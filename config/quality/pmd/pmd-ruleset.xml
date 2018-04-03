@@ -7,6 +7,7 @@
     <description>Custom ruleset for ribot Android application</description>
 
     <exclude-pattern>.*/R.java</exclude-pattern>
+    <exclude-pattern>.*/*Test.java</exclude-pattern>
     <exclude-pattern>.*/gen/.*</exclude-pattern>
 
     <rule ref="rulesets/java/android.xml" />

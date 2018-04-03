@@ -13,6 +13,7 @@
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
+apply plugin: 'net.ltgt.errorprone'
 
 dependencies {
     checkstyle 'com.puppycrawl.tools:checkstyle:8.7'
@@ -25,6 +26,7 @@ check.dependsOn 'checkstyle', 'findbugs', 'pmd'
 
 task checkstyle(type: Checkstyle, group: 'Verification', description: 'Runs code style checks') {
     configFile file("$qualityConfigDir/checkstyle/checkstyle-config.xml")
+    configProperties.checkstyleSuppressionsPath = file("${qualityConfigDir}/checkstyle/suppressions.xml").absolutePath
     source 'src'
     include '**/*.java'
 

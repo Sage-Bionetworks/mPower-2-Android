@@ -28,7 +28,7 @@
         <!-- General Code Style -->
 
         <module name="LineLength">
-            <property name="max" value="100"/>
+            <property name="max" value="120"/>
             <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
         </module>
 
@@ -158,6 +158,10 @@
                      value="Method type name ''{0}'' must match pattern ''{1}''."/>
         </module>
 
+    </module>
+
+    <module name="SuppressionFilter">
+        <property name="file" value="${checkstyleSuppressionsPath}"/>
     </module>
 
 </module>
