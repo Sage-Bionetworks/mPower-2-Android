@@ -1,0 +1,44 @@
+language: android
+jdk: oraclejdk8
+dist: trusty
+sudo: true
+android:
+  components:
+    - tools
+    - platform-tools
+    - tools
+    # The BuildTools version used by your project
+    - build-tools-27.0.3
+    # The SDK version used to compile your project
+    - android-27
+    # additional components
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+    # system image
+    - sys-img-armeabi-v7a-android-26
+cache:
+  - bundler
+branches:
+  only:
+  - master
+  - "/^stable-.*$/"
+licenses:
+  - android-sdk-preview-license-.+
+  - android-sdk-license-.+
+  - google-gdk-license-.+
+before_install:
+- echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
+- git config --global user.name "Travis CI"
+- git config --global user.email "tcisagebio@sagebase.org"
+- yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+install:
+- gem install bundler
+- bundle install
+#before_script:
+#- mkdir "$ANDROID_HOME/licenses" || true
+#- echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+#- echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+script:
+- export PATH=$PATH:$ANDROID_HOME/build-tools/27.0.3
+- ./travis/build.sh
