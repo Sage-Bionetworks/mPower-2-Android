@@ -16,11 +16,6 @@ android:
     - extra-google-m2repository
 script:
     - ./gradlew clean build
-deploy:
-    provider: script
-    script: ./gradlew bintrayUpload
-    on:
-        branch: master
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
