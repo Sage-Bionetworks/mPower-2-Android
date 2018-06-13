@@ -38,7 +38,9 @@ before_install:
 - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
 - git config --global user.name "Travis CI"
 - git config --global user.email "tcisagebio@sagebase.org"
-- yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+- yes | sdkmanager "platforms;android-27"
+#- $ANDROID_HOME/tools/bin/sdkmanager --version
+#- yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
 install:
 - gem install bundler
 - bundle install
