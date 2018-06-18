@@ -3,4 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="mp_orange">#F5B33C</color>
+    <color name="black">#000000</color>
+
+    <color name="mp_status_bar_purple">#47337D</color>
+    <color name="mp_onboarding_purple">#5A478F</color>
 </resources>

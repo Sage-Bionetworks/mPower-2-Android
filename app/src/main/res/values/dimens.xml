@@ -1,0 +1,7 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Button Sizes -->
+    <dimen name="mp_rounded_button_height">50dp</dimen>
+    <dimen name="mp_rounded_button_radius">25dp</dimen>
+
+</resources>
