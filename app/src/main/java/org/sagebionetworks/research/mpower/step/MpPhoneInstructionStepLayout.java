@@ -86,5 +86,6 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
                         Log.d("Sign Up", "Error, message: " + dataResponse.getMessage());
                     }
                 }, throwable -> Log.e("Sign Up", "Throwable " + throwable.getMessage()));
+        super.goForwardClicked(v);
     }
 }

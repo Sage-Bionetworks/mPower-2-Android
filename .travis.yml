@@ -1,0 +1,42 @@
+language: android
+
+# Required to run retrolambda
+jdk:
+    - oraclejdk8
+
+android:
+  components:
+    - tools
+    - platform-tools
+    - tools
+    - build-tools-27.0.3
+    - android-27
+
+    # RS components
+    - extra-android-m2repository
+    - extra-google-m2repository
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  bundler: true
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+branches:
+  only:
+  - master
+  - "/^stable-.*$/"
+before_install:
+- echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
+- git config --global user.name "Travis CI"
+- git config --global user.email "tcisagebio@sagebase.org"
+- yes | sdkmanager "platforms;android-27"
+install:
+- gem install bundler
+- bundle install
+script:
+- export PATH=$PATH:$ANDROID_HOME/build-tools/27.0.3
+- ./travis/build.sh
+
