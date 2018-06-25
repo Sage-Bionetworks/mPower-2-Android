@@ -13,7 +13,6 @@ elif [[ -z "$TRAVIS_TAG" && "$TRAVIS_BRANCH" =~ ^stable-.* ]]; then # non-tag co
     /tmp/git-crypt-ccdcc76f8e1a639847a8accd801f5a284194e43f/git-crypt unlock $TRAVIS_BUILD_DIR/git-crypt-android-certificates.key
     popd
     bundle exec fastlane test
-    bundle exec fastlane internal alias:"$KEY_ALIAS" storepass:"$KEYSTORE_PASSWORD" keypass:"$KEY_PASSWORD"
-    signed_apk_path:"app/build/outputs/apk/app-release.apk"
+    bundle exec fastlane internal alias:"$KEY_ALIAS" storepass:"$KEYSTORE_PASSWORD" keypass:"$KEY_PASSWORD" signed_apk_path:"app/build/outputs/apk/app-release.apk"
 fi
 exit $?
