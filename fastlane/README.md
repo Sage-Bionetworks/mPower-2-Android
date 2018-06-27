@@ -26,14 +26,14 @@ Runs all the tests
 fastlane android assemble
 ```
 Build apk
-### android beta
-```
-fastlane android beta
-```
-Submit a new Beta Build to Crashlytics Beta
 ### android alpha
 ```
 fastlane android alpha
+```
+Deploy a new version to the Google Play
+### android internal
+```
+fastlane android internal
 ```
 Deploy a new version to the Google Play
 ### android local
