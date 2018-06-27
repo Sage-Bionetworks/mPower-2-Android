@@ -5,9 +5,16 @@
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/android-sdk/android-sdk.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/android-sdk/android-sdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/ResearchStack/backbone/backbone.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/ResearchStack/backbone/backbone.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/data/data.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/data/data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/domain/domain.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/domain/domain.iml" />
       <module fileurl="file://$PROJECT_DIR$/mPower-2-Android.iml" filepath="$PROJECT_DIR$/mPower-2-Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/mobile-ui/mobile-ui.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/mobile-ui/mobile-ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/motor-control-module/motor-control-module.iml" filepath="$PROJECT_DIR$/motor-control-module/motor-control-module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/mpower/mpower.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/mpower/mpower.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/presentation/presentation.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/presentation/presentation.iml" />
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/researchstack-sdk/researchstack-sdk.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/researchstack-sdk/researchstack-sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/sageresearch-app-sdk/sageresearch-app-sdk.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/sageresearch-app-sdk/sageresearch-app-sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/test-utils/test-utils.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/test-utils/test-utils.iml" />
     </modules>
   </component>
 </project>
