@@ -14,6 +14,7 @@ android {
         versionCode 5
         versionName "0.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -21,10 +22,45 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {
+    implementation 'com.android.support:multidex:1.0.3'
+
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    implementation 'org.slf4j:slf4j-api:1.7.21'
+    implementation 'com.github.tony19:logback-android-core:1.1.1-6'
+    implementation 'com.github.tony19:logback-android-classic:1.1.1-6', {
+        exclude group: 'com.google.android', module: 'android'
+    }
+    testImplementation 'org.slf4j:slf4j-simple:1.7.21'
+
+    implementation 'com.google.code.gson:gson:2.8.2'
+
+    implementation 'com.ryanharter.auto.value:auto-value-parcel-adapter:0.2.6'
+    implementation 'com.ryanharter.auto.value:auto-value-gson-annotations:0.7.0'
+    annotationProcessor "com.google.auto.value:auto-value:1.6"
+    annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.6'
+    annotationProcessor 'com.ryanharter.auto.value:auto-value-gson:0.7.0'
+    annotationProcessor 'com.google.auto.value:auto-value-annotations:1.6' // include again for auto-value-gson
+
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation 'com.google.code.findbugs:jsr305:2.0.1'
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+
+    implementation 'com.google.dagger:dagger-android:2.15'
+    implementation 'com.google.dagger:dagger-android-support:2.15'
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.15'
+    annotationProcessor "com.google.dagger:dagger-compiler:2.15"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.1'
@@ -32,4 +68,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation project(path: ':mobile-ui')
+    implementation project(path: ':data')
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
 }

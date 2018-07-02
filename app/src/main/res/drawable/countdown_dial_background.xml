@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ BSD 3-Clause License
   ~
   ~ Copyright 2018  Sage Bionetworks. All rights reserved.
@@ -30,6 +30,19 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<resources>
-    <string name="app_name">mPower</string>
-</resources>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/royal500" />
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:innerRadiusRatio="@dimen/countdownDialInnerRadiusRatio"
+            android:shape="ring"
+            android:thicknessRatio="@dimen/countdownDialThicknessRatio"
+            android:useLevel="false">
+            <solid android:color="@color/appWhite" />
+        </shape>
+    </item>
+</layer-list>
