@@ -1,4 +1,17 @@
-include ':app', ':researchstack-sdk', ':android-sdk', ':backbone'
+include ':backbone'
+project(':backbone').projectDir = new File('BridgeAndroidSdk/ResearchStack/backbone')
+
+include ':mpower', ':domain', ':data', ':mobile-ui', ':presentation'
+project(':mpower').projectDir = new File('BridgeAndroidSdk/SageResearch-Android/mpower')
+project(':domain').projectDir = new File('BridgeAndroidSdk/SageResearch-Android/domain')
+project(':data').projectDir = new File('BridgeAndroidSdk/SageResearch-Android/data')
+project(':mobile-ui').projectDir = new File('BridgeAndroidSdk/SageResearch-Android/mobile-ui')
+project(':presentation').projectDir = new File('BridgeAndroidSdk/SageResearch-Android/presentation')
+
+include ':sageresearch-app-sdk', ':researchstack-sdk', ':android-sdk', ':test-utils'
+project(':sageresearch-app-sdk').projectDir = new File('BridgeAndroidSdk/sageresearch-app-sdk')
 project(':researchstack-sdk').projectDir = new File('BridgeAndroidSdk/researchstack-sdk')
 project(':android-sdk').projectDir = new File('BridgeAndroidSdk/android-sdk')
-project(':backbone').projectDir = new File('BridgeAndroidSdk/ResearchStack/backbone')
+project(':test-utils').projectDir = new File('BridgeAndroidSdk/test-utils')
+
+include ':app', ':motor-control-module', ':sageresearch-mpower'
