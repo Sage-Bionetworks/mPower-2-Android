@@ -53,11 +53,11 @@ public class MPowerApplication extends MultiDexApplication implements HasSupport
     @Override
     public void onCreate() {
         super.onCreate();
-//        DaggerMPowerApplicationComponent
-//                .builder()
-//                .application(this)
-//                .build()
-//                .inject(this);
+        DaggerMPowerApplicationComponent
+                .builder()
+                .application(this)
+                .build()
+                .inject(this);
     }
 
     @Override

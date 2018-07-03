@@ -9,7 +9,7 @@ android {
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "org.sagebionetworks.research.mpower"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 27
         versionCode 5
         versionName "0.0.1"
@@ -71,4 +71,5 @@ dependencies {
     implementation project(path: ':mobile-ui')
     implementation project(path: ':data')
     implementation 'android.arch.lifecycle:extensions:1.1.1'
+    implementation project(path: ':motor-control-module')
 }
