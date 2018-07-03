@@ -65,7 +65,6 @@ public class ShowOverviewStepFragment extends
         ShowUIStepFragmentBase<OverviewStepView, ShowUIStepViewModel<OverviewStepView>,
                 OverviewStepViewBinding<OverviewStepView>> {
     public static final String INFO_TAPPED_RESULT_ID = "infoTapped";
-
     private boolean isFirstRun;
 
     @NonNull
