@@ -57,5 +57,5 @@ public abstract class MPowerApplicationModule {
     @IntoMap
     @ActivityKey(MainActivity.class)
     abstract AndroidInjector.Factory<? extends Activity>
-    bindActivityInjectorFactory(MainActivitySubcomponent.Builder builder);
+            bindActivityInjectorFactory(MainActivitySubcomponent.Builder builder);
 }
