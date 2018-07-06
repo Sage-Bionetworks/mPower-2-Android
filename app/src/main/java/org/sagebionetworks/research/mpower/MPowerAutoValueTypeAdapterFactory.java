@@ -32,6 +32,3 @@
 
 package org.sagebionetworks.research.mpower;
 
-import com.google.gson.TypeAdapterFactory;
-import com.ryanharter.auto.value.gson.GsonTypeAdapterFactory;
-

@@ -34,15 +34,12 @@ package org.sagebionetworks.research.mpower;
 
 import android.app.Activity;
 import android.content.Context;
-import com.google.gson.TypeAdapterFactory;
 import dagger.Binds;
 import dagger.Module;
-import dagger.Provides;
 import dagger.android.ActivityKey;
 import dagger.android.AndroidInjectionModule;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
-import dagger.multibindings.IntoSet;
 import org.sagebionetworks.research.data.inject.DataModule;
 import org.sagebionetworks.research.motor_control_module.inject.AppShowStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.AppTaskModule;
