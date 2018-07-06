@@ -1,2 +1,2 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.sagebionetworks.research.motor_control_module" />
+<manifest
+        package="org.sagebionetworks.research.motor_control_module"/>
