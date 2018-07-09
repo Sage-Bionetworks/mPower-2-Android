@@ -36,72 +36,73 @@
     android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/left"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toStartOf="@+id/center"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="100dp">
-
-        <ImageButton
-            android:id="@+id/leftIconImageView"
-            android:layout_width="68dp"
-            android:layout_height="0dp"
-            android:background="@color/transparent"
-            app:layout_constraintDimensionRatio="H,1:1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/countdown_dial_background" />
-
-        <TextView
-            android:id="@+id/leftIconLabel"
-            style="@style/Widget.ResearchStack.TextView.Overview.IconLabel"
+            android:id="@+id/left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PANTS WITH POCKETS"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/center"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/leftIconImageView" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="110dp">
+
+        <ImageButton
+                android:id="@+id/leftIconImageView"
+                android:layout_width="68dp"
+                android:layout_height="0dp"
+                android:background="@color/transparent"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/countdown_dial_background"/>
+
+        <TextView
+                android:id="@+id/leftIconLabel"
+                style="@style/Widget.ResearchStack.TextView.Overview.IconLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PANTS WITH POCKETS"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/leftIconImageView"/>
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toStartOf="@+id/right"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/left"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="100dp">
-
-        <ImageButton
-            android:id="@+id/centerIconImageView"
-            android:layout_width="68dp"
-            android:layout_height="0dp"
-            android:background="@color/transparent"
-            app:layout_constraintDimensionRatio="H,1:1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/countdown_dial_background" />
-
-        <TextView
-            android:id="@+id/centerIconLabel"
-            style="@style/Widget.ResearchStack.TextView.Overview.IconLabel"
+            android:id="@+id/center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PANTS WITH POCKETS"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/centerIconImageView" />
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/right"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/left"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="110dp">
+
+        <ImageButton
+                android:id="@+id/centerIconImageView"
+                android:layout_width="68dp"
+                android:layout_height="0dp"
+                android:background="@color/transparent"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/countdown_dial_background"/>
+
+        <TextView
+                android:id="@+id/centerIconLabel"
+                style="@style/Widget.ResearchStack.TextView.Overview.IconLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="COMFORTABLE PLACE TO SIT"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/centerIconImageView"
+        />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -113,7 +114,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/center"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="100dp">
+        app:layout_constraintWidth_max="110dp">
 
         <ImageButton
             android:id="@+id/rightIconImageView"
@@ -127,14 +128,15 @@
             app:srcCompat="@drawable/countdown_dial_background" />
 
         <TextView
-            android:id="@+id/rightIconLabel"
-            style="@style/Widget.ResearchStack.TextView.Overview.IconLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="PANTS WITH POCKETS"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rightIconImageView" />
+                android:id="@+id/rightIconLabel"
+                style="@style/Widget.ResearchStack.TextView.Overview.IconLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PANTS WITH POCKETS"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rightIconImageView"
+                android:gravity="center_vertical|center_horizontal"/>
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>
