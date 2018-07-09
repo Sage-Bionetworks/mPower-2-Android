@@ -38,7 +38,7 @@ import dagger.multibindings.IntoMap;
 import org.sagebionetworks.research.domain.inject.InputFieldsModule;
 import org.sagebionetworks.research.domain.inject.StepModule;
 import org.sagebionetworks.research.domain.inject.StepModule.StepClassKey;
-import org.sagebionetworks.research.motor_control_module.step.CompletionStep;
+import org.sagebionetworks.research.motor_control_module.step.HandSelectionStep;
 import org.sagebionetworks.research.motor_control_module.step.InstructionStep;
 import org.sagebionetworks.research.motor_control_module.step.OverviewStep;
 
@@ -47,13 +47,6 @@ import org.sagebionetworks.research.motor_control_module.step.OverviewStep;
  */
 @Module(includes = {InputFieldsModule.class, StepModule.class})
 public class AppStepModule {
-    @Provides
-    @IntoMap
-    @StepClassKey(CompletionStep.class)
-    static String provideCompletionStepClassInfo() {
-        return CompletionStep.TYPE_KEY;
-    }
-
     /**
      * Returns the type key for InstructionStep.class.
      *
@@ -76,5 +69,12 @@ public class AppStepModule {
     @StepClassKey(OverviewStep.class)
     static String provideOverviewStepClassInfo() {
         return OverviewStep.TYPE_KEY;
+    }
+
+    @Provides
+    @IntoMap
+    @StepClassKey(HandSelectionStep.class)
+    static String provideHandSelectedStepClassInfo() {
+        return HandSelectionStep.TYPE_KEY;
     }
 }

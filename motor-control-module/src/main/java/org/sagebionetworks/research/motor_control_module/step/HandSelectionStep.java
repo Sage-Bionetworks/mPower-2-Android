@@ -30,26 +30,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.motor_control_module.show_step_fragment;
+package org.sagebionetworks.research.motor_control_module.step;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragment;
-import org.sagebionetworks.research.motor_control_module.R;
-import org.sagebionetworks.research.presentation.model.interfaces.StepView;
+import android.support.annotation.Nullable;
+import org.sagebionetworks.research.domain.form.interfaces.InputField;
+import org.sagebionetworks.research.domain.step.implementations.FormUIStepBase;
+import org.sagebionetworks.research.domain.step.ui.action.interfaces.Action;
+import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
+import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
 
-public class ShowCompletionStepFragment extends ShowUIStepFragment {
-    @NonNull
-    public static ShowCompletionStepFragment newInstance(@NonNull StepView stepView) {
-        ShowCompletionStepFragment fragment = new ShowCompletionStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
-        fragment.setArguments(arguments);
-        return fragment;
+import java.util.List;
+import java.util.Map;
+
+public class HandSelectionStep extends FormUIStepBase {
+    // For now a hand selection step is just a FormUIStep.
+    public static final String TYPE_KEY = AppStepType.HAND_SELECTION;
+
+    public HandSelectionStep(@NonNull final String identifier,
+                             @NonNull final Map<String, Action> actions,
+                             @Nullable final String title,
+                             @Nullable final String text,
+                             @Nullable final String detail,
+                             @Nullable final String footnote,
+                             @Nullable final ColorTheme colorTheme,
+                             @Nullable final ImageTheme imageTheme,
+                             @NonNull final List<InputField> inputFields) {
+        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme, inputFields);
     }
 
     @Override
-    public int getLayoutId() {
-        return R.layout.mpower2_completion_step;
+    public String getType() {
+        return TYPE_KEY;
     }
 }

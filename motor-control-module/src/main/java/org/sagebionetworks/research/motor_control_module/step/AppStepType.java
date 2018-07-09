@@ -30,26 +30,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.motor_control_module.show_step_fragment;
+package org.sagebionetworks.research.motor_control_module.step;
 
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragment;
-import org.sagebionetworks.research.motor_control_module.R;
-import org.sagebionetworks.research.presentation.model.interfaces.StepView;
+import android.support.annotation.StringDef;
+import org.sagebionetworks.research.domain.step.StepType;
 
-public class ShowCompletionStepFragment extends ShowUIStepFragment {
-    @NonNull
-    public static ShowCompletionStepFragment newInstance(@NonNull StepView stepView) {
-        ShowCompletionStepFragment fragment = new ShowCompletionStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
-        fragment.setArguments(arguments);
-        return fragment;
-    }
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    @Override
-    public int getLayoutId() {
-        return R.layout.mpower2_completion_step;
-    }
+// Adds the app specific steps to the StepType annotation
+@Retention(RetentionPolicy.RUNTIME)
+@StringDef({StepType.COMPLETION, StepType.OVERVIEW, StepType.INSTRUCTION, StepType.UI, StepType.FORM,
+    StepType.ACTIVE, StepType.BASE, StepType.COUNTDOWN, StepType.IMAGE_PICKER, StepType.IMAGE_PICKER,
+    StepType.LOGGING, StepType.REVIEW, StepType.SECTION, StepType.SELECTION, StepType.TASK_INFO,
+    StepType.TRANSFORM, AppStepType.HAND_SELECTION})
+public @interface AppStepType {
+    String HAND_SELECTION = "handSelection";
 }

@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO: show list of available tasks
         if (performTaskFragment == null) {
             compositeDisposable.add(
-                    taskRepository.getTaskInfo("Tapping")
+                    taskRepository.getTaskInfo("Tremor")
                             .map(taskInfo -> TaskView.builder()
                                     .setIdentifier(taskInfo.getIdentifier())
                                     .build())
