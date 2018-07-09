@@ -30,26 +30,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.motor_control_module.show_step_fragment;
+package org.sagebionetworks.research.motor_control_module.inject.subcomponents;
 
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragment;
-import org.sagebionetworks.research.motor_control_module.R;
-import org.sagebionetworks.research.presentation.model.interfaces.StepView;
+import javax.inject.Scope;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public class ShowCompletionStepFragment extends ShowUIStepFragment {
-    @NonNull
-    public static ShowCompletionStepFragment newInstance(@NonNull StepView stepView) {
-        ShowCompletionStepFragment fragment = new ShowCompletionStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
-        fragment.setArguments(arguments);
-        return fragment;
-    }
-
-    @Override
-    public int getLayoutId() {
-        return R.layout.mpower2_completion_step;
-    }
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ShowHandSelectionStepFragmentScope {
 }

@@ -37,12 +37,15 @@ import dagger.Module;
 import dagger.android.AndroidInjector;
 import dagger.android.support.FragmentKey;
 import dagger.multibindings.IntoMap;
+import org.sagebionetworks.research.motor_control_module.inject.subcomponents.ShowHandSelectionStepFragmentSubcomponent;
 import org.sagebionetworks.research.motor_control_module.inject.subcomponents.ShowInstructionStepFragmentSubcomponent;
 import org.sagebionetworks.research.motor_control_module.inject.subcomponents.ShowOverviewStepFragmentSubcomponent;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowHandSelectionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowInstructionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment;
 
-@Module(subcomponents = {ShowInstructionStepFragmentSubcomponent.class, ShowOverviewStepFragmentSubcomponent.class},
+@Module(subcomponents = {ShowInstructionStepFragmentSubcomponent.class, ShowHandSelectionStepFragmentSubcomponent.class,
+                ShowOverviewStepFragmentSubcomponent.class},
         includes = {AppStepModule.class, AppStepViewModule.class, AppShowStepViewModelModule.class,
                 AppShowStepFragmentModule.class})
 public abstract class AppShowStepModule {
@@ -57,4 +60,10 @@ public abstract class AppShowStepModule {
     @FragmentKey(ShowOverviewStepFragment.class)
     abstract AndroidInjector.Factory<? extends android.support.v4.app.Fragment>
     bindShowOverviewStepFragmentInjectoryFactory(ShowOverviewStepFragmentSubcomponent.Builder builder);
+
+    @Binds
+    @IntoMap
+    @FragmentKey(ShowHandSelectionStepFragment.class)
+    abstract AndroidInjector.Factory<? extends android.support.v4.app.Fragment>
+    bindShowHandSelectionStepFragmentInjectoryFactory(ShowHandSelectionStepFragmentSubcomponent.Builder builder);
 }

@@ -36,8 +36,12 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule;
+import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.ShowStepFragmentFactory;
+import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.StepViewKey;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowHandSelectionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowInstructionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment;
+import org.sagebionetworks.research.motor_control_module.step_view.HandSelectionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
 
@@ -45,15 +49,22 @@ import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepV
 public class AppShowStepFragmentModule {
     @Provides
     @IntoMap
-    @ShowStepFragmentModule.StepViewKey(InstructionStepView.class)
-    static ShowStepFragmentModule.ShowStepFragmentFactory provideShowInstructionStepFragmentFactory() {
+    @StepViewKey(InstructionStepView.TYPE)
+    static ShowStepFragmentFactory provideShowInstructionStepFragmentFactory() {
         return ShowInstructionStepFragment::newInstance;
     }
 
     @Provides
     @IntoMap
-    @ShowStepFragmentModule.StepViewKey(OverviewStepView.class)
-    static ShowStepFragmentModule.ShowStepFragmentFactory provideShowOverviewStepFragmentFactory() {
+    @StepViewKey(OverviewStepView.TYPE)
+    static ShowStepFragmentFactory provideShowOverviewStepFragmentFactory() {
         return ShowOverviewStepFragment::newInstance;
+    }
+
+    @Provides
+    @IntoMap
+    @StepViewKey(HandSelectionStepView.TYPE)
+    static ShowStepFragmentFactory provideHandSelectionStepFragmentFactory() {
+        return ShowHandSelectionStepFragment::newInstance;
     }
 }

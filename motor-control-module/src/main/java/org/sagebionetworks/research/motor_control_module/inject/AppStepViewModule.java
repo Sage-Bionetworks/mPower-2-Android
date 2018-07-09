@@ -36,7 +36,8 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import org.sagebionetworks.research.domain.step.StepType;
-import org.sagebionetworks.research.motor_control_module.step_view.CompletionStepView;
+import org.sagebionetworks.research.motor_control_module.step.AppStepType;
+import org.sagebionetworks.research.motor_control_module.step_view.HandSelectionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
 import org.sagebionetworks.research.presentation.inject.StepViewModule;
@@ -64,8 +65,8 @@ public class AppStepViewModule {
 
     @Provides
     @IntoMap
-    @StepTypeKey(StepType.COMPLETION)
-    static InternalStepViewFactory providedCompletionStepViewFactory() {
-        return CompletionStepView::fromCompletionStep;
+    @StepTypeKey(AppStepType.HAND_SELECTION)
+    static InternalStepViewFactory provideHandSelectionStepViewFactory() {
+        return HandSelectionStepView::fromHandSelectionStep;
     }
 }
