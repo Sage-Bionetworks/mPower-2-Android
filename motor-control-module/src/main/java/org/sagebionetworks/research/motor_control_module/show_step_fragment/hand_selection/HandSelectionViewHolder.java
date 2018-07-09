@@ -30,20 +30,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.motor_control_module.show_step_fragment;
+package org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection;
 
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
-import org.sagebionetworks.research.mobile_ui.show_step.view.form.ShowFormUIStepFragment;
-import org.sagebionetworks.research.presentation.model.interfaces.StepView;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
-public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
-    @NonNull
-    public static ShowHandSelectionStepFragment newInstance(@NonNull StepView stepView) {
-        ShowHandSelectionStepFragment fragment = new ShowHandSelectionStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
-        fragment.setArguments(arguments);
-        return fragment;
+import org.sagebionetworks.research.domain.mobile_ui.R;
+import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
+
+public class HandSelectionViewHolder extends RecyclerView.ViewHolder {
+    private final ActionButton button;
+    private final RecyclerView parent;
+
+    public HandSelectionViewHolder(final RecyclerView parent, final ActionButton button) {
+        super(button);
+        this.button = button;
+        this.parent = parent;
+        this.button.setOnClickListener(view -> {
+            // Reset all of the child views to appear as if they have not been selected
+            int children = parent.getChildCount();
+            int inactiveColor = parent.getContext().getResources().getColor(R.color.transparent);
+            for (int i = 0; i < children; i++) {
+                View child = parent.getChildAt(i);
+                child.setBackgroundColor(inactiveColor);
+            }
+
+            // Set the button that was touched to appear touched.
+            int activeColor = view.getContext().getResources().getColor(R.color.appVeryLightGray);
+            button.setBackgroundColor(activeColor);
+        });
+    }
+
+    public ActionButton getButton() {
+        return this.button;
     }
 }

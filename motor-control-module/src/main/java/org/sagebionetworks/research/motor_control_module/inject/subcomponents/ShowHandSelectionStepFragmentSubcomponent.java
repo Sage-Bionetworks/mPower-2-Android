@@ -34,7 +34,7 @@ package org.sagebionetworks.research.motor_control_module.inject.subcomponents;
 
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowHandSelectionStepFragment;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
 import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule;
 
 @ShowHandSelectionStepFragmentScope

@@ -30,45 +30,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.motor_control_module.step;
+package org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import org.sagebionetworks.research.domain.form.interfaces.InputField;
-import org.sagebionetworks.research.domain.step.implementations.FormUIStepBase;
-import org.sagebionetworks.research.domain.step.ui.action.interfaces.Action;
-import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
-import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+
+import org.sagebionetworks.research.domain.mobile_ui.R;
+import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
+import org.sagebionetworks.research.presentation.DisplayString;
+import org.sagebionetworks.research.presentation.model.form.ChoiceView;
 
 import java.util.List;
-import java.util.Map;
 
-public class HandSelectionStep extends FormUIStepBase {
-    // For now a hand selection step is just a FormUIStep.
-    public static final String TYPE_KEY = AppStepType.HAND_SELECTION;
+public class HandSelectionAdapter<T> extends RecyclerView.Adapter<HandSelectionViewHolder> {
+    private List<ChoiceView<T>> choices;
+    private RecyclerView recyclerView;
 
-    public HandSelectionStep(@NonNull final String identifier,
-                             @NonNull final Map<String, Action> actions,
-                             @Nullable final String title,
-                             @Nullable final String text,
-                             @Nullable final String detail,
-                             @Nullable final String footnote,
-                             @Nullable final ColorTheme colorTheme,
-                             @Nullable final ImageTheme imageTheme,
-                             @NonNull final List<InputField> inputFields) {
-        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme, inputFields);
+    public HandSelectionAdapter(final RecyclerView recyclerView, final List<ChoiceView<T>> choices) {
+        this.choices = choices;
+        this.recyclerView = recyclerView;
     }
 
-    @Override
     @NonNull
-    public HandSelectionStep copyWithIdentifier(@NonNull String identifier) {
-        return new HandSelectionStep(identifier, this.getActions(), this.getTitle(),
-                this.getText(), this.getDetail(), this.getFootnote(), this.getColorTheme(),
-                this.getImageTheme(), this.getInputFields());
+    @Override
+    public HandSelectionViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
+        ActionButton button = (ActionButton) LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.rs2_form_view_holder, parent, false);
+        return new HandSelectionViewHolder(this.recyclerView, button);
     }
 
     @Override
-    public String getType() {
-        return TYPE_KEY;
+    public void onBindViewHolder(@NonNull final HandSelectionViewHolder holder, final int position) {
+        ChoiceView<T> inputField = this.choices.get(position);
+        ActionButton button = holder.getButton();
+        DisplayString textDisplayString = inputField.getText();
+        String text = "";
+        if (textDisplayString != null) {
+            text = textDisplayString.getDisplayString();
+        }
+
+        button.setText(text);
+    }
+
+    @Override
+    public int getItemCount() {
+        return this.choices.size();
     }
 }

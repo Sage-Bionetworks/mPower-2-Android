@@ -38,7 +38,7 @@ import dagger.multibindings.IntoMap;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.ShowStepFragmentFactory;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.StepViewKey;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowHandSelectionStepFragment;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowInstructionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment;
 import org.sagebionetworks.research.motor_control_module.step_view.HandSelectionStepView;
