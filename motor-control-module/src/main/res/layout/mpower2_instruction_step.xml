@@ -95,10 +95,10 @@
                     app:layout_constraintBottom_toBottomOf="@+id/rs2_image_view"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:max="6" android:progress="2"/>
+                    android:max="3" android:progress="2"/>
 
             <TextView
-                    android:text="Step 2 of 6"
+                    android:text="Step 2 of 3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@id/rs2_progress_label"
