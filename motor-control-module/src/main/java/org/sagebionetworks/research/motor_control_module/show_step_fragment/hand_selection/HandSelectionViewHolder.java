@@ -32,15 +32,18 @@
 
 package org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import org.sagebionetworks.research.domain.form.interfaces.Choice;
 import org.sagebionetworks.research.domain.mobile_ui.R;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 
 public class HandSelectionViewHolder extends RecyclerView.ViewHolder {
     private final ActionButton button;
     private final RecyclerView parent;
+    private String choice;
 
     public HandSelectionViewHolder(final RecyclerView parent, final ActionButton button) {
         super(button);
@@ -56,12 +59,19 @@ public class HandSelectionViewHolder extends RecyclerView.ViewHolder {
             }
 
             // Set the button that was touched to appear touched.
-            int activeColor = view.getContext().getResources().getColor(R.color.appVeryLightGray);
+            int activeColor = view.getContext().getResources().getColor(R.color.appDarkGrey);
             button.setBackgroundColor(activeColor);
+
+            HandSelectionAdapter<?> adapter = (HandSelectionAdapter<?>)parent.getAdapter();
+            adapter.setSelectedChoice(this.choice);
         });
     }
 
     public ActionButton getButton() {
         return this.button;
+    }
+
+    public void setChoice(@NonNull @HandSelection String choice) {
+        this.choice = choice;
     }
 }

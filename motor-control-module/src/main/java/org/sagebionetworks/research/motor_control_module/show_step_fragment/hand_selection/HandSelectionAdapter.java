@@ -47,10 +47,13 @@ import java.util.List;
 public class HandSelectionAdapter<T> extends RecyclerView.Adapter<HandSelectionViewHolder> {
     private List<ChoiceView<T>> choices;
     private RecyclerView recyclerView;
+    private String selectedChoice;
 
-    public HandSelectionAdapter(final RecyclerView recyclerView, final List<ChoiceView<T>> choices) {
+    public HandSelectionAdapter(final RecyclerView recyclerView, final List<ChoiceView<T>> choices,
+                                @HandSelection String defaultChoice) {
         this.choices = choices;
         this.recyclerView = recyclerView;
+        this.selectedChoice = defaultChoice;
     }
 
     @NonNull
@@ -61,9 +64,15 @@ public class HandSelectionAdapter<T> extends RecyclerView.Adapter<HandSelectionV
         return new HandSelectionViewHolder(this.recyclerView, button);
     }
 
+    public void setSelectedChoice(@HandSelection String selectedChoice) {
+        this.selectedChoice = selectedChoice;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull final HandSelectionViewHolder holder, final int position) {
-        ChoiceView<T> inputField = this.choices.get(position);
+        ChoiceView<String> inputField = (ChoiceView<String>)this.choices.get(position);
+        String choice = inputField.getAnswerValue();
+        holder.setChoice(choice);
         ActionButton button = holder.getButton();
         DisplayString textDisplayString = inputField.getText();
         String text = "";
@@ -72,6 +81,16 @@ public class HandSelectionAdapter<T> extends RecyclerView.Adapter<HandSelectionV
         }
 
         button.setText(text);
+        int color;
+        if (choice.equals(this.selectedChoice)) {
+            // this button is selected.
+            color = button.getContext().getResources().getColor(R.color.appDarkGrey);
+        } else {
+            // this button is not selected
+            color = button.getContext().getResources().getColor(R.color.transparent);
+        }
+
+        button.setBackgroundColor(color);
     }
 
     @Override

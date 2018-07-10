@@ -32,6 +32,8 @@
 
 package org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,6 +44,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.sagebionetworks.research.domain.result.AnswerResultType;
+import org.sagebionetworks.research.domain.result.ResultType;
+import org.sagebionetworks.research.domain.result.implementations.AnswerResultBase;
+import org.sagebionetworks.research.domain.result.interfaces.AnswerResult;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowFormUIStepFragment;
 import org.sagebionetworks.research.motor_control_module.R;
@@ -50,11 +56,15 @@ import org.sagebionetworks.research.presentation.model.form.InputFieldView;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.threeten.bp.Instant;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowHandSelectionStepFragment.class);
+    public static final String HAND_SELECTION_KEY = "handSelection";
+    public static final String HAND_ORDER_KEY = "handOrder";
 
     @NonNull
     public static ShowHandSelectionStepFragment newInstance(@NonNull StepView stepView) {
@@ -64,10 +74,41 @@ public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
         return fragment;
     }
 
+    public void writeHandSelectionResult(@HandSelection String handSelection) {
+        List<String> result = new ArrayList<>();
+        switch (handSelection) {
+            case HandSelection.LEFT:
+                result.add(HandSelection.LEFT);
+                break;
+            case HandSelection.RIGHT:
+                result.add(HandSelection.RIGHT);
+                break;
+            case HandSelection.BOTH:
+                // If the user selected both we randomize the hand order.
+                if (Math.random() < .5) {
+                    result.add(HandSelection.LEFT);
+                    result.add(HandSelection.RIGHT);
+                } else {
+                    result.add(HandSelection.RIGHT);
+                    result.add(HandSelection.LEFT);
+                }
+                break;
+        }
+
+        AnswerResult<List<String>> answerResult = new AnswerResultBase<>(HAND_ORDER_KEY, Instant.now(),
+                Instant.now(), result, AnswerResultType.DATA);
+        this.performTaskViewModel.addStepResult(answerResult);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
 
+        String taskId = this.performTaskViewModel.getTaskView().getIdentifier();
+        SharedPreferences prefs = this.getContext().getSharedPreferences(taskId, Context.MODE_PRIVATE);
+        // The default value is both if the user hasn't selected before.
+        @HandSelection String lastSelection = prefs.getString(HAND_SELECTION_KEY, HandSelection.BOTH);
+        this.writeHandSelectionResult(lastSelection);
         RecyclerView recyclerView = this.stepViewBinding.getRecyclerView();
         if (recyclerView != null) {
             recyclerView.setHasFixedSize(true);
@@ -94,7 +135,7 @@ public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
 
             ChoiceInputFieldViewBase<?> choiceInputField = (ChoiceInputFieldViewBase<?>)inputField;
             HandSelectionAdapter<?> adapter = new HandSelectionAdapter<>(recyclerView,
-                    choiceInputField.getChoices());
+                    choiceInputField.getChoices(), lastSelection);
             recyclerView.setAdapter(adapter);
         }
 
