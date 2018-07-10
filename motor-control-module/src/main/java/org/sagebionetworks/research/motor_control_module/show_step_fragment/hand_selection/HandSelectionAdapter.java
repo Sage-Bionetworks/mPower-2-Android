@@ -84,7 +84,7 @@ public class HandSelectionAdapter<T> extends RecyclerView.Adapter<HandSelectionV
         int color;
         if (choice.equals(this.selectedChoice)) {
             // this button is selected.
-            color = button.getContext().getResources().getColor(R.color.appDarkGrey);
+            color = button.getContext().getResources().getColor(R.color.appLightGray);
         } else {
             // this button is not selected
             color = button.getContext().getResources().getColor(R.color.transparent);

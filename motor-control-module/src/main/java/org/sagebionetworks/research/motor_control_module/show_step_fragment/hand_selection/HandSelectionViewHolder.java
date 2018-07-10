@@ -59,7 +59,7 @@ public class HandSelectionViewHolder extends RecyclerView.ViewHolder {
             }
 
             // Set the button that was touched to appear touched.
-            int activeColor = view.getContext().getResources().getColor(R.color.appDarkGrey);
+            int activeColor = view.getContext().getResources().getColor(R.color.appLightGray);
             button.setBackgroundColor(activeColor);
 
             HandSelectionAdapter<?> adapter = (HandSelectionAdapter<?>)parent.getAdapter();
