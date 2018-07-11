@@ -35,6 +35,7 @@ package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
+import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.view_binding.StepViewBinding;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
@@ -46,10 +47,12 @@ import org.sagebionetworks.research.presentation.show_step.ShowGenericStepViewMo
 public class ShowTappingActiveUIStepFragment extends
         ShowStepFragmentBase<StepView, ShowGenericStepViewModel, StepViewBinding<StepView>> {
     @NonNull
-    public static ShowTappingActiveUIStepFragment newInstance(@NonNull StepView stepView) {
+    public static ShowTappingActiveUIStepFragment newInstance(@NonNull StepView stepView,
+                                                              @NonNull PerformTaskFragment performTaskFragment) {
         ShowTappingActiveUIStepFragment fragment = new ShowTappingActiveUIStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
+        Bundle arguments = ShowStepFragmentBase.createArguments(stepView, performTaskFragment);
         fragment.setArguments(arguments);
+        fragment.initialize();
         return fragment;
     }
 

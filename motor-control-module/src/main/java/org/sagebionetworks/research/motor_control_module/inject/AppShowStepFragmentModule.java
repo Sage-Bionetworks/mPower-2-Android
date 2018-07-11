@@ -45,14 +45,14 @@ import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepV
 public class AppShowStepFragmentModule {
     @Provides
     @IntoMap
-    @ShowStepFragmentModule.StepViewKey(InstructionStepView.class)
+    @ShowStepFragmentModule.StepViewKey(InstructionStepView.TYPE)
     static ShowStepFragmentModule.ShowStepFragmentFactory provideShowInstructionStepFragmentFactory() {
         return ShowInstructionStepFragment::newInstance;
     }
 
     @Provides
     @IntoMap
-    @ShowStepFragmentModule.StepViewKey(OverviewStepView.class)
+    @ShowStepFragmentModule.StepViewKey(OverviewStepView.TYPE)
     static ShowStepFragmentModule.ShowStepFragmentFactory provideShowOverviewStepFragmentFactory() {
         return ShowOverviewStepFragment::newInstance;
     }
