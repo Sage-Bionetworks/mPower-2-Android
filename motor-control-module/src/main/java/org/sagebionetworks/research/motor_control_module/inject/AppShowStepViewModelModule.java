@@ -37,23 +37,24 @@ import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
+import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule;
 import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule.StepViewClassKey;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_model_factories.AbstractShowStepViewModelFactory;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_model_factories.ShowUIStepViewModelFactory;
 
-@Module
+@Module(includes = ShowStepViewModelModule.class)
 public class AppShowStepViewModelModule {
     @Provides
     @IntoMap
-    @StepViewClassKey(InstructionStepView.class)
+    @StepViewClassKey(InstructionStepView.TYPE)
     static AbstractShowStepViewModelFactory<?, ? extends StepView> provideInstructionStepVMF() {
         return new ShowUIStepViewModelFactory<InstructionStepView>();
     }
 
     @Provides
     @IntoMap
-    @StepViewClassKey(OverviewStepView.class)
+    @StepViewClassKey(OverviewStepView.TYPE)
     static AbstractShowStepViewModelFactory<?, ? extends StepView> provideOverviewStepVMF() {
         return new ShowUIStepViewModelFactory<OverviewStepView>();
     }

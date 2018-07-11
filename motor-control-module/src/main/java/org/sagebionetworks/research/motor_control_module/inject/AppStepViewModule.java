@@ -61,11 +61,4 @@ public class AppStepViewModule {
     static InternalStepViewFactory provideOverviewStepViewFactory() {
         return OverviewStepView::fromOverviewStep;
     }
-
-    @Provides
-    @IntoMap
-    @StepTypeKey(StepType.COMPLETION)
-    static InternalStepViewFactory providedCompletionStepViewFactory() {
-        return CompletionStepView::fromCompletionStep;
-    }
 }

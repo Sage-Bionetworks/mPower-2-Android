@@ -35,6 +35,7 @@ package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
+import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.view_binding.UIStepViewBinding;
@@ -47,10 +48,12 @@ public class ShowInstructionStepFragment extends
         ShowUIStepFragmentBase<InstructionStepView, ShowUIStepViewModel<InstructionStepView>,
                         UIStepViewBinding<InstructionStepView>> {
     @NonNull
-    public static ShowInstructionStepFragment newInstance(@NonNull StepView stepView) {
+    public static ShowInstructionStepFragment newInstance(@NonNull StepView stepView,
+                                                          @NonNull PerformTaskFragment performTaskFragment) {
         ShowInstructionStepFragment fragment = new ShowInstructionStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
+        Bundle arguments = ShowStepFragmentBase.createArguments(stepView, performTaskFragment);
         fragment.setArguments(arguments);
+        fragment.initialize();
         return fragment;
     }
 
