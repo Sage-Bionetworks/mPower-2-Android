@@ -107,9 +107,8 @@ public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
 
-        String taskId = this.performTaskViewModel.getTaskView().getIdentifier();
-        SharedPreferences prefs = this.getContext().getSharedPreferences(taskId, Context.MODE_PRIVATE);
         // The default value is both if the user hasn't selected before.
+        SharedPreferences prefs = this.getSharedPreferencesForTask();
         @HandSelection String lastSelection = prefs.getString(HAND_SELECTION_KEY, HandSelection.BOTH);
         this.writeHandSelectionResult(lastSelection);
         RecyclerView recyclerView = this.stepViewBinding.getRecyclerView();
@@ -137,11 +136,16 @@ public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
             }
 
             ChoiceInputFieldViewBase<?> choiceInputField = (ChoiceInputFieldViewBase<?>)inputField;
-            HandSelectionAdapter<?> adapter = new HandSelectionAdapter<>(recyclerView,
+            HandSelectionAdapter<?> adapter = new HandSelectionAdapter<>(this, recyclerView,
                     choiceInputField.getChoices(), lastSelection);
             recyclerView.setAdapter(adapter);
         }
 
         return result;
+    }
+
+    public SharedPreferences getSharedPreferencesForTask() {
+        String taskId = this.performTaskViewModel.getTaskView().getIdentifier();
+        return this.getContext().getSharedPreferences(taskId, Context.MODE_PRIVATE);
     }
 }

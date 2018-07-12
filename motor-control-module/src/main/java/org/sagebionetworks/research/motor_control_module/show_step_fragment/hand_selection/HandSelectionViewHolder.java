@@ -32,6 +32,8 @@
 
 package org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -42,14 +44,22 @@ import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 
 public class HandSelectionViewHolder extends RecyclerView.ViewHolder {
     private final ActionButton button;
+    private final ShowHandSelectionStepFragment fragment;
     private final RecyclerView parent;
     private String choice;
 
-    public HandSelectionViewHolder(final RecyclerView parent, final ActionButton button) {
+    public HandSelectionViewHolder(final ShowHandSelectionStepFragment fragment, final RecyclerView parent,
+                                   final ActionButton button) {
         super(button);
         this.button = button;
         this.parent = parent;
+        this.fragment = fragment;
         this.button.setOnClickListener(view -> {
+            // Write the hand order result to the task result.
+            fragment.writeHandSelectionResult(this.choice);
+            // Write the selection to SharedPreferences.
+            SharedPreferences prefs = fragment.getSharedPreferencesForTask();
+            prefs.edit().putString(ShowHandSelectionStepFragment.HAND_SELECTION_KEY, this.choice).apply();
             // Reset all of the child views to appear as if they have not been selected
             int children = parent.getChildCount();
             int inactiveColor = parent.getContext().getResources().getColor(R.color.transparent);

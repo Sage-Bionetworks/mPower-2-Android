@@ -35,6 +35,7 @@ package org.sagebionetworks.research.motor_control_module.inject;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
+import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.ShowStepFragmentFactory;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.StepViewKey;

@@ -37,15 +37,22 @@ import android.support.annotation.Nullable;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.gson.annotations.SerializedName;
 import org.sagebionetworks.research.domain.interfaces.HashCodeHelper;
+import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.implementations.ActiveUIStepBase;
 import org.sagebionetworks.research.domain.step.ui.action.interfaces.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
+import org.sagebionetworks.research.domain.task.Task;
+import org.sagebionetworks.research.domain.task.navigation.strategy.StepNavigationStrategy;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.FirstRunHelper;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.HandFragmentNavigationHelper;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.HandStepHelper;
 
 import java.util.Map;
 
-public class InstructionStep extends ActiveUIStepBase {
+public class InstructionStep extends ActiveUIStepBase implements StepNavigationStrategy.SkipStepStrategy,
+        StepNavigationStrategy.NextStepStrategy {
     public static final String TYPE_KEY = StepType.INSTRUCTION;
 
     @SerializedName("isFirstRunOnly")
@@ -100,5 +107,17 @@ public class InstructionStep extends ActiveUIStepBase {
 
     public boolean isFirstRunOnly() {
         return this.firstRunOnly;
+    }
+
+    @Override
+    public String getNextStepIdentifier(Task task, TaskResult taskResult) {
+        HandStepHelper.Hand thisHand = HandStepHelper.whichHand(this.getIdentifier());
+        HandStepHelper.Hand nextHand = HandStepHelper.nextHand(task, taskResult);
+        return thisHand != null && nextHand != null && thisHand != nextHand ? nextHand.toString() : null;
+    }
+
+    @Override
+    public boolean shouldSkip(Task task, TaskResult taskResult) {
+        return HandFragmentNavigationHelper.shouldSkip(this.getIdentifier(), task, taskResult);
     }
 }

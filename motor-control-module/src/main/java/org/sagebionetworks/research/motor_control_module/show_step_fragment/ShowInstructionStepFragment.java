@@ -35,18 +35,25 @@ package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
+import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
+import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
+import org.sagebionetworks.research.mobile_ui.show_step.view.FragmentNavigationRule;
+import org.sagebionetworks.research.mobile_ui.show_step.view.FragmentSkipRule;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.view_binding.UIStepViewBinding;
 import org.sagebionetworks.research.motor_control_module.R;
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
+import org.sagebionetworks.research.presentation.perform_task.PerformTaskViewModel;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowUIStepViewModel;
 
 public class ShowInstructionStepFragment extends
-        ShowHandStepFragmentBase<InstructionStepView, ShowUIStepViewModel<InstructionStepView>,
-                        UIStepViewBinding<InstructionStepView>> {
+        ShowUIStepFragmentBase<InstructionStepView, ShowUIStepViewModel<InstructionStepView>,
+                        UIStepViewBinding<InstructionStepView>> implements FragmentNavigationRule, FragmentSkipRule {
+
+
     @NonNull
     public static ShowInstructionStepFragment newInstance(@NonNull StepView stepView,
                                                           @NonNull PerformTaskFragment performTaskFragment) {
@@ -66,5 +73,27 @@ public class ShowInstructionStepFragment extends
     @Override
     protected UIStepViewBinding<InstructionStepView> instantiateAndBindBinding(View view) {
         return new UIStepViewBinding<>(view);
+    }
+
+    @Override
+    public boolean shouldSkip() {
+        TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
+        if (taskResult == null) {
+            return false;
+        }
+
+        Task task = this.performTaskViewModel.getTask();
+        return HandFragmentNavigationHelper.shouldSkip(this.stepView.getIdentifier(), task, taskResult);
+    }
+
+    @Override
+    public String getNextStepIdentifier() {
+        TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
+        if (taskResult == null) {
+            return null;
+        }
+
+        Task task = this.performTaskViewModel.getTask();
+        return HandFragmentNavigationHelper.getNextStepIdentifier(this.stepView.getIdentifier(), task, taskResult);
     }
 }

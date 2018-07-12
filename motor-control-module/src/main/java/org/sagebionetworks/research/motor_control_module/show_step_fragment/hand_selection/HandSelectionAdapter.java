@@ -47,12 +47,14 @@ import java.util.List;
 public class HandSelectionAdapter<T> extends RecyclerView.Adapter<HandSelectionViewHolder> {
     private List<ChoiceView<T>> choices;
     private RecyclerView recyclerView;
+    private ShowHandSelectionStepFragment fragment;
     private String selectedChoice;
 
-    public HandSelectionAdapter(final RecyclerView recyclerView, final List<ChoiceView<T>> choices,
-                                @HandSelection String defaultChoice) {
+    public HandSelectionAdapter(final ShowHandSelectionStepFragment fragment, final RecyclerView recyclerView,
+                                final List<ChoiceView<T>> choices, @HandSelection String defaultChoice) {
         this.choices = choices;
         this.recyclerView = recyclerView;
+        this.fragment = fragment;
         this.selectedChoice = defaultChoice;
     }
 
@@ -61,7 +63,7 @@ public class HandSelectionAdapter<T> extends RecyclerView.Adapter<HandSelectionV
     public HandSelectionViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
         ActionButton button = (ActionButton) LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.rs2_form_view_holder, parent, false);
-        return new HandSelectionViewHolder(this.recyclerView, button);
+        return new HandSelectionViewHolder(this.fragment, this.recyclerView, button);
     }
 
     public void setSelectedChoice(@HandSelection String selectedChoice) {

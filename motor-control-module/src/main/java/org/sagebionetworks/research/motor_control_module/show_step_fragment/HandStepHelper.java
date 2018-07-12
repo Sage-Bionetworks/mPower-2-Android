@@ -120,7 +120,7 @@ public abstract class HandStepHelper {
         // or handString.anything.
         String handString = hand.toString();
         String handRegex = REGEX_FORMAT.replaceAll(PLACEHOLDER, handString);
-        return result.getResultsMatchingRegex(handRegex).size() != handSection.getSteps().size();
+        return result.getResultsMatchingRegex(handRegex).size() == handSection.getSteps().size();
     }
 
     /**
