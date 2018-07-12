@@ -135,7 +135,7 @@ public abstract class HandStepHelper {
         String identifier = hand.toString();
         for (Step step : steps) {
             if (step instanceof SectionStep) {
-                SectionStep sectionStep = (SectionStep)steps;
+                SectionStep sectionStep = (SectionStep)step;
                 // The given section step should have an identifier of the form <anything>.identifier
                 // since it could be nested in other section steps.
                 if (step.getIdentifier().matches("(.*\\.)?" + identifier)) {

@@ -48,6 +48,7 @@ import org.sagebionetworks.research.domain.result.AnswerResultType;
 import org.sagebionetworks.research.domain.result.ResultType;
 import org.sagebionetworks.research.domain.result.implementations.AnswerResultBase;
 import org.sagebionetworks.research.domain.result.interfaces.AnswerResult;
+import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowFormUIStepFragment;
 import org.sagebionetworks.research.motor_control_module.R;
@@ -67,10 +68,12 @@ public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
     public static final String HAND_ORDER_KEY = "handOrder";
 
     @NonNull
-    public static ShowHandSelectionStepFragment newInstance(@NonNull StepView stepView) {
+    public static ShowHandSelectionStepFragment newInstance(@NonNull StepView stepView,
+                                                            @NonNull PerformTaskFragment performTaskFragment) {
         ShowHandSelectionStepFragment fragment = new ShowHandSelectionStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
+        Bundle arguments = ShowStepFragmentBase.createArguments(stepView, performTaskFragment);
         fragment.setArguments(arguments);
+        fragment.initialize();
         return fragment;
     }
 
