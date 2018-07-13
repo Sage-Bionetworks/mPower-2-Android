@@ -39,7 +39,7 @@ import dagger.multibindings.IntoSet;
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
 import org.sagebionetworks.research.motor_control_module.MotorControlAutoValueTypeAdapterFactory;
 
-@Module(includes = {PerformTaskModule.class, AppStepModule.class})
+@Module(includes = {PerformTaskModule.class, AppOverrideJsonModule.class, AppStepModule.class})
 public class AppTaskModule {
     @Provides
     @IntoSet

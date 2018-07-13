@@ -44,9 +44,9 @@ import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBas
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.view_binding.UIStepViewBinding;
 import org.sagebionetworks.research.motor_control_module.R;
+import org.sagebionetworks.research.motor_control_module.step.HandStepNavigationRuleHelper;
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
-import org.sagebionetworks.research.presentation.perform_task.PerformTaskViewModel;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowUIStepViewModel;
 
 public class ShowInstructionStepFragment extends
@@ -83,7 +83,7 @@ public class ShowInstructionStepFragment extends
         }
 
         Task task = this.performTaskViewModel.getTask();
-        return HandFragmentNavigationHelper.shouldSkip(this.stepView.getIdentifier(), task, taskResult);
+        return HandStepNavigationRuleHelper.shouldSkip(this.stepView.getIdentifier(), task, taskResult);
     }
 
     @Override
@@ -94,6 +94,6 @@ public class ShowInstructionStepFragment extends
         }
 
         Task task = this.performTaskViewModel.getTask();
-        return HandFragmentNavigationHelper.getNextStepIdentifier(this.stepView.getIdentifier(), task, taskResult);
+        return HandStepNavigationRuleHelper.getNextStepIdentifier(this.stepView.getIdentifier(), task, taskResult);
     }
 }

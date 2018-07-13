@@ -34,8 +34,10 @@ package org.sagebionetworks.research.motor_control_module.step;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.gson.annotations.SerializedName;
+
 import org.sagebionetworks.research.domain.interfaces.HashCodeHelper;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.StepType;
@@ -46,8 +48,6 @@ import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
 import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.domain.task.navigation.strategy.StepNavigationStrategy;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.FirstRunHelper;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.HandFragmentNavigationHelper;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.HandStepHelper;
 
 import java.util.Map;
 
@@ -111,13 +111,14 @@ public class InstructionStep extends ActiveUIStepBase implements StepNavigationS
 
     @Override
     public String getNextStepIdentifier(Task task, TaskResult taskResult) {
-        HandStepHelper.Hand thisHand = HandStepHelper.whichHand(this.getIdentifier());
-        HandStepHelper.Hand nextHand = HandStepHelper.nextHand(task, taskResult);
-        return thisHand != null && nextHand != null && thisHand != nextHand ? nextHand.toString() : null;
+        return HandStepNavigationRuleHelper.getNextStepIdentifier(this.getIdentifier(), task, taskResult);
     }
 
     @Override
     public boolean shouldSkip(Task task, TaskResult taskResult) {
-        return HandFragmentNavigationHelper.shouldSkip(this.getIdentifier(), task, taskResult);
+        // We skip an instruction step if it should be skipped because of it's hand, or because
+        // it is first run only.
+        return HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), task, taskResult) ||
+                (this.firstRunOnly && !FirstRunHelper.isFirstRun(taskResult));
     }
 }

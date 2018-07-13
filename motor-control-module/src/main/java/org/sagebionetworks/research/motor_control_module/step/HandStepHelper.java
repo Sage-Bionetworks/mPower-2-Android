@@ -1,14 +1,14 @@
-package org.sagebionetworks.research.motor_control_module.show_step_fragment;
+package org.sagebionetworks.research.motor_control_module.step;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.sagebionetworks.research.domain.result.interfaces.AnswerResult;
+import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.interfaces.SectionStep;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.domain.task.Task;
-import org.sagebionetworks.research.domain.task.navigation.StepNavigator;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public abstract class HandStepHelper {
     public static final String REGEX_FORMAT;
     static {
         String startRegexFormat = "^" + PLACEHOLDER + "(\\..*)?";
-        String middleRegexFormat = ".*\\." + PLACEHOLDER + "\\..*";
+        String middleRegexFormat = ".*\\." + PLACEHOLDER + "(\\..*)?";
         REGEX_FORMAT = "(" + startRegexFormat + ")" + "|(" + middleRegexFormat + ")";
     }
 
@@ -120,7 +120,8 @@ public abstract class HandStepHelper {
         // or handString.anything.
         String handString = hand.toString();
         String handRegex = REGEX_FORMAT.replaceAll(PLACEHOLDER, handString);
-        return result.getResultsMatchingRegex(handRegex).size() == handSection.getSteps().size();
+        List<Result> resultMatches = result.getResultsMatchingRegex(handRegex);
+        return resultMatches.size() == handSection.getSteps().size();
     }
 
     /**
