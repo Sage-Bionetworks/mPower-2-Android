@@ -10,17 +10,19 @@ import org.sagebionetworks.research.domain.step.interfaces.SectionStep;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
+import org.sagebionetworks.research.presentation.DisplayString;
 
 import java.util.List;
 
 public abstract class HandStepHelper {
-    public static final String PLACEHOLDER = "<>";
-    // Matches any step with the PLACEHOLDER anywhere in it's identifier or parent's identifiers.
-    // it is expected that PLACEHOLDER will be replaced with the desired identifier via .replaceAll()
+    public static final String REGEX_PLACEHOLDER = "<>";
+    public static final String JSON_PLACEHOLDER = "%@";
+    // Matches any step with the REGEX_PLACEHOLDER anywhere in it's identifier or parent's identifiers.
+    // it is expected that REGEX_PLACEHOLDER will be replaced with the desired identifier via .replaceAll()
     public static final String REGEX_FORMAT;
     static {
-        String startRegexFormat = "^" + PLACEHOLDER + "(\\..*)?";
-        String middleRegexFormat = ".*\\." + PLACEHOLDER + "(\\..*)?";
+        String startRegexFormat = "^" + REGEX_PLACEHOLDER + "(\\..*)?";
+        String middleRegexFormat = ".*\\." + REGEX_PLACEHOLDER + "(\\..*)?";
         REGEX_FORMAT = "(" + startRegexFormat + ")" + "|(" + middleRegexFormat + ")";
     }
 
@@ -56,12 +58,12 @@ public abstract class HandStepHelper {
      * if the given identifier doesn't represent a hand step.
      */
     public static Hand whichHand(@NonNull String identifier) {
-        String leftRegex = REGEX_FORMAT.replaceAll(PLACEHOLDER, "left");
+        String leftRegex = REGEX_FORMAT.replaceAll(REGEX_PLACEHOLDER, "left");
         if (identifier.matches(leftRegex)) {
             return Hand.LEFT;
         }
 
-        String rightRegex = REGEX_FORMAT.replaceAll(PLACEHOLDER, "right");
+        String rightRegex = REGEX_FORMAT.replaceAll(REGEX_PLACEHOLDER, "right");
         if (identifier.matches(rightRegex)) {
             return Hand.RIGHT;
         }
@@ -107,6 +109,20 @@ public abstract class HandStepHelper {
         return null;
     }
 
+    public static DisplayString getHandString(@Nullable DisplayString fromJson, @NonNull String stepIdentifier) {
+        Hand whichHand = HandStepHelper.whichHand(stepIdentifier);
+        if (fromJson == null) {
+            return null;
+        }
+
+        String originalString = fromJson.getDisplayString();
+        if (whichHand != null && originalString != null) {
+            originalString = originalString.replaceAll(JSON_PLACEHOLDER, whichHand.toString().toUpperCase());
+        }
+
+        return DisplayString.create(null, originalString);
+    }
+
     /**
      * Returns `true` if the given hand has already gone, `false` otherwise.
      * @param hand The hand to test whether has already gone.
@@ -119,7 +135,7 @@ public abstract class HandStepHelper {
         // If the hand has gone there must be either a string that has anything.handString.anything,
         // or handString.anything.
         String handString = hand.toString();
-        String handRegex = REGEX_FORMAT.replaceAll(PLACEHOLDER, handString);
+        String handRegex = REGEX_FORMAT.replaceAll(REGEX_PLACEHOLDER, handString);
         List<Result> resultMatches = result.getResultsMatchingRegex(handRegex);
         return resultMatches.size() == handSection.getSteps().size();
     }

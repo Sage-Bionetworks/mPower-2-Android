@@ -39,6 +39,7 @@ import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.FirstRunHelper;
+import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
 import org.sagebionetworks.research.motor_control_module.step.InstructionStep;
 import org.sagebionetworks.research.presentation.DisplayString;
 import org.sagebionetworks.research.presentation.mapper.DrawableMapper;
@@ -61,10 +62,13 @@ public class InstructionStepView extends ActiveUIStepViewBase {
 
         InstructionStep instructionStep = (InstructionStep) step;
         ActiveUIStepViewBase activeUIStepView = ActiveUIStepViewBase.fromActiveUIStep(step, mapper);
+        DisplayString handTitle = HandStepHelper.getHandString(activeUIStepView.getTitle(), step.getIdentifier());
+        DisplayString handText = HandStepHelper.getHandString(activeUIStepView.getText(), step.getIdentifier());
+        DisplayString handDetail = HandStepHelper.getHandString(activeUIStepView.getDetail(), step.getIdentifier());
+        DisplayString handFootnote = HandStepHelper.getHandString(activeUIStepView.getFootnote(), step.getIdentifier());
         return new InstructionStepView(activeUIStepView.getIdentifier(), activeUIStepView.getNavDirection(),
-                activeUIStepView.getActions(), activeUIStepView.getTitle(), activeUIStepView.getText(),
-                activeUIStepView.getDetail(), activeUIStepView.getFootnote(), activeUIStepView.getColorTheme(),
-                activeUIStepView.getImageTheme(), activeUIStepView.getDuration(),
+                activeUIStepView.getActions(), handTitle, handText, handDetail, handFootnote,
+                activeUIStepView.getColorTheme(), activeUIStepView.getImageTheme(), activeUIStepView.getDuration(),
                 activeUIStepView.isBackgroundAudioRequired(), instructionStep.isFirstRunOnly());
     }
 

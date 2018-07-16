@@ -33,6 +33,7 @@
 package org.sagebionetworks.research.mpower;
 
 import android.os.Bundle;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import dagger.android.AndroidInjection;
 import io.reactivex.disposables.CompositeDisposable;

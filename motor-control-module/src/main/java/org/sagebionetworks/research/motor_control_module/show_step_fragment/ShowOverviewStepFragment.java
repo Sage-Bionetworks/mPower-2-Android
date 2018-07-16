@@ -118,9 +118,8 @@ public class ShowOverviewStepFragment extends
             scrollView.post(() -> scrollView.fullScroll(ScrollView.FOCUS_DOWN));
             this.stepViewBinding.getInfoButton().setVisibility(View.GONE);
         } else {
-            // Hide all the extra information when the view is created.
+            // Hide all the extra information.
             scrollView.setScrollingEnabled(false);
-            this.stepViewBinding.getTitle().setAlpha(0f);
             this.stepViewBinding.getText().setAlpha(0f);
             this.stepViewBinding.getOverallIconDescriptionLabel().setAlpha(0f);
             for (ImageView imageView : this.stepViewBinding.getIconImageViews()) {

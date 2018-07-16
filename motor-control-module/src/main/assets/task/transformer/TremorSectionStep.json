@@ -52,12 +52,12 @@
     },
     "commands": ["transitionAutomatically", "shouldDisableIdleTimer", "vibrate", "playSound"],
     "actions": {
-      "skip": {
+      "forward": {
         "type": "navigation",
         "skipToIdentifier": "tremor",
         "buttonTitle": "Restart test"
       },
-      "learnMore": {
+      "skip": {
         "type": "navigation",
         "skipToIdentifier": "holdPhoneInstructions",
         "buttonTitle": "Review instructions"
