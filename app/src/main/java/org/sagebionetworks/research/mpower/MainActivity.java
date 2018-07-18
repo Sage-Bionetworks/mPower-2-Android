@@ -33,18 +33,26 @@
 package org.sagebionetworks.research.mpower;
 
 import android.os.Bundle;
-import android.support.annotation.VisibleForTesting;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import dagger.android.AndroidInjection;
+import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import org.sagebionetworks.research.domain.repository.TaskRepository;
+import org.sagebionetworks.research.domain.task.TaskInfo;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.sagebionetworks.research.presentation.model.TaskView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.UUID;
+import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainActivity.class);
@@ -54,22 +62,28 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     TaskRepository taskRepository;
 
+    private static final List<String> taskIdentifiers = Arrays.asList("Tapping", "Tremor", "WalkAndBalance");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.rs2_perform_task_activity_layout);
-
-        PerformTaskFragment performTaskFragment = (PerformTaskFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.rs2_task_content_frame);
-
-        // TODO: show list of available tasks
-        if (performTaskFragment == null) {
-            compositeDisposable.add(
-                    taskRepository.getTaskInfo("Tremor")
-                            .map(taskInfo -> TaskView.builder()
-                                    .setIdentifier(taskInfo.getIdentifier())
-                                    .build())
+        setContentView(R.layout.mpower2_task_selection);
+        TaskSelectionBinding binding = new TaskSelectionBinding();
+        Unbinder unbinder = ButterKnife.bind(binding, this);
+        List<TextView> textViews = binding.taskTextViews;
+        this.registerFragmentLifeCycleListener(textViews);
+        for (int i = 0; i < textViews.size(); i++) {
+            String taskIdentifier = taskIdentifiers.get(i);
+            Single<TaskInfo> taskInfoSingle = taskRepository.getTaskInfo(taskIdentifier);
+            final TextView textView = textViews.get(i);
+            compositeDisposable.add(taskInfoSingle.subscribe(
+                    taskInfo -> textView.setText(taskInfo.getTitle()),
+                    throwable -> LOGGER.warn(throwable.toString())));
+            textView.setOnClickListener(view ->
+                    compositeDisposable.add(taskInfoSingle.map(taskInfo -> TaskView.builder()
+                            .setIdentifier(taskInfo.getIdentifier())
+                            .build())
                             .subscribe(taskView -> {
                                 PerformTaskFragment newPerformTaskFragment = PerformTaskFragment
                                         .newInstance(taskView, UUID.randomUUID());
@@ -79,9 +93,44 @@ public class MainActivity extends AppCompatActivity {
                                         .add(R.id.rs2_task_content_frame, newPerformTaskFragment)
                                         .commit();
                             }, throwable ->
-                                    LOGGER.error("Failed to retrieve task", throwable)));
-        } else {
-            LOGGER.debug("Found existing PerformTaskFragment");
+                                    LOGGER.error("Failed to retrieve task", throwable)))
+            );
         }
+    }
+
+    /**
+     * Registers a lifecycle listener that hides the task selection buttons when any PerformTaskFragment starts,
+     * and makes the button reappear when there a no PerformTaskFragments running again.
+     * @param textViews The list of textView's to hide when the fragment's start and to reappear when the fragments end.
+     */
+    private void registerFragmentLifeCycleListener(final List<TextView> textViews) {
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(
+                new FragmentManager.FragmentLifecycleCallbacks() {
+                    int fragmentStartedCount = 0;
+
+                    @Override
+                    public void onFragmentStarted(FragmentManager fm, Fragment f) {
+                        super.onFragmentStarted(fm, f);
+                        if (f instanceof PerformTaskFragment) {
+                            fragmentStartedCount++;
+                            for (TextView textView : textViews) {
+                                textView.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFragmentStopped(FragmentManager fm, Fragment f) {
+                        super.onFragmentStopped(fm, f);
+                        if (f instanceof PerformTaskFragment) {
+                            fragmentStartedCount--;
+                            if (fragmentStartedCount == 0) {
+                                for (TextView textView : textViews) {
+                                    textView.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+                    }
+                }, false);
     }
 }
