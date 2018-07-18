@@ -100,7 +100,7 @@ public class ShowOverviewStepFragment extends
             this.performTaskViewModel.addStepResult(new ResultBase(INFO_TAPPED_RESULT_ID, Instant.now(),
                     Instant.now()));
         } else {
-            this.showStepViewModel.handleAction(actionType);
+            super.handleActionButtonClick(actionButton);
         }
     }
 

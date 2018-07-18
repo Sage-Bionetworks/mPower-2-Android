@@ -23,7 +23,7 @@
         }
       ],
       "image": {
-        "type": "animation",
+        "type": "animated",
         "imageNames": [
           "tap_left1",
           "tap_left2"
@@ -65,7 +65,7 @@
       "title": "You will finger tap for 30 seconds with each hand",
       "text": "Speed of finger tapping can reflect severity of motor symptoms in Parkinson’s disease. This activity measures your tapping speed for each hand. Your medical provider may measure this differently.",
       "image": {
-        "type": "animation",
+        "type": "animated",
         "imageNames": [
           "tap_left1",
           "tap_left2"
@@ -122,7 +122,7 @@
       "title": "Put the phone on a table",
       "text": "Place your phone on a flat surface such as a table before you begin the activity.",
       "image": {
-        "type": "animation",
+        "type": "animated",
         "imageNames": [
           "f_flat_surface",
           "place_phone",
@@ -155,7 +155,7 @@
       "title": "First, tap with your %@ hand",
       "text": "Alternate tapping the buttons that appear with your index and middle finger of your %@ HAND. Keep tapping for 30 seconds for as fast as you can.",
       "image": {
-        "type": "animation",
+        "type": "animated",
         "imageNames": [
           "tap_left1",
           "tap_left2"

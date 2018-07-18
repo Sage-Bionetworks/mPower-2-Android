@@ -34,19 +34,19 @@
           "f_walking6"
         ],
         "placementType": "topMarginBackground",
-        "animationDuration": 2.5
+        "animationDuration": 3
       },
       "icons": [
         {
-          "icon": "SmoothSurface",
+          "icon": "icon_smooth_surface",
           "title": "A SMOOTH SURFACE"
         },
         {
-          "icon": "PantsWithPockets",
+          "icon": "icon_pants_with_pockets",
           "title": "PANTS WITH POCKETS"
         },
         {
-          "icon": "WalkingShoes",
+          "icon": "icon_walking_shoes",
           "title": "WALKING SHOES"
         }
       ],
@@ -89,7 +89,7 @@
           "f_walking6"
         ],
         "placementType": "topMarginBackground",
-        "animationDuration": 2.5
+        "animationDuration": 3
       },
       "colorTheme": {
         "colorStyle": {
@@ -290,17 +290,17 @@
       "image": {
         "type": "animated",
         "imageNames": [
-          "F-Turning1",
-          "F-Turning2",
-          "F-Turning3",
-          "F-Turning4",
-          "F-Turning5",
-          "F-Turning6",
-          "F-Turning7",
-          "F-Turning8",
-          "F-Wait1",
-          "F-Wait2",
-          "F-Wait3"
+          "f_turning1",
+          "f_turning2",
+          "f_turning3",
+          "f_turning4",
+          "f_turning5",
+          "f_turning6",
+          "f_turning7",
+          "f_turning8",
+          "f_wait1",
+          "f_wait2",
+          "f_wait3"
         ],
         "placementType": "topMarginBackground",
         "animationDuration": 5
@@ -367,7 +367,7 @@
       "isFirstRunOnly": true,
       "image": {
         "type": "fetchable",
-        "imageName": "F-Turning1",
+        "imageName": "f_turning1",
         "placementType": "fullsizeBackground"
       },
       "viewTheme": {
@@ -408,7 +408,7 @@
           "duration": 30,
           "image": {
             "type": "fetchable",
-            "imageName": "F-Turning1",
+            "imageName": "f_turning1",
             "placementType": "fullsizeBackground"
           },
           "colorTheme": {
@@ -451,7 +451,7 @@
       "text": "You just completed your %@ Walk and Balance activity.",
       "image": {
         "type": "fetchable",
-        "imageName": "Completion-WalkAndBalance",
+        "imageName": "completion_tremor",
         "placementType": "topBackground"
       },
       "viewTheme": {
