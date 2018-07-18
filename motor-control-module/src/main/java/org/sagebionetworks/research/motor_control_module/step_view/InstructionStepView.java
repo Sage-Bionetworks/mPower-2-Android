@@ -62,13 +62,10 @@ public class InstructionStepView extends ActiveUIStepViewBase {
 
         InstructionStep instructionStep = (InstructionStep) step;
         ActiveUIStepViewBase activeUIStepView = ActiveUIStepViewBase.fromActiveUIStep(step, mapper);
-        DisplayString handTitle = HandStepHelper.getHandString(activeUIStepView.getTitle(), step.getIdentifier());
-        DisplayString handText = HandStepHelper.getHandString(activeUIStepView.getText(), step.getIdentifier());
-        DisplayString handDetail = HandStepHelper.getHandString(activeUIStepView.getDetail(), step.getIdentifier());
-        DisplayString handFootnote = HandStepHelper.getHandString(activeUIStepView.getFootnote(), step.getIdentifier());
         return new InstructionStepView(activeUIStepView.getIdentifier(), activeUIStepView.getNavDirection(),
-                activeUIStepView.getActions(), handTitle, handText, handDetail, handFootnote,
-                activeUIStepView.getColorTheme(), activeUIStepView.getImageTheme(), activeUIStepView.getDuration(),
+                activeUIStepView.getActions(), activeUIStepView.getTitle(), activeUIStepView.getText(),
+                activeUIStepView.getDetail(), activeUIStepView.getFootnote(), activeUIStepView.getColorTheme(),
+                activeUIStepView.getImageTheme(), activeUIStepView.getDuration(),
                 activeUIStepView.isBackgroundAudioRequired(), instructionStep.isFirstRunOnly());
     }
 

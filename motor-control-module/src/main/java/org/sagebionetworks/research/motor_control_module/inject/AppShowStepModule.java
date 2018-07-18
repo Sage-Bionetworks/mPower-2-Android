@@ -38,12 +38,13 @@ import dagger.android.AndroidInjector;
 import dagger.android.support.FragmentKey;
 import dagger.multibindings.IntoMap;
 import org.sagebionetworks.research.motor_control_module.inject.subcomponents.*;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowMPowerActiveUIStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowInstructionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment;
 
 @Module(subcomponents = {ShowInstructionStepFragmentSubcomponent.class, ShowHandSelectionStepFragmentSubcomponent.class,
-                ShowOverviewStepFragmentSubcomponent.class},
+                ShowOverviewStepFragmentSubcomponent.class, ShowMPowerActiveUIStepFragmentSubcomponent.class},
         includes = {AppStepModule.class, AppStepViewModule.class, AppShowStepViewModelModule.class,
                 AppShowStepFragmentModule.class})
 public abstract class AppShowStepModule {
@@ -51,17 +52,23 @@ public abstract class AppShowStepModule {
     @IntoMap
     @FragmentKey(ShowInstructionStepFragment.class)
     abstract AndroidInjector.Factory<? extends android.support.v4.app.Fragment>
-    bindShowInstructionStepFragmentInjectoryFactory(ShowInstructionStepFragmentSubcomponent.Builder builder);
+    bindShowInstructionStepFragmentInjectorFactory(ShowInstructionStepFragmentSubcomponent.Builder builder);
 
     @Binds
     @IntoMap
     @FragmentKey(ShowOverviewStepFragment.class)
     abstract AndroidInjector.Factory<? extends android.support.v4.app.Fragment>
-    bindShowOverviewStepFragmentInjectoryFactory(ShowOverviewStepFragmentSubcomponent.Builder builder);
+    bindShowOverviewStepFragmentInjectorFactory(ShowOverviewStepFragmentSubcomponent.Builder builder);
 
     @Binds
     @IntoMap
     @FragmentKey(ShowHandSelectionStepFragment.class)
     abstract AndroidInjector.Factory<? extends android.support.v4.app.Fragment>
-    bindShowHandSelectionStepFragmentInjectoryFactory(ShowHandSelectionStepFragmentSubcomponent.Builder builder);
+    bindShowHandSelectionStepFragmentInjectorFactory(ShowHandSelectionStepFragmentSubcomponent.Builder builder);
+
+    @Binds
+    @IntoMap
+    @FragmentKey(ShowMPowerActiveUIStepFragment.class)
+    abstract AndroidInjector.Factory<? extends android.support.v4.app.Fragment>
+    bindShowMPowerActiveUIStepFragmentInjectoryactory(ShowMPowerActiveUIStepFragmentSubcomponent.Builder builder);
 }

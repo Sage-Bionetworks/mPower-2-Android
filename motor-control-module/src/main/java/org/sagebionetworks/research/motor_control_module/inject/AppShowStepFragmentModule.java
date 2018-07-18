@@ -35,21 +35,27 @@ package org.sagebionetworks.research.motor_control_module.inject;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
+import org.sagebionetworks.research.domain.inject.DependencyInjectionType;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.ShowStepFragmentFactory;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.StepViewKey;
+import org.sagebionetworks.research.mobile_ui.show_step.view.ShowActiveUIStepFragment;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowMPowerActiveUIStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowInstructionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment;
 import org.sagebionetworks.research.motor_control_module.step_view.HandSelectionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
+import org.sagebionetworks.research.presentation.model.implementations.ActiveUIStepViewBase;
+import org.sagebionetworks.research.presentation.model.interfaces.ActiveUIStepView;
 
 @Module(includes = {ShowStepFragmentModule.class})
 public class AppShowStepFragmentModule {
     @Provides
     @IntoMap
+    @DependencyInjectionType.Default
     @StepViewKey(InstructionStepView.TYPE)
     static ShowStepFragmentFactory provideShowInstructionStepFragmentFactory() {
         return ShowInstructionStepFragment::newInstance;
@@ -57,6 +63,7 @@ public class AppShowStepFragmentModule {
 
     @Provides
     @IntoMap
+    @DependencyInjectionType.Default
     @StepViewKey(OverviewStepView.TYPE)
     static ShowStepFragmentFactory provideShowOverviewStepFragmentFactory() {
         return ShowOverviewStepFragment::newInstance;
@@ -64,8 +71,17 @@ public class AppShowStepFragmentModule {
 
     @Provides
     @IntoMap
+    @DependencyInjectionType.Default
     @StepViewKey(HandSelectionStepView.TYPE)
     static ShowStepFragmentFactory provideHandSelectionStepFragmentFactory() {
         return ShowHandSelectionStepFragment::newInstance;
+    }
+
+    @Provides
+    @IntoMap
+    @DependencyInjectionType.Override
+    @StepViewKey(ActiveUIStepViewBase.TYPE)
+    static ShowStepFragmentFactory provideActiveUIStepFragmentFactory() {
+        return ShowMPowerActiveUIStepFragment::newInstance;
     }
 }

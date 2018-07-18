@@ -51,9 +51,7 @@ import org.sagebionetworks.research.presentation.show_step.show_step_view_models
 
 public class ShowInstructionStepFragment extends
         ShowUIStepFragmentBase<InstructionStepView, ShowUIStepViewModel<InstructionStepView>,
-                        UIStepViewBinding<InstructionStepView>> implements FragmentNavigationRule, FragmentSkipRule {
-
-
+                        UIStepViewBinding<InstructionStepView>> {
     @NonNull
     public static ShowInstructionStepFragment newInstance(@NonNull StepView stepView,
                                                           @NonNull PerformTaskFragment performTaskFragment) {
@@ -76,24 +74,8 @@ public class ShowInstructionStepFragment extends
     }
 
     @Override
-    public boolean shouldSkip() {
-        TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
-        if (taskResult == null) {
-            return false;
-        }
-
-        Task task = this.performTaskViewModel.getTask();
-        return HandStepNavigationRuleHelper.shouldSkip(this.stepView.getIdentifier(), task, taskResult);
-    }
-
-    @Override
-    public String getNextStepIdentifier() {
-        TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
-        if (taskResult == null) {
-            return null;
-        }
-
-        Task task = this.performTaskViewModel.getTask();
-        return HandStepNavigationRuleHelper.getNextStepIdentifier(this.stepView.getIdentifier(), task, taskResult);
+    protected void update(InstructionStepView stepView) {
+        super.update(stepView);
+        HandStepUIHelper.update(stepView, this.stepViewBinding);
     }
 }

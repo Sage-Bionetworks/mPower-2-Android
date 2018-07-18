@@ -15,8 +15,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 @LargeTest
 public class AppActiveUIStepTests extends UITestHelper {
     public static final String TREMOR_ACTIVE_TITLE = "Hold the phone still in your %@ hand.";
-    public static final String FORWARD_ACTION_TEXT = "Restart Test";
-    public static final String SKIP_ACTION_TEXT = "Review Instructions";
+    public static final String FORWARD_ACTION_TEXT = "Restart test";
+    public static final String SKIP_ACTION_TEXT = "Review instructions";
     public static final String UNIT_LABEL_TEXT = "SECONDS";
 
     @Test
@@ -26,7 +26,7 @@ public class AppActiveUIStepTests extends UITestHelper {
         // We make only the left hand go so we have a predictable order.
         onView(withText("I can only perform this activity with my LEFT hand.")).perform(click());
         this.navigateForwardNTimes(4);
-        this.testCommon(TREMOR_ACTIVE_TITLE.replaceAll("%@", "%@"));
+        this.testCommon(TREMOR_ACTIVE_TITLE.replaceAll("%@", "LEFT"));
     }
 
     @Test
@@ -36,7 +36,7 @@ public class AppActiveUIStepTests extends UITestHelper {
         // We make only the right hand go so we have a predictable order.
         onView(withText("I can only perform this activity with my RIGHT hand.")).perform(click());
         this.navigateForwardNTimes(4);
-        this.testCommon(TREMOR_ACTIVE_TITLE.replaceAll("%@", "%@"));
+        this.testCommon(TREMOR_ACTIVE_TITLE.replaceAll("%@", "RIGHT"));
     }
 
     private void testCommon(String title) {
@@ -47,6 +47,5 @@ public class AppActiveUIStepTests extends UITestHelper {
         onView(withId(R.id.unitLabel)).check(matches(withText(UNIT_LABEL_TEXT)));
         onView(withId(R.id.rs2_step_navigation_action_forward)).check(matches(withText(FORWARD_ACTION_TEXT)));
         onView(withId(R.id.rs2_step_navigation_action_skip)).check(matches(withText(SKIP_ACTION_TEXT)));
-
     }
 }

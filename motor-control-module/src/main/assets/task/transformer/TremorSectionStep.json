@@ -52,7 +52,7 @@
     },
     "commands": ["transitionAutomatically", "shouldDisableIdleTimer", "vibrate", "playSound"],
     "actions": {
-      "forward": {
+      "goForward": {
         "type": "navigation",
         "skipToIdentifier": "tremor",
         "buttonTitle": "Restart test"

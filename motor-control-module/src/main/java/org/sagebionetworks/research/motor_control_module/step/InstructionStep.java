@@ -51,7 +51,7 @@ import org.sagebionetworks.research.motor_control_module.show_step_fragment.Firs
 
 import java.util.Map;
 
-public class InstructionStep extends ActiveUIStepBase implements StepNavigationStrategy.SkipStepStrategy,
+public class InstructionStep extends MPowerActiveUIStep implements StepNavigationStrategy.SkipStepStrategy,
         StepNavigationStrategy.NextStepStrategy {
     public static final String TYPE_KEY = StepType.INSTRUCTION;
 

@@ -30,47 +30,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.motor_control_module.inject;
+package org.sagebionetworks.research.motor_control_module.inject.subcomponents;
 
-import dagger.Module;
-import dagger.Provides;
-import dagger.multibindings.IntoMap;
-import org.sagebionetworks.research.domain.inject.DependencyInjectionType;
-import org.sagebionetworks.research.domain.step.StepType;
-import org.sagebionetworks.research.motor_control_module.step.AppStepType;
-import org.sagebionetworks.research.motor_control_module.step_view.HandSelectionStepView;
-import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
-import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
-import org.sagebionetworks.research.presentation.inject.StepViewModule;
-import org.sagebionetworks.research.presentation.inject.StepViewModule.InternalStepViewFactory;
-import org.sagebionetworks.research.presentation.inject.StepViewModule.StepTypeKey;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowMPowerActiveUIStepFragment;
+import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule;
 
-/**
- * Add app-specific steps.
- */
-@Module(includes = StepViewModule.class)
-public class AppStepViewModule {
-    @Provides
-    @IntoMap
-    @DependencyInjectionType.Default
-    @StepTypeKey(StepType.INSTRUCTION)
-    static InternalStepViewFactory provideInstructionStepViewFactory() {
-        return InstructionStepView::fromInstructionStep;
-    }
-
-    @Provides
-    @IntoMap
-    @DependencyInjectionType.Default
-    @StepTypeKey(StepType.OVERVIEW)
-    static InternalStepViewFactory provideOverviewStepViewFactory() {
-        return OverviewStepView::fromOverviewStep;
-    }
-
-    @Provides
-    @IntoMap
-    @DependencyInjectionType.Default
-    @StepTypeKey(AppStepType.HAND_SELECTION)
-    static InternalStepViewFactory provideHandSelectionStepViewFactory() {
-        return HandSelectionStepView::fromHandSelectionStep;
+@ShowMPowerActiveUIStepFragmentScope
+@Subcomponent(modules = ShowStepViewModelModule.class)
+public abstract class ShowMPowerActiveUIStepFragmentSubcomponent
+        implements AndroidInjector<ShowMPowerActiveUIStepFragment> {
+    @Subcomponent.Builder
+    public abstract static class Builder extends AndroidInjector.Builder<ShowMPowerActiveUIStepFragment> {
+        @Override
+        public abstract ShowMPowerActiveUIStepFragmentSubcomponent build();
     }
 }
