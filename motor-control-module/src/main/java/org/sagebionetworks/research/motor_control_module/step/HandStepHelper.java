@@ -83,13 +83,13 @@ public abstract class HandStepHelper {
         // find that hand sections.
         SectionStep leftSection = HandStepHelper.findHandSectionStep(task.getSteps(), Hand.LEFT);
         SectionStep rightSection = HandStepHelper.findHandSectionStep(task.getSteps(), Hand.RIGHT);
-        if (leftSection == null || rightSection == null) {
+        AnswerResult<List<String>> handOrderResult =
+                result.getAnswerResult(ShowHandSelectionStepFragment.HAND_ORDER_KEY);
+        if (leftSection == null || rightSection == null || handOrderResult == null) {
             // If we don't have sections for both right and left there is no reason to continue.
             return null;
         }
 
-        AnswerResult<List<String>> handOrderResult =
-                result.getAnswerResult(ShowHandSelectionStepFragment.HAND_ORDER_KEY);
         List<String> handOrder = handOrderResult.getAnswer();
         Hand firstHand = Hand.fromString(handOrder.get(0));
         SectionStep firstSection = firstHand == Hand.LEFT ? leftSection : rightSection;
