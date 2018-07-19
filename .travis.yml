@@ -38,5 +38,7 @@ install:
 - bundle install
 script:
 - export PATH=$PATH:$ANDROID_HOME/build-tools/27.0.3
+- rvm list rubies
+- ./gradlew --version
 - ./travis/build.sh
 
