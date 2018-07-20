@@ -35,11 +35,11 @@ package org.sagebionetworks.research.motor_control_module.inject;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
-import org.sagebionetworks.research.domain.inject.DependencyInjectionType;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.motor_control_module.step.AppStepType;
 import org.sagebionetworks.research.motor_control_module.step_view.HandSelectionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
+import org.sagebionetworks.research.motor_control_module.step_view.MPowerActiveUIStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
 import org.sagebionetworks.research.presentation.inject.StepViewModule;
 import org.sagebionetworks.research.presentation.inject.StepViewModule.InternalStepViewFactory;
@@ -52,7 +52,6 @@ import org.sagebionetworks.research.presentation.inject.StepViewModule.StepTypeK
 public class AppStepViewModule {
     @Provides
     @IntoMap
-    @DependencyInjectionType.Default
     @StepTypeKey(StepType.INSTRUCTION)
     static InternalStepViewFactory provideInstructionStepViewFactory() {
         return InstructionStepView::fromInstructionStep;
@@ -60,7 +59,6 @@ public class AppStepViewModule {
 
     @Provides
     @IntoMap
-    @DependencyInjectionType.Default
     @StepTypeKey(StepType.OVERVIEW)
     static InternalStepViewFactory provideOverviewStepViewFactory() {
         return OverviewStepView::fromOverviewStep;
@@ -68,9 +66,15 @@ public class AppStepViewModule {
 
     @Provides
     @IntoMap
-    @DependencyInjectionType.Default
     @StepTypeKey(AppStepType.HAND_SELECTION)
     static InternalStepViewFactory provideHandSelectionStepViewFactory() {
         return HandSelectionStepView::fromHandSelectionStep;
+    }
+
+    @Provides
+    @IntoMap
+    @StepTypeKey(AppStepType.MPOWER_ACTIVE)
+    static InternalStepViewFactory provideMPowerActiveUIStepViewFactory() {
+        return MPowerActiveUIStepView::fromMPowerActiveUIStep;
     }
 }

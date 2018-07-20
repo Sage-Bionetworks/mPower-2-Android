@@ -38,11 +38,13 @@ import dagger.multibindings.IntoMap;
 
 import org.sagebionetworks.research.motor_control_module.step_view.HandSelectionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
+import org.sagebionetworks.research.motor_control_module.step_view.MPowerActiveUIStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
 import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule;
 import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule.StepViewClassKey;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_model_factories.AbstractShowStepViewModelFactory;
+import org.sagebionetworks.research.presentation.show_step.show_step_view_model_factories.ShowActiveUIStepViewModelFactory;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_model_factories.ShowUIStepViewModelFactory;
 
 @Module(includes = ShowStepViewModelModule.class)
@@ -66,5 +68,12 @@ public class AppShowStepViewModelModule {
     @StepViewClassKey(HandSelectionStepView.TYPE)
     static AbstractShowStepViewModelFactory<?, ? extends StepView> provideHandSelectionStepVMF() {
         return new ShowUIStepViewModelFactory<HandSelectionStepView>();
+    }
+
+    @Provides
+    @IntoMap
+    @StepViewClassKey(MPowerActiveUIStepView.TYPE)
+    static AbstractShowStepViewModelFactory<?, ? extends StepView> provideMPowerActiveUIStepVMF() {
+        return new ShowActiveUIStepViewModelFactory<>();
     }
 }

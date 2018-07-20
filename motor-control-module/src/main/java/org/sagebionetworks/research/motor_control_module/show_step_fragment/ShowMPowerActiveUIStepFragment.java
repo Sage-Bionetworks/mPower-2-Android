@@ -15,12 +15,10 @@ import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
 public class ShowMPowerActiveUIStepFragment extends ShowActiveUIStepFragment {
     @NonNull
-    public static ShowMPowerActiveUIStepFragment newInstance(@NonNull StepView stepView,
-                                                          @NonNull PerformTaskFragment performTaskFragment) {
+    public static ShowMPowerActiveUIStepFragment newInstance(@NonNull StepView stepView) {
         ShowMPowerActiveUIStepFragment fragment = new ShowMPowerActiveUIStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView, performTaskFragment);
+        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
         fragment.setArguments(arguments);
-        fragment.initialize();
         return fragment;
     }
 

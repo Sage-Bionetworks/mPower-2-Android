@@ -36,24 +36,21 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.implementations.UIStepBase;
-import org.sagebionetworks.research.domain.step.ui.action.interfaces.Action;
+import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
 
 import java.util.Map;
+import java.util.Set;
 
 public class CompletionStep extends UIStepBase {
     public static final String TYPE_KEY = StepType.COMPLETION;
 
-    public CompletionStep(@NonNull final String identifier,
-            @Nullable final Map<String, Action> actions,
-            @Nullable final String title,
-            @Nullable final String text,
-            @Nullable final String detail,
-            @Nullable final String footnote,
-            @Nullable final ColorTheme colorTheme,
-            @Nullable final ImageTheme imageTheme) {
-        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme);
+    public CompletionStep(@NonNull String identifier, @Nullable Map<String, Action> actions,
+                          @Nullable Set<String> hiddenActions, @Nullable String title, @Nullable String text,
+                          @Nullable String detail, @Nullable String footnote, @Nullable ColorTheme colorTheme,
+                          @Nullable ImageTheme imageTheme) {
+        super(identifier, actions, hiddenActions, title, text, detail, footnote, colorTheme, imageTheme);
     }
 
     @Override

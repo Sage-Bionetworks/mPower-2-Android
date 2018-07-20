@@ -35,49 +35,110 @@ package org.sagebionetworks.research.motor_control_module.step;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
-import org.sagebionetworks.research.domain.interfaces.HashCodeHelper;
+import org.sagebionetworks.research.domain.result.implementations.ResultBase;
+import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.StepType;
-import org.sagebionetworks.research.domain.step.implementations.ActiveUIStepBase;
-import org.sagebionetworks.research.domain.step.ui.action.interfaces.Action;
+import org.sagebionetworks.research.domain.step.interfaces.ActiveUIStep;
+import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
 import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.domain.task.navigation.strategy.StepNavigationStrategy;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.FirstRunHelper;
+import org.threeten.bp.Instant;
 
 import java.util.Map;
+import java.util.Set;
 
-public class InstructionStep extends MPowerActiveUIStep implements StepNavigationStrategy.SkipStepStrategy,
+@AutoValue
+public abstract class InstructionStep implements ActiveUIStep, StepNavigationStrategy.SkipStepStrategy,
         StepNavigationStrategy.NextStepStrategy {
     public static final String TYPE_KEY = StepType.INSTRUCTION;
 
-    @SerializedName("isFirstRunOnly")
-    private final boolean firstRunOnly;
+    @AutoValue.Builder
+    public abstract static class Builder {
+        public abstract InstructionStep build();
 
-    public InstructionStep(@NonNull final String identifier,
-            @NonNull final Map<String, Action> actions,
-            @Nullable final String title,
-            @Nullable final String text,
-            @Nullable final String detail,
-            @Nullable final String footnote,
-            @Nullable final ColorTheme colorTheme,
-            @Nullable final ImageTheme imageTheme,
-            @Nullable final Double duration, final boolean backgroundAudioRequired,
-            final boolean firstRunOnly) {
-        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme, duration,
-                backgroundAudioRequired);
-        this.firstRunOnly = firstRunOnly;
+        @NonNull
+        public abstract Builder setActions(@NonNull Map<String, Action> actions);
+
+        @NonNull
+        public abstract Builder setBackgroundAudioRequired(boolean isBackgroundAudioRequired);
+
+        @NonNull
+        public abstract Builder setColorTheme(@Nullable ColorTheme colorTheme);
+
+        @NonNull
+        public abstract Builder setCommands(@NonNull Set<String> commands);
+
+        @NonNull
+        public abstract Builder setDetail(@Nullable String detail);
+
+        @NonNull
+        public abstract Builder setDuration(@Nullable Double duration);
+
+        @NonNull
+        public abstract Builder setFootnote(@Nullable String footnote);
+
+        @NonNull
+        public abstract Builder setHiddenActions(@NonNull Set<String> hiddenActions);
+
+        @NonNull
+        public abstract Builder setIdentifier(@NonNull String identifier);
+
+        @NonNull
+        public abstract Builder setImageTheme(@Nullable ImageTheme imageTheme);
+
+        @NonNull
+        public abstract Builder setSpokenInstructions(@NonNull Map<String, String> spokenInstructions);
+
+        @NonNull
+        public abstract Builder setText(@Nullable String text);
+
+        @NonNull
+        public abstract Builder setTitle(@Nullable String title);
+
+        public abstract Builder setFirstRunOnly(boolean firstRunOnly);
+    }
+
+    public static Builder builder() {
+        return new AutoValue_InstructionStep.Builder()
+                .setActions(ImmutableMap.of())
+                .setCommands(ImmutableSet.of())
+                .setBackgroundAudioRequired(false)
+                .setFirstRunOnly(false)
+                .setHiddenActions(ImmutableSet.of());
+    }
+
+    public abstract Builder toBuilder();
+
+    public static TypeAdapter<InstructionStep> typeAdapter(Gson gson) {
+        return new AutoValue_InstructionStep.GsonTypeAdapter(gson)
+                .setDefaultActions(ImmutableMap.of())
+                .setDefaultCommands(ImmutableSet.of())
+                .setDefaultHiddenActions(ImmutableSet.of())
+                .setDefaultSpokenInstructions(ImmutableMap.of());
     }
 
     @Override
+    @NonNull
     public InstructionStep copyWithIdentifier(@NonNull String identifier) {
-        return new InstructionStep(identifier, this.getActions(), this.getTitle(), this.getText(), this.getDetail(),
-                this.getFootnote(), this.getColorTheme(), this.getImageTheme(), this.getDuration(),
-                this.isBackgroundAudioRequired(), this.firstRunOnly);
+        return this.toBuilder().setIdentifier(identifier).build();
+    }
+
+    @Override
+    @NonNull
+    public Result instantiateStepResult() {
+        return new ResultBase(this.getIdentifier(), Instant.now(), Instant.now());
     }
 
     @NonNull
@@ -86,28 +147,8 @@ public class InstructionStep extends MPowerActiveUIStep implements StepNavigatio
         return TYPE_KEY;
     }
 
-    @Override
-    protected boolean equalsHelper(Object other) {
-        InstructionStep step = (InstructionStep) other;
-        return super.equalsHelper(other) &&
-                this.isFirstRunOnly() == step.isFirstRunOnly();
-    }
-
-    @Override
-    protected HashCodeHelper hashCodeHelper() {
-        return super.hashCodeHelper()
-                .addFields(this.isFirstRunOnly());
-    }
-
-    @Override
-    protected ToStringHelper toStringHelper() {
-        return super.toStringHelper()
-                .add("isFirstRunOnly", this.isFirstRunOnly());
-    }
-
-    public boolean isFirstRunOnly() {
-        return this.firstRunOnly;
-    }
+    @SerializedName("isFirstRunOnly")
+    public abstract boolean isFirstRunOnly();
 
     @Override
     public String getNextStepIdentifier(Task task, TaskResult taskResult) {
@@ -119,6 +160,6 @@ public class InstructionStep extends MPowerActiveUIStep implements StepNavigatio
         // We skip an instruction step if it should be skipped because of it's hand, or because
         // it is first run only.
         return HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), task, taskResult) ||
-                (this.firstRunOnly && !FirstRunHelper.isFirstRun(taskResult));
+                (this.isFirstRunOnly() && !FirstRunHelper.isFirstRun(taskResult));
     }
 }

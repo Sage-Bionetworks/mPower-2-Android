@@ -15,7 +15,7 @@
   "steps": [
     {
       "identifier": "tapping",
-      "type": "active",
+      "type": "mpowerActive",
       "duration": 30,
       "image": {
         "type": "fetchable",

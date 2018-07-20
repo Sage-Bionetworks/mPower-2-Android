@@ -40,6 +40,7 @@ import org.sagebionetworks.research.domain.inject.StepModule;
 import org.sagebionetworks.research.domain.inject.StepModule.StepClassKey;
 import org.sagebionetworks.research.motor_control_module.step.HandSelectionStep;
 import org.sagebionetworks.research.motor_control_module.step.InstructionStep;
+import org.sagebionetworks.research.motor_control_module.step.MPowerActiveUIStep;
 import org.sagebionetworks.research.motor_control_module.step.OverviewStep;
 
 /**
@@ -67,14 +68,21 @@ public class AppStepModule {
     @Provides
     @IntoMap
     @StepClassKey(OverviewStep.class)
-    static String provideOverviewStepClassInfo() {
+    static String provideOverviewStepTypeKey() {
         return OverviewStep.TYPE_KEY;
     }
 
     @Provides
     @IntoMap
     @StepClassKey(HandSelectionStep.class)
-    static String provideHandSelectedStepClassInfo() {
+    static String provideHandSelectedStepTypeKey() {
         return HandSelectionStep.TYPE_KEY;
+    }
+
+    @Provides
+    @IntoMap
+    @StepClassKey(MPowerActiveUIStep.class)
+    static String provideMPowerActiveUIStepTypeKey() {
+        return MPowerActiveUIStep.TYPE_KEY;
     }
 }

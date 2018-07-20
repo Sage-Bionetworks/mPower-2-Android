@@ -52,13 +52,17 @@ public class FirstRunOnlyStepTests {
         when(this.task.getProgressMarkers()).thenReturn(ImmutableList.copyOf(progressMarkers));
         List<Step> steps = new ArrayList<>();
         steps.add(mockStepWithIdentifier("introduction"));
-        InstructionStep instructionFirstRunOnly = new InstructionStep("instructionFirstRunOnly", ImmutableMap.of(),
-                null, null, null, null, null, null, null, false,
-                true);
+        InstructionStep instructionFirstRunOnly = InstructionStep.builder()
+                .setActions(ImmutableMap.of())
+                .setIdentifier("instructionStepFirstRunOnly")
+                .setFirstRunOnly(true)
+                .build();
         steps.add(instructionFirstRunOnly);
-        InstructionStep instructionNotFirstRunOnly = new InstructionStep("instructionNonFirstRunOnly", ImmutableMap.of(),
-                null, null, null, null, null, null, null, false,
-                false);
+        InstructionStep instructionNotFirstRunOnly = InstructionStep.builder()
+                .setActions(ImmutableMap.of())
+                .setIdentifier("instructionStepNonFirstRunOnly")
+                .setFirstRunOnly(false)
+                .build();
         steps.add(instructionNotFirstRunOnly);
         steps.add(mockStepWithIdentifier("completion"));
         when(this.task.getSteps()).thenReturn(ImmutableList.copyOf(steps));

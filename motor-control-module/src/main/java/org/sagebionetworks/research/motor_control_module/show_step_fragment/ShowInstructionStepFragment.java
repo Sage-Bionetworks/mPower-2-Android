@@ -53,12 +53,10 @@ public class ShowInstructionStepFragment extends
         ShowUIStepFragmentBase<InstructionStepView, ShowUIStepViewModel<InstructionStepView>,
                         UIStepViewBinding<InstructionStepView>> {
     @NonNull
-    public static ShowInstructionStepFragment newInstance(@NonNull StepView stepView,
-                                                          @NonNull PerformTaskFragment performTaskFragment) {
+    public static ShowInstructionStepFragment newInstance(@NonNull StepView stepView) {
         ShowInstructionStepFragment fragment = new ShowInstructionStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView, performTaskFragment);
+        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
         fragment.setArguments(arguments);
-        fragment.initialize();
         return fragment;
     }
 

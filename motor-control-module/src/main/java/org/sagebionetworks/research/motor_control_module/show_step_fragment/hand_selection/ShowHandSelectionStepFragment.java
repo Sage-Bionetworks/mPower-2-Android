@@ -68,12 +68,10 @@ public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
     public static final String HAND_ORDER_KEY = "handOrder";
 
     @NonNull
-    public static ShowHandSelectionStepFragment newInstance(@NonNull StepView stepView,
-                                                            @NonNull PerformTaskFragment performTaskFragment) {
+    public static ShowHandSelectionStepFragment newInstance(@NonNull StepView stepView) {
         ShowHandSelectionStepFragment fragment = new ShowHandSelectionStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView, performTaskFragment);
+        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
         fragment.setArguments(arguments);
-        fragment.initialize();
         return fragment;
     }
 

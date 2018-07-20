@@ -36,35 +36,32 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import org.sagebionetworks.research.domain.form.interfaces.InputField;
 import org.sagebionetworks.research.domain.step.implementations.FormUIStepBase;
-import org.sagebionetworks.research.domain.step.ui.action.interfaces.Action;
+import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class HandSelectionStep extends FormUIStepBase {
     // For now a hand selection step is just a FormUIStep.
     public static final String TYPE_KEY = AppStepType.HAND_SELECTION;
 
-    public HandSelectionStep(@NonNull final String identifier,
-                             @NonNull final Map<String, Action> actions,
-                             @Nullable final String title,
-                             @Nullable final String text,
-                             @Nullable final String detail,
-                             @Nullable final String footnote,
-                             @Nullable final ColorTheme colorTheme,
-                             @Nullable final ImageTheme imageTheme,
-                             @NonNull final List<InputField> inputFields) {
-        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme, inputFields);
+    public HandSelectionStep(@NonNull String identifier, @NonNull Map<String, Action> actions,
+                             @Nullable Set<String> hiddenActions, @Nullable String title,
+                             @Nullable String text, @Nullable String detail, @Nullable String footnote,
+                             @Nullable ColorTheme colorTheme, @Nullable ImageTheme imageTheme, @NonNull List<InputField> inputFields) {
+        super(identifier, actions, hiddenActions, title, text, detail, footnote, colorTheme, imageTheme, inputFields);
     }
+
 
     @Override
     @NonNull
     public HandSelectionStep copyWithIdentifier(@NonNull String identifier) {
-        return new HandSelectionStep(identifier, this.getActions(), this.getTitle(),
-                this.getText(), this.getDetail(), this.getFootnote(), this.getColorTheme(),
-                this.getImageTheme(), this.getInputFields());
+        return new HandSelectionStep(identifier, this.getActions(), this.getHiddenActions(), this.getTitle(),
+                this.getText(), this.getDetail(), this.getFootnote(), this.getColorTheme(), this.getImageTheme(),
+                this.getInputFields());
     }
 
     @Override

@@ -63,21 +63,18 @@ public class HandStepTests {
        when(this.task.getProgressMarkers()).thenReturn(ImmutableList.copyOf(progressMarkers));
        List<Step> steps = new ArrayList<>();
         steps.add(StepTestHelper.mockStepWithIdentifier("introduction"));
-       InstructionStep instruction = new InstructionStep("instruction", ImmutableMap.of(),
-                null, null, null, null, null, null, null, false,
-                false);
+       InstructionStep instruction = InstructionStep.builder().setActions(ImmutableMap.of())
+               .setIdentifier("instruction").build();
        steps.add(instruction);
-       InstructionStep leftInstruction = new InstructionStep("left.instruction", ImmutableMap.of(),
-               null, null, null, null, null, null, null, false,
-               false);
-        MPowerActiveUIStep leftActive = new MPowerActiveUIStep("left.active", ImmutableMap.of(),
-                null, null, null, null, null, null, null, false);
+       InstructionStep leftInstruction = InstructionStep.builder().setActions(ImmutableMap.of())
+               .setIdentifier("left.instruction").build();
+       MPowerActiveUIStep leftActive = MPowerActiveUIStep.builder().setActions(ImmutableMap.of())
+               .setIdentifier("left.active").build();
        steps.add(mockSectionStep("left", leftInstruction, leftActive));
-       InstructionStep rightInstruction = new InstructionStep("right.instruction", ImmutableMap.of(),
-                null, null, null, null, null, null, null, false,
-                false);
-       MPowerActiveUIStep rightActive = new MPowerActiveUIStep("right.active", ImmutableMap.of(),
-                null, null, null, null, null, null, null, false);
+       InstructionStep rightInstruction = InstructionStep.builder().setActions(ImmutableMap.of())
+               .setIdentifier("right.instruction").build();
+       MPowerActiveUIStep rightActive = MPowerActiveUIStep.builder().setActions(ImmutableMap.of())
+               .setIdentifier("right.active").build();
        steps.add(mockSectionStep("right", rightInstruction, rightActive));
        steps.add(StepTestHelper.mockStepWithIdentifier("completion"));
        when(this.task.getSteps()).thenReturn(ImmutableList.copyOf(steps));

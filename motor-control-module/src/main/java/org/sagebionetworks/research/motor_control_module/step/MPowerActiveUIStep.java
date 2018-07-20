@@ -3,21 +3,103 @@ package org.sagebionetworks.research.motor_control_module.step;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+
+import org.sagebionetworks.research.domain.result.implementations.ResultBase;
+import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
-import org.sagebionetworks.research.domain.step.implementations.ActiveUIStepBase;
-import org.sagebionetworks.research.domain.step.ui.action.interfaces.Action;
+import org.sagebionetworks.research.domain.step.interfaces.ActiveUIStep;
+import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
 import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.domain.task.navigation.strategy.StepNavigationStrategy;
+import org.threeten.bp.Instant;
 
 import java.util.Map;
+import java.util.Set;
 
-public class MPowerActiveUIStep extends ActiveUIStepBase implements StepNavigationStrategy.SkipStepStrategy,
+
+@AutoValue
+public abstract class MPowerActiveUIStep implements ActiveUIStep, StepNavigationStrategy.SkipStepStrategy,
         StepNavigationStrategy.NextStepStrategy {
+    public static final String TYPE_KEY = AppStepType.MPOWER_ACTIVE;
 
-    public MPowerActiveUIStep(@NonNull String identifier, @NonNull Map<String, Action> actions, @Nullable String title, @Nullable String text, @Nullable String detail, @Nullable String footnote, @Nullable ColorTheme colorTheme, @Nullable ImageTheme imageTheme, @Nullable Double duration, boolean backgroundAudioRequired) {
-        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme, duration, backgroundAudioRequired);
+    @AutoValue.Builder
+    public abstract static class Builder {
+        public abstract MPowerActiveUIStep build();
+
+        @NonNull
+        public abstract Builder setActions(@NonNull Map<String, Action> actions);
+
+        @NonNull
+        public abstract Builder setBackgroundAudioRequired(boolean isBackgroundAudioRequired);
+
+        @NonNull
+        public abstract Builder setColorTheme(@Nullable ColorTheme colorTheme);
+
+        @NonNull
+        public abstract Builder setCommands(@NonNull Set<String> commands);
+
+        @NonNull
+        public abstract Builder setDetail(@Nullable String detail);
+
+        @NonNull
+        public abstract Builder setDuration(@Nullable Double duration);
+
+        @NonNull
+        public abstract Builder setFootnote(@Nullable String footnote);
+
+        @NonNull
+        public abstract Builder setHiddenActions(@NonNull Set<String> hiddenActions);
+
+        @NonNull
+        public abstract Builder setIdentifier(@NonNull String identifier);
+
+        @NonNull
+        public abstract Builder setImageTheme(@Nullable ImageTheme imageTheme);
+
+        @NonNull
+        public abstract Builder setSpokenInstructions(@NonNull Map<String, String> spokenInstructions);
+
+        @NonNull
+        public abstract Builder setText(@Nullable String text);
+
+        @NonNull
+        public abstract Builder setTitle(@Nullable String title);
+    }
+
+    public static TypeAdapter<MPowerActiveUIStep> typeAdapter(Gson gson) {
+        return new AutoValue_MPowerActiveUIStep.GsonTypeAdapter(gson)
+                .setDefaultActions(ImmutableMap.of())
+                .setDefaultCommands(ImmutableSet.of())
+                .setDefaultHiddenActions(ImmutableSet.of())
+                .setDefaultSpokenInstructions(ImmutableMap.of());
+    }
+
+    public static Builder builder() {
+        return new AutoValue_MPowerActiveUIStep.Builder()
+                .setActions(ImmutableMap.of())
+                .setCommands(ImmutableSet.of())
+                .setBackgroundAudioRequired(false)
+                .setHiddenActions(ImmutableSet.of());
+    }
+
+    public abstract Builder toBuilder();
+
+    @Override
+    public String getType() {
+        return TYPE_KEY;
+    }
+
+    @Override
+    @NonNull
+    public Result instantiateStepResult() {
+        return new ResultBase(this.getIdentifier(), Instant.now(), Instant.now());
     }
 
     @Override
@@ -33,8 +115,6 @@ public class MPowerActiveUIStep extends ActiveUIStepBase implements StepNavigati
     @Override
     @NonNull
     public MPowerActiveUIStep copyWithIdentifier(@NonNull String identifier) {
-        return new MPowerActiveUIStep(identifier, this.getActions(), this.getTitle(), this.getText(),
-                this.getDetail(), this.getFootnote(), this.getColorTheme(), this.getImageTheme(),
-                this.getDuration(), this.isBackgroundAudioRequired());
+        return this.toBuilder().setIdentifier(identifier).build();
     }
 }

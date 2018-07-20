@@ -240,7 +240,7 @@
       "steps": [
         {
           "identifier": "motion",
-          "type": "active",
+          "type": "mpowerActive",
           "title": "Walk back and forth",
           "duration": 30,
           "image": {
@@ -403,7 +403,7 @@
       "steps": [
         {
           "identifier": "motion",
-          "type": "active",
+          "type": "mpowerActive",
           "title": "Turn around and then stand still",
           "duration": 30,
           "image": {

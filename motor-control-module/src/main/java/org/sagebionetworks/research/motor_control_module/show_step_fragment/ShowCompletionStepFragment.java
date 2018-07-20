@@ -42,10 +42,9 @@ import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
 public class ShowCompletionStepFragment extends ShowUIStepFragment {
     @NonNull
-    public static ShowCompletionStepFragment newInstance(@NonNull StepView stepView,
-                                                         @NonNull PerformTaskFragment performTaskFragment) {
+    public static ShowCompletionStepFragment newInstance(@NonNull StepView stepView) {
         ShowCompletionStepFragment fragment = new ShowCompletionStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView, performTaskFragment);
+        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
         fragment.setArguments(arguments);
         return fragment;
     }

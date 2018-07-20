@@ -47,12 +47,10 @@ import org.sagebionetworks.research.presentation.show_step.ShowGenericStepViewMo
 public class ShowTappingActiveUIStepFragment extends
         ShowStepFragmentBase<StepView, ShowGenericStepViewModel, StepViewBinding<StepView>> {
     @NonNull
-    public static ShowTappingActiveUIStepFragment newInstance(@NonNull StepView stepView,
-                                                              @NonNull PerformTaskFragment performTaskFragment) {
+    public static ShowTappingActiveUIStepFragment newInstance(@NonNull StepView stepView) {
         ShowTappingActiveUIStepFragment fragment = new ShowTappingActiveUIStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView, performTaskFragment);
+        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
         fragment.setArguments(arguments);
-        fragment.initialize();
         return fragment;
     }
 

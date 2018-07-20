@@ -70,12 +70,10 @@ public class ShowOverviewStepFragment extends
     private boolean isFirstRun;
 
     @NonNull
-    public static ShowOverviewStepFragment newInstance(@NonNull StepView stepView,
-                                                       @NonNull PerformTaskFragment performTaskFragment) {
+    public static ShowOverviewStepFragment newInstance(@NonNull StepView stepView) {
         ShowOverviewStepFragment fragment = new ShowOverviewStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView, performTaskFragment);
+        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
         fragment.setArguments(arguments);
-        fragment.initialize();
         return fragment;
     }
 

@@ -37,12 +37,13 @@ import android.support.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.implementations.UIStepBase;
-import org.sagebionetworks.research.domain.step.ui.action.interfaces.Action;
+import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class OverviewStep extends UIStepBase {
     public static final String TYPE_KEY = StepType.OVERVIEW;
@@ -50,20 +51,18 @@ public class OverviewStep extends UIStepBase {
     @NonNull
     private final ImmutableList<Icon> icons;
 
-    public OverviewStep(@NonNull final String identifier,
-            @Nullable final Map<String, Action> actions,
-            @Nullable final String title, @Nullable final String text, @Nullable final String detail,
-            @Nullable final String footnote,
-            @Nullable final ColorTheme colorTheme,
-            @Nullable final ImageTheme imageTheme,
-            @NonNull final List<Icon> icons) {
-        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme);
+    public OverviewStep(@NonNull String identifier, @Nullable Map<String, Action> actions,
+                        @Nullable Set<String> hiddenActions, @Nullable String title, @Nullable String text,
+                        @Nullable String detail, @Nullable String footnote, @Nullable ColorTheme colorTheme,
+                        @Nullable ImageTheme imageTheme, List<Icon> icons) {
+        super(identifier, actions, hiddenActions, title, text, detail, footnote, colorTheme, imageTheme);
         this.icons = ImmutableList.copyOf(icons);
     }
 
     @Override
     public OverviewStep copyWithIdentifier(@NonNull String identifier) {
-        return new OverviewStep(identifier, this.getActions(), this.getTitle(), this.getText(), this.getDetail(),
+        return new OverviewStep(identifier, this.getActions(), this.getHiddenActions(), this.getTitle(),
+                this.getText(), this.getDetail(),
                 this.getFootnote(), this.getColorTheme(), this.getImageTheme(), this.icons);
     }
 
