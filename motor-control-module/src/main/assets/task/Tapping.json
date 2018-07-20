@@ -1,0 +1,216 @@
+{
+  "identifier": "Tapping",
+  "shouldHideActions": [
+    "goBackward",
+    "skip"
+  ],
+  "progressMarkers": [
+    "fingerTappingInstructions",
+    "phoneOnTableInstruction",
+    "tappingFirstHandInstruction",
+    "completion"
+  ],
+  "steps": [
+    {
+      "identifier": "introduction",
+      "type": "overview",
+      "title": "Finger Tapping",
+      "text": "In this activity we will measure your finger tapping speed with each hand; this may reflect severity of motor systems in Parkinson’s Disease.",
+      "permissions": [
+        {
+          "permissionType": "motion",
+          "reason": "Access to Motion and Fitness sensors is required to measure the phone's orientation."
+        }
+      ],
+      "image": {
+        "type": "animation",
+        "imageNames": [
+          "tap_left1",
+          "tap_left2"
+        ],
+        "placementType": "topBackground",
+        "animationDuration": 1
+      },
+      "icons": [
+        {
+          "icon": "icon_flat_surface",
+          "title": "A FLAT SURFACE"
+        }
+      ],
+      "actions": {
+        "goForward": {
+          "type": "base",
+          "buttonTitle": "Get started"
+        },
+        "skip": {
+          "type": "reminder",
+          "reminderIdentifier": "Tapping"
+        }
+      },
+      "colorTheme": {
+        "colorStyle": {
+          "header": "darkBackground",
+          "body": "lightBackground",
+          "footer": "lightBackground"
+        }
+      },
+      "viewTheme": {
+        "viewIdentifier": "Overview",
+        "storyboardIdentifier": "ActiveTaskSteps"
+      }
+    },
+    {
+      "identifier": "fingerTappingInstructions",
+      "type": "instruction",
+      "title": "You will finger tap for 30 seconds with each hand",
+      "text": "Speed of finger tapping can reflect severity of motor symptoms in Parkinson’s disease. This activity measures your tapping speed for each hand. Your medical provider may measure this differently.",
+      "image": {
+        "type": "animation",
+        "imageNames": [
+          "tap_left1",
+          "tap_left2"
+        ],
+        "placementType": "topBackground",
+        "animationDuration": 1
+      },
+      "colorTheme": {
+        "colorStyle": {
+          "header": "darkBackground",
+          "body": "lightBackground",
+          "footer": "lightBackground"
+        }
+      },
+      "viewTheme": {
+        "viewIdentifier": "Instruction",
+        "storyboardIdentifier": "ActiveTaskSteps"
+      },
+      "actions": {
+        "goForward": {
+          "type": "base",
+          "buttonTitle": "Got it"
+        }
+      }
+    },
+    {
+      "identifier": "handSelection",
+      "type": "handSelection",
+      "title": "Which hands are you capable of doing this task with?",
+      "uiHint": "list",
+      "dataType": "singleChoice.string",
+      "choices": [
+        {
+          "text": "I can only perform this activity with my LEFT hand.",
+          "value": "left"
+        },
+        {
+          "text": "I can only perform this activity with my RIGHT hand.",
+          "value": "right"
+        },
+        {
+          "text": "I can perform this activity with both hands.",
+          "value": "both"
+        }
+      ]
+    },
+    {
+      "identifier": "phoneOnTableInstruction",
+      "type": "instruction",
+      "title": "Put the phone on a table",
+      "text": "Place your phone on a flat surface such as a table before you begin the activity.",
+      "image": {
+        "type": "animation",
+        "imageNames": [
+          "f_flat_surface",
+          "place_phone",
+          "phone_on_surface"
+        ],
+        "animationDuration": 3.0,
+        "placementType": "topBackground"
+      },
+      "colorTheme": {
+        "colorStyle": {
+          "header": "darkBackground",
+          "body": "lightBackground",
+          "footer": "lightBackground"
+        }
+      },
+      "viewTheme": {
+        "viewIdentifier": "Instruction",
+        "storyboardIdentifier": "ActiveTaskSteps"
+      },
+      "actions": {
+        "goForward": {
+          "type": "base",
+          "buttonTitle": "Did it"
+        }
+      }
+    },
+    {
+      "identifier": "tappingFirstHandInstruction",
+      "type": "instruction",
+      "title": "First, tap with your %@ hand",
+      "text": "Alternate tapping the buttons that appear with your index and middle finger of your %@ HAND. Keep tapping for 30 seconds for as fast as you can.",
+      "image": {
+        "type": "animation",
+        "imageNames": [
+          "tap_left1",
+          "tap_left2"
+        ],
+        "animationDuration": 1.0,
+        "placementType": "topBackground"
+      },
+      "colorTheme": {
+        "colorStyle": {
+          "header": "darkBackground",
+          "body": "lightBackground",
+          "footer": "lightBackground"
+        }
+      },
+      "viewTheme": {
+        "viewIdentifier": "Instruction",
+        "storyboardIdentifier": "ActiveTaskSteps"
+      },
+      "actions": {
+        "goForward": {
+          "type": "base",
+          "buttonTitle": "Start the test"
+        }
+      }
+    },
+    {
+      "identifier": "left",
+      "type": "transform",
+      "resourceTransformer": {
+        "resourceName": "TappingSectionStep.json"
+      }
+    },
+    {
+      "identifier": "right",
+      "type": "transform",
+      "resourceTransformer": {
+        "resourceName": "TappingSectionStep.json"
+      }
+    },
+    {
+      "identifier": "completion",
+      "type": "completion",
+      "title": "Great job!",
+      "text": "You just completed",
+      "image": {
+        "type": "fetchable",
+        "imageName": "completion_finger_tapping",
+        "placementType": "topBackground"
+      },
+      "viewTheme": {
+        "viewIdentifier": "Completion Tapping",
+        "storyboardIdentifier": "ActiveTaskSteps"
+      },
+      "actions": {
+        "goForward": {
+          "type": "base",
+          "buttonTitle": "Done"
+        }
+      }
+    }
+  ]
+}
