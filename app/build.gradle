@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
-apply from: '../config/quality/quality.gradle'
 apply plugin: 'kotlin-android'
-
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply from: '../config/quality/quality.gradle'
 
 android {
     compileSdkVersion 27
@@ -35,7 +35,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    kapt 'com.jakewharton:butterknife-compiler:8.8.1'
 
     implementation 'org.slf4j:slf4j-api:1.7.21'
     implementation 'com.github.tony19:logback-android-core:1.1.1-6'
@@ -47,10 +47,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.ryanharter.auto.value:auto-value-parcel-adapter:0.2.6'
     implementation 'com.ryanharter.auto.value:auto-value-gson-annotations:0.7.0'
-    annotationProcessor "com.google.auto.value:auto-value:1.6"
-    annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.6'
-    annotationProcessor 'com.ryanharter.auto.value:auto-value-gson:0.7.0'
-    annotationProcessor 'com.google.auto.value:auto-value-annotations:1.6' // include again for auto-value-gson
+    kapt "com.google.auto.value:auto-value:1.6"
+    kapt 'com.ryanharter.auto.value:auto-value-parcel:0.2.6'
+    kapt 'com.ryanharter.auto.value:auto-value-gson:0.7.0'
+    kapt 'com.google.auto.value:auto-value-annotations:1.6' // include again for auto-value-gson
 
 
     implementation project(path: ':mobile-ui')
@@ -62,8 +62,8 @@ dependencies {
 
     implementation 'com.google.dagger:dagger-android:2.15'
     implementation 'com.google.dagger:dagger-android-support:2.15'
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.15'
-    annotationProcessor "com.google.dagger:dagger-compiler:2.15"
+    kapt 'com.google.dagger:dagger-android-processor:2.15'
+    kapt "com.google.dagger:dagger-compiler:2.15"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
