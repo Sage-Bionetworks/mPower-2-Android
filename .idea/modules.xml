@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/ResearchStack/backbone/backbone.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/ResearchStack/backbone/backbone.iml" />
       <module fileurl="file://$PROJECT_DIR$/mPower-2-Android.iml" filepath="$PROJECT_DIR$/mPower-2-Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/researchstack-mpower/researchstack-mpower.iml" filepath="$PROJECT_DIR$/researchstack-mpower/researchstack-mpower.iml" />
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/researchstack-sdk/researchstack-sdk.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/researchstack-sdk/researchstack-sdk.iml" />
     </modules>
   </component>

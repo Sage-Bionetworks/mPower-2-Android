@@ -5,32 +5,18 @@ import android.content.res.Configuration;
 import android.support.multidex.MultiDex;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
-import org.researchstack.backbone.ResearchStack;
-import org.researchstack.backbone.StorageAccess;
 import org.sagebionetworks.bridge.android.BridgeApplication;
-import org.sagebionetworks.research.researchStack.MpResearchStack;
+import org.sagebionetworks.research.mpower.inject.DaggerMPowerApplicationComponent;
 
 public class MpMainApplication extends BridgeApplication {
-
-    // We don't use a pin code for MPower, so just plug in a useless one the app remembers
-    public static final String PIN_CODE = "1234";
-
-    MpResearchStack researchStack;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        researchStack = new MpResearchStack(this);
-        ResearchStack.init(this, researchStack);
-    }
-
-    public static void mockAuthenticate(Context context) {
-        if (StorageAccess.getInstance().hasPinCode(context)) {
-            StorageAccess.getInstance().authenticate(context, PIN_CODE);
-        } else {
-            StorageAccess.getInstance().createPinCode(context, PIN_CODE);
-        }
+        DaggerMPowerApplicationComponent
+                .builder()
+                .application(this)
+                .build();
     }
 
     @Override
@@ -51,8 +37,12 @@ public class MpMainApplication extends BridgeApplication {
             configuration.fontScale = 1.3f;
             Context context = getApplicationContext();
             DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+
             WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-            wm.getDefaultDisplay().getMetrics(metrics);
+            if (wm != null) {
+                wm.getDefaultDisplay().getMetrics(metrics);
+            }
+
             metrics.scaledDensity = configuration.fontScale * metrics.density;
             context.getResources().updateConfiguration(configuration, metrics);
         }
