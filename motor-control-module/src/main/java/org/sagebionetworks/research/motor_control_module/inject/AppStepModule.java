@@ -49,9 +49,9 @@ import dagger.multibindings.IntoMap;
 public class AppStepModule {
 
     /**
-     * Returns the type key for InstructionStepView.class.
+     * Returns the type key for InstructionStep.class.
      *
-     * @return the type key for InstructionStepView.class.
+     * @return the type key for InstructionStep.class.
      */
     @Provides
     @IntoMap

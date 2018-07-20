@@ -58,7 +58,7 @@ public class InstructionStepView extends ActiveUIStepViewBase {
     @NonNull
     public static InstructionStepView fromInstructionStep(@NonNull Step step, DrawableMapper mapper) {
         if (!(step instanceof InstructionStep)) {
-            throw new IllegalArgumentException("Provided step: " + step + " is not an InstructionStepView");
+            throw new IllegalArgumentException("Provided step: " + step + " is not an InstructionStep");
         }
 
         InstructionStep instructionStep = (InstructionStep) step;
