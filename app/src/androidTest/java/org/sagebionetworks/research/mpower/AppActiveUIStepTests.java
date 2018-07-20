@@ -40,10 +40,10 @@ public class AppActiveUIStepTests extends UITestHelper {
     }
 
     private void testCommon(String title) {
-        checkVisible(R.id.rs2_step_navigation_action_cancel, R.id.rs2_title, R.id.countdownDial,
+        checkVisible(R.id.rs2_step_navigation_action_cancel, R.id.beginLabel, R.id.countdownDial,
                 R.id.countLabel, R.id.unitLabel, R.id.rs2_step_navigation_action_forward,
                 R.id.rs2_step_navigation_action_skip);
-        onView(withId(R.id.rs2_title)).check(matches(withText(title)));
+        onView(withId(R.id.beginLabel)).check(matches(withText(title)));
         onView(withId(R.id.unitLabel)).check(matches(withText(UNIT_LABEL_TEXT)));
         onView(withId(R.id.rs2_step_navigation_action_forward)).check(matches(withText(FORWARD_ACTION_TEXT)));
         onView(withId(R.id.rs2_step_navigation_action_skip)).check(matches(withText(SKIP_ACTION_TEXT)));

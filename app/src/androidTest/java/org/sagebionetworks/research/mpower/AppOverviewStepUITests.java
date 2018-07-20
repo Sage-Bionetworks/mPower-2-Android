@@ -1,19 +1,11 @@
 package org.sagebionetworks.research.mpower;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import org.junit.Rule;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
-import org.threeten.bp.Instant;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.*;
@@ -52,9 +44,9 @@ public class AppOverviewStepUITests extends UITestHelper {
     }
 
     private void test_tremorOverview_Common() {
-        checkVisible(R.id.rs2_step_navigation_action_cancel, R.id.rs2_title, R.id.rs2_step_navigation_action_forward,
+        checkVisible(R.id.rs2_step_navigation_action_cancel, R.id.beginLabel, R.id.rs2_step_navigation_action_forward,
                 R.id.rs2_step_navigation_action_skip);
-        onView(withId(R.id.rs2_title)).check(matches(withText(TREMOR_OVERVIEW_TITLE)));
+        onView(withId(R.id.beginLabel)).check(matches(withText(TREMOR_OVERVIEW_TITLE)));
         onView(withId(R.id.rs2_step_navigation_action_forward)).check(matches(withText(OVERVIEW_FORWARD_ACTION_TEXT)));
         onView(withId(R.id.rs2_step_navigation_action_skip)).check(matches(withText(OVERVIEW_SKIP_ACTION_TEXT)));
         checkInvisible(R.id.leftIconImageView, R.id.leftIconLabel, R.id.rightIconImageView, R.id.rightIconLabel);

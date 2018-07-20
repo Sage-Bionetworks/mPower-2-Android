@@ -39,11 +39,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import dagger.android.AndroidInjection;
 import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+
 import org.sagebionetworks.research.domain.repository.TaskRepository;
 import org.sagebionetworks.research.domain.task.TaskInfo;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
@@ -52,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+
 import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -81,19 +85,21 @@ public class MainActivity extends AppCompatActivity {
                     taskInfo -> textView.setText(taskInfo.getTitle()),
                     throwable -> LOGGER.warn(throwable.toString())));
             textView.setOnClickListener(view ->
-                    compositeDisposable.add(taskInfoSingle.map(taskInfo -> TaskView.builder()
-                            .setIdentifier(taskInfo.getIdentifier())
-                            .build())
-                            .subscribe(taskView -> {
-                                PerformTaskFragment newPerformTaskFragment = PerformTaskFragment
-                                        .newInstance(taskView, UUID.randomUUID());
+                    compositeDisposable.add(
+                            taskInfoSingle
+                                    .map(taskInfo -> TaskView.builder()
+                                            .setIdentifier(taskInfo.getIdentifier())
+                                            .build())
+                                    .subscribe(taskView -> {
+                                        PerformTaskFragment newPerformTaskFragment = PerformTaskFragment
+                                                .newInstance(taskView, UUID.randomUUID());
 
-                                getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .add(R.id.rs2_task_content_frame, newPerformTaskFragment)
-                                        .commit();
-                            }, throwable ->
-                                    LOGGER.error("Failed to retrieve task", throwable)))
+                                        getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .add(R.id.rs2_task_content_frame, newPerformTaskFragment)
+                                                .commit();
+                                    }, throwable ->
+                                            LOGGER.error("Failed to retrieve task", throwable)))
             );
         }
     }
@@ -101,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Registers a lifecycle listener that hides the task selection buttons when any PerformTaskFragment starts,
      * and makes the button reappear when there a no PerformTaskFragments running again.
+     *
      * @param textViews The list of textView's to hide when the fragment's start and to reappear when the fragments end.
      */
     private void registerFragmentLifeCycleListener(final List<TextView> textViews) {

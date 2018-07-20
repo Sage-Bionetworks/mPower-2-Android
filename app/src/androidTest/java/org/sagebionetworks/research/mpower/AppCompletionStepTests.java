@@ -27,8 +27,8 @@ public class AppCompletionStepTests extends UITestHelper {
         this.navigateForwardNTimes(4);
         // Wait 31 seconds for the Active step to finish
         Thread.sleep(31000);
-        checkVisible(R.id.rs2_title, R.id.rs2_text, R.id.rs2_image_view, R.id.rs2_step_navigation_action_forward);
-        onView(withId(R.id.rs2_title)).check(matches(withText(TREMOR_COMPLETION_TITLE)));
+        checkVisible(R.id.beginLabel, R.id.rs2_text, R.id.rs2_image_view, R.id.rs2_step_navigation_action_forward);
+        onView(withId(R.id.beginLabel)).check(matches(withText(TREMOR_COMPLETION_TITLE)));
         onView(withId(R.id.rs2_text)).check(matches(withText(TREMOR_COMPLETION_TEXT)));
         onView(withId(R.id.rs2_step_navigation_action_forward)).check(matches(withText(COMPLETION_FORWARD_ACTION_TEXT)));
     }

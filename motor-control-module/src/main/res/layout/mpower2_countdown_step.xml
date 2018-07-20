@@ -37,7 +37,7 @@
     android:background="@color/royal600">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/rs2_image_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:alpha=".3"
@@ -50,6 +50,7 @@
 
     <org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar
         android:id="@id/rs2_step_navigation_action_bar"
+        style="@style/Widget.ResearchStack.NavigationActionBar.Active"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
@@ -58,18 +59,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageButton
-        android:id="@+id/imageButton"
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/rs2_step_navigation_cancel_button"
         android:layout_width="30dp"
         android:layout_height="0dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
-        android:background="@android:color/transparent"
-        android:scaleType="fitXY"
+        android:background="@drawable/rs2_cancel_icon"
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/rs2_cancel_icon" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/beginLabel"
@@ -80,13 +79,13 @@
         android:textColor="@color/appWhite"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/countdownLabel"
-        app:layout_constraintEnd_toStartOf="@+id/imageView2"
+        app:layout_constraintBottom_toTopOf="@+id/countLabel"
+        app:layout_constraintEnd_toStartOf="@+id/rs2_image_view"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageView2" />
+        app:layout_constraintStart_toEndOf="@+id/rs2_image_view" />
 
     <TextView
-        android:id="@+id/countdownLabel"
+        android:id="@+id/countLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/lato_light"
@@ -95,8 +94,8 @@
         android:textColor="@color/appWhite"
         android:textSize="100sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView2"
+        app:layout_constraintEnd_toStartOf="@+id/rs2_image_view"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toEndOf="@+id/rs2_image_view"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
