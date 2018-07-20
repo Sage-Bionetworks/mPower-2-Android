@@ -32,32 +32,26 @@
 
 package org.sagebionetworks.research.motor_control_module.inject;
 
-import dagger.Module;
-import dagger.Provides;
-import dagger.multibindings.IntoMap;
 import org.sagebionetworks.research.domain.inject.InputFieldsModule;
 import org.sagebionetworks.research.domain.inject.StepModule;
 import org.sagebionetworks.research.domain.inject.StepModule.StepClassKey;
-import org.sagebionetworks.research.motor_control_module.step.CompletionStep;
 import org.sagebionetworks.research.motor_control_module.step.InstructionStep;
 import org.sagebionetworks.research.motor_control_module.step.OverviewStep;
+
+import dagger.Module;
+import dagger.Provides;
+import dagger.multibindings.IntoMap;
 
 /**
  * Add app-specific steps.
  */
 @Module(includes = {InputFieldsModule.class, StepModule.class})
 public class AppStepModule {
-    @Provides
-    @IntoMap
-    @StepClassKey(CompletionStep.class)
-    static String provideCompletionStepClassInfo() {
-        return CompletionStep.TYPE_KEY;
-    }
 
     /**
-     * Returns the type key for InstructionStep.class.
+     * Returns the type key for InstructionStepView.class.
      *
-     * @return the type key for InstructionStep.class.
+     * @return the type key for InstructionStepView.class.
      */
     @Provides
     @IntoMap
