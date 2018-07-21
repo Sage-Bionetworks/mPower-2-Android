@@ -65,11 +65,11 @@ public class MpMainActivity extends AppCompatActivity {
             MpDataProvider provider = MpDataProvider.getInstance();
             Subscription subscription = provider.signInWithPhoneAndToken("US", testPhoneNumber, token)
                     .subscribe(dataResponse -> {
-                        if (dataResponse.getAuthenticated()) {
+                        if (dataResponse.isAuthenticated()) {
                             Log.d("TokenLoginSubscribe", "Authenticated Login Complete");
                             // We were able to log in. Let's go somewhere!
                             // Check if they are consented
-                            if (dataResponse.getConsented()) {
+                            if (dataResponse.isAuthenticated()) {
                                 startOverviewActivity();
                             } else {
                                 startConsentActivity();

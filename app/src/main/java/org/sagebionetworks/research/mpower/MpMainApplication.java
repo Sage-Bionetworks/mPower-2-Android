@@ -1,14 +1,30 @@
 package org.sagebionetworks.research.mpower;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.support.multidex.MultiDex;
+import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
+
 import org.sagebionetworks.bridge.android.BridgeApplication;
 import org.sagebionetworks.research.mpower.inject.DaggerMPowerApplicationComponent;
 
-public class MpMainApplication extends BridgeApplication {
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasActivityInjector;
+import dagger.android.support.HasSupportFragmentInjector;
+
+public class MpMainApplication extends BridgeApplication implements HasSupportFragmentInjector,
+        HasActivityInjector {
+    @Inject
+    DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
+
+    @Inject
+    DispatchingAndroidInjector<Fragment> dispatchingSupportFragmentInjector;
 
     @Override
     public void onCreate() {
@@ -20,10 +36,8 @@ public class MpMainApplication extends BridgeApplication {
     }
 
     @Override
-    protected void attachBaseContext(Context base) {
-        // This is needed for android versions < 5.0 or you can extend MultiDexApplication
-        super.attachBaseContext(base);
-        MultiDex.install(this);
+    public AndroidInjector<Activity> activityInjector() {
+        return dispatchingActivityInjector;
     }
 
     @Override
@@ -46,5 +60,17 @@ public class MpMainApplication extends BridgeApplication {
             metrics.scaledDensity = configuration.fontScale * metrics.density;
             context.getResources().updateConfiguration(configuration, metrics);
         }
+    }
+
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return dispatchingSupportFragmentInjector;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        // This is needed for android versions < 5.0 or you can extend MultiDexApplication
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

@@ -39,6 +39,7 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    @Override
     public void goForwardClicked(View v) {
         MpDataProvider provider = MpDataProvider.getInstance();
         String phoneNumber = phoneEntryField.getText().toString();

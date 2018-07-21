@@ -30,17 +30,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.mpower;
+package org.sagebionetworks.research.mpower.sageresearch.inject;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 
-import dagger.Subcomponent;
+import org.sagebionetworks.research.mpower.sageresearch.TappingTaskActivity;
+
+import dagger.Binds;
+import dagger.Module;
+import dagger.android.ActivityKey;
+import dagger.android.AndroidInjectionModule;
 import dagger.android.AndroidInjector;
+import dagger.multibindings.IntoMap;
 
-@Subcomponent
-public interface MainActivitySubcomponent extends AndroidInjector<MainActivity> {
-    @Subcomponent.Builder
-    abstract class Builder extends AndroidInjector.Builder<MainActivity> {
-        @Override
-        public abstract MainActivitySubcomponent build();
-    }
+//TODO: SR modules
+@Module(includes = {AndroidInjectionModule.class},
+        subcomponents = {TappingActivitySubcomponent.class})
+public abstract class MPowerSageResearchModule {
+    @Binds
+    public abstract Context provideApplicationContext(Application app);
+
+    @Binds
+    @IntoMap
+    @ActivityKey(TappingTaskActivity.class)
+    abstract AndroidInjector.Factory<? extends Activity>
+            bindActivityInjectorFactory(TappingActivitySubcomponent.Builder builder);
 }
