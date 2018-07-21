@@ -32,7 +32,8 @@ public class MpMainApplication extends BridgeApplication implements HasSupportFr
         DaggerMPowerApplicationComponent
                 .builder()
                 .application(this)
-                .build();
+                .build()
+                .inject(this);
     }
 
     @Override

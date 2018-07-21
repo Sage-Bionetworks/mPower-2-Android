@@ -35,6 +35,11 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     implementation project(':android-sdk')
+    implementation project(':backbone'), {
+        // TODO: remove when ResearchStack joda-time exclusion PR is merged
+        exclude group: 'joda-time', module: 'joda-time'
+    }
+    implementation project(':data')
     implementation project(':sageresearch-mpower')
     implementation project(':researchstack-mpower')
 

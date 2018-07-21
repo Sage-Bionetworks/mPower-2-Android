@@ -36,6 +36,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
+import org.sagebionetworks.research.data.inject.DataModule;
+import org.sagebionetworks.research.domain.inject.StepModule;
+import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule;
 import org.sagebionetworks.research.mpower.sageresearch.TappingTaskActivity;
 
 import dagger.Binds;
@@ -46,7 +49,7 @@ import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
 
 //TODO: SR modules
-@Module(includes = {AndroidInjectionModule.class},
+@Module(includes = {AndroidInjectionModule.class, ShowStepModule.class, DataModule.class, StepModule.class},
         subcomponents = {TappingActivitySubcomponent.class})
 public abstract class MPowerSageResearchModule {
     @Binds

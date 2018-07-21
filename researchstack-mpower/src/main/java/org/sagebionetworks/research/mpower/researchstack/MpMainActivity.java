@@ -5,20 +5,30 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
+import org.researchstack.backbone.ResearchStack;
 import org.researchstack.backbone.factory.IntentFactory;
 import org.researchstack.backbone.task.Task;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpResourceManager;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 import rx.Subscription;
 
 public class MpMainActivity extends AppCompatActivity {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MpMainActivity.class);
+
     public static final int SIGN_UP_TASK_CODE = 1600;
 
     protected MpTaskFactory taskFactory = new MpTaskFactory();
+
+    @Inject
+    ResearchStack researchStack;
 
     String testPhoneNumber = "2063066209";
 
@@ -27,10 +37,12 @@ public class MpMainActivity extends AppCompatActivity {
     @SuppressLint("RxLeakedSubscription")
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
 
-        handleIntent(getIntent());
+        setContentView(R.layout.activity_mp_main);
 
+        handleIntent(getIntent());
     }
 
     @Override
@@ -66,7 +78,7 @@ public class MpMainActivity extends AppCompatActivity {
             Subscription subscription = provider.signInWithPhoneAndToken("US", testPhoneNumber, token)
                     .subscribe(dataResponse -> {
                         if (dataResponse.isAuthenticated()) {
-                            Log.d("TokenLoginSubscribe", "Authenticated Login Complete");
+                            LOGGER.debug("TokenLoginSubscribe: Authenticated Login Complete");
                             // We were able to log in. Let's go somewhere!
                             // Check if they are consented
                             if (dataResponse.isAuthenticated()) {
@@ -75,10 +87,10 @@ public class MpMainActivity extends AppCompatActivity {
                                 startConsentActivity();
                             }
                         } else {
-                            Log.e("TokenLoginSubscribe", "Authenticated Login Failure");
+                            LOGGER.error("TokenLoginSubscribe: Authenticated Login Failure");
                             // Unable to log in right now. Let's boot to consent process.
                         }
-                    }, throwable -> Log.e("Sign Up", "Throwable " + throwable.getMessage()));
+                    }, throwable -> LOGGER.error("Sign up failed", throwable));
         } else {
             // Normal app opening, let's go to the right spot
             // TODO: Check if already signed in
