@@ -3,8 +3,6 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 27
 
-
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
@@ -28,10 +26,11 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     api project(':sageresearch-app-sdk')
+    implementation project(':motor-control-module')
     implementation project(':data')
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'org.slf4j:slf4j-api:1.7.21'
     implementation 'com.github.tony19:logback-android-core:1.1.1-6'

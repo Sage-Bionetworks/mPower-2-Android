@@ -36,7 +36,6 @@ dependencies {
 
     implementation project(':android-sdk')
     implementation project(':sageresearch-mpower')
-    implementation project(':motor-control-module')
     implementation project(':researchstack-mpower')
 
     implementation 'com.jakewharton:butterknife:8.8.1'
