@@ -24,19 +24,28 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
-branches:
-  only:
-  - master
-  - "/^stable-.*$/"
 before_install:
-- echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
-- git config --global user.name "Travis CI"
-- git config --global user.email "tcisagebio@sagebase.org"
-- yes | sdkmanager "platforms;android-27"
+  - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
+  - git config --global user.name "Travis CI"
+  - git config --global user.email "tcisagebio@sagebase.org"
+  - yes | sdkmanager "platforms;android-27"
 install:
-- gem install bundler
-- bundle install
-script:
-- export PATH=$PATH:$ANDROID_HOME/build-tools/27.0.3
-- ./travis/build.sh
+  - gem install bundler
+  - bundle install
+before_script:
+  - export PATH=$PATH:$ANDROID_HOME/build-tools/27.0.3
 
+stages:
+  - test
+  - check
+  - name: deploy
+    if: branch =~ /^stable-.*$/
+
+jobs:
+  include:
+    - stage: test
+      script: bundle exec fastlane test
+    - stage: check
+      script: bundle exec fastlane assemble
+    - stage: deploy
+      script: ./travis/deploy.sh
