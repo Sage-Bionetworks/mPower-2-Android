@@ -1,14 +1,13 @@
 language: android
+jdk: oraclejdk8
+dist: trusty
+sudo: true
 android:
   components:
     - platform-tools
     - tools
     - build-tools-27.0.3
     - android-27
-
-    # RS components
-    - extra-android-m2repository
-    - extra-google-m2repository
 
 before_install:
   - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
