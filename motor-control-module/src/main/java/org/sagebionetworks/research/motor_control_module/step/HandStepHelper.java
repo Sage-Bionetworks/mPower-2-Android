@@ -72,6 +72,22 @@ public abstract class HandStepHelper {
     }
 
     /**
+     * Returns the order the hands should go in for the given task result.
+     * @param result The result to get the hand order from.
+     * @return the order the hands should go in for the given task result.
+     */
+    @Nullable
+    public static List<String> getHandOrder(@NonNull TaskResult result) {
+        AnswerResult<List<String>> handOrderResult =
+                result.getAnswerResult(ShowHandSelectionStepFragment.HAND_ORDER_KEY);
+        if (handOrderResult != null) {
+            return handOrderResult.getAnswer();
+        }
+
+        return null;
+    }
+
+    /**
      * Returns the next hand that should go from the given task result, or null if no next hand
      * should go.
      * @param task The task to figure out which hand should go next in.
@@ -83,14 +99,12 @@ public abstract class HandStepHelper {
         // find that hand sections.
         SectionStep leftSection = HandStepHelper.findHandSectionStep(task.getSteps(), Hand.LEFT);
         SectionStep rightSection = HandStepHelper.findHandSectionStep(task.getSteps(), Hand.RIGHT);
-        AnswerResult<List<String>> handOrderResult =
-                result.getAnswerResult(ShowHandSelectionStepFragment.HAND_ORDER_KEY);
-        if (leftSection == null || rightSection == null || handOrderResult == null) {
+        List<String> handOrder = HandStepHelper.getHandOrder(result);
+        if (leftSection == null || rightSection == null || handOrder == null) {
             // If we don't have sections for both right and left there is no reason to continue.
             return null;
         }
 
-        List<String> handOrder = handOrderResult.getAnswer();
         Hand firstHand = Hand.fromString(handOrder.get(0));
         SectionStep firstSection = firstHand == Hand.LEFT ? leftSection : rightSection;
         if (!HandStepHelper.hasGone(firstHand, firstSection, result)) {

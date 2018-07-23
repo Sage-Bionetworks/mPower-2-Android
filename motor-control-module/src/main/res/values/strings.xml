@@ -32,4 +32,6 @@
 
 <resources>
     <string name="app_name">Motor Control Module</string>
+    <string name="tap_count_label">Tap Count</string>
+    <string name="tapping_continue_with_text">Continue with %@ hand</string>
 </resources>

@@ -43,8 +43,9 @@ import java.lang.annotation.RetentionPolicy;
 @StringDef({StepType.COMPLETION, StepType.OVERVIEW, StepType.INSTRUCTION, StepType.UI, StepType.FORM,
     StepType.ACTIVE, StepType.BASE, StepType.COUNTDOWN, StepType.IMAGE_PICKER, StepType.IMAGE_PICKER,
     StepType.LOGGING, StepType.REVIEW, StepType.SECTION, StepType.SELECTION, StepType.TASK_INFO,
-    StepType.TRANSFORM, AppStepType.HAND_SELECTION, AppStepType.MPOWER_ACTIVE})
+    StepType.TRANSFORM, AppStepType.HAND_SELECTION, AppStepType.MPOWER_ACTIVE, AppStepType.TAPPING})
 public @interface AppStepType {
     String HAND_SELECTION = "handSelection";
     String MPOWER_ACTIVE = "mpowerActive";
+    String TAPPING = "tapping";
 }
