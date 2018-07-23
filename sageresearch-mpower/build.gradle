@@ -3,8 +3,6 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 27
 
-
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
@@ -21,13 +19,25 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {
+    api project(':sageresearch-app-sdk')
+    implementation project(':motor-control-module')
+    implementation project(':data')
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api project(':sageresearch-app-sdk')
+    implementation 'org.slf4j:slf4j-api:1.7.21'
+    implementation 'com.github.tony19:logback-android-core:1.1.1-6'
+    implementation 'com.github.tony19:logback-android-classic:1.1.1-6', {
+        exclude group: 'com.google.android', module: 'android'
+    }
+    testImplementation 'org.slf4j:slf4j-simple:1.7.21'
 
     implementation 'com.android.support:appcompat-v7:27.1.1'
     testImplementation 'junit:junit:4.12'

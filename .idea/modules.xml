@@ -12,6 +12,7 @@
       <module fileurl="file://$PROJECT_DIR$/motor-control-module/motor-control-module.iml" filepath="$PROJECT_DIR$/motor-control-module/motor-control-module.iml" />
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/mpower/mpower.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/mpower/mpower.iml" />
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/presentation/presentation.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/presentation/presentation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/researchstack-mpower/researchstack-mpower.iml" filepath="$PROJECT_DIR$/researchstack-mpower/researchstack-mpower.iml" />
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/researchstack-sdk/researchstack-sdk.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/researchstack-sdk/researchstack-sdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/sageresearch-app-sdk/sageresearch-app-sdk.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/sageresearch-app-sdk/sageresearch-app-sdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/sageresearch-mpower/sageresearch-mpower.iml" filepath="$PROJECT_DIR$/sageresearch-mpower/sageresearch-mpower.iml" />

@@ -1,0 +1,36 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.sagebionetworks.research.mpower.researchstack">
+
+    <application android:allowBackup="true">
+        <activity android:name=".MpMainActivity">
+            <!-- To open app using launcher -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- To open app using link -->
+            <tools:validation testUrl="https://ws.sagebridge.org/sage-mpower-2/phoneSignIn/TOKEN" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="ws.sagebridge.org"
+                    android:pathPrefix="/sage-mpower-2/phoneSignIn"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:parentActivityName=".MpMainActivity"
+            android:name=".MpSignupActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
+    </application>
+</manifest>
