@@ -46,14 +46,14 @@ import org.sagebionetworks.research.presentation.show_step.show_step_view_model_
 public class AppShowStepViewModelModule {
     @Provides
     @IntoMap
-    @StepViewClassKey(InstructionStepView.class)
+    @StepViewClassKey(InstructionStepView.TYPE)
     static AbstractShowStepViewModelFactory<?, ? extends StepView> provideInstructionStepVMF() {
         return new ShowUIStepViewModelFactory<InstructionStepView>();
     }
 
     @Provides
     @IntoMap
-    @StepViewClassKey(OverviewStepView.class)
+    @StepViewClassKey(OverviewStepView.TYPE)
     static AbstractShowStepViewModelFactory<?, ? extends StepView> provideOverviewStepVMF() {
         return new ShowUIStepViewModelFactory<OverviewStepView>();
     }

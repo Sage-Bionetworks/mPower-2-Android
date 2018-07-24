@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.mpower;
+package org.sagebionetworks.research.mpower.sageresearch;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,8 +45,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainActivity.class);
+public class TappingTaskActivity extends AppCompatActivity {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TappingTaskActivity.class);
 
     CompositeDisposable compositeDisposable = new CompositeDisposable();
 

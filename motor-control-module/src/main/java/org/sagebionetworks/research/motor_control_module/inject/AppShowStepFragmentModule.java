@@ -32,27 +32,28 @@
 
 package org.sagebionetworks.research.motor_control_module.inject;
 
-import dagger.Module;
-import dagger.Provides;
-import dagger.multibindings.IntoMap;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowInstructionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment;
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
 
+import dagger.Module;
+import dagger.Provides;
+import dagger.multibindings.IntoMap;
+
 @Module(includes = {ShowStepFragmentModule.class})
 public class AppShowStepFragmentModule {
     @Provides
     @IntoMap
-    @ShowStepFragmentModule.StepViewKey(InstructionStepView.class)
+    @ShowStepFragmentModule.StepViewKey(InstructionStepView.TYPE)
     static ShowStepFragmentModule.ShowStepFragmentFactory provideShowInstructionStepFragmentFactory() {
         return ShowInstructionStepFragment::newInstance;
     }
 
     @Provides
     @IntoMap
-    @ShowStepFragmentModule.StepViewKey(OverviewStepView.class)
+    @ShowStepFragmentModule.StepViewKey(OverviewStepView.TYPE)
     static ShowStepFragmentModule.ShowStepFragmentFactory provideShowOverviewStepFragmentFactory() {
         return ShowOverviewStepFragment::newInstance;
     }
