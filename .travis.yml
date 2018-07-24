@@ -1,20 +1,40 @@
 language: android
-
-# Required to run retrolambda
-jdk:
-    - oraclejdk8
-
+jdk: oraclejdk8
+dist: trusty
+sudo: true
 android:
   components:
-    - tools
     - platform-tools
     - tools
     - build-tools-27.0.3
     - android-27
+    - android-26
 
-    # RS components
-    - extra-android-m2repository
-    - extra-google-m2repository
+
+before_install:
+  - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
+  - git config --global user.name "Travis CI"
+  - git config --global user.email "tcisagebio@sagebase.org"
+
+install:
+  - gem install bundler
+  - bundle install
+
+stages:
+  - test
+  - check
+  - name: deploy
+    if: branch =~ /^stable-.*$/
+
+jobs:
+  include:
+    - stage: test
+      script: bundle exec fastlane test
+    - stage: check
+      script: bundle exec fastlane assemble
+    - stage: deploy
+      script: ./travis/deploy.sh
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -24,19 +44,3 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
-branches:
-  only:
-  - master
-  - "/^stable-.*$/"
-before_install:
-- echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
-- git config --global user.name "Travis CI"
-- git config --global user.email "tcisagebio@sagebase.org"
-- yes | sdkmanager "platforms;android-27"
-install:
-- gem install bundler
-- bundle install
-script:
-- export PATH=$PATH:$ANDROID_HOME/build-tools/27.0.3
-- ./travis/build.sh
-
