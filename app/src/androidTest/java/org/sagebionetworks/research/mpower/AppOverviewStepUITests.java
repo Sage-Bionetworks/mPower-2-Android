@@ -29,7 +29,7 @@ public class AppOverviewStepUITests extends UITestHelper {
         this.test_tremorOverview_Common();
         // We care that the info button is GONE specifically because someone could still press it otherwise.
         checkGone(R.id.rs2_step_navigation_action_info);
-        checkVisible(R.id.rs2_text, R.id.rs2_image_view, R.id.overallIconDescriptionLabel, R.id.centerIconImageView,
+        checkVisible(R.id.rs2_title, R.id.rs2_image_view, R.id.overallIconDescriptionLabel, R.id.centerIconImageView,
                 R.id.centerIconLabel);
         onView(withId(R.id.overallIconDescriptionLabel)).check(matches(withText(OVERVIEW_ICON_DESCRIPTION_LABEL_TEXT)));
         onView(withId(R.id.centerIconLabel)).check(matches(withText(TREMOR_CENTER_ICON_LABEL)));
@@ -40,7 +40,7 @@ public class AppOverviewStepUITests extends UITestHelper {
         this.setupActivity(TREMOR_SHARED_PREFS_KEY,false);
         this.test_tremorOverview_Common();
         checkVisible(R.id.rs2_step_navigation_action_info);
-        checkInvisible(R.id.rs2_text, R.id.overallIconDescriptionLabel, R.id.centerIconImageView, R.id.centerIconLabel);
+        checkInvisible(R.id.rs2_title, R.id.overallIconDescriptionLabel, R.id.centerIconImageView, R.id.centerIconLabel);
     }
 
     private void test_tremorOverview_Common() {

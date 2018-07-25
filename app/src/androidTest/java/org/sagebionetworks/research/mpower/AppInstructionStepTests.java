@@ -78,10 +78,10 @@ public class AppInstructionStepTests extends UITestHelper {
     }
 
     private void testCommon(String title, String text, String forwardAction, int progress, int maxProgress) {
-        checkVisible(R.id.beginLabel, R.id.rs2_text, R.id.rs2_step_navigation_action_forward, R.id.rs2_progress_bar,
+        checkVisible(R.id.beginLabel, R.id.rs2_title, R.id.rs2_step_navigation_action_forward, R.id.rs2_progress_bar,
                 R.id.rs2_progress_label, R.id.rs2_image_view, R.id.rs2_step_navigation_action_cancel);
         onView(withId(R.id.beginLabel)).check(matches(withText(title)));
-        onView(withId(R.id.rs2_text)).check(matches(withText(text)));
+        onView(withId(R.id.rs2_title)).check(matches(withText(text)));
         onView(withId(R.id.rs2_step_navigation_action_forward)).check(matches(withText(forwardAction)));
         String progressString = "STEP " + progress + " OF " + maxProgress;
         onView(withId(R.id.rs2_progress_label)).check(matches(withText(progressString)));

@@ -41,6 +41,7 @@ import org.sagebionetworks.research.motor_control_module.step_view.HandSelection
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.MPowerActiveUIStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
+import org.sagebionetworks.research.motor_control_module.step_view.TappingStepView;
 import org.sagebionetworks.research.presentation.inject.StepViewModule;
 import org.sagebionetworks.research.presentation.inject.StepViewModule.InternalStepViewFactory;
 import org.sagebionetworks.research.presentation.inject.StepViewModule.StepTypeKey;
@@ -76,5 +77,12 @@ public class AppStepViewModule {
     @StepTypeKey(AppStepType.MPOWER_ACTIVE)
     static InternalStepViewFactory provideMPowerActiveUIStepViewFactory() {
         return MPowerActiveUIStepView::fromMPowerActiveUIStep;
+    }
+
+    @Provides
+    @IntoMap
+    @StepTypeKey(AppStepType.TAPPING)
+    static InternalStepViewFactory provideTappingStepViewFactory() {
+        return TappingStepView::fromTappingStep;
     }
 }

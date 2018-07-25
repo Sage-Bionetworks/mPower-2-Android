@@ -42,9 +42,11 @@ import org.sagebionetworks.research.motor_control_module.show_step_fragment.Show
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowInstructionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.ShowTappingStepFragment;
 
 @Module(subcomponents = {ShowInstructionStepFragmentSubcomponent.class, ShowHandSelectionStepFragmentSubcomponent.class,
-                ShowOverviewStepFragmentSubcomponent.class, ShowMPowerActiveUIStepFragmentSubcomponent.class},
+                ShowOverviewStepFragmentSubcomponent.class, ShowMPowerActiveUIStepFragmentSubcomponent.class,
+        ShowTappingStepFragmentSubcomponent.class},
         includes = {AppStepModule.class, AppStepViewModule.class, AppShowStepViewModelModule.class,
                 AppShowStepFragmentModule.class})
 public abstract class AppShowStepModule {
@@ -71,4 +73,10 @@ public abstract class AppShowStepModule {
     @FragmentKey(ShowMPowerActiveUIStepFragment.class)
     abstract AndroidInjector.Factory<? extends android.support.v4.app.Fragment>
     bindShowMPowerActiveUIStepFragmentInjectoryactory(ShowMPowerActiveUIStepFragmentSubcomponent.Builder builder);
+
+    @Binds
+    @IntoMap
+    @FragmentKey(ShowTappingStepFragment.class)
+    abstract AndroidInjector.Factory<? extends android.support.v4.app.Fragment>
+    bindShowTappingStepFragmentInjectoryactory(ShowTappingStepFragmentSubcomponent.Builder builder);
 }

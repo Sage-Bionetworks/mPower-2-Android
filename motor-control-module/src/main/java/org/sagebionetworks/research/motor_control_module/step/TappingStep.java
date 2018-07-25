@@ -17,12 +17,15 @@ import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
 import org.sagebionetworks.research.domain.task.Task;
+import org.sagebionetworks.research.domain.task.navigation.strategy.StepNavigationStrategy;
 import org.threeten.bp.Instant;
 
 import java.util.Map;
 import java.util.Set;
 
-public abstract class TappingStep implements ActiveUIStep {
+@AutoValue
+public abstract class TappingStep implements ActiveUIStep, StepNavigationStrategy.SkipStepStrategy,
+    StepNavigationStrategy.NextStepStrategy {
     public static final String TYPE_KEY = AppStepType.TAPPING;
 
     @AutoValue.Builder
@@ -102,5 +105,16 @@ public abstract class TappingStep implements ActiveUIStep {
     @NonNull
     public TappingStep copyWithIdentifier(@NonNull String identifier) {
         return this.toBuilder().setIdentifier(identifier).build();
+    }
+
+    @Override
+    public boolean shouldSkip(@NonNull Task task, @NonNull TaskResult taskResult) {
+        return HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), task, taskResult);
+    }
+
+    @Override
+    @Nullable
+    public String getNextStepIdentifier(@NonNull Task task, @NonNull TaskResult taskResult) {
+        return HandStepNavigationRuleHelper.getNextStepIdentifier(this.getIdentifier(), task, taskResult);
     }
 }

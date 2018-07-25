@@ -32,28 +32,43 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <org.sagebionetworks.research.mobile_ui.widget.TapButton
-        android:id="@+id/leftTapButton"
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/leftTappingButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/mpower2_tap_button"
+        android:fontFamily="@font/lato"
+        android:gravity="center"
+        android:text="@string/tap_button_text"
+        android:textColor="@color/appTextDark"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintEnd_toStartOf="@+id/rightTapButton"
+        app:layout_constraintEnd_toStartOf="@+id/rightTappingButton"
         app:layout_constraintHeight_max="120dp"
-        app:layout_constraintHeight_min="115dp"
+        app:layout_constraintHeight_min="100dp"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <org.sagebionetworks.research.mobile_ui.widget.TapButton
-        android:id="@+id/rightTapButton"
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/rightTappingButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/mpower2_tap_button"
+        android:fontFamily="@font/lato"
+        android:gravity="center"
+        android:text="@string/tap_button_text"
+        android:textColor="@color/appTextDark"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -62,6 +77,6 @@
         app:layout_constraintHeight_max="120dp"
         app:layout_constraintHeight_min="100dp"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/leftTapButton"
+        app:layout_constraintStart_toEndOf="@+id/leftTappingButton"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

@@ -15,7 +15,7 @@
   "steps": [
     {
       "identifier": "tapping",
-      "type": "mpowerActive",
+      "type": "tapping",
       "duration": 30,
       "image": {
         "type": "fetchable",
@@ -29,6 +29,7 @@
         "viewIdentifier": "Tapping",
         "storyboardIdentifier": "ActiveTaskSteps"
       },
+      "title":"Tap the buttons with your %@ hand",
       "commands": [
         "shouldDisableIdleTimer",
         "playSound"

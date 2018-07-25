@@ -1,9 +1,8 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jakewharton.butterknife'
 
 android {
     compileSdkVersion 27
-
-
 
     defaultConfig {
         minSdkVersion 16

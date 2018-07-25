@@ -24,7 +24,7 @@ public abstract class TappingSample {
 
         public abstract Builder setUptime(@NonNull Instant uptime);
 
-        public abstract Builder setTimestampe(@Nullable Instant timestamp);
+        public abstract Builder setTimestamp(@Nullable Instant timestamp);
 
         public abstract Builder setStepPath(@NonNull String stepPath);
 

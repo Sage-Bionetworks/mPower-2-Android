@@ -124,14 +124,14 @@ public abstract class HandStepHelper {
     }
 
     public static DisplayString getHandString(@Nullable DisplayString fromJson, @NonNull String stepIdentifier) {
-        Hand whichHand = HandStepHelper.whichHand(stepIdentifier);
+        Hand hand = HandStepHelper.whichHand(stepIdentifier);
         if (fromJson == null) {
             return null;
         }
 
         String originalString = fromJson.getDisplayString();
-        if (whichHand != null && originalString != null) {
-            originalString = originalString.replaceAll(JSON_PLACEHOLDER, whichHand.toString().toUpperCase());
+        if (hand != null && originalString != null) {
+            originalString = originalString.replaceAll(JSON_PLACEHOLDER, hand.toString().toUpperCase());
         }
 
         return DisplayString.create(null, originalString);

@@ -15,6 +15,8 @@ import org.sagebionetworks.research.presentation.mapper.DrawableMapper;
 import org.sagebionetworks.research.presentation.model.ColorThemeView;
 import org.sagebionetworks.research.presentation.model.ImageThemeView;
 import org.sagebionetworks.research.presentation.model.action.ActionView;
+import org.sagebionetworks.research.presentation.model.implementations.ActiveUIStepViewBase;
+import org.sagebionetworks.research.presentation.model.interfaces.ActiveUIStepView;
 import org.threeten.bp.Duration;
 
 public class TappingStepView extends MPowerActiveUIStepView {
@@ -34,7 +36,7 @@ public class TappingStepView extends MPowerActiveUIStepView {
             throw new IllegalArgumentException("Provided Step: " + step + " is not a TappingStep.");
         }
 
-        MPowerActiveUIStepView stepView = MPowerActiveUIStepView.fromMPowerActiveUIStep(step, mapper);
+        ActiveUIStepView stepView = ActiveUIStepViewBase.fromActiveUIStep(step, mapper);
         return new TappingStepView(stepView.getIdentifier(), stepView.getNavDirection(), stepView.getActions(),
                 stepView.getTitle(), stepView.getText(), stepView.getDetail(), stepView.getFootnote(),
                 stepView.getColorTheme(), stepView.getImageTheme(), stepView.getDuration(), stepView.isBackgroundAudioRequired());

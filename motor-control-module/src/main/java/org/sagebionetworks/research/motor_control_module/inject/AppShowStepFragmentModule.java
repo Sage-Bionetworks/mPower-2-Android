@@ -42,10 +42,12 @@ import org.sagebionetworks.research.motor_control_module.show_step_fragment.Show
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowInstructionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.ShowTappingStepFragment;
 import org.sagebionetworks.research.motor_control_module.step_view.HandSelectionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.MPowerActiveUIStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
+import org.sagebionetworks.research.motor_control_module.step_view.TappingStepView;
 
 @Module(includes = {ShowStepFragmentModule.class})
 public class AppShowStepFragmentModule {
@@ -73,7 +75,14 @@ public class AppShowStepFragmentModule {
     @Provides
     @IntoMap
     @StepViewKey(MPowerActiveUIStepView.TYPE)
-    static ShowStepFragmentFactory provideActiveUIStepFragmentFactory() {
+    static ShowStepFragmentFactory provideMPowerActiveUIStepFragmentFactory() {
         return ShowMPowerActiveUIStepFragment::newInstance;
+    }
+
+    @Provides
+    @IntoMap
+    @StepViewKey(TappingStepView.TYPE)
+    static ShowStepFragmentFactory provideTappingStepFragmentFactory() {
+        return ShowTappingStepFragment::newInstance;
     }
 }
