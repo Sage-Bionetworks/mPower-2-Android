@@ -21,6 +21,8 @@ android {
                 arguments = ['autovaluegson.mutableAdaptersWithDefaultSetters': 'true']
             }
         }
+
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
     buildTypes {

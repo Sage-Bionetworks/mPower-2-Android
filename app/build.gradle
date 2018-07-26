@@ -6,20 +6,29 @@ apply from: '../config/quality/quality.gradle'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    buildToolsVersion "28.0.1"
     defaultConfig {
         applicationId "org.sagebionetworks.research.mpower"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 5
         versionName "0.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+
+        resConfigs "en" // english only
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
         }
     }
     compileOptions {
@@ -34,6 +43,7 @@ android {
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
+    // Local projects
     implementation project(':android-sdk')
     implementation project(':backbone'), {
         // TODO: remove when ResearchStack joda-time exclusion PR is merged
@@ -43,9 +53,11 @@ dependencies {
     implementation project(':sageresearch-mpower')
     implementation project(':researchstack-mpower')
 
+    // ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
     kapt 'com.jakewharton:butterknife-compiler:8.8.1'
 
+    // Logging
     implementation 'org.slf4j:slf4j-api:1.7.21'
     implementation 'com.github.tony19:logback-android-core:1.1.1-6'
     implementation 'com.github.tony19:logback-android-classic:1.1.1-6', {
@@ -53,6 +65,7 @@ dependencies {
     }
     testImplementation 'org.slf4j:slf4j-simple:1.7.21'
 
+    // Gson
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.ryanharter.auto.value:auto-value-parcel-adapter:0.2.6'
     implementation 'com.ryanharter.auto.value:auto-value-gson-annotations:0.7.0'
@@ -61,10 +74,7 @@ dependencies {
     kapt 'com.ryanharter.auto.value:auto-value-gson:0.7.0'
     kapt 'com.google.auto.value:auto-value-annotations:1.6' // include again for auto-value-gson
 
-    implementation 'android.arch.lifecycle:extensions:1.1.1'
-
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-
+    // Dagger
     implementation 'com.google.dagger:dagger-android:2.16'
     implementation 'com.google.dagger:dagger-android-support:2.16'
     kapt 'com.google.dagger:dagger-android-processor:2.16'
@@ -73,7 +83,13 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+
+    implementation "com.android.support:design:$support_library_version"
+    implementation "com.android.support:support-vector-drawable:$support_library_version"
+    implementation "com.android.support:support-v4:$support_library_version"
+    implementation "com.android.support:appcompat-v7:$support_library_version"
+
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
     implementation 'nl.littlerobots.rxlint:rxlint:1.6.1'
