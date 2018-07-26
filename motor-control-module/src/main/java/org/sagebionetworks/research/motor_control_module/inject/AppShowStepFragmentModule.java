@@ -38,7 +38,9 @@ import dagger.multibindings.IntoMap;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.ShowStepFragmentFactory;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.StepViewKey;
+import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowMPowerActiveUIStepFragment;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowTappingCompletionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowInstructionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment;
@@ -47,6 +49,7 @@ import org.sagebionetworks.research.motor_control_module.step_view.HandSelection
 import org.sagebionetworks.research.motor_control_module.step_view.InstructionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.MPowerActiveUIStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
+import org.sagebionetworks.research.motor_control_module.step_view.TappingCompletionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.TappingStepView;
 
 @Module(includes = {ShowStepFragmentModule.class})
@@ -84,5 +87,12 @@ public class AppShowStepFragmentModule {
     @StepViewKey(TappingStepView.TYPE)
     static ShowStepFragmentFactory provideTappingStepFragmentFactory() {
         return ShowTappingStepFragment::newInstance;
+    }
+
+    @Provides
+    @IntoMap
+    @StepViewKey(TappingCompletionStepView.TYPE)
+    static ShowStepFragmentFactory provideTappingCompletionStepFragmentFactory() {
+        return ShowTappingCompletionStepFragment::newInstance;
     }
 }

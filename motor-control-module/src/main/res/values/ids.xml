@@ -3,4 +3,11 @@
     <id name="leftTappingButton"/>
     <id name="rightTappingButton"/>
     <id name="tappingButtonView"/>
+
+    <id name="tapping_completion_count"/>
+    <id name="tapping_completion_description"/>
+    <id name="tapping_completion_time_label"/>
+
+    <id name="tapping_completion_left_result"/>
+    <id name="tapping_completion_right_result"/>
 </resources>

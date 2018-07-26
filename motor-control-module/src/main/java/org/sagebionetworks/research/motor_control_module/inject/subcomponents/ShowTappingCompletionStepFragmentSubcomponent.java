@@ -30,23 +30,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.motor_control_module.step;
+package org.sagebionetworks.research.motor_control_module.inject.subcomponents;
 
-import android.support.annotation.StringDef;
-import org.sagebionetworks.research.domain.step.StepType;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowTappingCompletionStepFragment;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.ShowTappingStepFragment;
+import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
 
-// Adds the app specific steps to the StepType annotation
-@Retention(RetentionPolicy.RUNTIME)
-@StringDef({StepType.COMPLETION, StepType.OVERVIEW, StepType.INSTRUCTION, StepType.UI, StepType.FORM,
-    StepType.ACTIVE, StepType.BASE, StepType.COUNTDOWN, StepType.IMAGE_PICKER, StepType.IMAGE_PICKER,
-    StepType.LOGGING, StepType.REVIEW, StepType.SECTION, StepType.SELECTION, StepType.TASK_INFO,
-    StepType.TRANSFORM, AppStepType.HAND_SELECTION, AppStepType.MPOWER_ACTIVE, AppStepType.TAPPING})
-public @interface AppStepType {
-    String HAND_SELECTION = "handSelection";
-    String MPOWER_ACTIVE = "mpowerActive";
-    String TAPPING = "tapping";
-    String TAPPING_COMPLETION = "tappingCompletion";
+@ShowTappingCompletionStepFragmentScope
+@Subcomponent(modules = ShowStepViewModelModule.class)
+public abstract class ShowTappingCompletionStepFragmentSubcomponent
+        implements AndroidInjector<ShowTappingCompletionStepFragment> {
+    @Subcomponent.Builder
+    public abstract static class Builder extends AndroidInjector.Builder<ShowTappingCompletionStepFragment> {
+        public abstract ShowTappingCompletionStepFragmentSubcomponent build();
+    }
 }

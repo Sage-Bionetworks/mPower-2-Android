@@ -197,7 +197,7 @@
     },
     {
       "identifier": "completion",
-      "type": "completion",
+      "type": "tappingCompletion",
       "title": "Great job!",
       "text": "You just completed your Finger Tapping Activity.",
       "image": {

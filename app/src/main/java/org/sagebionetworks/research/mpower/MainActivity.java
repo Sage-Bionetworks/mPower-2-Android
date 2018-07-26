@@ -37,7 +37,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import butterknife.ButterKnife;
@@ -45,7 +44,6 @@ import butterknife.Unbinder;
 import dagger.android.AndroidInjection;
 import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
 import org.sagebionetworks.research.domain.repository.TaskRepository;
 import org.sagebionetworks.research.domain.task.TaskInfo;
@@ -55,8 +53,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
-import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainActivity.class);

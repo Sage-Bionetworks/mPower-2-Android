@@ -32,12 +32,11 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <org.sagebionetworks.research.mobile_ui.widget.ActionButton
-        android:id="@+id/leftTappingButton"
+        android:id="@id/leftTappingButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/mpower2_tap_button"
@@ -51,7 +50,7 @@
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintEnd_toStartOf="@+id/rightTappingButton"
+        app:layout_constraintEnd_toStartOf="@id/rightTappingButton"
         app:layout_constraintHeight_max="120dp"
         app:layout_constraintHeight_min="100dp"
         app:layout_constraintHorizontal_bias="0.5"
@@ -59,7 +58,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <org.sagebionetworks.research.mobile_ui.widget.ActionButton
-        android:id="@+id/rightTappingButton"
+        android:id="@id/rightTappingButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/mpower2_tap_button"
@@ -77,6 +76,6 @@
         app:layout_constraintHeight_max="120dp"
         app:layout_constraintHeight_min="100dp"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/leftTappingButton"
+        app:layout_constraintStart_toEndOf="@id/leftTappingButton"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

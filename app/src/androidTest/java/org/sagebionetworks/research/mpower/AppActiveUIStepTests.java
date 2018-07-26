@@ -13,6 +13,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
+@SuppressWarnings("PMD")
 public class AppActiveUIStepTests extends UITestHelper {
     public static final String TREMOR_ACTIVE_TITLE = "Hold the phone still in your %@ hand.";
     public static final String FORWARD_ACTION_TEXT = "Restart test";

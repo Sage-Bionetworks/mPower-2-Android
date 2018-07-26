@@ -30,31 +30,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.motor_control_module.step;
+package org.sagebionetworks.research.motor_control_module.inject.subcomponents;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import org.sagebionetworks.research.domain.step.StepType;
-import org.sagebionetworks.research.domain.step.implementations.UIStepBase;
-import org.sagebionetworks.research.domain.step.ui.action.Action;
-import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
-import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-import java.util.Map;
-import java.util.Set;
+import javax.inject.Scope;
 
-public class CompletionStep extends UIStepBase {
-    public static final String TYPE_KEY = StepType.COMPLETION;
-
-    public CompletionStep(@NonNull String identifier, @Nullable Map<String, Action> actions,
-                          @Nullable Set<String> hiddenActions, @Nullable String title, @Nullable String text,
-                          @Nullable String detail, @Nullable String footnote, @Nullable ColorTheme colorTheme,
-                          @Nullable ImageTheme imageTheme) {
-        super(identifier, actions, hiddenActions, title, text, detail, footnote, colorTheme, imageTheme);
-    }
-
-    @Override
-    public String getType() {
-        return TYPE_KEY;
-    }
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ShowTappingCompletionStepFragmentScope {
 }

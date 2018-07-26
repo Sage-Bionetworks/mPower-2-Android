@@ -12,6 +12,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.*;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
+@SuppressWarnings("PMD")
 public class AppOverviewStepUITests extends UITestHelper {
     public static final String TREMOR_OVERVIEW_TITLE = "Tremor Test";
     public static final String TREMOR_OVERVIEW_TEXT = "In this activity you will be holding the phone in your lap for 30 "

@@ -3,8 +3,6 @@ package org.sagebionetworks.research.mpower;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.test.espresso.ViewInteraction;
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import org.hamcrest.core.AllOf;
 import org.hamcrest.core.AnyOf;

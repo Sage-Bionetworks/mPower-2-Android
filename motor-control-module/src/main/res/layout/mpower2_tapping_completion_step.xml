@@ -31,26 +31,115 @@
   -->
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rs2_root_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:id="@+id/rs2_root_view"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent">
 
-    <org.sagebionetworks.research.mobile_ui.step_views.TappingCompletionStepHeaderView
+    <ImageView
+            android:id="@+id/rs2_image_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:background="@drawable/completion_background_gradient"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_weight="3"
+            app:srcCompat="@drawable/completion_finger_tapping" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/rs2_title"
+            app:layout_constraintVertical_chainStyle="spread_inside"/>
+
+    <TextView
+            android:id="@+id/rs2_title"
+            style="@style/Widget.ResearchStack.StepBody.TitleLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="56dp"
+            android:layout_marginRight="56dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Great Job!"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rs2_image_view" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/rs2_text"/>
+
+    <TextView
+            android:id="@+id/rs2_text"
+            style="@style/Widget.ResearchStack.StepBody.TextLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="56dp"
+            android:layout_marginRight="56dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="You Just Completed"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rs2_title" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/tapping_completion_left_result"/>
+
+    <org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar
+            android:id="@id/rs2_step_navigation_action_bar"
+            style="@style/Widget.ResearchStack.NavigationActionBar.Completion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:isShadowHidden="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+    </org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar>
+
+    <org.sagebionetworks.research.motor_control_module.widget.TapCountResultView
+            android:id="@+id/tapping_completion_left_result"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="100dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="100dp"
+            android:layout_marginStart="100dp"
+            app:layout_constraintVertical_weight="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rs2_text" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/tapping_completion_right_result"
+            app:layout_constraintVertical_chainStyle="packed" android:layout_marginTop="8dp"
+    />
+
+    <org.sagebionetworks.research.motor_control_module.widget.TapCountResultView
+            android:id="@+id/tapping_completion_right_result"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="100dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="100dp"
+            android:layout_marginStart="100dp"
+            app:layout_constraintVertical_weight="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tapping_completion_left_result"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/tapping_completion_time_label"/>
+
+    <TextView
+            android:id="@+id/tapping_completion_time_label"
+            style="@style/Widget.ResearchStack.StepBody.TextLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="56dp"
+            android:layout_marginRight="56dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="In 30 seconds"
             app:layout_constraintBottom_toTopOf="@+id/rs2_step_navigation_action_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    <org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar
-        android:id="@id/rs2_step_navigation_action_bar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:isShadowHidden="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/tapping_completion_right_result"/>
 
 </android.support.constraint.ConstraintLayout>

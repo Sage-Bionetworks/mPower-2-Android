@@ -162,6 +162,7 @@ public class ShowTappingStepFragment extends
         });
 
         this.stepViewBinding.getUnitLabel().setText(R.string.tap_count_label);
+
         this.stepViewBinding.getRootView().setOnTouchListener((targetView, motionEvent) -> {
             targetView.performClick();
             this.handleMotionEvent(TappingButtonIdentifier.NONE, motionEvent);

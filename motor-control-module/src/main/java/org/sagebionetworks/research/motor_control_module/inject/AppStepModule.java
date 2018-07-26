@@ -42,7 +42,9 @@ import org.sagebionetworks.research.motor_control_module.step.HandSelectionStep;
 import org.sagebionetworks.research.motor_control_module.step.InstructionStep;
 import org.sagebionetworks.research.motor_control_module.step.MPowerActiveUIStep;
 import org.sagebionetworks.research.motor_control_module.step.OverviewStep;
+import org.sagebionetworks.research.motor_control_module.step.TappingCompletionStep;
 import org.sagebionetworks.research.motor_control_module.step.TappingStep;
+import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule;
 
 /**
  * Add app-specific steps.
@@ -92,5 +94,12 @@ public class AppStepModule {
     @StepClassKey(TappingStep.class)
     static String provideTappingStepTypeKey() {
         return TappingStep.TYPE_KEY;
+    }
+
+    @Provides
+    @IntoMap
+    @StepClassKey(TappingCompletionStep.class)
+    static String provideTappingCompletionStepTypeKey() {
+        return TappingCompletionStep.TYPE_KEY;
     }
 }
