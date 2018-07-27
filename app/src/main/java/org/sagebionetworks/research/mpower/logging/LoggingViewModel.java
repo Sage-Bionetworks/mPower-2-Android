@@ -5,8 +5,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.support.annotation.AnyThread;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import org.joda.time.DateTime;
 import org.sagebionetworks.bridge.android.manager.ActivityManager;
@@ -20,8 +22,21 @@ import java.util.concurrent.TimeUnit;
 
 import rx.subscriptions.CompositeSubscription;
 
+/**
+ * The ViewModel forms the presentation layer (ViewModel or Presenter). It is responsible for receiving actions from
+ * the views, communicating with the data layer, applying UI logic, keeping state, and exposing relevant data to the
+ * UI for rendering. It encapsulates logic and state while not depending on the Android framework, thus making it
+ * suitable for JVM unit testing.
+ * <p>
+ * https://medium.com/upday-devs/android-architecture-patterns-part-3-model-view-viewmodel-e7eeee76b73b
+ * <p>
+ * https://medium.com/@rohitsingh14101992/lets-keep-activity-dumb-using-livedata-53468ed0dc1f
+ */
 public class LoggingViewModel extends ViewModel {
-
+    /**
+     * This is the ScheduledActivity model for the view layer. It contains data related to rendering a scheduled
+     * activity.
+     */
     public static class ScheduledActivityView {
         public final String scheduledActivityGuid;
 
@@ -34,6 +49,7 @@ public class LoggingViewModel extends ViewModel {
 
     private final ActivityManager activityManager;
 
+    // holds onto RxJava subscriptions for cleanup
     private final CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     private final MutableLiveData<List<ScheduledActivityView>> scheduledActivitiesLiveData = new MutableLiveData<>();
@@ -42,6 +58,10 @@ public class LoggingViewModel extends ViewModel {
 
     private final MutableLiveData<Boolean> scheduledActivitiesLoadingLiveData = new MutableLiveData<>();
 
+    /**
+     * @param activityManager
+     *         injected activity manager dependency
+     */
     public LoggingViewModel(@NonNull ActivityManager activityManager) {
         this.activityManager = checkNotNull(activityManager, "activity manager cannot be null");
 
@@ -60,6 +80,9 @@ public class LoggingViewModel extends ViewModel {
         return scheduledActivitiesLoadingLiveData;
     }
 
+    /**
+     * Receives action from the View (LoggingFragment)
+     */
     @MainThread
     public void reload() {
         updateScheduledActivities();
@@ -71,10 +94,11 @@ public class LoggingViewModel extends ViewModel {
         compositeSubscription.unsubscribe();
     }
 
-    @MainThread
+    @VisibleForTesting
+    @AnyThread
     void updateScheduledActivities() {
-        scheduledActivitiesLoadingErrorMessageLiveData.setValue(null);
-        scheduledActivitiesLoadingLiveData.setValue(true);
+        scheduledActivitiesLoadingErrorMessageLiveData.postValue(null);
+        scheduledActivitiesLoadingLiveData.postValue(true);
 
         compositeSubscription.add(activityManager.getActivities(DateTime.now().minusDays(14), DateTime.now())
                 .delay(1, TimeUnit.SECONDS)

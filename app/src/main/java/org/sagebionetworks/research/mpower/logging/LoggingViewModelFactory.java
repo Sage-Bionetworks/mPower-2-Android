@@ -8,14 +8,29 @@ import org.sagebionetworks.bridge.android.manager.ActivityManager;
 
 import javax.inject.Inject;
 
+/**
+ * A ViewModelFactory allows us to instantiate ViewModels using creation parameters and/or constructor arguments.
+ * LoggingViewModel's create method does not take parameters, but it does take a constructor argument.
+ */
 public class LoggingViewModelFactory {
     private ActivityManager activityManager;
 
+    /**
+     * This constructor is annotated with @Inject, which is picked up by our dependency injection framework.
+     *
+     * @param activityManager
+     *         injected activity manager
+     */
     @Inject
     public LoggingViewModelFactory(ActivityManager activityManager) {
         this.activityManager = activityManager;
     }
 
+    /**
+     * LoggingViewModel uses construction injection to get an instance of the ActivityManager.
+     *
+     * @return a ViewModel instance
+     */
     public ViewModelProvider.Factory create() {
         return new ViewModelProvider.Factory() {
             @NonNull

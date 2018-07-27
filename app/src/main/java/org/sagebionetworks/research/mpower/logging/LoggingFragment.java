@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,13 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import dagger.android.support.AndroidSupportInjection;
 
+/**
+ * This Fragment follows the dumb/passive view pattern. Its sole responsibility is to render the UI.
+ * <p>
+ * https://martinfowler.com/eaaDev/PassiveScreen.html
+ * <p>
+ * https://medium.com/@rohitsingh14101992/lets-keep-activity-dumb-using-livedata-53468ed0dc1f
+ */
 public class LoggingFragment extends Fragment {
     @BindView(R.id.textview_error_message)
     TextView errorMessageTextView;
@@ -88,6 +96,9 @@ public class LoggingFragment extends Fragment {
         loggingViewModel.reload();
     }
 
+    // these methods marked with @VisibleForTesting would be the ones to UI test. Since this is a dumb/passive view,
+    // the only work it should be doing is subscribing to POJOs and rendering them.
+    @VisibleForTesting
     void updateScheduledActivities(List<ScheduledActivityView> scheduledActivityViews) {
         StringBuilder sb = new StringBuilder();
         for (ScheduledActivityView v : scheduledActivityViews) {
@@ -95,6 +106,7 @@ public class LoggingFragment extends Fragment {
         }
     }
 
+    @VisibleForTesting
     void updateScheduledActivitiesErrorMessage(String errorMessage) {
         if (Strings.isNullOrEmpty(errorMessage)) {
             errorMessageTextView.setVisibility(View.GONE);
@@ -104,6 +116,7 @@ public class LoggingFragment extends Fragment {
         }
     }
 
+    @VisibleForTesting
     void updateScheduledActivitiesLoading(Boolean isLoading) {
         scheduledActivitiesLoadingToggleButton.setChecked(isLoading);
     }
