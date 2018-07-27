@@ -5,9 +5,21 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.navigation
+import org.sagebionetworks.research.mpower.history.HistoryFragment;
+import org.sagebionetworks.research.mpower.insights.InsightsFragment;
+import org.sagebionetworks.research.mpower.profile.ProfileFragment;
+import org.sagebionetworks.research.mpower.logging.LoggingFragment;
 
-class MainActivity : AppCompatActivity() {
+import javax.inject.Inject
+
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
+    @Inject
+    lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         supportFragmentManager
@@ -17,22 +29,8 @@ class MainActivity : AppCompatActivity() {
         return@OnNavigationItemSelectedListener true
     }
 
-    // TODO: fragment caching
-    fun findOrCreateFragment(item: MenuItem): Fragment {
-        when (item.itemId) {
-            R.id.navigation_logging -> return LoggingFragment()
-
-            R.id.navigation_history -> return HistoryFragment()
-
-            R.id.navigation_insights -> return InsightsFragment()
-
-            R.id.navigation_profile -> return ProfileFragment()
-
-            else -> return LoggingFragment()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -42,5 +40,24 @@ class MainActivity : AppCompatActivity() {
                 .commit()
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+    }
+
+    // TODO: fragment caching
+    fun findOrCreateFragment(item: MenuItem): Fragment {
+        return when (item.itemId) {
+            R.id.navigation_logging -> LoggingFragment()
+
+            R.id.navigation_history -> HistoryFragment()
+
+            R.id.navigation_insights -> InsightsFragment()
+
+            R.id.navigation_profile -> ProfileFragment()
+
+            else -> LoggingFragment()
+        }
+    }
+
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
+        return fragmentInjector
     }
 }

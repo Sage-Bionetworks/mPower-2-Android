@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower;
+package org.sagebionetworks.research.mpower.profile;
 
 import android.arch.lifecycle.ViewModel;
 

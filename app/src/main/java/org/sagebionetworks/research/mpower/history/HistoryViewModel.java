@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower;
+package org.sagebionetworks.research.mpower.history;
 
 import android.arch.lifecycle.ViewModel;
 

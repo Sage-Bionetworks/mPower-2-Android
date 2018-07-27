@@ -4,7 +4,7 @@ import android.app.Application;
 
 import org.sagebionetworks.bridge.android.di.BridgeServiceModule;
 import org.sagebionetworks.bridge.android.di.S3Module;
-import org.sagebionetworks.research.mpower.MpMainApplication;
+import org.sagebionetworks.research.mpower.MPowerApplication;
 import org.sagebionetworks.research.mpower.researchstack.inject.MPowerResearchStackModule;
 import org.sagebionetworks.research.mpower.sageresearch.inject.MPowerSageResearchModule;
 
@@ -25,5 +25,5 @@ public interface MPowerApplicationComponent {
         MPowerApplicationComponent build();
     }
 
-    void inject(MpMainApplication application);
+    void inject(MPowerApplication application);
 }
