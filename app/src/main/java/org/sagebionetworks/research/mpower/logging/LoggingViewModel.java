@@ -8,16 +8,20 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.AnyThread;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
 import org.joda.time.DateTime;
 import org.sagebionetworks.bridge.android.manager.ActivityManager;
 import org.sagebionetworks.bridge.rest.model.ScheduledActivity;
+import org.sagebionetworks.research.mpower.TaskLauncher;
+import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import rx.subscriptions.CompositeSubscription;
@@ -58,12 +62,15 @@ public class LoggingViewModel extends ViewModel {
 
     private final MutableLiveData<Boolean> scheduledActivitiesLoadingLiveData = new MutableLiveData<>();
 
+    private final TaskLauncher taskLauncher;
+
     /**
      * @param activityManager
      *         injected activity manager dependency
      */
-    public LoggingViewModel(@NonNull ActivityManager activityManager) {
+    public LoggingViewModel(@NonNull ActivityManager activityManager, @NonNull TaskLauncher taskLauncher) {
         this.activityManager = checkNotNull(activityManager, "activity manager cannot be null");
+        this.taskLauncher = checkNotNull(taskLauncher, "task launcher cannot be null");
 
         updateScheduledActivities();
     }
@@ -78,6 +85,20 @@ public class LoggingViewModel extends ViewModel {
 
     public LiveData<Boolean> getScheduledActivitiesLoadingLiveData() {
         return scheduledActivitiesLoadingLiveData;
+    }
+
+    /**
+     * Receives action from the View.
+     *
+     * @param taskId
+     *         identifier of task to launch
+     * @param taskRunUUID
+     *         previous task run to continue from, if applicable
+     * @return state of task launch
+     */
+    @MainThread
+    public LiveData<TaskLaunchState> launchTask(@NonNull String taskId, @Nullable UUID taskRunUUID) {
+        return taskLauncher.launchTask(taskId, taskRunUUID);
     }
 
     /**

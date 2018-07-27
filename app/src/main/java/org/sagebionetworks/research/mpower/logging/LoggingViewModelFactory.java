@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
 import org.sagebionetworks.bridge.android.manager.ActivityManager;
+import org.sagebionetworks.research.mpower.TaskLauncher;
 
 import javax.inject.Inject;
 
@@ -13,7 +14,9 @@ import javax.inject.Inject;
  * LoggingViewModel's create method does not take parameters, but it does take a constructor argument.
  */
 public class LoggingViewModelFactory {
-    private ActivityManager activityManager;
+    private final ActivityManager activityManager;
+
+    private final TaskLauncher taskLauncher;
 
     /**
      * This constructor is annotated with @Inject, which is picked up by our dependency injection framework.
@@ -22,8 +25,9 @@ public class LoggingViewModelFactory {
      *         injected activity manager
      */
     @Inject
-    public LoggingViewModelFactory(ActivityManager activityManager) {
+    public LoggingViewModelFactory(ActivityManager activityManager, TaskLauncher taskLauncher) {
         this.activityManager = activityManager;
+        this.taskLauncher = taskLauncher;
     }
 
     /**
@@ -39,7 +43,7 @@ public class LoggingViewModelFactory {
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
                 if (modelClass.isAssignableFrom(LoggingViewModel.class)) {
                     // noinspection unchecked
-                    return (T) new LoggingViewModel(activityManager);
+                    return (T) new LoggingViewModel(activityManager, taskLauncher);
                 }
                 throw new IllegalArgumentException("Unknown ViewModel class");
             }
