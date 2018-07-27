@@ -50,16 +50,16 @@
         app:srcCompat="@drawable/f_walking1" />
 
     <org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar
-        android:id="@id/rs2_step_navigation_action_bar"
-        style="@style/Widget.ResearchStack.NavigationActionBar.Active"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:isShadowHidden="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
+            android:id="@id/rs2_step_navigation_action_bar"
+            style="@style/Widget.ResearchStack.NavigationActionBar.TappingActive"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:isShadowHidden="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent">
 
     </org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar>
 

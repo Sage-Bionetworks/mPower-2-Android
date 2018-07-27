@@ -35,4 +35,7 @@
     <string name="tap_count_label">Tap Count</string>
     <string name="tapping_continue_with_text">Continue with %@ hand</string>
     <string name="tapping_continue">Next</string>
+    <string name="tapping_completion_left_description">LEFT TAP COUNT</string>
+    <string name="tapping_completion_right_description">RIGHT TAP COUNT</string>
+    <string name="tapping_completion_time_label_text">In 30 seconds</string>
 </resources>

@@ -40,4 +40,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Widget.ResearchStack.NavigationActionBar.TappingActive" parent="Widget.ResearchStack.NavigationActionBar.Active">
+        <item name="isSkipHidden">true</item>
+    </style>
 </resources>

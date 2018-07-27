@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.motor_control_module.step_binding;
+package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 
 import android.view.View;
 import android.widget.TextView;
@@ -42,7 +42,7 @@ public class TappingCompletionStepViewBinding extends UIStepViewBinding<TappingC
         return this.tappingCompletionStepViewHolder.leftResult;
     }
 
-    public TapCountResultView getRightCount() {
+    public TapCountResultView getRightResult() {
         return this.tappingCompletionStepViewHolder.rightResult;
     }
 

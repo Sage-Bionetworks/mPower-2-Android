@@ -44,14 +44,14 @@
             android:autoSizeMinTextSize="40sp"
             android:autoSizeTextType="uniform"
             android:fontFamily="@font/lato_light"
-            android:includeFontPadding="false"
-            android:singleLine="false"
+            android:singleLine="true"
             android:text="58"
             android:textColor="@color/appTextDark"
             android:textSize="80sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="2dp" android:layout_marginBottom="2dp"
+            android:layout_marginLeft="8dp" android:layout_marginStart="8dp"/>
 
     <TextView
             android:id="@id/tapping_completion_description"
