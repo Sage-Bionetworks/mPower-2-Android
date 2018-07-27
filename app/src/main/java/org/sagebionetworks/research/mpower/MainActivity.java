@@ -35,6 +35,7 @@ package org.sagebionetworks.research.mpower;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
@@ -48,6 +49,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import org.sagebionetworks.research.domain.repository.TaskRepository;
 import org.sagebionetworks.research.domain.task.TaskInfo;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
+import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.presentation.model.TaskView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.mpower2_task_selection);
         TaskSelectionBinding binding = new TaskSelectionBinding();
         Unbinder unbinder = ButterKnife.bind(binding, this);
+        // Ensure that the first view is on screen and not under the status bar.
+        View firstSelectionView = binding.taskTextViews.get(0);
+        SystemWindowHelper.adjustViewInsets(firstSelectionView);
+        ViewCompat.requestApplyInsets(firstSelectionView);
         List<TextView> textViews = binding.taskTextViews;
         this.registerFragmentLifeCycleListener(textViews);
         for (int i = 0; i < textViews.size(); i++) {

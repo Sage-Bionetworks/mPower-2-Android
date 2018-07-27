@@ -61,7 +61,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <org.sagebionetworks.research.mobile_ui.widget.ActionButton
-        android:id="@+id/rs2_step_navigation_cancel_button"
+        android:id="@+id/rs2_step_navigation_action_cancel"
         android:layout_width="30dp"
         android:layout_height="0dp"
         android:layout_marginLeft="20dp"
