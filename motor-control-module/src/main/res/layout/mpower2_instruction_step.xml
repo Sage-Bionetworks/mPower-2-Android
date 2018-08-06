@@ -49,7 +49,7 @@
 
     <ScrollView
             android:id="@+id/scrollView"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:fadeScrollbars="false"
             app:layout_constraintBottom_toTopOf="@id/rs2_step_navigation_action_bar"
@@ -74,7 +74,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/f_walking1"></ImageView>
+                    app:srcCompat="@drawable/f_walking1" android:fadingEdge="none"
+                    android:requiresFadingEdge="none" android:fadeScrollbars="true"></ImageView>
 
             <include
                     android:id="@+id/stepBody"

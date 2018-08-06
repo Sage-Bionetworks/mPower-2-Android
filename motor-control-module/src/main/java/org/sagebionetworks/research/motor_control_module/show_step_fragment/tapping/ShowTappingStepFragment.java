@@ -374,7 +374,7 @@ public class ShowTappingStepFragment extends
 
         this.createSample(event, buttonIdentifier);
         // update the tap count
-        if (!buttonIdentifier.equals(TappingButtonIdentifier.NONE)) {
+        if (!buttonIdentifier.equals(TappingButtonIdentifier.NONE) && !this.expired) {
             this.hitButtonCount++;
         }
 

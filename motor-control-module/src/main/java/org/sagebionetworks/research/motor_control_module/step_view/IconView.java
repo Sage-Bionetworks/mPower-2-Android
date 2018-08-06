@@ -40,8 +40,10 @@ import org.sagebionetworks.research.presentation.DisplayDrawable;
 import org.sagebionetworks.research.presentation.DisplayString;
 import org.sagebionetworks.research.presentation.mapper.DrawableMapper;
 
+import java.io.Serializable;
+
 @AutoValue
-public abstract class IconView {
+public abstract class IconView implements Serializable {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract IconView build();

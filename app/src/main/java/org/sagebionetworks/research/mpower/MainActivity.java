@@ -33,6 +33,7 @@
 package org.sagebionetworks.research.mpower;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
@@ -78,8 +79,9 @@ public class MainActivity extends AppCompatActivity {
         TaskSelectionBinding binding = new TaskSelectionBinding();
         Unbinder unbinder = ButterKnife.bind(binding, this);
         // Ensure that the first view is on screen and not under the status bar.
-        View firstSelectionView = binding.taskTextViews.get(0);
-        SystemWindowHelper.adjustViewInsets(firstSelectionView);
+        @NonNull View firstSelectionView = binding.taskTextViews.get(0);
+        ViewCompat.setOnApplyWindowInsetsListener(firstSelectionView,
+                SystemWindowHelper.getOnApplyWindowInsetsListener(SystemWindowHelper.Direction.TOP));
         ViewCompat.requestApplyInsets(firstSelectionView);
         List<TextView> textViews = binding.taskTextViews;
         this.registerFragmentLifeCycleListener(textViews);
