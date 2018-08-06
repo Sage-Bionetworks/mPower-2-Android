@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     }
 
     // TODO: fragment caching, don't create a new one each time, ask FragmentManager if it has an instance already
+    // @liujoshua 2018/08/06
     fun findOrCreateFragment(item: MenuItem): Fragment {
         return when (item.itemId) {
             R.id.navigation_tracking -> TrackingFragment()

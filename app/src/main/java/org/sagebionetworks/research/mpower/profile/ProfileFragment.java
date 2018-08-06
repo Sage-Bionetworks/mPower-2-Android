@@ -40,7 +40,7 @@ public class ProfileFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         profile = ViewModelProviders.of(this).get(ProfileViewModel.class);
-        // TODO: Use the ViewModel
+        // TODO: Use the ViewModel @liujoshua 2018/08/06
     }
 
     @Override

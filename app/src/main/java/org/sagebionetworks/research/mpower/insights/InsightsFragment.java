@@ -39,7 +39,7 @@ public class InsightsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         insightsViewModel = ViewModelProviders.of(this).get(InsightsViewModel.class);
-        // TODO: Use the ViewModel
+        // TODO: Use the ViewModel @liujoshua 2018/08/06
     }
 
     @Override

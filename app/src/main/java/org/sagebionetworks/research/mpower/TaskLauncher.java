@@ -28,7 +28,7 @@ public class TaskLauncher {
         @Retention(RetentionPolicy.SOURCE)
         @StringDef({Type.RUNNING, Type.LAUNCH_ERROR, Type.CANCELED, Type.COMPLETED})
         public @interface Type {
-            // TODO: determine other states
+            // TODO: determine other states @liujoshua 2018/08/06
             String RUNNING = "running";
             String LAUNCH_ERROR = "launch_error";
             String COMPLETED = "completed";
@@ -63,7 +63,7 @@ public class TaskLauncher {
     public LiveData<TaskLaunchState> launchTask(@NonNull String taskIdentifier, @Nullable UUID taskRunUUID) {
         checkArgument(!Strings.isNullOrEmpty(taskIdentifier), "taskIdentifier cannot be null or empty");
 
-        // TODO: load and launch task using RS or SR as appropriate
+        // TODO: load and launch task using RS or SR as appropriate @liujoshua 2018/08/06
         MutableLiveData<TaskLaunchState> tls = new MutableLiveData<>();
         tls.postValue(new TaskLaunchState(Type.LAUNCH_ERROR));
         return tls;

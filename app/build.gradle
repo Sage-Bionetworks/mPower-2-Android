@@ -46,7 +46,7 @@ dependencies {
     // Local projects
     implementation project(':android-sdk')
     implementation project(':backbone'), {
-        // TODO: remove when ResearchStack joda-time exclusion PR is merged
+        // TODO: remove when ResearchStack joda-time exclusion PR is merged @liujoshua 2018/08/06
         exclude group: 'joda-time', module: 'joda-time'
     }
     implementation project(':data')

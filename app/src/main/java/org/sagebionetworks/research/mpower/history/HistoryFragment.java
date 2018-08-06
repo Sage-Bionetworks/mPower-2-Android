@@ -39,7 +39,7 @@ public class HistoryFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         historyViewModel = ViewModelProviders.of(this).get(HistoryViewModel.class);
-        // TODO: Use the ViewModel
+        // TODO: Use the ViewModel @liujoshua 2018/08/06
     }
 
     @Override
