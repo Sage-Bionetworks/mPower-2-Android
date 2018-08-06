@@ -29,7 +29,7 @@ public class MainActivityTest {
     @Test
     public void mainActivityTest() {
 
-        // check initial layout, showing logging tab
+        // check initial layout, showing tracking tab
         onView(allOf(
                 withId(R.id.container),
                 withChild(allOf(withId(R.id.fragment_container), isDisplayed())),
@@ -38,12 +38,12 @@ public class MainActivityTest {
 
         onView(withId(R.id.fragment_container))
                 .check(matches(hasDescendant(allOf(
-                        withId(R.id.fragment_logging),
+                        withId(R.id.fragment_tracking),
                         isDisplayed()))));
 
         onView(withId(R.id.navigation))
                 .check(matches(isDisplayed()))
-                .check(matches(hasDescendant(allOf(withId(R.id.navigation_logging), isDisplayed()))))
+                .check(matches(hasDescendant(allOf(withId(R.id.navigation_tracking), isDisplayed()))))
                 .check(matches(hasDescendant(allOf(withId(R.id.navigation_history), isDisplayed()))))
                 .check(matches(hasDescendant(allOf(withId(R.id.navigation_insights), isDisplayed()))))
                 .check(matches(hasDescendant(allOf(withId(R.id.navigation_profile), isDisplayed()))));
@@ -69,11 +69,11 @@ public class MainActivityTest {
         onView(withId(R.id.fragment_profile))
                 .check(matches(isDisplayed()));
 
-        // show logging tab
-        onView(withId(R.id.navigation_logging))
+        // show tracking tab
+        onView(withId(R.id.navigation_tracking))
                 .perform(click());
 
-        onView(withId(R.id.fragment_logging))
+        onView(withId(R.id.fragment_tracking))
                 .check(matches(isDisplayed()));
     }
 }

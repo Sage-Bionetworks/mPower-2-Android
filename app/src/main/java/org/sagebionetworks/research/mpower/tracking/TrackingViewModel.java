@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower.logging;
+package org.sagebionetworks.research.mpower.tracking;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -36,7 +36,7 @@ import rx.subscriptions.CompositeSubscription;
  * <p>
  * https://medium.com/@rohitsingh14101992/lets-keep-activity-dumb-using-livedata-53468ed0dc1f
  */
-public class LoggingViewModel extends ViewModel {
+public class TrackingViewModel extends ViewModel {
     /**
      * This is the ScheduledActivity model for the view layer. It contains data related to rendering a scheduled
      * activity.
@@ -49,7 +49,7 @@ public class LoggingViewModel extends ViewModel {
         }
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingViewModel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrackingViewModel.class);
 
     private final ActivityManager activityManager;
 
@@ -68,7 +68,7 @@ public class LoggingViewModel extends ViewModel {
      * @param activityManager
      *         injected activity manager dependency
      */
-    public LoggingViewModel(@NonNull ActivityManager activityManager, @NonNull TaskLauncher taskLauncher) {
+    public TrackingViewModel(@NonNull ActivityManager activityManager, @NonNull TaskLauncher taskLauncher) {
         this.activityManager = checkNotNull(activityManager, "activity manager cannot be null");
         this.taskLauncher = checkNotNull(taskLauncher, "task launcher cannot be null");
 
@@ -102,7 +102,7 @@ public class LoggingViewModel extends ViewModel {
     }
 
     /**
-     * Receives action from the View (LoggingFragment)
+     * Receives action from the View (TrackingFragment)
      */
     @MainThread
     public void reload() {

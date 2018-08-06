@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower.logging;
+package org.sagebionetworks.research.mpower.tracking;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -16,7 +16,7 @@ import android.widget.ToggleButton;
 import com.google.common.base.Strings;
 
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.logging.LoggingViewModel.ScheduledActivityView;
+import org.sagebionetworks.research.mpower.tracking.TrackingViewModel.ScheduledActivityView;
 
 import java.util.List;
 
@@ -35,12 +35,12 @@ import dagger.android.support.AndroidSupportInjection;
  * <p>
  * https://medium.com/@rohitsingh14101992/lets-keep-activity-dumb-using-livedata-53468ed0dc1f
  */
-public class LoggingFragment extends Fragment {
+public class TrackingFragment extends Fragment {
     @BindView(R.id.textview_error_message)
     TextView errorMessageTextView;
 
     @Inject
-    LoggingViewModelFactory loggingViewModelFactory;
+    TrackingViewModelFactory trackingViewModelFactory;
 
     @BindView(R.id.togglebutton_loading)
     ToggleButton scheduledActivitiesLoadingToggleButton;
@@ -48,12 +48,12 @@ public class LoggingFragment extends Fragment {
     @BindView(R.id.textview_scheduled_activities)
     TextView scheduledActivitiesTextView;
 
-    private LoggingViewModel loggingViewModel;
+    private TrackingViewModel trackingViewModel;
 
     private Unbinder unbinder;
 
-    public static LoggingFragment newInstance() {
-        return new LoggingFragment();
+    public static TrackingFragment newInstance() {
+        return new TrackingFragment();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class LoggingFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.logging_fragment, container, false);
+        View view = inflater.inflate(R.layout.tracking_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -73,15 +73,15 @@ public class LoggingFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loggingViewModel = ViewModelProviders.of(
+        trackingViewModel = ViewModelProviders.of(
                 this,
-                loggingViewModelFactory.create()).get(LoggingViewModel.class);
+                trackingViewModelFactory.create()).get(TrackingViewModel.class);
 
-        loggingViewModel.getScheduledActivitiesLiveData()
+        trackingViewModel.getScheduledActivitiesLiveData()
                 .observe(this, this::updateScheduledActivities);
-        loggingViewModel.getScheduledActivitiesLoadingErrorMessageLiveData()
+        trackingViewModel.getScheduledActivitiesLoadingErrorMessageLiveData()
                 .observe(this, this::updateScheduledActivitiesErrorMessage);
-        loggingViewModel.getScheduledActivitiesLoadingLiveData()
+        trackingViewModel.getScheduledActivitiesLoadingLiveData()
                 .observe(this, this::updateScheduledActivitiesLoading);
     }
 
@@ -93,7 +93,7 @@ public class LoggingFragment extends Fragment {
 
     @OnClick(R.id.button_reload)
     void onReloadClicked() {
-        loggingViewModel.reload();
+        trackingViewModel.reload();
     }
 
     // these methods marked with @VisibleForTesting would be the ones to UI test. Since this is a dumb/passive view,

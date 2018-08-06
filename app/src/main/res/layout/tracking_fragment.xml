@@ -2,15 +2,15 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_logging"
+    android:id="@+id/fragment_tracking"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".logging.LoggingFragment">
+    tools:context=".tracking.TrackingFragment">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/title_logging" />
+        android:text="@string/title_tracking" />
 
     <TextView
         android:id="@+id/textview_scheduled_activities"

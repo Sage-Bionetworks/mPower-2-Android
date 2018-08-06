@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower.logging;
+package org.sagebionetworks.research.mpower.tracking;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
@@ -11,9 +11,9 @@ import javax.inject.Inject;
 
 /**
  * A ViewModelFactory allows us to instantiate ViewModels using creation parameters and/or constructor arguments.
- * LoggingViewModel's create method does not take parameters, but it does take a constructor argument.
+ * TrackingViewModel's create method does not take parameters, but it does take a constructor argument.
  */
-public class LoggingViewModelFactory {
+public class TrackingViewModelFactory {
     private final ActivityManager activityManager;
 
     private final TaskLauncher taskLauncher;
@@ -25,13 +25,13 @@ public class LoggingViewModelFactory {
      *         injected activity manager
      */
     @Inject
-    public LoggingViewModelFactory(ActivityManager activityManager, TaskLauncher taskLauncher) {
+    public TrackingViewModelFactory(ActivityManager activityManager, TaskLauncher taskLauncher) {
         this.activityManager = activityManager;
         this.taskLauncher = taskLauncher;
     }
 
     /**
-     * LoggingViewModel uses construction injection to get an instance of the ActivityManager.
+     * TrackingViewModel uses construction injection to get an instance of the ActivityManager.
      *
      * @return a ViewModel instance
      */
@@ -41,9 +41,9 @@ public class LoggingViewModelFactory {
             @Override
             @SuppressWarnings(value = "unchecked")
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                if (modelClass.isAssignableFrom(LoggingViewModel.class)) {
+                if (modelClass.isAssignableFrom(TrackingViewModel.class)) {
                     // noinspection unchecked
-                    return (T) new LoggingViewModel(activityManager, taskLauncher);
+                    return (T) new TrackingViewModel(activityManager, taskLauncher);
                 }
                 throw new IllegalArgumentException("Unknown ViewModel class");
             }

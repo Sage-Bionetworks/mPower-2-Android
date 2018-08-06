@@ -3,9 +3,9 @@
 
     <!-- TODO update icons for navigation -->
     <item
-        android:id="@+id/navigation_logging"
+        android:id="@+id/navigation_tracking"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_logging" />
+        android:title="@string/title_tracking" />
 
     <item
         android:id="@+id/navigation_history"

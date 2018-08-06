@@ -5,7 +5,7 @@ import android.content.Context;
 
 import org.sagebionetworks.research.mpower.history.HistoryFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;
-import org.sagebionetworks.research.mpower.logging.LoggingFragment;
+import org.sagebionetworks.research.mpower.tracking.TrackingFragment;
 import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
 
@@ -27,7 +27,7 @@ public interface MPowerApplicationModule {
     InsightsFragment contributeInsightsFragmentInjector();
 
     @ContributesAndroidInjector
-    LoggingFragment contributeLoggingFragmentInjector();
+    TrackingFragment contributeTrackingFragmentInjector();
 
     @ContributesAndroidInjector
     MainActivity contributeMainActivityInjector();

@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_main.navigation
 import org.sagebionetworks.research.mpower.history.HistoryFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
-import org.sagebionetworks.research.mpower.logging.LoggingFragment;
+import org.sagebionetworks.research.mpower.tracking.TrackingFragment;
 
 import javax.inject.Inject
 
@@ -36,16 +36,16 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
         supportFragmentManager
                 .beginTransaction()
-                .add(R.id.fragment_container, LoggingFragment())
+                .add(R.id.fragment_container, TrackingFragment())
                 .commit()
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
 
-    // TODO: fragment caching
+    // TODO: fragment caching, don't create a new one each time, ask FragmentManager if it has an instance already
     fun findOrCreateFragment(item: MenuItem): Fragment {
         return when (item.itemId) {
-            R.id.navigation_logging -> LoggingFragment()
+            R.id.navigation_tracking -> TrackingFragment()
 
             R.id.navigation_history -> HistoryFragment()
 
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
             R.id.navigation_profile -> ProfileFragment()
 
-            else -> LoggingFragment()
+            else -> TrackingFragment()
         }
     }
 
