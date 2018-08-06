@@ -18,7 +18,7 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
-public class MpMainApplication extends BridgeApplication implements HasSupportFragmentInjector,
+public class MPowerApplication extends BridgeApplication implements HasSupportFragmentInjector,
         HasActivityInjector {
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingActivityInjector;

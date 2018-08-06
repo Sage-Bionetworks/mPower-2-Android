@@ -31,8 +31,13 @@
   -->
 
 <resources>
-    <string name="osb_study_id">sage-mpower-2</string>
-    <string name="osb_study_name">mPower 2.0</string>
+    <string name="osb_study_id" translatable="false">sage-mpower-2</string>
+    <string name="osb_study_name" translatable="false">mPower 2.0</string>
 
     <string name="app_name">mPower</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_tracking">Tracking</string>
+    <string name="title_history">History</string>
+    <string name="title_insights">Insights</string>
+    <string name="title_profile">Profile</string>
 </resources>
