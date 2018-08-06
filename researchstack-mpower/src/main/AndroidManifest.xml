@@ -26,6 +26,7 @@
                     android:host="ws.sagebridge.org"
                     android:pathPrefix="/sage-mpower-2/phoneSignIn"
                     android:scheme="https" />
+                <!-- TODO remove mpower.sagebridge temp site once parkinsonmpower.org ready @liujoshua 2018/08/06 -->
                 <data
                     android:host="mpower.sagebridge.org"
                     android:pathPrefix="/sage-mpower-2/phoneSignIn"
@@ -37,6 +38,6 @@
 
             </intent-filter>
         </activity>
-        
+
     </application>
 </manifest>
