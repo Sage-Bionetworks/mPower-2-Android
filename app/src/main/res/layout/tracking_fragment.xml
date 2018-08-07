@@ -37,7 +37,7 @@
         android:name="org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="@dimen/app_medium_margin"
         app:layout_constraintBottom_toTopOf="@+id/togglebutton_loading"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,9 +55,9 @@
     <org.sagebionetworks.research.mpower.tracking.TrackingStatusBar
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginLeft="@dimen/app_medium_margin"
+        android:layout_marginRight="@dimen/app_medium_margin"
+        android:layout_marginTop="@dimen/app_medium_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
