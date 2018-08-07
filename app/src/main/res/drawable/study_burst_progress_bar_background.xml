@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/appWhite"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+                android:innerRadiusRatio="@dimen/countdownDialInnerRadiusRatio"
+                android:shape="ring"
+                android:thicknessRatio="@dimen/countdownDialThicknessRatio"
+                android:useLevel="false">
+            <solid android:color="@color/appVeryLightGray" />
+        </shape>
+    </item>
+</layer-list>

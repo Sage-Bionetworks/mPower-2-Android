@@ -8,11 +8,6 @@
     tools:context=".tracking.TrackingFragment">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/title_tracking" />
-
-    <TextView
         android:id="@+id/textview_scheduled_activities"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -56,5 +51,15 @@
         app:layout_constraintBottom_toTopOf="@+id/fragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <org.sagebionetworks.research.mpower.tracking.TrackingStatusBar
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
