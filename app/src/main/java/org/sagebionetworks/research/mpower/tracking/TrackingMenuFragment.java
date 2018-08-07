@@ -40,7 +40,7 @@ public class TrackingMenuFragment extends Fragment {
 
     // TODO for now icons have a white background, fix this when design gets the images without the background.
     private static final List<Integer> MEASURING_ICONS =
-            Arrays.asList(R.drawable.walk_and_balance_icon, R.drawable.finger_tapping_complete_icon, R.drawable.tremor_icon);
+            Arrays.asList(R.drawable.walk_and_balance_icon, R.drawable.finger_tapping_icon, R.drawable.tremor_icon);
 
     private static final List<Integer> TRACKING_ICONS =
             Arrays.asList(R.drawable.medication_icon, R.drawable.symptom_icon, R.drawable.trigger_icon);
