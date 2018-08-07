@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="46dp">
+
+    <ImageView
+        android:id="@+id/baseline"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@color/appVeryLightGray" />
+
+    <TextView
+        android:id="@+id/tracking_tab"
+        style="@style/Widget.MPower.TextView.TrackingMenu"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:text="@string/tracking_tab_title"
+        app:layout_constraintBottom_toTopOf="@+id/tracking_selected_image_view"
+        app:layout_constraintEnd_toStartOf="@+id/measuring_tab"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/measuring_tab"
+        style="@style/Widget.MPower.TextView.TrackingMenu"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="@string/measuring_tab_title"
+        app:layout_constraintBottom_toBottomOf="@+id/tracking_tab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tracking_tab"
+        app:layout_constraintTop_toTopOf="@+id/tracking_tab" />
+
+    <ImageView
+        android:id="@+id/tracking_selected_image_view"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/measuring_selected_image_view"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tracking_tab"
+        app:srcCompat="@color/royal400" />
+
+    <ImageView
+        android:id="@+id/measuring_selected_image_view"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tracking_selected_image_view"
+        app:layout_constraintTop_toTopOf="@+id/tracking_selected_image_view"
+        app:srcCompat="@color/royal400" />
+
+</android.support.constraint.ConstraintLayout>

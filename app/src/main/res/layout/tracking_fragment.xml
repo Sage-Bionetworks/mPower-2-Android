@@ -36,4 +36,25 @@
         android:layout_height="wrap_content"
         android:text="Reload"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <fragment
+        android:id="@+id/fragment"
+        android:name="org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/togglebutton_loading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout="@layout/tracking_menu_fragment" />
+
+    <ImageView
+        android:id="@+id/shadow"
+        android:layout_width="0dp"
+        android:layout_height="5dp"
+        android:src="@drawable/scroll_view_shadow"
+        app:layout_constraintBottom_toTopOf="@+id/fragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </android.support.constraint.ConstraintLayout>
