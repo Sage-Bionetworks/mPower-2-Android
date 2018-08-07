@@ -46,10 +46,10 @@
 
     <string name="study_burst_progress_bar_day">Day</string>
     <string name="study_burst_progress_bar_title">Study Burst</string>
-    <string name="measuring_center_label">WALK AND BALANCE</string>
-    <string name="measuring_left_label">FINGER TAPPING</string>
-    <string name="measuring_right_label">TREMOR\nTEST</string>
-    <string name="tracking_center_label">MEDICATION\n</string>
-    <string name="tracking_left_label">SYMPTOM\n</string>
-    <string name="tracking_right_label">TRIGGER\n</string>
+    <string name="measuring_center_label">Walk And Balance</string>
+    <string name="measuring_left_label">Finger Tapping</string>
+    <string name="measuring_right_label">Tremor Test</string>
+    <string name="tracking_center_label">Medication</string>
+    <string name="tracking_left_label">Symptom</string>
+    <string name="tracking_right_label">Trigger</string>
 </resources>
