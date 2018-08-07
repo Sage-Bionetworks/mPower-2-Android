@@ -1,0 +1,29 @@
+{
+  "identifier": "Signup",
+  "steps": [
+    {
+      "identifier": "signup_start",
+      "type": "instruction",
+      "text": "Welcome to mPower",
+      "detail": "A Parkinson's Disease Research Study",
+      "textColor": "white",
+      "backgroundColor": "mp_onboarding_purple",
+      "action": {
+        "next": {}
+      }
+    },
+    {
+      "identifier": "signup_enter_phone",
+      "type": "instruction",
+      "text": "Enter your mobile phone number",
+      "detail": "To receive a link to login into the mPower app, enter your mobile phone number."
+    },
+    {
+      "identifier": "message_sent",
+      "type": "instruction",
+      "text": "Your link is on its way!",
+      "detail": "We sent you a link vs SMS text to",
+      "textColor": "white"
+    }
+  ]
+}

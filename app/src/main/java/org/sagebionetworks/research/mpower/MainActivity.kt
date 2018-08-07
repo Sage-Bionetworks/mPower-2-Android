@@ -1,5 +1,8 @@
 package org.sagebionetworks.research.mpower
 
+import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -10,16 +13,33 @@ import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.navigation
-import org.sagebionetworks.research.mpower.history.HistoryFragment;
-import org.sagebionetworks.research.mpower.insights.InsightsFragment;
-import org.sagebionetworks.research.mpower.profile.ProfileFragment;
-import org.sagebionetworks.research.mpower.tracking.TrackingFragment;
-
+import org.researchstack.backbone.factory.IntentFactory
+import org.researchstack.backbone.task.Task
+import org.sagebionetworks.research.mpower.history.HistoryFragment
+import org.sagebionetworks.research.mpower.insights.InsightsFragment
+import org.sagebionetworks.research.mpower.profile.ProfileFragment
+import org.sagebionetworks.research.mpower.researchstack.MpMainActivity.SIGN_UP_TASK_CODE
+import org.sagebionetworks.research.mpower.researchstack.MpSignupActivity
+import org.sagebionetworks.research.mpower.researchstack.framework.MpResourceManager
+import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
+import org.sagebionetworks.research.mpower.tracking.TrackingFragment
+import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
+    private val LOGGER = LoggerFactory.getLogger(MainActivity::class.java)
+    private val CONSENT_URI = Uri.parse("http://mpower.sagebridge.org/study/intro")
+    private val SIGNUP_TASK_ID = "Signup"
+
     @Inject
     lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
+    @Inject
+    lateinit var mainViewModelProviderFactory: MainViewModelFactory
+
+    // TODO inject this dependency, ideally switch to TaskLauncher @liujoshua 2018/08/06
+    @Inject lateinit var taskLauncher : TaskLauncher
+
+    private lateinit var mainViewModel: MainViewModel
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         supportFragmentManager
@@ -33,6 +53,39 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        mainViewModel = ViewModelProviders.of(this, mainViewModelProviderFactory.create())
+                .get(MainViewModel::class.java)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!mainViewModel.isAuthenticated) {
+            showSignUpActivity()
+        } else if (!mainViewModel.isConsented) {
+            // FIXME check for local consent pending upload @liujoshua 2018/08/06
+            showConsentActivity()
+        } else {
+            showMainActivityLayout()
+        }
+    }
+
+    fun showSignUpActivity() {
+        LOGGER.debug("Showing sign up activity")
+
+        taskLauncher.launchTask(this, SIGNUP_TASK_ID, null)
+    }
+
+    fun showConsentActivity() {
+        LOGGER.debug("Showing consent activity")
+
+        // TODO use ChromeTab @liujoshua 2018/08/06
+        val browserIntent = Intent(Intent.ACTION_VIEW, CONSENT_URI)
+        startActivity(browserIntent)
+    }
+
+    fun showMainActivityLayout() {
+        LOGGER.debug("Showing main activity")
 
         supportFragmentManager
                 .beginTransaction()

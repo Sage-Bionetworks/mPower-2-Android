@@ -3,6 +3,9 @@
     package="org.sagebionetworks.research.mpower.researchstack">
 
     <application android:allowBackup="true">
+        <activity android:name="org.researchstack.backbone.ui.ActiveTaskActivity"
+            android:parentActivityName=".MpMainActivity"
+            android:theme="@style/Base.Theme.Backbone"/>
         <activity
             android:name=".MpSignupActivity"
             android:label="@string/app_name"

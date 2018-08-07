@@ -34,4 +34,6 @@ public interface MPowerApplicationModule {
 
     @ContributesAndroidInjector
     ProfileFragment contributeProfileFragmentInjector();
+
+
 }

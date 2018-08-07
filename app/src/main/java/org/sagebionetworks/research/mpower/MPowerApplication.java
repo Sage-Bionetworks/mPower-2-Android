@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import org.researchstack.backbone.ResearchStack;
 import org.sagebionetworks.bridge.android.BridgeApplication;
 import org.sagebionetworks.research.mpower.inject.DaggerMPowerApplicationComponent;
 
@@ -25,6 +26,10 @@ public class MPowerApplication extends BridgeApplication implements HasSupportFr
 
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingSupportFragmentInjector;
+
+    // this causes ResearchStack provider method, which also initializes RS, to be called during onCreate
+    @Inject
+    ResearchStack researchStack;
 
     @Override
     public void onCreate() {

@@ -32,27 +32,25 @@
 
 package org.sagebionetworks.research.mpower.sageresearch.inject;
 
-import android.app.Activity;
-
 import org.sagebionetworks.research.data.inject.DataModule;
 import org.sagebionetworks.research.domain.inject.StepModule;
+import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.InstructionStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.OverviewStepModule;
+import org.sagebionetworks.research.mpower.sageresearch.PerformTaskActivity;
 import org.sagebionetworks.research.mpower.sageresearch.TappingTaskActivity;
 
-import dagger.Binds;
 import dagger.Module;
-import dagger.android.ActivityKey;
 import dagger.android.AndroidInjectionModule;
-import dagger.android.AndroidInjector;
-import dagger.multibindings.IntoMap;
+import dagger.android.ContributesAndroidInjector;
 
-//TODO: SR modules
-@Module(includes = {AndroidInjectionModule.class, ShowStepModule.class, DataModule.class, StepModule.class},
-        subcomponents = {TappingActivitySubcomponent.class})
+@Module(includes = {AndroidInjectionModule.class, ShowStepModule.class, DataModule.class, StepModule.class,
+        PerformTaskModule.class, InstructionStepModule.class, OverviewStepModule.class})
 public abstract class MPowerSageResearchModule {
-    @Binds
-    @IntoMap
-    @ActivityKey(TappingTaskActivity.class)
-    abstract AndroidInjector.Factory<? extends Activity>
-            bindActivityInjectorFactory(TappingActivitySubcomponent.Builder builder);
+    @ContributesAndroidInjector
+    abstract PerformTaskActivity contributePerformTaskActivityInjector();
+
+    @ContributesAndroidInjector
+    abstract TappingTaskActivity contributesTappingTaskActivityInjector();
 }

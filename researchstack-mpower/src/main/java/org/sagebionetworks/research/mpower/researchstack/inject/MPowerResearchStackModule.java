@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 
 import org.researchstack.backbone.ResearchStack;
+import org.researchstack.backbone.StorageAccess;
 import org.sagebionetworks.research.mpower.researchstack.MpMainActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpResearchStack;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
@@ -18,7 +19,6 @@ import dagger.multibindings.IntoMap;
 @Module(subcomponents = {MpMainActivitySubcomponent.class})
 public abstract class MPowerResearchStackModule {
 
-    // We don't use a pin code for MPower, so just plug in a useless one the app remembers
     public static final String PIN_CODE = "1234";
 
     @Binds
@@ -28,7 +28,6 @@ public abstract class MPowerResearchStackModule {
             MpMainActivitySubcomponent.Builder builder);
 
     @Provides
-
     static MpTaskFactory provideMpTaskFactory() {
         return new MpTaskFactory();
     }
@@ -37,6 +36,14 @@ public abstract class MPowerResearchStackModule {
     static ResearchStack provideResearchStack(Context context) {
         MpResearchStack researchStack = new MpResearchStack(context);
         ResearchStack.init(context, researchStack);
+
+        // We don't use a pin code for MPower, so just plug one in for the app to always use
+        if (StorageAccess.getInstance().hasPinCode(context)) {
+            StorageAccess.getInstance().authenticate(context, PIN_CODE);
+        } else {
+            StorageAccess.getInstance().createPinCode(context, PIN_CODE);
+        }
+
         return researchStack;
     }
 }
