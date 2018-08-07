@@ -30,39 +30,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.mpower;
+package org.sagebionetworks.research.mpower.sageresearch;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-import dagger.android.AndroidInjection;
-import io.reactivex.Single;
-import io.reactivex.disposables.CompositeDisposable;
-
 import org.sagebionetworks.research.domain.repository.TaskRepository;
-import org.sagebionetworks.research.domain.task.TaskInfo;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
-import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
-import org.sagebionetworks.research.presentation.model.TaskView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
+import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainActivity.class);
+import dagger.android.AndroidInjection;
+import io.reactivex.disposables.CompositeDisposable;
+
+public class TappingTaskActivity extends AppCompatActivity {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TappingTaskActivity.class);
 
     CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -75,41 +66,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.mpower2_task_selection);
-        TaskSelectionBinding binding = new TaskSelectionBinding();
-        Unbinder unbinder = ButterKnife.bind(binding, this);
-        // Ensure that the first view is on screen and not under the status bar.
-        @NonNull View firstSelectionView = binding.taskTextViews.get(0);
-        ViewCompat.setOnApplyWindowInsetsListener(firstSelectionView,
-                SystemWindowHelper.getOnApplyWindowInsetsListener(SystemWindowHelper.Direction.TOP));
-        ViewCompat.requestApplyInsets(firstSelectionView);
-        List<TextView> textViews = binding.taskTextViews;
-        this.registerFragmentLifeCycleListener(textViews);
-        for (int i = 0; i < textViews.size(); i++) {
-            String taskIdentifier = taskIdentifiers.get(i);
-            Single<TaskInfo> taskInfoSingle = taskRepository.getTaskInfo(taskIdentifier);
-            final TextView textView = textViews.get(i);
-            compositeDisposable.add(taskInfoSingle.subscribe(
-                    taskInfo -> textView.setText(taskInfo.getTitle()),
-                    throwable -> LOGGER.warn(throwable.toString())));
-            textView.setOnClickListener(view ->
-                    compositeDisposable.add(
-                            taskInfoSingle
-                                    .map(taskInfo -> TaskView.builder()
-                                            .setIdentifier(taskInfo.getIdentifier())
-                                            .build())
-                                    .subscribe(taskView -> {
-                                        PerformTaskFragment newPerformTaskFragment = PerformTaskFragment
-                                                .newInstance(taskView, UUID.randomUUID());
-
-                                        getSupportFragmentManager()
-                                                .beginTransaction()
-                                                .add(R.id.rs2_task_content_frame, newPerformTaskFragment)
-                                                .commit();
-                                    }, throwable ->
-                                            LOGGER.error("Failed to retrieve task", throwable)))
-            );
-        }
     }
 
     /**

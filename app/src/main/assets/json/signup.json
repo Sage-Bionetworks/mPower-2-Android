@@ -1,0 +1,57 @@
+{
+  "taskIdentifier": "Signup",
+  "schemaIdentifier": "Signup",
+  "optional": false,
+  "steps": [
+    {
+      "identifier": "signup_start",
+      "type": "mpInstruction",
+      "text": "Welcome to mPower",
+      "detailText": "A Parkinson's Disease Research Study",
+      "textColor": "white",
+      "backgroundColor": "mp_onboarding_purple",
+      "image": "placeholder_image",
+      "imageColor": "bpBlue",
+      "scaleType": "FIT",
+      "buttonText": "Next",
+      "hideProgress": true,
+      "statusBarColor": "mp_status_bar_purple",
+      "behindToolbar": true,
+      "hideToolbar": true
+    },
+    {
+      "identifier": "signup_enter_phone",
+      "type": "mpPhoneInstruction",
+      "text": "Enter your mobile phone number",
+      "detailText": "To receive a link to login into the mPower app, enter your mobile phone number.",
+      "textColor": "white",
+      "backgroundColor": "mp_onboarding_purple",
+      "image": "ic_phonebook",
+      "imageColor": "bpBlue",
+      "scaleType": "FIT",
+      "buttonText": "Next",
+      "hideProgress": true,
+      "statusBarColor": "mp_status_bar_purple",
+      "behindToolbar": true,
+      "hideToolbar": true,
+      "phoneHint": "Enter your mobile number",
+      "showBackButton": true
+    },
+    {
+      "identifier": "message_sent",
+      "type": "mpInstruction",
+      "text": "Your link is on its way!",
+      "detailText": "We sent you a link vs SMS text to",
+      "textColor": "white",
+      "backgroundColor": "mp_onboarding_purple",
+      "image": "placeholder_image",
+      "imageColor": "bpBlue",
+      "scaleType": "FIT",
+      "buttonText": "Next",
+      "hideProgress": true,
+      "statusBarColor": "mp_status_bar_purple",
+      "behindToolbar": true,
+      "hideToolbar": true
+    }
+  ]
+}

@@ -34,7 +34,9 @@ package org.sagebionetworks.research.motor_control_module.step;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
+
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.implementations.UIStepBase;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
@@ -60,10 +62,10 @@ public class OverviewStep extends UIStepBase {
     }
 
     @Override
-    public OverviewStep copyWithIdentifier(@NonNull String identifier) {
+    public OverviewStep copyWithIdentifierOperation(@NonNull String identifier) {
         return new OverviewStep(identifier, this.getActions(), this.getHiddenActions(), this.getTitle(),
-                this.getText(), this.getDetail(),
-                this.getFootnote(), this.getColorTheme(), this.getImageTheme(), this.icons);
+                this.getText(), this.getDetail(), this.getFootnote(), this.getColorTheme(), this.getImageTheme(),
+                this.icons);
     }
 
     @Override

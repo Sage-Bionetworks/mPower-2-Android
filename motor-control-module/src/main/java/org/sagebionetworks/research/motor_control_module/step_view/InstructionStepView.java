@@ -34,7 +34,9 @@ package org.sagebionetworks.research.motor_control_module.step_view;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
+
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
@@ -85,13 +87,13 @@ public class InstructionStepView extends ActiveUIStepViewBase {
         this.isFirstRunOnly = isFirstRunOnly;
     }
 
-    public boolean isFirstRunOnly() {
-        return this.isFirstRunOnly;
-    }
-
     @StepType
     @NonNull
     public String getType() {
         return TYPE;
+    }
+
+    public boolean isFirstRunOnly() {
+        return this.isFirstRunOnly;
     }
 }

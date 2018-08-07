@@ -32,9 +32,6 @@
 
 package org.sagebionetworks.research.motor_control_module.inject;
 
-import dagger.Module;
-import dagger.Provides;
-import dagger.multibindings.IntoMap;
 import org.sagebionetworks.research.domain.inject.InputFieldsModule;
 import org.sagebionetworks.research.domain.inject.StepModule;
 import org.sagebionetworks.research.domain.inject.StepModule.StepClassKey;
@@ -45,6 +42,10 @@ import org.sagebionetworks.research.motor_control_module.step.OverviewStep;
 import org.sagebionetworks.research.motor_control_module.step.TappingCompletionStep;
 import org.sagebionetworks.research.motor_control_module.step.TappingStep;
 import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule;
+
+import dagger.Module;
+import dagger.Provides;
+import dagger.multibindings.IntoMap;
 
 /**
  * Add app-specific steps.

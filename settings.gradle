@@ -1,16 +1,16 @@
 include ':backbone'
-project(':backbone').projectDir = new File('BridgeAndroidSdk/ResearchStack/backbone')
+project(':backbone').projectDir = new File('BridgeAndroidSDK/ResearchStack/backbone')
 
 include ':domain', ':data', ':mobile-ui', ':presentation'
-project(':domain').projectDir = new File('BridgeAndroidSdk/SageResearch-Android/domain')
-project(':data').projectDir = new File('BridgeAndroidSdk/SageResearch-Android/data')
-project(':mobile-ui').projectDir = new File('BridgeAndroidSdk/SageResearch-Android/mobile-ui')
-project(':presentation').projectDir = new File('BridgeAndroidSdk/SageResearch-Android/presentation')
+project(':domain').projectDir = new File('BridgeAndroidSDK/SageResearch-Android/domain')
+project(':data').projectDir = new File('BridgeAndroidSDK/SageResearch-Android/data')
+project(':mobile-ui').projectDir = new File('BridgeAndroidSDK/SageResearch-Android/mobile-ui')
+project(':presentation').projectDir = new File('BridgeAndroidSDK/SageResearch-Android/presentation')
 
 include ':sageresearch-app-sdk', ':researchstack-sdk', ':android-sdk', ':test-utils'
-project(':sageresearch-app-sdk').projectDir = new File('BridgeAndroidSdk/sageresearch-app-sdk')
-project(':researchstack-sdk').projectDir = new File('BridgeAndroidSdk/researchstack-sdk')
-project(':android-sdk').projectDir = new File('BridgeAndroidSdk/android-sdk')
-project(':test-utils').projectDir = new File('BridgeAndroidSdk/test-utils')
+project(':sageresearch-app-sdk').projectDir = new File('BridgeAndroidSDK/sageresearch-app-sdk')
+project(':researchstack-sdk').projectDir = new File('BridgeAndroidSDK/researchstack-sdk')
+project(':android-sdk').projectDir = new File('BridgeAndroidSDK/android-sdk')
+project(':test-utils').projectDir = new File('BridgeAndroidSDK/test-utils')
 
-include ':app', ':motor-control-module', ':sageresearch-mpower'
+include ':app', ':motor-control-module', ':sageresearch-mpower', ':researchstack-mpower'

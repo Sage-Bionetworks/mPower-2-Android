@@ -30,25 +30,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.mpower;
+package org.sagebionetworks.research.mpower.sageresearch.inject;
 
 
-import dagger.BindsInstance;
-import dagger.Component;
+import org.sagebionetworks.research.mpower.sageresearch.TappingTaskActivity;
 
-import javax.inject.Singleton;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
 
-@Component(modules = {MPowerApplicationModule.class})
-@Singleton
-public abstract class MPowerApplicationComponent {
-    @Component.Builder
-    public interface Builder {
-
-        @BindsInstance
-        public Builder application(MPowerApplication application);
-
-        public MPowerApplicationComponent build();
+@Subcomponent
+public interface TappingActivitySubcomponent extends AndroidInjector<TappingTaskActivity> {
+    @Subcomponent.Builder
+    abstract class Builder extends AndroidInjector.Builder<TappingTaskActivity> {
+        @Override
+        public abstract TappingActivitySubcomponent build();
     }
-
-    public abstract MPowerApplication inject(MPowerApplication app);
 }

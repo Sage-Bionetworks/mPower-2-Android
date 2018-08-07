@@ -14,12 +14,14 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ['autovaluegson.defaultCollectionsToEmpty': 'true',
-                             'autovaluegson.mutableAdaptersWithDefaultSetters': 'true']
+                arguments = ['autovaluegson.mutableAdaptersWithDefaultSetters': 'true']
             }
         }
+
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
     buildTypes {
@@ -36,9 +38,11 @@ android {
 }
 
 dependencies {
+    implementation project(':data')
+    implementation project(':sageresearch-app-sdk')
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support.constraint:constraint-layout:1.1.1'
-    api project(':sageresearch-mpower')
     implementation 'com.android.support:multidex:1.0.3'
 
     implementation 'com.jakewharton:butterknife:8.8.1'
