@@ -75,6 +75,7 @@ public abstract class InstructionStep implements ActiveUIStep {
         @NonNull
         public abstract Builder setDuration(@Nullable Double duration);
 
+        @NonNull
         public abstract Builder setFirstRunOnly(boolean firstRunOnly);
 
         @NonNull
