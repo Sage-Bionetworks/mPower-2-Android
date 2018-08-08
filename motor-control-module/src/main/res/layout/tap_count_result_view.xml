@@ -65,5 +65,5 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="12dp"
             app:layout_constraintStart_toEndOf="@+id/tapping_completion_count" android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"/>
+            android:layout_marginStart="@dimen/app_margin_small"/>
 </android.support.constraint.ConstraintLayout>

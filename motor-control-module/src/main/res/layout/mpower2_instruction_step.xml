@@ -58,26 +58,50 @@
             app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
-                android:id="@+id/contentView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:addStatesFromChildren="false"
-                android:orientation="vertical"
-                android:paddingBottom="20dp">
+            android:id="@+id/contentView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:addStatesFromChildren="false"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/app_margin_medium">
 
             <ImageView
-                    android:id="@id/rs2_image_view"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:scaleType="fitXY"
-                    app:layout_constraintDimensionRatio="H,3280:3620"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/f_walking1" android:fadingEdge="none"
-                    android:requiresFadingEdge="none" android:fadeScrollbars="true"></ImageView>
+                android:id="@id/rs2_image_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="fitXY"
+                app:layout_constraintDimensionRatio="H,3280:3620"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/f_walking1"></ImageView>
+
+            <org.sagebionetworks.research.mobile_ui.widget.StepHeader
+                android:id="@+id/stepHeader"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/transparent"
+                app:isCancelButtonHidden="false"
+                app:isInfoButtonHidden="true"
+                app:isProgressBarHidden="false"
+                app:isProgressLabelHidden="false"
+                app:layout_constraintBottom_toBottomOf="@id/rs2_image_view"
+                app:layout_constraintEnd_toEndOf="@id/rs2_image_view"
+                app:layout_constraintStart_toStartOf="@id/rs2_image_view"
+                app:layout_constraintTop_toTopOf="@id/rs2_image_view"
+                app:usesFloatingProgressBar="false" />
 
             <include
+                android:id="@+id/stepBody"
+                layout="@layout/rs2_step_body"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/app_margin_medium"
+                android:layout_marginTop="@dimen/app_margin_medium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rs2_image_view" />
                     android:id="@+id/stepBody"
                     layout="@layout/rs2_step_body"
                     android:layout_width="0dp"

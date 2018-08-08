@@ -44,4 +44,11 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="Widget.MPower.TextView.TrackingMenu" parent="">
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textColor">@color/royal400</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

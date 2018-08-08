@@ -10,4 +10,11 @@
 
     <id name="tapping_completion_left_result"/>
     <id name="tapping_completion_right_result"/>
+
+    // study burst progress bar
+    <id name="study_burst_progress_bar_dial"/>
+    <id name="study_burst_progress_bar_day"/>
+    <id name="study_burst_progress_bar_day_count"/>
+    <id name="study_burst_progress_bar_title"/>
+    <id name="study_burst_progress_bar_text"/>
 </resources>

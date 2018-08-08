@@ -36,18 +36,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.SerializedName;
-
-import org.sagebionetworks.research.domain.result.implementations.ResultBase;
-import org.sagebionetworks.research.domain.result.interfaces.Result;
-import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
-
-import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
@@ -57,29 +45,20 @@ import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.interfaces.ActiveUIStep;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
-import org.sagebionetworks.research.domain.step.interfaces.ActiveUIStep;
-import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
-import org.sagebionetworks.research.domain.task.Task;
-import org.sagebionetworks.research.domain.task.navigation.strategy.StepNavigationStrategy;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.FirstRunHelper;
-import org.threeten.bp.Instant;
 
 import java.util.Map;
-import java.util.Set;
 
 @AutoValue
-public abstract class InstructionStep implements ActiveUIStep, StepNavigationStrategy.SkipStepStrategy,
-        StepNavigationStrategy.NextStepStrategy {
-    public static final String TYPE_KEY = StepType.INSTRUCTION;
-
+public abstract class InstructionStep implements ActiveUIStep {
     @AutoValue.Builder
     public abstract static class Builder {
+        @NonNull
         public abstract InstructionStep build();
 
         @NonNull
-        public abstract Builder setActions(@NonNull Map<String, Action> actions);
+        public abstract Builder setActions(@NonNull ImmutableMap<String, Action> actions);
 
         @NonNull
         public abstract Builder setBackgroundAudioRequired(boolean isBackgroundAudioRequired);
@@ -88,7 +67,7 @@ public abstract class InstructionStep implements ActiveUIStep, StepNavigationStr
         public abstract Builder setColorTheme(@Nullable ColorTheme colorTheme);
 
         @NonNull
-        public abstract Builder setCommands(@NonNull Set<String> commands);
+        public abstract Builder setCommands(@NonNull ImmutableSet<String> commands);
 
         @NonNull
         public abstract Builder setDetail(@Nullable String detail);
@@ -97,10 +76,13 @@ public abstract class InstructionStep implements ActiveUIStep, StepNavigationStr
         public abstract Builder setDuration(@Nullable Double duration);
 
         @NonNull
+        public abstract Builder setFirstRunOnly(boolean firstRunOnly);
+
+        @NonNull
         public abstract Builder setFootnote(@Nullable String footnote);
 
         @NonNull
-        public abstract Builder setHiddenActions(@NonNull Set<String> hiddenActions);
+        public abstract Builder setHiddenActions(@NonNull ImmutableSet<String> hiddenActions);
 
         @NonNull
         public abstract Builder setIdentifier(@NonNull String identifier);
@@ -109,27 +91,17 @@ public abstract class InstructionStep implements ActiveUIStep, StepNavigationStr
         public abstract Builder setImageTheme(@Nullable ImageTheme imageTheme);
 
         @NonNull
-        public abstract Builder setSpokenInstructions(@NonNull Map<String, String> spokenInstructions);
+        public abstract Builder setSpokenInstructions(
+                @NonNull Map<String, String> spokenInstructions);
 
         @NonNull
         public abstract Builder setText(@Nullable String text);
 
         @NonNull
         public abstract Builder setTitle(@Nullable String title);
-
-        public abstract Builder setFirstRunOnly(boolean firstRunOnly);
     }
 
-    public static Builder builder() {
-        return new AutoValue_InstructionStep.Builder()
-                .setActions(ImmutableMap.of())
-                .setCommands(ImmutableSet.of())
-                .setBackgroundAudioRequired(false)
-                .setFirstRunOnly(false)
-                .setHiddenActions(ImmutableSet.of());
-    }
-
-    public abstract Builder toBuilder();
+    public static final String TYPE_KEY = StepType.INSTRUCTION;
 
     public static TypeAdapter<InstructionStep> typeAdapter(Gson gson) {
         return new AutoValue_InstructionStep.GsonTypeAdapter(gson)
@@ -139,37 +111,17 @@ public abstract class InstructionStep implements ActiveUIStep, StepNavigationStr
                 .setDefaultSpokenInstructions(ImmutableMap.of());
     }
 
-    @Override
     @NonNull
-    public InstructionStep copyWithIdentifier(@NonNull String identifier) {
-        return this.toBuilder().setIdentifier(identifier).build();
+    @Override
+    public Step copyWithIdentifier(@NonNull final String identifier) {
+        return toBuilder().setIdentifier(identifier).build();
     }
 
-    @Override
-    @NonNull
-    public Result instantiateStepResult() {
-        return new ResultBase(this.getIdentifier(), Instant.now(), Instant.now());
-    }
-
-    @NonNull
-    @Override
     public String getType() {
         return TYPE_KEY;
     }
 
-    @SerializedName("isFirstRunOnly")
     public abstract boolean isFirstRunOnly();
 
-    @Override
-    public String getNextStepIdentifier(Task task, TaskResult taskResult) {
-        return HandStepNavigationRuleHelper.getNextStepIdentifier(this.getIdentifier(), task, taskResult);
-    }
-
-    @Override
-    public boolean shouldSkip(Task task, TaskResult taskResult) {
-        // We skip an instruction step if it should be skipped because of it's hand, or because
-        // it is first run only.
-        return HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), task, taskResult) ||
-                (this.isFirstRunOnly() && !FirstRunHelper.isFirstRun(taskResult));
-    }
+    public abstract Builder toBuilder();
 }
