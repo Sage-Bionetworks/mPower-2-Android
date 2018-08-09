@@ -31,6 +31,18 @@ android {
             testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
         }
     }
+
+    flavorDimensions "userRole"
+
+    productFlavors {
+        internal {
+            dimension "userRole"
+        }
+        participant {
+            dimension "userRole"
+        }
+    }
+
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
