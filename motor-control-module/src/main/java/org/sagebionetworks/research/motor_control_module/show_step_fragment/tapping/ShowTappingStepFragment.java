@@ -104,7 +104,7 @@ public class ShowTappingStepFragment extends
         super.update(stepView);
         Task task = this.performTaskViewModel.getTask();
         TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
-        HandStepUIHelper.update(task, taskResult, stepView, this.stepViewBinding);
+        HandStepUIHelper.update(stepView, this.stepViewBinding);
         // Underline the skip button
         ActionButton skipButton = this.stepViewBinding.getSkipButton();
         if (skipButton != null) {
@@ -416,18 +416,16 @@ public class ShowTappingStepFragment extends
      * @return the String to display on the nextButton.
      */
     private String getNextButtonLabel() {
-        Task task = this.performTaskViewModel.getTask();
         TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
         if (taskResult != null) {
-            HandStepHelper.Hand nextHand = HandStepHelper.nextHand(task, taskResult);
-            if (nextHand != null) {
+            HandStepHelper.Hand thisHand = HandStepHelper.whichHand(this.stepView.getIdentifier());
+            if (thisHand != null) {
                 List<String> handOrder = HandStepHelper.getHandOrder(taskResult);
                 if (handOrder != null) {
                     String last = handOrder.size() == 2 ? handOrder.get(1) : handOrder.get(0);
-                    if (!nextHand.toString().equals(last)) {
+                    if (!thisHand.toString().equals(last)) {
                         String nextButtonString = this.getResources().getString(R.string.tapping_continue_with_text);
-                        return nextButtonString
-                                .replaceAll(HandStepHelper.JSON_PLACEHOLDER, nextHand.getOtherHand().toString());
+                        return nextButtonString.replaceAll(HandStepHelper.JSON_PLACEHOLDER, last);
 
                     }
                 }

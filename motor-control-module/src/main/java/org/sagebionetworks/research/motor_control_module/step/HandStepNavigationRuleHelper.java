@@ -9,32 +9,19 @@ import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.domain.task.Task;
 
 public abstract class HandStepNavigationRuleHelper {
-    public static boolean shouldSkip(@NonNull String stepIdentifier, @NonNull Task task, @NonNull TaskResult taskResult) {
+    public static boolean shouldSkip(@NonNull String stepIdentifier, @NonNull TaskResult taskResult) {
         HandStepHelper.Hand hand = HandStepHelper.whichHand(stepIdentifier);
-        HandStepHelper.Hand nextHand = HandStepHelper.nextHand(task, taskResult);
+        HandStepHelper.Hand nextHand = HandStepHelper.nextHand(taskResult);
         return hand != null && hand != nextHand;
     }
 
     @Nullable
-    public static String getNextStepIdentifier(@NonNull String stepIdentifier, @NonNull Task task,
+    public static String getNextStepIdentifier(@NonNull String stepIdentifier,
                                                @NonNull TaskResult taskResult) {
         HandStepHelper.Hand thisHand = HandStepHelper.whichHand(stepIdentifier);
-        HandStepHelper.Hand nextHand = HandStepHelper.nextHand(task, taskResult);
+        HandStepHelper.Hand nextHand = HandStepHelper.nextHand(taskResult);
         if(thisHand != null && nextHand != null && thisHand != nextHand) {
-            Step resultStep = null;
-            for (Step step : task.getSteps()) {
-                if (step.getIdentifier().equals(nextHand.toString())) {
-                    resultStep = step;
-                }
-            }
-
-            if (resultStep != null) {
-                while (resultStep instanceof SectionStep) {
-                    resultStep = ((SectionStep) resultStep).getSteps().get(0);
-                }
-
-                return resultStep.getIdentifier();
-            }
+            return nextHand.toString();
         }
 
         return null;

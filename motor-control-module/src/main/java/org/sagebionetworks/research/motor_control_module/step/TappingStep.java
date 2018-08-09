@@ -97,24 +97,18 @@ public abstract class TappingStep implements ActiveUIStep, StepNavigationStrateg
 
     @Override
     @NonNull
-    public Result instantiateStepResult() {
-        return new ResultBase(this.getIdentifier(), Instant.now(), Instant.now());
-    }
-
-    @Override
-    @NonNull
     public TappingStep copyWithIdentifier(@NonNull String identifier) {
         return this.toBuilder().setIdentifier(identifier).build();
     }
 
     @Override
-    public boolean shouldSkip(@NonNull Task task, @NonNull TaskResult taskResult) {
-        return HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), task, taskResult);
+    public boolean shouldSkip(@NonNull TaskResult taskResult) {
+        return HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), taskResult);
     }
 
     @Override
     @Nullable
-    public String getNextStepIdentifier(@NonNull Task task, @NonNull TaskResult taskResult) {
-        return HandStepNavigationRuleHelper.getNextStepIdentifier(this.getIdentifier(), task, taskResult);
+    public String getNextStepIdentifier(@NonNull TaskResult taskResult) {
+        return HandStepNavigationRuleHelper.getNextStepIdentifier(this.getIdentifier(), taskResult);
     }
 }

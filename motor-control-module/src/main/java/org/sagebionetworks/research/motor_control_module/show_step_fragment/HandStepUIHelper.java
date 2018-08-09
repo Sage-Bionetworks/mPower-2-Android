@@ -16,9 +16,9 @@ import org.sagebionetworks.research.presentation.show_step.show_step_view_models
 
 public abstract class HandStepUIHelper {
     public static <S extends UIStepView, SB extends UIStepViewBinding<S>>
-    void update(Task task, TaskResult taskResult, S stepView, SB stepViewBinding) {
+    void update(S stepView, SB stepViewBinding) {
         // First we figure out which hand will go next.
-        HandStepHelper.Hand nextHand = HandStepHelper.nextHand(task, taskResult);
+        HandStepHelper.Hand nextHand = HandStepHelper.whichHand(stepView.getIdentifier());
         // Contains placeholder will be true if any of the strings contains the formatting placeholder %@.
         boolean containsPlaceholder = false;
         // Formatting the title.

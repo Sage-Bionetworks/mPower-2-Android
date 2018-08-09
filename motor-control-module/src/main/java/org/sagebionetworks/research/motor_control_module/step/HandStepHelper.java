@@ -20,6 +20,9 @@ public abstract class HandStepHelper {
     // Matches any step with the REGEX_PLACEHOLDER anywhere in it's identifier or parent's identifiers.
     // it is expected that REGEX_PLACEHOLDER will be replaced with the desired identifier via .replaceAll()
     public static final String REGEX_FORMAT;
+    public static final String SECTION_ACTIVE_STEP_IDENTIFIER = "active";
+    public static final String SECTION_TAPPING_STEP_IDENTIFIER = "tapping";
+
     static {
         String startRegexFormat = "^" + REGEX_PLACEHOLDER + "(\\..*)?";
         String middleRegexFormat = ".*\\." + REGEX_PLACEHOLDER + "(\\..*)?";
@@ -90,31 +93,26 @@ public abstract class HandStepHelper {
     /**
      * Returns the next hand that should go from the given task result, or null if no next hand
      * should go.
-     * @param task The task to figure out which hand should go next in.
      * @param result The task result to figure out which hand should go next from.
      * @return the next hand that should go from the given task result.
      */
     @Nullable
-    public static Hand nextHand(@NonNull Task task, @NonNull TaskResult result) {
+    public static Hand nextHand(@NonNull TaskResult result) {
         // find that hand sections.
-        SectionStep leftSection = HandStepHelper.findHandSectionStep(task.getSteps(), Hand.LEFT);
-        SectionStep rightSection = HandStepHelper.findHandSectionStep(task.getSteps(), Hand.RIGHT);
         List<String> handOrder = HandStepHelper.getHandOrder(result);
-        if (leftSection == null || rightSection == null || handOrder == null) {
-            // If we don't have sections for both right and left there is no reason to continue.
+        if (handOrder == null) {
+            // If we don't have a hand order we return.
             return null;
         }
 
         Hand firstHand = Hand.fromString(handOrder.get(0));
-        SectionStep firstSection = firstHand == Hand.LEFT ? leftSection : rightSection;
-        if (!HandStepHelper.hasGone(firstHand, firstSection, result)) {
+        if (!HandStepHelper.hasGone(firstHand, result)) {
             return firstHand;
         } else {
             String secondHandString = handOrder.size() == 2 ? handOrder.get(1) : null;
             if (secondHandString != null) {
                 Hand secondHand = Hand.fromString(secondHandString);
-                SectionStep secondSection = secondHand == Hand.LEFT ? leftSection : rightSection;
-                if (!HandStepHelper.hasGone(secondHand, secondSection, result)) {
+                if (!HandStepHelper.hasGone(secondHand, result)) {
                     return secondHand;
                 }
             }
@@ -140,18 +138,25 @@ public abstract class HandStepHelper {
     /**
      * Returns `true` if the given hand has already gone, `false` otherwise.
      * @param hand The hand to test whether has already gone.
-     * @param handSection The SectionStep that contains all of the hand steps for the given hand.
-     * @param result The task result to figure out if the hand has already gone from.
+     * @param taskResult The task result to figure out if the hand has already gone from.
      * @return `true` if the given hand has already gone, `false` otherwise.
      */
-    public static boolean hasGone(@NonNull Hand hand, @NonNull SectionStep handSection,
-                                  @NonNull TaskResult result) {
+    public static boolean hasGone(@NonNull Hand hand,
+                                  @NonNull TaskResult taskResult) {
         // If the hand has gone there must be either a string that has anything.handString.anything,
         // or handString.anything.
         String handString = hand.toString();
         String handRegex = REGEX_FORMAT.replaceAll(REGEX_PLACEHOLDER, handString);
-        List<Result> resultMatches = result.getResultsMatchingRegex(handRegex);
-        return resultMatches.size() == handSection.getSteps().size();
+        List<Result> resultMatches = taskResult.getResultsMatchingRegex(handRegex);
+        for (Result result : resultMatches) {
+            String identifier = result.getIdentifier();
+            if (identifier.endsWith("." + SECTION_ACTIVE_STEP_IDENTIFIER) ||
+                    identifier.endsWith("." + SECTION_TAPPING_STEP_IDENTIFIER)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

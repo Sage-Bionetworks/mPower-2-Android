@@ -41,7 +41,7 @@ public class ShowMPowerActiveUIStepFragment extends ShowActiveUIStepFragment {
         super.update(stepView);
         Task task = this.performTaskViewModel.getTask();
         TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
-        HandStepUIHelper.update(task, taskResult, stepView, this.stepViewBinding);
+        HandStepUIHelper.update(stepView, this.stepViewBinding);
         // Underline the skip button
         ActionButton skipButton = this.stepViewBinding.getSkipButton();
         if (skipButton != null) {

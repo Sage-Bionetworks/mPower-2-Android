@@ -9,12 +9,16 @@ import org.sagebionetworks.research.mpower.tracking.TrackingFragment;
 import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
 
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
 
 @Module
 public interface MPowerApplicationModule {
+    @Binds
+    Context provideApplicationContext(Application application);
+
     @ContributesAndroidInjector
     HistoryFragment contributeHistoryFragmentInjector();
 

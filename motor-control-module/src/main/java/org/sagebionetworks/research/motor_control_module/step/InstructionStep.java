@@ -41,17 +41,21 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
+import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.interfaces.ActiveUIStep;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
+import org.sagebionetworks.research.domain.task.navigation.strategy.StepNavigationStrategy;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.FirstRunHelper;
 
 import java.util.Map;
 
 @AutoValue
-public abstract class InstructionStep implements ActiveUIStep {
+public abstract class InstructionStep implements ActiveUIStep, StepNavigationStrategy.SkipStepStrategy,
+    StepNavigationStrategy.NextStepStrategy {
     @AutoValue.Builder
     public abstract static class Builder {
         @NonNull
@@ -103,12 +107,33 @@ public abstract class InstructionStep implements ActiveUIStep {
 
     public static final String TYPE_KEY = StepType.INSTRUCTION;
 
+    public static Builder builder() {
+        return new AutoValue_InstructionStep.Builder()
+                .setActions(ImmutableMap.of())
+                .setCommands(ImmutableSet.of())
+                .setHiddenActions(ImmutableSet.of())
+                .setSpokenInstructions(ImmutableMap.of())
+                .setFirstRunOnly(false)
+                .setBackgroundAudioRequired(false);
+    }
+
     public static TypeAdapter<InstructionStep> typeAdapter(Gson gson) {
         return new AutoValue_InstructionStep.GsonTypeAdapter(gson)
                 .setDefaultActions(ImmutableMap.of())
                 .setDefaultCommands(ImmutableSet.of())
                 .setDefaultHiddenActions(ImmutableSet.of())
                 .setDefaultSpokenInstructions(ImmutableMap.of());
+    }
+
+    @Override
+    public String getNextStepIdentifier(@NonNull TaskResult taskResult) {
+        return HandStepNavigationRuleHelper.getNextStepIdentifier(this.getIdentifier(), taskResult);
+    }
+
+    @Override
+    public boolean shouldSkip(@NonNull TaskResult taskResult) {
+        return HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), taskResult) ||
+                (this.isFirstRunOnly() && !FirstRunHelper.isFirstRun(taskResult));
     }
 
     @NonNull

@@ -38,8 +38,6 @@ import android.view.View;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
-import org.sagebionetworks.research.mobile_ui.show_step.view.FragmentNavigationRule;
-import org.sagebionetworks.research.mobile_ui.show_step.view.FragmentSkipRule;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.view_binding.UIStepViewBinding;
@@ -76,6 +74,6 @@ public class ShowInstructionStepFragment extends
         super.update(stepView);
         Task task = this.performTaskViewModel.getTask();
         TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
-        HandStepUIHelper.update(task, taskResult, stepView, this.stepViewBinding);
+        HandStepUIHelper.update(stepView, this.stepViewBinding);
     }
 }
