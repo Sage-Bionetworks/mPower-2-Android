@@ -40,4 +40,9 @@
     <string name="title_history">History</string>
     <string name="title_insights">Insights</string>
     <string name="title_profile">Profile</string>
+
+    <string name="title_activity_external_id">External ID Sign Up</string>
+
+    <string name="title_alert_error">Error</string>
+
 </resources>

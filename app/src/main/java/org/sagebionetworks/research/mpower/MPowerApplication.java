@@ -8,8 +8,11 @@ import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import org.researchstack.backbone.ResearchStack;
 import org.sagebionetworks.bridge.android.BridgeApplication;
 import org.sagebionetworks.research.mpower.inject.DaggerMPowerApplicationComponent;
+import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
+import org.sagebionetworks.research.mpower.researchstack.framework.MpResearchStack;
 
 import javax.inject.Inject;
 
@@ -26,6 +29,8 @@ public class MPowerApplication extends BridgeApplication implements HasSupportFr
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingSupportFragmentInjector;
 
+    MpResearchStack researchStack;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -34,6 +39,9 @@ public class MPowerApplication extends BridgeApplication implements HasSupportFr
                 .application(this)
                 .build()
                 .inject(this);
+
+        researchStack = new MpResearchStack(this);
+        ResearchStack.init(this, researchStack);
     }
 
     @Override

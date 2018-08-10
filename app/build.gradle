@@ -52,6 +52,7 @@ dependencies {
     implementation project(':data')
     implementation project(':sageresearch-mpower')
     implementation project(':researchstack-mpower')
+    implementation project(':researchstack-sdk')
 
     // ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'

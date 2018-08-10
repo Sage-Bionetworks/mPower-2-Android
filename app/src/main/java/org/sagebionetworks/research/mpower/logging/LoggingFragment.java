@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.logging;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import com.google.common.base.Strings;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.logging.LoggingViewModel.ScheduledActivityView;
+import org.sagebionetworks.research.mpower.signup.ExternalIDRegistrationActivity;
 
 import java.util.List;
 
@@ -113,6 +115,10 @@ public class LoggingFragment extends Fragment {
         } else {
             errorMessageTextView.setVisibility(View.VISIBLE);
             errorMessageTextView.setText(errorMessage);
+            if (errorMessage.equals("Not signed in.") && getActivity() != null) {
+                getActivity().startActivity(
+                        new Intent(getActivity(), ExternalIDRegistrationActivity.class));
+            }
         }
     }
 
