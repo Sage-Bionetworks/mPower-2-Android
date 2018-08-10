@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.view.MenuItem
 import com.google.common.base.Supplier
 import com.google.common.collect.ImmutableMap
 import dagger.android.AndroidInjection
@@ -26,12 +25,17 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     private val CONSENT_URI = Uri.parse("http://mpower.sagebridge.org/study/intro")
     private val SIGNUP_TASK_ID = "Signup"
 
+    // tag for identifying an instance of a fragment
     private val TAG_FRAGMENT_TRACKING = "tracking"
     private val TAG_FRAGMENT_PROFILE = "profile"
+
+    // Mapping of a tag to a creation method for a fragment
     private val FRAGMENT_TAG_TO_CREATOR = ImmutableMap.Builder<String, Supplier<Fragment>>()
             .put(TAG_FRAGMENT_TRACKING, Supplier { TrackingFragment() })
             .put(TAG_FRAGMENT_PROFILE, Supplier { ProfileFragment() })
             .build()
+
+    // mapping of navigation IDs to a fragment tag
     private val FRAGMENT_NAV_ID_TO_TAG = ImmutableMap.Builder<Int, String>()
             .put(R.id.navigation_tracking, TAG_FRAGMENT_TRACKING)
             .put(R.id.navigation_profile, TAG_FRAGMENT_PROFILE)
@@ -49,7 +53,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     private lateinit var mainViewModel: MainViewModel
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        showFragment(item)
+        showFragment(FRAGMENT_NAV_ID_TO_TAG[item.itemId])
         return@OnNavigationItemSelectedListener true
     }
 
@@ -95,28 +99,42 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
 
-    fun showFragment(item: MenuItem) {
-        return showFragment(FRAGMENT_NAV_ID_TO_TAG[item.itemId])
-    }
-
+    /**
+     * Show the fragment specified by a certain tag. The fragment currently displayed in fragment_container is
+     * detached from the UI. If this is the first time we are showing a fragment, an instance is created and added to
+     * the fragment_container. If we have previously displayed a fragment, we retrieve it from the fragment manager
+     * and re-attached to the UI.
+     */
     fun showFragment(fragmentTag: String?) {
-        var fragmentTransaction = supportFragmentManager.beginTransaction()
+        if (fragmentTag == null) {
+            LOGGER.warn("could not show fragment with null tag")
+        }
 
-        var previousFragment = supportFragmentManager
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+
+        val previousFragment = supportFragmentManager
                 .findFragmentById(R.id.fragment_container)
         if (previousFragment != null) {
+            LOGGER.debug("detaching fragment with tag: {}", previousFragment.tag)
             fragmentTransaction.detach(previousFragment)
         }
 
         var nextFragment = supportFragmentManager.findFragmentByTag(fragmentTag)
         if (nextFragment == null) {
-            val fragmentSupplier: Supplier<Fragment> = FRAGMENT_TAG_TO_CREATOR[fragmentTag]
-                    ?: FRAGMENT_TAG_TO_CREATOR[TAG_FRAGMENT_TRACKING]!!
-            nextFragment = fragmentSupplier.get()!!
+            LOGGER.debug("no fragment found for tag: {}, creating a new one ", fragmentTag)
+            val fragmentSupplier: Supplier<Fragment>? = FRAGMENT_TAG_TO_CREATOR[fragmentTag]
+                    ?: FRAGMENT_TAG_TO_CREATOR[TAG_FRAGMENT_TRACKING]
+
+            if (fragmentSupplier == null) {
+                LOGGER.warn("no supplier found for fragment with tag: {}", fragmentTag)
+                return
+            }
+            nextFragment = fragmentSupplier.get()
 
             fragmentTransaction
                     .add(R.id.fragment_container, nextFragment, fragmentTag)
         } else {
+            LOGGER.debug("reattaching fragment with tag: {}", nextFragment.tag)
             fragmentTransaction.attach(nextFragment)
         }
         fragmentTransaction.commit()
