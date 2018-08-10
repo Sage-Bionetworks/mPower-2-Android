@@ -3,6 +3,7 @@ package org.sagebionetworks.research.mpower;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.support.annotation.VisibleForTesting;
 import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
@@ -11,6 +12,7 @@ import android.view.WindowManager;
 import org.researchstack.backbone.ResearchStack;
 import org.sagebionetworks.bridge.android.BridgeApplication;
 import org.sagebionetworks.research.mpower.inject.DaggerMPowerApplicationComponent;
+import org.sagebionetworks.research.mpower.inject.MPowerApplicationComponent;
 
 import javax.inject.Inject;
 
@@ -34,11 +36,15 @@ public class MPowerApplication extends BridgeApplication implements HasSupportFr
     @Override
     public void onCreate() {
         super.onCreate();
-        DaggerMPowerApplicationComponent
+        initAppComponent().inject(this);
+    }
+
+    @VisibleForTesting
+    protected MPowerApplicationComponent initAppComponent() {
+        return DaggerMPowerApplicationComponent
                 .builder()
                 .application(this)
-                .build()
-                .inject(this);
+                .build();
     }
 
     @Override

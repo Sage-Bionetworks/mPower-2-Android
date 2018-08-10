@@ -7,12 +7,12 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 
+import com.google.common.base.Strings;
+
 import org.sagebionetworks.bridge.android.manager.AuthenticationManager;
 import org.sagebionetworks.bridge.rest.model.SignUp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -51,7 +51,10 @@ public class ExternalIdSignInViewModel extends ViewModel {
     private final MutableLiveData<String> errorMessageMutableLiveData;
 
     private String externalId = "";
+
     private String firstName = "";
+
+    private final MutableLiveData<Boolean> isExternalIdValidLiveData;
 
     private final MutableLiveData<Boolean> isLoadingMutableLiveData;
 
@@ -60,8 +63,7 @@ public class ExternalIdSignInViewModel extends ViewModel {
     private boolean skipConsent = false;
 
     @MainThread
-    public ExternalIdSignInViewModel(
-            final AuthenticationManager authenticationManager) {
+    public ExternalIdSignInViewModel(final AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
 
         errorMessageMutableLiveData = new MutableLiveData<>();
@@ -71,6 +73,9 @@ public class ExternalIdSignInViewModel extends ViewModel {
 
         isSignedInLiveData = new MutableLiveData<>();
         isSignedInLiveData.setValue(false);
+
+        isExternalIdValidLiveData = new MutableLiveData<>();
+        isExternalIdValidLiveData.setValue(false);
     }
 
     public void doSignIn() {
@@ -88,19 +93,23 @@ public class ExternalIdSignInViewModel extends ViewModel {
 
         compositeSubscription.add(
                 authenticationManager.signUp(signUp)
-                .andThen(authenticationManager.signInViaExternalId(externalId, externalId))
-                .doOnSubscribe(() -> isLoadingMutableLiveData.postValue(true))
-                .doAfterTerminate(() -> isLoadingMutableLiveData.postValue(false))
-                .subscribe(s -> {
-                    isSignedInLiveData.postValue(true);
-                }, t -> {
-                    isSignedInLiveData.postValue(false);
-                    errorMessageMutableLiveData.postValue(t.getMessage());
-                }));
+                        .andThen(authenticationManager.signInViaExternalId(externalId, externalId))
+                        .doOnSubscribe(() -> isLoadingMutableLiveData.postValue(true))
+                        .doAfterTerminate(() -> isLoadingMutableLiveData.postValue(false))
+                        .subscribe(s -> {
+                            isSignedInLiveData.postValue(true);
+                        }, t -> {
+                            isSignedInLiveData.postValue(false);
+                            errorMessageMutableLiveData.postValue(t.getMessage());
+                        }));
     }
 
-    public LiveData<String> errorMessageLiveData() {
+    public LiveData<String> getErrorMessageLiveData() {
         return errorMessageMutableLiveData;
+    }
+
+    public LiveData<Boolean> getIsExternalIdValid() {
+        return isExternalIdValidLiveData;
     }
 
     public LiveData<Boolean> getIsLoadingLiveData() {
@@ -111,13 +120,15 @@ public class ExternalIdSignInViewModel extends ViewModel {
         return isSignedInLiveData;
     }
 
-    public void setFirstName(String firstName) {
-        LOGGER.debug("setFirstName: {}", firstName);
-        this.firstName = firstName;
-    }
     public void setExternalId(String externalId) {
         LOGGER.debug("setExternalId: {}", externalId);
         this.externalId = externalId;
+        isExternalIdValidLiveData.postValue(!Strings.isNullOrEmpty(externalId));
+    }
+
+    public void setFirstName(String firstName) {
+        LOGGER.debug("setFirstName: {}", firstName);
+        this.firstName = firstName;
     }
 
     public void setSkipConsent(boolean skipConsent) {
@@ -128,5 +139,9 @@ public class ExternalIdSignInViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         compositeSubscription.unsubscribe();
+    }
+
+    void onErrorMessageConsumed() {
+        errorMessageMutableLiveData.postValue(null);
     }
 }
