@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ExternalIdSignInActivity"
+            android:name=".authentication.ExternalIdSignInActivity"
             android:label="@string/title_activity_external_id_sign_in"
             android:theme="@style/MPowerTheme"
             android:windowSoftInputMode="adjustResize"/>

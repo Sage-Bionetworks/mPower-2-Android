@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower;
+package org.sagebionetworks.research.mpower.authentication;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;

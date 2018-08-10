@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower;
+package org.sagebionetworks.research.mpower.authentication;
 
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 
@@ -11,6 +11,8 @@ import android.widget.CheckBox;
 import android.widget.ProgressBar;
 
 import com.google.common.base.Strings;
+
+import org.sagebionetworks.research.mpower.R;
 
 import javax.inject.Inject;
 

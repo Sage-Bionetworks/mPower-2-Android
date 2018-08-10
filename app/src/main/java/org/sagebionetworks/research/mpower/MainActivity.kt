@@ -13,8 +13,7 @@ import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.navigation
-import org.sagebionetworks.research.mpower.history.HistoryFragment
-import org.sagebionetworks.research.mpower.insights.InsightsFragment
+import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity
 import org.sagebionetworks.research.mpower.profile.ProfileFragment
 import org.sagebionetworks.research.mpower.tracking.TrackingFragment
 import org.slf4j.LoggerFactory
@@ -96,9 +95,9 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         return when (item.itemId) {
             R.id.navigation_tracking -> TrackingFragment()
 
-            R.id.navigation_history -> HistoryFragment()
-
-            R.id.navigation_insights -> InsightsFragment()
+//            R.id.navigation_history -> HistoryFragment()
+//
+//            R.id.navigation_insights -> InsightsFragment()
 
             R.id.navigation_profile -> ProfileFragment()
 
