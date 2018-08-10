@@ -76,21 +76,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/f_walking1"/>
 
-            <org.sagebionetworks.research.mobile_ui.widget.StepHeader
-                android:id="@+id/stepHeader"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:background="@color/transparent"
-                app:isCancelButtonHidden="false"
-                app:isInfoButtonHidden="true"
-                app:isProgressBarHidden="false"
-                app:isProgressLabelHidden="false"
-                app:layout_constraintBottom_toBottomOf="@id/rs2_image_view"
-                app:layout_constraintEnd_toEndOf="@id/rs2_image_view"
-                app:layout_constraintStart_toStartOf="@id/rs2_image_view"
-                app:layout_constraintTop_toTopOf="@id/rs2_image_view"
-                app:usesFloatingProgressBar="false" />
-
             <include
                 android:id="@+id/stepBody"
                 layout="@layout/rs2_step_body"

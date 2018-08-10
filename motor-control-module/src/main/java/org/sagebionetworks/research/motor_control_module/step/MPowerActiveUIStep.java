@@ -98,12 +98,14 @@ public abstract class MPowerActiveUIStep implements ActiveUIStep, StepNavigation
 
     @Override
     public String getNextStepIdentifier(TaskResult taskResult) {
-        return HandStepNavigationRuleHelper.getNextStepIdentifier(this.getIdentifier(), taskResult);
+        String nextStepIdentifier = HandStepNavigationRuleHelper.getNextStepIdentifier(this.getIdentifier(), taskResult);
+        return nextStepIdentifier;
     }
 
     @Override
     public boolean shouldSkip(TaskResult taskResult) {
-        return HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), taskResult);
+        boolean shouldSkip = HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), taskResult);
+        return shouldSkip;
     }
 
     @Override

@@ -38,18 +38,28 @@
                                              android:layout_height="match_parent">
 
     <ImageView
-            android:id="@+id/rs2_image_view"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/completion_background_gradient"
-            android:scaleType="fitCenter"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_weight="3"
-            app:srcCompat="@drawable/completion_finger_tapping" app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintBottom_toTopOf="@+id/rs2_title"
-            app:layout_constraintVertical_chainStyle="spread_inside"/>
+        android:id="@+id/background_image_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/rs2_image_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/completion_background_gradient" />
+
+    <ImageView
+        android:id="@+id/rs2_image_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/rs2_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread_inside"
+        app:layout_constraintVertical_weight="3"
+        app:srcCompat="@drawable/completion_finger_tapping" />
 
     <TextView
             android:id="@+id/rs2_title"

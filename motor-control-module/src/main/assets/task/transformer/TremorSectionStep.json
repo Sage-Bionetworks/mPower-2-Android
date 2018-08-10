@@ -35,7 +35,7 @@
       }
     }
   }, {
-    "identifier": "tremor",
+    "identifier": "active",
     "type": "mpowerActive",
     "duration": 30,
     "image": {

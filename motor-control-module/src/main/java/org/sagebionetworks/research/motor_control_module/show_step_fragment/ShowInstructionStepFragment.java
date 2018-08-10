@@ -72,8 +72,7 @@ public class ShowInstructionStepFragment extends
     @Override
     protected void update(InstructionStepView stepView) {
         super.update(stepView);
-        Task task = this.performTaskViewModel.getTask();
         TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
-        HandStepUIHelper.update(stepView, this.stepViewBinding);
+        HandStepUIHelper.update(taskResult, stepView, this.stepViewBinding);
     }
 }

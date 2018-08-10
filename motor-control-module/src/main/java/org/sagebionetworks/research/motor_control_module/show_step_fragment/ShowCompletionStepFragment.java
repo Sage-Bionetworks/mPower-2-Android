@@ -34,9 +34,19 @@ package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.view.OnApplyWindowInsetsListener;
+import android.support.v4.view.ViewCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragment;
+import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
+import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.motor_control_module.R;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
@@ -47,6 +57,18 @@ public class ShowCompletionStepFragment extends ShowUIStepFragment {
         Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
         fragment.setArguments(arguments);
         return fragment;
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View result = super.onCreateView(inflater, container, savedInstanceState);
+        ImageView imageView = this.stepViewBinding.getImageView();
+        if (imageView != null) {
+            OnApplyWindowInsetsListener listener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
+            ViewCompat.setOnApplyWindowInsetsListener(imageView, listener);
+        }
+
+        return result;
     }
 
     @Override

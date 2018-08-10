@@ -127,13 +127,15 @@ public abstract class InstructionStep implements ActiveUIStep, StepNavigationStr
 
     @Override
     public String getNextStepIdentifier(@NonNull TaskResult taskResult) {
-        return HandStepNavigationRuleHelper.getNextStepIdentifier(this.getIdentifier(), taskResult);
+        String nextStepIdentifier = HandStepNavigationRuleHelper.getNextStepIdentifier(this.getIdentifier(), taskResult);
+        return nextStepIdentifier;
     }
 
     @Override
     public boolean shouldSkip(@NonNull TaskResult taskResult) {
-        return HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), taskResult) ||
+        boolean shouldSkip = HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), taskResult) ||
                 (this.isFirstRunOnly() && !FirstRunHelper.isFirstRun(taskResult));
+        return shouldSkip;
     }
 
     @NonNull

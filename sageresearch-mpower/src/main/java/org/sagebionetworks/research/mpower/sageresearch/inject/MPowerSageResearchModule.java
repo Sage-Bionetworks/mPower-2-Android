@@ -35,6 +35,7 @@ package org.sagebionetworks.research.mpower.sageresearch.inject;
 import org.sagebionetworks.research.data.inject.DataModule;
 import org.sagebionetworks.research.domain.inject.StepModule;
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
+import org.sagebionetworks.research.domain.inject.TaskModule;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.HandSelectionStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.InstructionStepModule;
@@ -44,6 +45,7 @@ import org.sagebionetworks.research.motor_control_module.inject.TappingCompletio
 import org.sagebionetworks.research.motor_control_module.inject.TappingStepModule;
 import org.sagebionetworks.research.mpower.sageresearch.PerformTaskActivity;
 import org.sagebionetworks.research.mpower.sageresearch.TappingTaskActivity;
+import org.sagebionetworks.research.presentation.inject.StepViewModule;
 
 import dagger.Module;
 import dagger.android.AndroidInjectionModule;

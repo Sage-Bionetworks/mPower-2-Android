@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
@@ -60,7 +62,9 @@ public abstract class TappingCompletionStep implements ThemedUIStep {
     }
 
     public static TypeAdapter<TappingCompletionStep> typeAdapter(Gson gson) {
-        return new AutoValue_TappingCompletionStep.GsonTypeAdapter(gson);
+        return new AutoValue_TappingCompletionStep.GsonTypeAdapter(gson)
+                .setDefaultActions(ImmutableMap.of())
+                .setDefaultHiddenActions(ImmutableSet.of());
     }
 
     public abstract Builder toBuilder();

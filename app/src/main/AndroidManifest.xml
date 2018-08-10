@@ -9,15 +9,15 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/mpower2_ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MPowerTheme.NoActionBar">
-        <meta-data
-            android:name="android.webkit.WebView.MetricsOptOut"
-            android:value="true" />
+        android:theme="@style/AppTheme">
+        <activity android:name=".PerformTaskActivity">
+        </activity>
+        <activity android:name=".sageresearch.TappingTaskActivity">
 
-        <activity android:name=".sageresearch.TappingTaskActivity" />
+        </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />

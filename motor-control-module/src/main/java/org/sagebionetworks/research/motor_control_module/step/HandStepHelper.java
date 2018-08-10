@@ -22,6 +22,7 @@ public abstract class HandStepHelper {
     public static final String REGEX_FORMAT;
     public static final String SECTION_ACTIVE_STEP_IDENTIFIER = "active";
     public static final String SECTION_TAPPING_STEP_IDENTIFIER = "tapping";
+    public static final String SECTION_TREMOR_STEP_IDENTIFIER = "tremor";
 
     static {
         String startRegexFormat = "^" + REGEX_PLACEHOLDER + "(\\..*)?";
@@ -150,8 +151,9 @@ public abstract class HandStepHelper {
         List<Result> resultMatches = taskResult.getResultsMatchingRegex(handRegex);
         for (Result result : resultMatches) {
             String identifier = result.getIdentifier();
-            if (identifier.endsWith("." + SECTION_ACTIVE_STEP_IDENTIFIER) ||
-                    identifier.endsWith("." + SECTION_TAPPING_STEP_IDENTIFIER)) {
+            if (identifier.endsWith("." + SECTION_ACTIVE_STEP_IDENTIFIER)
+                    || identifier.endsWith("." + SECTION_TAPPING_STEP_IDENTIFIER)
+                    || identifier.equals("." + SECTION_TREMOR_STEP_IDENTIFIER)) {
                 return true;
             }
         }

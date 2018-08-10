@@ -102,9 +102,8 @@ public class ShowTappingStepFragment extends
     @Override
     public void update(TappingStepView stepView) {
         super.update(stepView);
-        Task task = this.performTaskViewModel.getTask();
         TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
-        HandStepUIHelper.update(stepView, this.stepViewBinding);
+        HandStepUIHelper.update(taskResult, stepView, this.stepViewBinding);
         // Underline the skip button
         ActionButton skipButton = this.stepViewBinding.getSkipButton();
         if (skipButton != null) {
