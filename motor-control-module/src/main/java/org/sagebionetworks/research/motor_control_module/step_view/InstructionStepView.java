@@ -95,10 +95,4 @@ public class InstructionStepView extends ActiveUIStepViewBase {
     public boolean isFirstRunOnly() {
         return this.isFirstRunOnly;
     }
-
-    @Override
-    public boolean shouldSkip(@Nullable TaskResult taskResult) {
-        // If this step should only run on first runs and it is not a first run then we should skip this step.
-        return this.isFirstRunOnly && !FirstRunHelper.isFirstRun(taskResult);
-    }
 }

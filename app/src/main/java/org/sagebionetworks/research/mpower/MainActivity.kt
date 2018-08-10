@@ -13,15 +13,9 @@ import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.navigation
-import org.researchstack.backbone.factory.IntentFactory
-import org.researchstack.backbone.task.Task
 import org.sagebionetworks.research.mpower.history.HistoryFragment
 import org.sagebionetworks.research.mpower.insights.InsightsFragment
 import org.sagebionetworks.research.mpower.profile.ProfileFragment
-import org.sagebionetworks.research.mpower.researchstack.MpMainActivity.SIGN_UP_TASK_CODE
-import org.sagebionetworks.research.mpower.researchstack.MpSignupActivity
-import org.sagebionetworks.research.mpower.researchstack.framework.MpResourceManager
-import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
 import org.sagebionetworks.research.mpower.tracking.TrackingFragment
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
@@ -37,7 +31,8 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     lateinit var mainViewModelProviderFactory: MainViewModelFactory
 
     // TODO inject this dependency, ideally switch to TaskLauncher @liujoshua 2018/08/06
-    @Inject lateinit var taskLauncher : TaskLauncher
+    @Inject
+    lateinit var taskLauncher: TaskLauncher
 
     private lateinit var mainViewModel: MainViewModel
 
@@ -50,7 +45,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this);
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -73,7 +68,9 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     fun showSignUpActivity() {
         LOGGER.debug("Showing sign up activity")
 
-        taskLauncher.launchTask(this, SIGNUP_TASK_ID, null)
+        startActivity(Intent(Intent(this, ExternalIdSignInActivity::class.java)))
+
+//        taskLauncher.launchTask(this, SIGNUP_TASK_ID, null)
     }
 
     fun showConsentActivity() {
