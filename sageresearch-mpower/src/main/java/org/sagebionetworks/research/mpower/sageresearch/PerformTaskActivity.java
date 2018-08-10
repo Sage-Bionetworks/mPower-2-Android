@@ -11,6 +11,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment.OnPerformTaskExitListener;
@@ -37,6 +40,7 @@ public class PerformTaskActivity extends AppCompatActivity implements HasSupport
 
     @Inject
     DispatchingAndroidInjector<Fragment> supportFragmentInjector;
+
 
     public static Intent createIntent(@NonNull Context context, @NonNull TaskView taskView,
             @Nullable UUID taskRunUUID) {

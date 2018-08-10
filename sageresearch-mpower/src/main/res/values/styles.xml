@@ -6,7 +6,6 @@
         <item name="colorPrimary">@color/royal600</item>
         <item name="colorPrimaryDark">@color/royal700</item>
 
-        <item name="android:colorButtonNormal">@color/butterscotch500</item>
         <item name="android:buttonStyle">@style/MPower.Button</item>
 
         <item name="android:textAppearance">@style/MPowerTextAppearance</item>

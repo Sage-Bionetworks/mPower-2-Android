@@ -8,6 +8,8 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import com.google.common.base.Supplier
+import com.google.common.collect.ImmutableMap
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -24,6 +26,17 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     private val CONSENT_URI = Uri.parse("http://mpower.sagebridge.org/study/intro")
     private val SIGNUP_TASK_ID = "Signup"
 
+    private val TAG_FRAGMENT_TRACKING = "tracking"
+    private val TAG_FRAGMENT_PROFILE = "profile"
+    private val FRAGMENT_TAG_TO_CREATOR = ImmutableMap.Builder<String, Supplier<Fragment>>()
+            .put(TAG_FRAGMENT_TRACKING, Supplier { TrackingFragment() })
+            .put(TAG_FRAGMENT_PROFILE, Supplier { ProfileFragment() })
+            .build()
+    private val FRAGMENT_NAV_ID_TO_TAG = ImmutableMap.Builder<Int, String>()
+            .put(R.id.navigation_tracking, TAG_FRAGMENT_TRACKING)
+            .put(R.id.navigation_profile, TAG_FRAGMENT_PROFILE)
+            .build()
+
     @Inject
     lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
     @Inject
@@ -36,10 +49,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     private lateinit var mainViewModel: MainViewModel
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container, findOrCreateFragment(item))
-                .commit()
+        showFragment(item)
         return@OnNavigationItemSelectedListener true
     }
 
@@ -81,28 +91,35 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     fun showMainActivityLayout() {
         LOGGER.debug("Showing main activity")
 
-        supportFragmentManager
-                .beginTransaction()
-                .add(R.id.fragment_container, TrackingFragment())
-                .commit()
-
+        showFragment(TAG_FRAGMENT_TRACKING)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
 
-    // TODO: fragment caching, don't create a new one each time, ask FragmentManager if it has an instance already
-    // @liujoshua 2018/08/06
-    fun findOrCreateFragment(item: MenuItem): Fragment {
-        return when (item.itemId) {
-            R.id.navigation_tracking -> TrackingFragment()
+    fun showFragment(item: MenuItem) {
+        return showFragment(FRAGMENT_NAV_ID_TO_TAG[item.itemId])
+    }
 
-//            R.id.navigation_history -> HistoryFragment()
-//
-//            R.id.navigation_insights -> InsightsFragment()
+    fun showFragment(fragmentTag: String?) {
+        var fragmentTransaction = supportFragmentManager.beginTransaction()
 
-            R.id.navigation_profile -> ProfileFragment()
-
-            else -> TrackingFragment()
+        var previousFragment = supportFragmentManager
+                .findFragmentById(R.id.fragment_container)
+        if (previousFragment != null) {
+            fragmentTransaction.detach(previousFragment)
         }
+
+        var nextFragment = supportFragmentManager.findFragmentByTag(fragmentTag)
+        if (nextFragment == null) {
+            val fragmentSupplier: Supplier<Fragment> = FRAGMENT_TAG_TO_CREATOR[fragmentTag]
+                    ?: FRAGMENT_TAG_TO_CREATOR[TAG_FRAGMENT_TRACKING]!!
+            nextFragment = fragmentSupplier.get()!!
+
+            fragmentTransaction
+                    .add(R.id.fragment_container, nextFragment, fragmentTag)
+        } else {
+            fragmentTransaction.attach(nextFragment)
+        }
+        fragmentTransaction.commit()
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
