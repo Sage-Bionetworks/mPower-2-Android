@@ -67,7 +67,6 @@ dependencies {
 
     // ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
-    implementation 'com.android.support:support-v4:27.1.1'
     kapt 'com.jakewharton:butterknife-compiler:8.8.1'
 
     // Logging
@@ -97,7 +96,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation 'android.arch.lifecycle:extensions:1.1.1'
-    implementation 'android.arch.lifecycle:reactivestreams:1.1.1'
 
     implementation "com.android.support:design:$support_library_version"
     implementation "com.android.support:support-vector-drawable:$support_library_version"

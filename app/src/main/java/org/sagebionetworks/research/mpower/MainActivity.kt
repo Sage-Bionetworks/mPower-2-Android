@@ -69,8 +69,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         LOGGER.debug("Showing sign up activity")
 
         startActivity(Intent(Intent(this, ExternalIdSignInActivity::class.java)))
-
-//        taskLauncher.launchTask(this, SIGNUP_TASK_ID, null)
     }
 
     fun showConsentActivity() {

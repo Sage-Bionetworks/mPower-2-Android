@@ -57,7 +57,7 @@ public class TaskLauncher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskLauncher.class);
 
-    private static final ImmutableSet<String> RS_TASKS = ImmutableSet.of("Signup");
+    private static final ImmutableSet<String> RS_TASKS = ImmutableSet.of();
 
     private static final ImmutableSet<String> SR_TASKS = ImmutableSet.of("Tapping");
 
