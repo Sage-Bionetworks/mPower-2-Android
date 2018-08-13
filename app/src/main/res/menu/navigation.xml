@@ -7,15 +7,17 @@
         android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/title_tracking" />
 
-    <item
-        android:id="@+id/navigation_history"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_history" />
+    <!--<item-->
+        <!--android:id="@+id/navigation_history"-->
+        <!--android:icon="@drawable/ic_dashboard_black_24dp"-->
+        <!--android:title="@string/title_history"-->
+        <!--android:visible="false" />-->
 
-    <item
-        android:id="@+id/navigation_insights"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_insights" />
+    <!--<item-->
+        <!--android:id="@+id/navigation_insights"-->
+        <!--android:icon="@drawable/ic_notifications_black_24dp"-->
+        <!--android:title="@string/title_insights"-->
+        <!--android:visible="false" />-->
 
     <item
         android:id="@+id/navigation_profile"

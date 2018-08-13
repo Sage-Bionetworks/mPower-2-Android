@@ -36,16 +36,16 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/rs2_root_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" style="@style/Widget.ResearchStack.NavigationActionBar.Instruction">
+        android:layout_height="match_parent">
 
     <org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar
-            android:id="@id/rs2_step_navigation_action_bar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            style="@style/Widget.ResearchStack.NavigationActionBar.Instruction"/>
+        android:id="@id/rs2_step_navigation_action_bar"
+        style="@style/Widget.ResearchStack.NavigationActionBar.Instruction"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ScrollView
             android:id="@+id/scrollView"
@@ -74,7 +74,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/f_walking1"></ImageView>
+                app:srcCompat="@drawable/f_walking1"/>
 
             <org.sagebionetworks.research.mobile_ui.widget.StepHeader
                 android:id="@+id/stepHeader"
@@ -102,16 +102,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rs2_image_view" />
-                    android:id="@+id/stepBody"
-                    layout="@layout/rs2_step_body"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/app_margin_medium"
-                    android:layout_marginTop="@dimen/app_margin_medium"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/rs2_image_view"/>
 
             <ProgressBar
                     android:id="@id/rs2_progress_bar"

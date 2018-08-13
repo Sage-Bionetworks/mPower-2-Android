@@ -22,7 +22,7 @@ public class MpResourceManager extends ResourceManager {
 
     private static final String BASE_PATH_VIDEO = "mp4";
 
-    public static final String SIGNUP_TASK_RESOURCE = "signup";
+    public static final String SIGNUP_TASK_RESOURCE = "Signup";
 
     public MpResourceManager() {
         super();

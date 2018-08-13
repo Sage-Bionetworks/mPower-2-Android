@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
 import android.support.annotation.AnyThread;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
@@ -90,6 +91,8 @@ public class TrackingViewModel extends ViewModel {
     /**
      * Receives action from the View.
      *
+     * @param context
+     *         context to launch task from
      * @param taskId
      *         identifier of task to launch
      * @param taskRunUUID
@@ -97,8 +100,9 @@ public class TrackingViewModel extends ViewModel {
      * @return state of task launch
      */
     @MainThread
-    public LiveData<TaskLaunchState> launchTask(@NonNull String taskId, @Nullable UUID taskRunUUID) {
-        return taskLauncher.launchTask(taskId, taskRunUUID);
+    public LiveData<TaskLaunchState> launchTask(@NonNull Context context, @NonNull String taskId,
+            @Nullable UUID taskRunUUID) {
+        return taskLauncher.launchTask(context, taskId, taskRunUUID);
     }
 
     /**

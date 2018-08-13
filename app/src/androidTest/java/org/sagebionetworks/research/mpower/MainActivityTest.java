@@ -44,23 +44,23 @@ public class MainActivityTest {
         onView(withId(R.id.navigation))
                 .check(matches(isDisplayed()))
                 .check(matches(hasDescendant(allOf(withId(R.id.navigation_tracking), isDisplayed()))))
-                .check(matches(hasDescendant(allOf(withId(R.id.navigation_history), isDisplayed()))))
-                .check(matches(hasDescendant(allOf(withId(R.id.navigation_insights), isDisplayed()))))
+//                .check(matches(hasDescendant(allOf(withId(R.id.navigation_history), isDisplayed()))))
+//                .check(matches(hasDescendant(allOf(withId(R.id.navigation_insights), isDisplayed()))))
                 .check(matches(hasDescendant(allOf(withId(R.id.navigation_profile), isDisplayed()))));
 
-        // show history tab
-        onView(withId(R.id.navigation_history))
-                .perform(click());
-
-        onView(withId(R.id.fragment_history))
-                .check(matches(isDisplayed()));
-
-        // show insights tab
-        onView(withId(R.id.navigation_insights))
-                .perform(click());
-
-        onView(withId(R.id.fragment_insights))
-                .check(matches(isDisplayed()));
+//        // show history tab
+//        onView(withId(R.id.navigation_history))
+//                .perform(click());
+//
+//        onView(withId(R.id.fragment_history))
+//                .check(matches(isDisplayed()));
+//
+//        // show insights tab
+//        onView(withId(R.id.navigation_insights))
+//                .perform(click());
+//
+//        onView(withId(R.id.fragment_insights))
+//                .check(matches(isDisplayed()));
 
         // show profile tab
         onView(withId(R.id.navigation_profile))

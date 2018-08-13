@@ -1,0 +1,34 @@
+package org.sagebionetworks.research.mpower;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
+
+import org.sagebionetworks.bridge.android.manager.AuthenticationManager;
+
+import javax.inject.Inject;
+
+public class MainViewModelFactory {
+    private final AuthenticationManager authenticationManager;
+
+    @Inject
+    public MainViewModelFactory(@NonNull AuthenticationManager authenticationManager) {
+        this.authenticationManager = checkNotNull(authenticationManager);
+    }
+
+    public ViewModelProvider.Factory create() {
+        return new ViewModelProvider.Factory() {
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull final Class<T> modelClass) {
+                if (modelClass.isAssignableFrom(MainViewModel.class)) {
+                    // noinspection unchecked
+                    return (T) new MainViewModel(authenticationManager);
+                }
+                throw new IllegalArgumentException("Unknown ViewModel class");
+            }
+        };
+    }
+}

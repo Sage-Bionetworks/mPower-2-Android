@@ -31,7 +31,10 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="sageResearchPrimaryLight">@color/royal600</color>
+    <color name="sageResearchPrimary">@color/royal700</color>
+    <color name="sageResearchPrimaryDark">@color/royal800</color>
+    <color name="sageResearchSecondary">@color/butterscotch500</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>
