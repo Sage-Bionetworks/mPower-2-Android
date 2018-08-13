@@ -4,6 +4,12 @@ language: android
 jdk:
     - oraclejdk8
 
+env:
+  matrix:
+    - ANDROID_TARGET=android-27 ANDROID_ABI=armeabi-v7a
+  global:   #Optional
+    - ADB_INSTALL_TIMEOUT=5    #Time out to 5 mins
+
 android:
   components:
     - tools
@@ -15,6 +21,9 @@ android:
     # RS components
     - extra-android-m2repository
     - extra-google-m2repository
+
+    # system images for emulator
+    - sys-img-armeabi-v7a-android-27
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -22,6 +31,7 @@ cache:
   bundler: true
   directories:
     - $HOME/.gradle/caches/
+    - $HOME/.gradle/native/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
 branches:
@@ -36,7 +46,14 @@ before_install:
 install:
 - gem install bundler
 - bundle install
+before_script:
+- android list targets
+- echo no | android create avd --force --name test --target $ANDROID_TARGET --abi $ANDROID_ABI    #Create AVD for given api
+- emulator -avd test -no-skin -no-audio -no-window &    #Start emulator
 script:
 - export PATH=$PATH:$ANDROID_HOME/build-tools/27.0.3
+- android-wait-for-emulator             #Run wait for the emulator script.
+- adb devices                           #Display list of devices
+- adb shell input keyevent 82 &
 - ./travis/build.sh
 
