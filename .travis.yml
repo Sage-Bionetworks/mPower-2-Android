@@ -4,17 +4,18 @@ language: android
 jdk:
     - oraclejdk8
 
+env:
+  global:   #Optional
+    - ADB_INSTALL_TIMEOUT=5    #Time out to 5 mins
 android:
   components:
     - tools
     - platform-tools
-    - tools
-    - build-tools-27.0.3
-    - android-27
 
     # RS components
     - extra-android-m2repository
     - extra-google-m2repository
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -22,6 +23,7 @@ cache:
   bundler: true
   directories:
     - $HOME/.gradle/caches/
+    - $HOME/.gradle/native/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
 branches:
@@ -32,11 +34,29 @@ before_install:
 - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
 - git config --global user.name "Travis CI"
 - git config --global user.email "tcisagebio@sagebase.org"
-- yes | sdkmanager "platforms;android-27"
 install:
+# - yes | sdkmanager "platforms;android-25"
+# - yes | sdkmanager "platforms;android-27"
+# Install SDK license so Android Gradle plugin can install deps.
+- mkdir "$ANDROID_HOME/licenses" || true
+- echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+# Install the rest of tools (e.g., avdmanager)
+- echo yes | sdkmanager tools
+# Install the system image
+- echo yes | sdkmanager "system-images;android-25;google_apis;armeabi-v7a"
+# - echo yes | sdkmanager "system-images;android-27;google_apis;x86"
+# install fastlane
 - gem install bundler
 - bundle install
+before_script:
+- sdkmanager --list
+- avdmanager list
+- echo no | avdmanager create avd --force -n test -k "system-images;android-25;google_apis;armeabi-v7a"
+# - echo no | avdmanager create avd --force -n test -k "system-images;android-27;google_apis;x86"
+- $ANDROID_HOME/emulator/emulator -avd test -no-skin -no-audio -no-window &    #Start emulator
 script:
-- export PATH=$PATH:$ANDROID_HOME/build-tools/27.0.3
+- android-wait-for-emulator             #Run wait for the emulator script.
+- adb devices                           #Display list of devices
+- adb shell input keyevent 82 &
 - ./travis/build.sh
 
