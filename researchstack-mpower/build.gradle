@@ -30,7 +30,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(':researchstack-sdk')
+    // Dagger needs access to some RS classes
+    api project(':researchstack-sdk')
 
     implementation 'com.google.dagger:dagger-android:2.16'
     implementation 'com.google.dagger:dagger-android-support:2.16'

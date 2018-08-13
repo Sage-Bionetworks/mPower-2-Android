@@ -1,17 +1,25 @@
 package org.sagebionetworks.research.mpower;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 
-import org.sagebionetworks.research.domain.repository.TaskRepository;
 import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type;
+import org.sagebionetworks.research.mpower.researchstack.ResearchStackTaskLauncher;
+import org.sagebionetworks.research.mpower.sageresearch.SageResearchTaskLauncher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -47,9 +55,21 @@ public class TaskLauncher {
         }
     }
 
-    @Inject
-    public TaskLauncher(TaskRepository taskRepository) {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskLauncher.class);
 
+    private static final ImmutableSet<String> RS_TASKS = ImmutableSet.of();
+
+    private static final ImmutableSet<String> SR_TASKS = ImmutableSet.of("Tapping");
+
+    private final ResearchStackTaskLauncher researchStackTaskLauncher;
+
+    private final SageResearchTaskLauncher sageResearchTaskLauncher;
+
+    @Inject
+    public TaskLauncher(@NonNull SageResearchTaskLauncher sageResearchTaskLauncher,
+            @NonNull ResearchStackTaskLauncher researchStackTaskLauncher) {
+        this.sageResearchTaskLauncher = checkNotNull(sageResearchTaskLauncher);
+        this.researchStackTaskLauncher = checkNotNull(researchStackTaskLauncher);
     }
 
     /**
@@ -60,12 +80,46 @@ public class TaskLauncher {
      * @return state of the task launch
      */
     @NonNull
-    public LiveData<TaskLaunchState> launchTask(@NonNull String taskIdentifier, @Nullable UUID taskRunUUID) {
+    public LiveData<TaskLaunchState> launchTask(@NonNull Context context, @NonNull String taskIdentifier,
+            @Nullable UUID taskRunUUID) {
+        checkNotNull(context);
         checkArgument(!Strings.isNullOrEmpty(taskIdentifier), "taskIdentifier cannot be null or empty");
+        checkState(taskRunUUID == null, "taskRunUUID not supported yet");
 
-        // TODO: load and launch task using RS or SR as appropriate @liujoshua 2018/08/06
+        // TODO: figure out what type of return values are appropriate @liujoshua 2018/08/06
+        MutableLiveData<TaskLaunchState> tls;
+
+        if (SR_TASKS.contains(taskIdentifier)) {
+            LOGGER.debug("Launching SageResearch task: {}", taskIdentifier);
+
+            sageResearchTaskLauncher.launchTask(context, taskIdentifier, taskRunUUID);
+            tls = new MutableLiveData<>();
+            tls.postValue(new TaskLaunchState(Type.LAUNCH_ERROR));
+        } else if (RS_TASKS.contains(taskIdentifier)) {
+            LOGGER.debug("Launching ResearchStack task: {}", taskIdentifier);
+
+            tls = launchResearchStackTask(context, taskIdentifier, taskRunUUID);
+        } else {
+            LOGGER.warn("Unknown type of task: {}", taskIdentifier);
+
+            tls = new MutableLiveData<>();
+            tls.postValue(new TaskLaunchState(Type.LAUNCH_ERROR));
+        }
+        return tls;
+    }
+
+    @VisibleForTesting
+    MutableLiveData<TaskLaunchState> launchResearchStackTask(@NonNull Context context, @NonNull String taskIdentifier,
+            @Nullable UUID taskRunUUID) {
+
         MutableLiveData<TaskLaunchState> tls = new MutableLiveData<>();
-        tls.postValue(new TaskLaunchState(Type.LAUNCH_ERROR));
+        try {
+            researchStackTaskLauncher.launchTask(context, taskIdentifier, taskRunUUID);
+        } catch (Throwable t) {
+            LOGGER.warn("Exception launching ResearchStack task: ()", taskIdentifier, t);
+            tls.postValue(new TaskLaunchState(Type.LAUNCH_ERROR));
+        }
+
         return tls;
     }
 }
