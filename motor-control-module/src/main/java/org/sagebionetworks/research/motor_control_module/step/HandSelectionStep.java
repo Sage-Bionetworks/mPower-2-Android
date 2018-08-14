@@ -37,6 +37,7 @@ import android.support.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import org.sagebionetworks.research.domain.async.AsyncActionConfiguration;
 import org.sagebionetworks.research.domain.form.interfaces.InputField;
 import org.sagebionetworks.research.domain.step.implementations.FormUIStepBase;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
@@ -51,18 +52,22 @@ public class HandSelectionStep extends FormUIStepBase {
     // For now a hand selection step is just a FormUIStep.
     public static final String TYPE_KEY = AppStepType.HAND_SELECTION;
 
-    public HandSelectionStep(@NonNull String identifier, @NonNull Map<String, Action> actions,
-                             @Nullable Set<String> hiddenActions, @Nullable String title,
-                             @Nullable String text, @Nullable String detail, @Nullable String footnote,
-                             @Nullable ColorTheme colorTheme, @Nullable ImageTheme imageTheme, @NonNull ImmutableList<InputField> inputFields) {
-        super(identifier, actions, hiddenActions, title, text, detail, footnote, colorTheme, imageTheme, inputFields);
+    public HandSelectionStep(@NonNull String identifier,
+            @NonNull Set<AsyncActionConfiguration> asyncActions,
+            @NonNull Map<String, Action> actions,
+            @Nullable Set<String> hiddenActions, @Nullable String title,
+            @Nullable String text, @Nullable String detail, @Nullable String footnote,
+            @Nullable ColorTheme colorTheme, @Nullable ImageTheme imageTheme,
+            @NonNull ImmutableList<InputField> inputFields) {
+        super(identifier, asyncActions, actions, hiddenActions, title, text, detail, footnote, colorTheme, imageTheme,
+                inputFields);
     }
 
 
     @Override
     @NonNull
     public HandSelectionStep copyWithIdentifier(@NonNull String identifier) {
-        return new HandSelectionStep(identifier, this.getActions(), this.getHiddenActions(), this.getTitle(),
+        return new HandSelectionStep(identifier, this.getAsyncActions(), this.getActions(), this.getHiddenActions(), this.getTitle(),
                 this.getText(), this.getDetail(), this.getFootnote(), this.getColorTheme(), this.getImageTheme(),
                 this.getInputFields());
     }
