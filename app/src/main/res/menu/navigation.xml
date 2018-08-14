@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- TODO update icons for navigation - @liujoshua 2018/08/06 -->
+    <item
+        android:id="@+id/navigation_tracking"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_tracking" />
+
+    <!--<item-->
+        <!--android:id="@+id/navigation_history"-->
+        <!--android:icon="@drawable/ic_dashboard_black_24dp"-->
+        <!--android:title="@string/title_history"-->
+        <!--android:visible="false" />-->
+
+    <!--<item-->
+        <!--android:id="@+id/navigation_insights"-->
+        <!--android:icon="@drawable/ic_notifications_black_24dp"-->
+        <!--android:title="@string/title_insights"-->
+        <!--android:visible="false" />-->
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/title_profile" />
+
+</menu>

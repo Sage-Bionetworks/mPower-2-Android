@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="rs2_show_active_ui_step_fragment_layout" type="layout">@layout/mpower2_active_step</item>
+</resources>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ BSD 3-Clause License
+  ~
+  ~ Copyright 2018  Sage Bionetworks. All rights reserved.
+  ~
+  ~ Redistribution and use in source and binary forms, with or without modification,
+  ~ are permitted provided that the following conditions are met:
+  ~
+  ~ 1.  Redistributions of source code must retain the above copyright notice, this
+  ~ list of conditions and the following disclaimer.
+  ~
+  ~ 2.  Redistributions in binary form must reproduce the above copyright notice,
+  ~ this list of conditions and the following disclaimer in the documentation and/or
+  ~ other materials provided with the distribution.
+  ~
+  ~ 3.  Neither the name of the copyright holder(s) nor the names of any contributors
+  ~ may be used to endorse or promote products derived from this software without
+  ~ specific prior written permission. No license is granted to the trademarks of
+  ~ the copyright holders even if such marks are included in this software.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ~ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/royal600">
+
+    <ImageView
+        android:id="@id/rs2_image_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha=".3"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/f_walking1" />
+
+    <org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar
+        android:id="@id/rs2_step_navigation_action_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:isShadowHidden="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar>
+
+    <ProgressBar
+        android:id="@+id/countdownDial"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/app_margin_medium"
+        android:layout_marginTop="@dimen/app_margin_medium"
+        android:background="@drawable/countdown_dial_background"
+        android:max="100"
+        android:progress="60"
+        android:progressDrawable="@drawable/countdown_dial"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@+id/TappingStepButtonView"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintHeight_max="250dp"
+        app:layout_constraintHeight_min="150dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textLabel"
+        app:layout_constraintWidth_max="250dp"
+        app:layout_constraintWidth_min="150dp" />
+
+    <TextView
+        android:id="@+id/textLabel"
+        android:layout_width="295dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="56dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="28dp"
+        android:fontFamily="@font/lato"
+        android:gravity="center"
+        android:text="Tap the buttons with your RIGHT hand"
+        android:textColor="@color/appWhite"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cancelButton" />
+
+    <ImageButton
+        android:id="@+id/cancelButton"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="@dimen/app_margin_medium"
+        android:layout_marginStart="@dimen/app_margin_medium"
+        android:layout_marginTop="@dimen/app_margin_medium"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/rs2_cancel_icon" />
+
+    <TextView
+        android:id="@+id/tapCountLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato_light"
+        android:text="15"
+        android:textColor="@color/appWhite"
+        android:textSize="80sp"
+        app:layout_constraintBottom_toTopOf="@+id/countdownDial"
+        app:layout_constraintEnd_toStartOf="@+id/countdownDial"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/countdownDial"
+        app:layout_constraintTop_toBottomOf="@+id/countdownDial"
+        app:layout_constraintVertical_bias=".55" />
+
+    <TextView
+        android:id="@+id/unitLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tap_unit_label_text"
+        android:textAllCaps="true"
+        android:textColor="@color/appWhite"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/countdownDial"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/countdownDial"
+        app:layout_constraintTop_toBottomOf="@+id/tapCountLabel" />
+
+    <org.sagebionetworks.research.mobile_ui.step_views.TappingStepButtonView
+        android:id="@+id/TappingStepButtonView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/countdownDial" />
+
+</android.support.constraint.ConstraintLayout>

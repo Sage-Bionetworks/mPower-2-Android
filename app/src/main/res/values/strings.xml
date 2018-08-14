@@ -1,3 +1,56 @@
+<!--
+  ~ BSD 3-Clause License
+  ~
+  ~ Copyright 2018  Sage Bionetworks. All rights reserved.
+  ~
+  ~ Redistribution and use in source and binary forms, with or without modification,
+  ~ are permitted provided that the following conditions are met:
+  ~
+  ~ 1.  Redistributions of source code must retain the above copyright notice, this
+  ~ list of conditions and the following disclaimer.
+  ~
+  ~ 2.  Redistributions in binary form must reproduce the above copyright notice,
+  ~ this list of conditions and the following disclaimer in the documentation and/or
+  ~ other materials provided with the distribution.
+  ~
+  ~ 3.  Neither the name of the copyright holder(s) nor the names of any contributors
+  ~ may be used to endorse or promote products derived from this software without
+  ~ specific prior written permission. No license is granted to the trademarks of
+  ~ the copyright holders even if such marks are included in this software.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ~ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
 <resources>
+    <string name="osb_study_id" translatable="false">sage-mpower-2</string>
+    <string name="osb_study_name" translatable="false">mPower 2.0</string>
+
     <string name="app_name">mPower</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_tracking">Tracking</string>
+    <string name="title_history">History</string>
+    <string name="title_insights">Insights</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_activity_external_id_sign_in">Sign in</string>
+    
+    <string name="tracking_tab_title">Tracking</string>
+    <string name="measuring_tab_title">Measuring</string>
+
+    <string name="study_burst_progress_bar_day">Day</string>
+    <string name="study_burst_progress_bar_title">Study Burst</string>
+    <string name="measuring_center_label">Walk And Balance</string>
+    <string name="measuring_left_label">Finger Tapping</string>
+    <string name="measuring_right_label">Tremor Test</string>
+    <string name="tracking_center_label">Medication</string>
+    <string name="tracking_left_label">Symptom</string>
+    <string name="tracking_right_label">Trigger</string>
 </resources>

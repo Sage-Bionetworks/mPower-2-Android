@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MPowerTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorAccent">@color/royal600</item>
+        <item name="colorPrimary">@color/royal600</item>
+        <item name="colorPrimaryDark">@color/royal700</item>
+
+        <item name="android:buttonStyle">@style/MPower.Button</item>
+
+        <item name="android:textAppearance">@style/MPowerTextAppearance</item>
+    </style>
+
+    <style name="MPowerTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="MPower.Button" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/rs2_rounded_button</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="MPowerTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#1A1C29</item>
+    </style>
+
+    <style name="MPowerTextAppearance.FieldHeader">
+        <item name="android:fontFamily">@font/lato_bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="MPowerTextAppearance.BodyCopy">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+</resources>

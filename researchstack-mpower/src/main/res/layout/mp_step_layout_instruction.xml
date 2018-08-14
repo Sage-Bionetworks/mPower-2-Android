@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mp_root_instruction_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/mp_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/mp_text_container"
+        android:layout_alignParentTop="true"
+        android:paddingTop="?attr/actionBarSize"
+        android:scaleType="centerInside" />
+
+    <TextView
+        android:id="@+id/mp_instruction_title"
+        style="@style/TextAppearance.MP.Header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="?attr/actionBarSize"
+        android:textColor="@color/white" />
+
+    <LinearLayout
+        android:id="@id/mp_text_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/mp_entry_field"
+        android:orientation="vertical"
+        android:paddingBottom="18dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="24dp">
+
+        <TextView
+            android:id="@+id/mp_instruction_text"
+            style="@style/TextAppearance.MP.SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textColorLink="?attr/colorAccent" />
+
+        <TextView
+            android:id="@+id/mp_instruction_more_detail_text"
+            style="@style/TextAppearance.MP.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:scrollbars="vertical"
+            android:textColor="@color/white"
+            android:textColorLink="?attr/colorAccent" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/mp_entry_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/mp_next_button_container"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@id/mp_next_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/rsb_padding_medium"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_go_back"
+                style="@style/MP.Orange.RoundedCornerMaterialButton"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/mp_rounded_button_height"
+                android:layout_margin="@dimen/rsb_padding_small"
+                android:focusable="true"
+                android:text="@string/rsb_AX_BUTTON_BACK"
+                android:textAllCaps="false"
+                android:textColor="@color/rsb_black"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/button_go_forward"
+                style="@style/MP.Orange.RoundedCornerMaterialButton"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/mp_rounded_button_height"
+                android:layout_margin="@dimen/rsb_padding_small"
+                android:focusable="true"
+                android:text="@string/rsb_BUTTON_NEXT"
+                android:textAllCaps="false"
+                android:textColor="@color/rsb_black" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</RelativeLayout>
