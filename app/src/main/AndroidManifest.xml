@@ -10,6 +10,9 @@
         android:roundIcon="@drawable/mpower2_ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name="org.sagebionetworks.research.presentation.recorder.service.RecorderService"
+            android:exported="true"
+            />
         <activity android:name=".PerformTaskActivity">
         </activity>
         <activity android:name=".sageresearch.TappingTaskActivity">

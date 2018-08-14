@@ -141,7 +141,7 @@ public class TrackingMenuFragment extends Fragment {
                     selection = this.getResources().getString(MEASURING_LABELS.get(copy));
                     String taskIdentifier = this.getTaskIdentifierFromLabel(selection);
                     if (taskIdentifier != null) {
-                        launcher.launchTask(this.getContext(), taskIdentifier, UUID.randomUUID());
+                        launcher.launchTask(this.getContext(), taskIdentifier, null);
                     } else {
                         LOGGER.warn("Selected Icon " + selection + " doesn't map to a task identifier");
                     }
