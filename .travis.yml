@@ -1,7 +1,7 @@
 language: android
 jdk: oraclejdk8
-#dist: trusty
-#sudo: true
+dist: trusty
+sudo: true
 env:
   global:
   - ANDROID_API=27
