@@ -175,19 +175,13 @@ public class ShowTappingStepFragment extends
         this.stepViewBinding.getNavigationActionBar().setVisibility(View.GONE);
         this.stepViewBinding.getNavigationActionBar().setAlpha(0f);
         this.updateTapCountLabel();
-
-        return result;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         // Add a PreDrawListener that updates the locations of the buttons for the tapping result.
         this.stepViewBinding.getRootView().getViewTreeObserver()
                 .addOnPreDrawListener(this::updateButtonBounds);
         this.nextButtonTitle = this.getNextButtonLabel();
+        return result;
     }
-
+    
     /**
      * Private helper that can function as a PreDrawListener that updates the positions of the buttons,
      * and root view on the screen for the tapping result. Always returns true so drawing proceeds as normal.
