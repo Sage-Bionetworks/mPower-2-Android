@@ -75,6 +75,8 @@ public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
         return fragment;
     }
 
+
+    // TODO rkolmos 08/16/2018 move this code to the view model.
     public void writeHandSelectionResult(@HandSelection String handSelection) {
         List<String> result = new ArrayList<>();
         switch (handSelection) {

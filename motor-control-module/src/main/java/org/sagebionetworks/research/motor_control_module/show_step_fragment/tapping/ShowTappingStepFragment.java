@@ -181,7 +181,7 @@ public class ShowTappingStepFragment extends
         this.nextButtonTitle = this.getNextButtonLabel();
         return result;
     }
-    
+
     /**
      * Private helper that can function as a PreDrawListener that updates the positions of the buttons,
      * and root view on the screen for the tapping result. Always returns true so drawing proceeds as normal.
@@ -211,6 +211,7 @@ public class ShowTappingStepFragment extends
     // endregion
 
     // region Samples
+    // TODO rkolmos 08/16/2018 move this to the view model
     /**
      * Returns true if the user is currently tapping, false otherwise.
      * @return true if the user is currently tapping, false otherwise.
@@ -218,7 +219,8 @@ public class ShowTappingStepFragment extends
     private boolean userIsTapping() {
         return !this.expired && this.tappingStart != null;
     }
-
+    
+    // TODO rkolmos 08/16/2018 move this to the view model
     /**
      * Creates a sample for the given motion event and buttonIdentifier
      * @param event The event to create a sample for.

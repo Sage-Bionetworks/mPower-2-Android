@@ -68,6 +68,7 @@ public class ShowTappingCompletionStepFragment extends
     @Override
     public void update(TappingCompletionStepView stepView) {
         super.update(stepView);
+        // TODO rkolmos 08/16/2018 move code providing tapping count result view data to view model.
         TapCountResultView leftResultView = this.stepViewBinding.getLeftResult();
         TappingResult leftResult = this.getTappingResult(HandStepHelper.Hand.LEFT);
         this.updateTapCountResultView(leftResultView, leftResult, R.string.tapping_completion_left_description);
@@ -99,6 +100,8 @@ public class ShowTappingCompletionStepFragment extends
             view.setVisibility(View.GONE);
         }
     }
+
+    // TODO rkolmos 08/16/2018 move the code for Result reading to the view model.
 
     /**
      * Returns the TappingResult for the given Hand in this task, or null if the given Hand didn't perform this task.
