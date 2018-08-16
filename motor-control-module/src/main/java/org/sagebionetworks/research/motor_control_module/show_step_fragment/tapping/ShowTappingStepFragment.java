@@ -219,7 +219,7 @@ public class ShowTappingStepFragment extends
     private boolean userIsTapping() {
         return !this.expired && this.tappingStart != null;
     }
-    
+
     // TODO rkolmos 08/16/2018 move this to the view model
     /**
      * Creates a sample for the given motion event and buttonIdentifier

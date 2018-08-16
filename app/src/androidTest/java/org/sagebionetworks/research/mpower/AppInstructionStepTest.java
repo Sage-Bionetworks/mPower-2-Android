@@ -14,8 +14,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-@SuppressWarnings("PMD")
-public class AppInstructionStepTests extends UITestHelper {
+public class AppInstructionStepTest extends UITestHelper {
     public static final int TREMOR_PROGRESS_MAX = 3;
     // Instruction Step 1
     public static final int TREMOR_INSTRUCTION_STEP_1_PROGRESS = 1;
