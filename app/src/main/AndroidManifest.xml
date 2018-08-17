@@ -13,7 +13,8 @@
         <service android:name="org.sagebionetworks.research.presentation.recorder.service.RecorderService"
             android:exported="true"
             />
-        <activity android:name=".PerformTaskActivity">
+        <activity android:name=".sageresearch.PerformTaskActivity">
+
         </activity>
         <activity android:name=".sageresearch.TappingTaskActivity">
 
