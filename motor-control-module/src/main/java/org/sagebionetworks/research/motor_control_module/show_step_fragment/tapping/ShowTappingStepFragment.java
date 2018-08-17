@@ -36,6 +36,7 @@
 
 package org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping;
 
+import android.animation.Animator;
 import android.arch.lifecycle.Observer;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -88,6 +89,20 @@ public class ShowTappingStepFragment extends
     }
 
     @Override
+    public Observer<Long> getCountdownObserver() {
+        return count -> {
+            if (count == null || count == 0) {
+                return;
+            }
+
+            Integer duration = ((Long) this.stepView.getDuration().getSeconds()).intValue();
+            int from = (int) (duration - count);
+            Animator animator = this.getCountdownAnimator(from, from + 1);
+            animator.start();
+        };
+    }
+
+    @Override
     public void update(TappingStepView stepView) {
         super.update(stepView);
         TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
@@ -136,11 +151,13 @@ public class ShowTappingStepFragment extends
             return true;
         });
 
+        this.stepViewBinding.getCountLabel().setText("0");
         this.showStepViewModel.getHitButtonCount().observe(this, count -> {
-                    count = count != null ? count : 0;
-                    String countLabelText = count + "";
-                    this.stepViewBinding.getCountLabel().setText(countLabelText);
-                });
+            count = count != null ? count : 0;
+            String countLabelText = count + "";
+            this.stepViewBinding.getCountLabel().setText(countLabelText);
+        });
+
         // Hide the navigation action bar, so the user cannot press navigation buttons until the tapping
         // is finished.
         this.stepViewBinding.getNavigationActionBar().setVisibility(View.GONE);
@@ -149,18 +166,21 @@ public class ShowTappingStepFragment extends
         this.stepViewBinding.getRootView().getViewTreeObserver()
                 .addOnPreDrawListener(this::updateButtonBounds);
         this.nextButtonTitle = this.getResources().getString(this.showStepViewModel.getNextButtonLabel());
-        this.nextButtonTitle.replaceAll(HandStepHelper.JSON_PLACEHOLDER, HandStepHelper.whichHand(this.stepView.getIdentifier()).toString());
+        this.nextButtonTitle.replaceAll(HandStepHelper.JSON_PLACEHOLDER,
+                HandStepHelper.whichHand(this.stepView.getIdentifier()).toString());
         this.showStepViewModel.isExpired().observe(this, expired -> {
             if (expired != null && expired) {
                 this.tappingFinished();
             }
         });
+
         return result;
     }
 
     /**
-     * Private helper that can function as a PreDrawListener that updates the positions of the buttons,
-     * and root view on the screen for the tapping result. Always returns true so drawing proceeds as normal.
+     * Private helper that can function as a PreDrawListener that updates the positions of the buttons, and root view
+     * on the screen for the tapping result. Always returns true so drawing proceeds as normal.
+     *
      * @return true so drawing always happens as normal when used as a PreDrawListener.
      */
     private boolean updateButtonBounds() {
@@ -174,7 +194,8 @@ public class ShowTappingStepFragment extends
         ActionButton rightButton = this.stepViewBinding.getRightTapButton();
         if (rightButton != null) {
             Rect buttonRect2 = new Rect();
-            buttonRect2.set(rightButton.getLeft(), rightButton.getTop(), rightButton.getRight(), rightButton.getBottom());
+            buttonRect2.set(rightButton.getLeft(), rightButton.getTop(), rightButton.getRight(),
+                    rightButton.getBottom());
             this.showStepViewModel.getButtonRect2().setValue(buttonRect2);
         }
 
@@ -198,7 +219,7 @@ public class ShowTappingStepFragment extends
         this.stepViewBinding.getNavigationActionBar().setVisibility(View.VISIBLE);
         this.stepViewBinding.getNextButton().setText(this.nextButtonTitle);
         this.stepViewBinding.getTappingButtonView().animate().alpha(0f).setDuration(300)
-                .withEndAction(() ->  {
+                .withEndAction(() -> {
                     this.stepViewBinding.getLeftTapButton().setVisibility(View.GONE);
                     this.stepViewBinding.getRightTapButton().setVisibility(View.GONE);
                 })
@@ -208,13 +229,17 @@ public class ShowTappingStepFragment extends
     // endregion
 
     // region User Input Listeners
+
     /**
      * Called when a MotionEvent has occurred.
-     * @param buttonIdentifier The identifier of the button that has been tapped.
-     * @param motionEvent The MotionEvent that occurred.
+     *
+     * @param buttonIdentifier
+     *         The identifier of the button that has been tapped.
+     * @param motionEvent
+     *         The MotionEvent that occurred.
      */
     private void handleMotionEvent(@TappingButtonIdentifier String buttonIdentifier,
-                                   MotionEvent motionEvent) {
+            MotionEvent motionEvent) {
         if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
             this.buttonPressed(buttonIdentifier, motionEvent);
         } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
@@ -224,17 +249,16 @@ public class ShowTappingStepFragment extends
 
     /**
      * Called when one of the tapping button's is pressed.
-     * @param buttonIdentifier The identifer of the button that was pressed.
-     * @param event The motion event corresponding to the button release.
+     *
+     * @param buttonIdentifier
+     *         The identifer of the button that was pressed.
+     * @param event
+     *         The motion event corresponding to the button release.
      */
     private void buttonPressed(@TappingButtonIdentifier String buttonIdentifier, @NonNull MotionEvent event) {
         int actionType = event.getAction();
         if (actionType != MotionEvent.ACTION_DOWN) {
             return;
-        }
-
-        if (this.showStepViewModel.getTappingStart().getValue() == null) {
-            this.startCountdown();
         }
 
         if (this.showStepViewModel.getLastTappedButtonIdentifier().getValue() != buttonIdentifier) {
@@ -247,8 +271,11 @@ public class ShowTappingStepFragment extends
 
     /**
      * Called when one of the tapping button's is released.
-     * @param buttonIdentifier The identifier of the button that was released.
-     * @param event The motion event corresponding to the button release.
+     *
+     * @param buttonIdentifier
+     *         The identifier of the button that was released.
+     * @param event
+     *         The motion event corresponding to the button release.
      */
     private void buttonReleased(@TappingButtonIdentifier String buttonIdentifier, MotionEvent event) {
         int actionType = event.getAction();

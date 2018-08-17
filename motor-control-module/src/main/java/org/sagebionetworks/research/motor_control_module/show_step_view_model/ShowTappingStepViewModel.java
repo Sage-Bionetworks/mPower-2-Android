@@ -1,6 +1,7 @@
 package org.sagebionetworks.research.motor_control_module.show_step_view_model;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.graphics.Point;
@@ -58,7 +59,7 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
     }
 
     public boolean userIsTapping() {
-        return !this.expired.getValue() && this.tappingStart.getValue() != null;
+        return (this.expired.getValue() != null && !this.expired.getValue()) && this.tappingStart.getValue() != null;
     }
 
     public LiveData<String> getLastTappedButtonIdentifier() {
@@ -97,13 +98,15 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
 
     public void handleButtonPress(@TappingButtonIdentifier String buttonIdentifier, @NonNull MotionEvent event) {
         if (this.tappingStart.getValue() == null) {
+            this.startCountdown();
             this.hitButtonCount.setValue(0);
             this.tappingStart.setValue(Instant.ofEpochMilli(event.getEventTime()));
         }
 
         this.createSample(event, buttonIdentifier);
         // update the tap count
-        if (!buttonIdentifier.equals(TappingButtonIdentifier.NONE) && !this.isExpired().getValue()) {
+        Boolean expired = this.isExpired().getValue();
+        if (!buttonIdentifier.equals(TappingButtonIdentifier.NONE) && (expired == null || !expired)) {
             this.hitButtonCount.setValue(this.hitButtonCount.getValue() + 1);
         }
     }
