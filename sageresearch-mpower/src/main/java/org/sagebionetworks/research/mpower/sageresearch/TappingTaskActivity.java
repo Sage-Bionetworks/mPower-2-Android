@@ -33,17 +33,24 @@
 package org.sagebionetworks.research.mpower.sageresearch;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import dagger.android.AndroidInjection;
-import io.reactivex.disposables.CompositeDisposable;
+import android.view.View;
+import android.widget.TextView;
+
 import org.sagebionetworks.research.domain.repository.TaskRepository;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
-import org.sagebionetworks.research.presentation.model.TaskView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
-import java.util.UUID;
+
+import dagger.android.AndroidInjection;
+import io.reactivex.disposables.CompositeDisposable;
 
 public class TappingTaskActivity extends AppCompatActivity {
     private static final Logger LOGGER = LoggerFactory.getLogger(TappingTaskActivity.class);
@@ -53,34 +60,48 @@ public class TappingTaskActivity extends AppCompatActivity {
     @Inject
     TaskRepository taskRepository;
 
+    private static final List<String> taskIdentifiers = Arrays.asList("Tapping", "Tremor", "WalkAndBalance");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.rs2_perform_task_activity_layout);
+    }
 
-        PerformTaskFragment performTaskFragment = (PerformTaskFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.rs2_task_content_frame);
+    /**
+     * Registers a lifecycle listener that hides the task selection buttons when any PerformTaskFragment starts,
+     * and makes the button reappear when there a no PerformTaskFragments running again.
+     *
+     * @param textViews The list of textView's to hide when the fragment's start and to reappear when the fragments end.
+     */
+    private void registerFragmentLifeCycleListener(final List<TextView> textViews) {
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(
+                new FragmentManager.FragmentLifecycleCallbacks() {
+                    int fragmentStartedCount = 0;
 
-        // TODO: show list of available tasks
-        if (performTaskFragment == null) {
-            compositeDisposable.add(
-                    taskRepository.getTaskInfo("Tapping")
-                            .map(taskInfo -> TaskView.builder()
-                                    .setIdentifier(taskInfo.getIdentifier())
-                                    .build())
-                            .subscribe(taskView -> {
-                                PerformTaskFragment newPerformTaskFragment = PerformTaskFragment
-                                        .newInstance(taskView, UUID.randomUUID());
+                    @Override
+                    public void onFragmentStarted(FragmentManager fm, Fragment f) {
+                        super.onFragmentStarted(fm, f);
+                        if (f instanceof PerformTaskFragment) {
+                            fragmentStartedCount++;
+                            for (TextView textView : textViews) {
+                                textView.setVisibility(View.GONE);
+                            }
+                        }
+                    }
 
-                                getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .add(R.id.rs2_task_content_frame, newPerformTaskFragment)
-                                        .commit();
-                            }, throwable ->
-                                    LOGGER.error("Failed to retrieve task", throwable)));
-        } else {
-            LOGGER.debug("Found existing PerformTaskFragment");
-        }
+                    @Override
+                    public void onFragmentStopped(FragmentManager fm, Fragment f) {
+                        super.onFragmentStopped(fm, f);
+                        if (f instanceof PerformTaskFragment) {
+                            fragmentStartedCount--;
+                            if (fragmentStartedCount == 0) {
+                                for (TextView textView : textViews) {
+                                    textView.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+                    }
+                }, false);
     }
 }

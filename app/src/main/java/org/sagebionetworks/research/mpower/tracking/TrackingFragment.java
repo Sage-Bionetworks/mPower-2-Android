@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.OnApplyWindowInsetsListener;
+import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,8 @@ import android.widget.ToggleButton;
 
 import com.google.common.base.Strings;
 
+import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
+import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.TrackingViewModel.ScheduledActivityView;
 
@@ -39,14 +43,17 @@ public class TrackingFragment extends Fragment {
     @BindView(R.id.textview_error_message)
     TextView errorMessageTextView;
 
-    @Inject
-    TrackingViewModelFactory trackingViewModelFactory;
+    @BindView(R.id.tracking_status_bar)
+    TrackingStatusBar trackingStatusBar;
 
     @BindView(R.id.togglebutton_loading)
     ToggleButton scheduledActivitiesLoadingToggleButton;
 
     @BindView(R.id.textview_scheduled_activities)
     TextView scheduledActivitiesTextView;
+
+    @Inject
+    TrackingViewModelFactory trackingViewModelFactory;
 
     private TrackingViewModel trackingViewModel;
 
@@ -67,6 +74,9 @@ public class TrackingFragment extends Fragment {
             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tracking_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
+        // Move the status bar down by the window insets.
+        OnApplyWindowInsetsListener listener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
+        ViewCompat.setOnApplyWindowInsetsListener(this.trackingStatusBar, listener);
         return view;
     }
 

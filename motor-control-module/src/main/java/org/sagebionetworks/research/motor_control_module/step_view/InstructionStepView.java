@@ -41,6 +41,7 @@ import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.FirstRunHelper;
+import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
 import org.sagebionetworks.research.motor_control_module.step.InstructionStep;
 import org.sagebionetworks.research.presentation.DisplayString;
 import org.sagebionetworks.research.presentation.mapper.DrawableMapper;

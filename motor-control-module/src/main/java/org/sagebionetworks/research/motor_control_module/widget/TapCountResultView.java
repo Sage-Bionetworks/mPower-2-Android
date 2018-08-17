@@ -35,9 +35,27 @@ package org.sagebionetworks.research.motor_control_module.widget;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+import android.widget.TextView;
+
 import org.sagebionetworks.research.motor_control_module.R;
+import org.sagebionetworks.research.motor_control_module.R2;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class TapCountResultView extends ConstraintLayout {
+    private TapCountResultViewBinding binding;
+    private Unbinder unbinder;
+
+    public class TapCountResultViewBinding {
+        @BindView(R2.id.tapping_completion_count)
+        TextView count;
+
+        @BindView(R2.id.tapping_completion_description)
+        TextView description;
+    }
+
     public TapCountResultView(final Context context) {
         super(context);
         this.commonInit();
@@ -55,5 +73,16 @@ public class TapCountResultView extends ConstraintLayout {
 
     protected void commonInit() {
         inflate(this.getContext(), R.layout.tap_count_result_view, this);
+        this.binding = new TapCountResultViewBinding();
+        this.unbinder = ButterKnife.bind(this.binding, this);
+    }
+
+    public void setCount(int count) {
+        String countString = count + "";
+        this.binding.count.setText(countString);
+    }
+
+    public void setDescription(String description) {
+        this.binding.description.setText(description);
     }
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:fitsSystemWindows="false"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent">
+
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/task1" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" style="@style/Widget.ResearchStack.StepBody.TitleLabel"
+            android:textStyle="normal"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/task2" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/task1" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" style="@style/Widget.ResearchStack.StepBody.TitleLabel"
+            android:textStyle="normal"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/task3" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/task2" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" style="@style/Widget.ResearchStack.StepBody.TitleLabel"
+            android:textStyle="normal"/>
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rs2_task_content_frame" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+</android.support.constraint.ConstraintLayout>

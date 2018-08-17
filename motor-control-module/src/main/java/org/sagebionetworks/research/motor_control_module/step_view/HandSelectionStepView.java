@@ -38,39 +38,48 @@ import com.google.common.collect.ImmutableMap;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.interfaces.CompletionStep;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
+import org.sagebionetworks.research.motor_control_module.step.AppStepType;
+import org.sagebionetworks.research.motor_control_module.step.HandSelectionStep;
 import org.sagebionetworks.research.presentation.DisplayString;
 import org.sagebionetworks.research.presentation.mapper.DrawableMapper;
 import org.sagebionetworks.research.presentation.model.ColorThemeView;
 import org.sagebionetworks.research.presentation.model.ImageThemeView;
 import org.sagebionetworks.research.presentation.model.action.ActionView;
-import org.sagebionetworks.research.presentation.model.implementations.UIStepViewBase;
+import org.sagebionetworks.research.presentation.model.form.InputFieldView;
+import org.sagebionetworks.research.presentation.model.implementations.FormUIStepViewBase;
+import org.sagebionetworks.research.presentation.model.interfaces.FormUIStepView;
 
-public class CompletionStepView extends UIStepViewBase {
-    public static final String TYPE = StepType.COMPLETION;
+import java.util.List;
 
-    public static CompletionStepView fromCompletionStep(Step step, DrawableMapper mapper) {
-        if (!(step instanceof CompletionStep)) {
-            throw new IllegalArgumentException("Provided step: " + step + " is not a CompletionStep.");
+public class HandSelectionStepView extends FormUIStepViewBase {
+    public static final String TYPE = AppStepType.HAND_SELECTION;
+
+    public HandSelectionStepView(@NonNull final String identifier, final int navDirection,
+                                 @NonNull final ImmutableMap<String, ActionView> actions,
+                                 @Nullable final DisplayString title,
+                                 @Nullable final DisplayString text,
+                                 @Nullable final DisplayString detail,
+                                 @Nullable final DisplayString footnote,
+                                 @Nullable final ColorThemeView colorTheme,
+                                 @Nullable final ImageThemeView imageTheme,
+                                 final List<InputFieldView> inputFields) {
+        super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme, inputFields);
+    }
+
+    @NonNull
+    public static HandSelectionStepView fromHandSelectionStep(@NonNull Step step, @NonNull DrawableMapper mapper) {
+        if (!(step instanceof HandSelectionStep)) {
+            throw new IllegalArgumentException("Provided step: " + step + " is not a HandSelectionStep.");
         }
 
-        UIStepViewBase uiStep = UIStepViewBase.fromUIStep(step, mapper);
-        return new CompletionStepView(uiStep.getIdentifier(), uiStep.getNavDirection(), uiStep.getActions(),
-                uiStep.getTitle(), uiStep.getText(), uiStep.getDetail(), uiStep.getFootnote(), uiStep.getColorTheme(),
-                uiStep.getImageTheme());
+        FormUIStepView formUIStepView = FormUIStepViewBase.fromFormUIStep(step, mapper);
+        return new HandSelectionStepView(formUIStepView.getIdentifier(), formUIStepView.getNavDirection(),
+                formUIStepView.getActions(), formUIStepView.getTitle(), formUIStepView.getText(),
+                formUIStepView.getDetail(), formUIStepView.getFootnote(), formUIStepView.getColorTheme(),
+                formUIStepView.getImageTheme(), formUIStepView.getInputFields());
     }
 
-    public CompletionStepView(@NonNull final String identifier, final int navDirection,
-            @NonNull final ImmutableMap<String, ActionView> actions,
-            @Nullable final DisplayString title,
-            @Nullable final DisplayString text,
-            @Nullable final DisplayString detail,
-            @Nullable final DisplayString footnote,
-            @Nullable final ColorThemeView colorTheme,
-            @Nullable final ImageThemeView imageTheme) {
-        super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme);
-    }
-
-    @StepType
+    @Override
     @NonNull
     public String getType() {
         return TYPE;

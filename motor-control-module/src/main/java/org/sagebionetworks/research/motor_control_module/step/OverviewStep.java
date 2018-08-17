@@ -53,10 +53,10 @@ public class OverviewStep extends UIStepBase {
     @NonNull
     private final ImmutableList<Icon> icons;
 
-    public OverviewStep(@NonNull final String identifier, @Nullable final Map<String, Action> actions,
-            @Nullable final Set<String> hiddenActions, @Nullable final String title, @Nullable final String text,
-            @Nullable final String detail, @Nullable final String footnote, @Nullable final ColorTheme colorTheme,
-            @Nullable final ImageTheme imageTheme, @NonNull final List<Icon> icons) {
+    public OverviewStep(@NonNull String identifier, @Nullable Map<String, Action> actions,
+                        @Nullable Set<String> hiddenActions, @Nullable String title, @Nullable String text,
+                        @Nullable String detail, @Nullable String footnote, @Nullable ColorTheme colorTheme,
+                        @Nullable ImageTheme imageTheme, List<Icon> icons) {
         super(identifier, actions, hiddenActions, title, text, detail, footnote, colorTheme, imageTheme);
         this.icons = ImmutableList.copyOf(icons);
     }

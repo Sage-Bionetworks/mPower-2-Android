@@ -35,18 +35,25 @@ package org.sagebionetworks.research.mpower.sageresearch.inject;
 import org.sagebionetworks.research.data.inject.DataModule;
 import org.sagebionetworks.research.domain.inject.StepModule;
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
+import org.sagebionetworks.research.domain.inject.TaskModule;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.HandSelectionStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.InstructionStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.MPowerActiveStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.OverviewStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.TappingCompletionStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.TappingStepModule;
 import org.sagebionetworks.research.mpower.sageresearch.PerformTaskActivity;
 import org.sagebionetworks.research.mpower.sageresearch.TappingTaskActivity;
+import org.sagebionetworks.research.presentation.inject.StepViewModule;
 
 import dagger.Module;
 import dagger.android.AndroidInjectionModule;
 import dagger.android.ContributesAndroidInjector;
 
 @Module(includes = {AndroidInjectionModule.class, ShowStepModule.class, DataModule.class, StepModule.class,
-        PerformTaskModule.class, InstructionStepModule.class, OverviewStepModule.class})
+        PerformTaskModule.class, InstructionStepModule.class, OverviewStepModule.class, MPowerActiveStepModule.class,
+        TappingCompletionStepModule.class, TappingStepModule.class, HandSelectionStepModule.class})
 public abstract class MPowerSageResearchModule {
     @ContributesAndroidInjector
     abstract PerformTaskActivity contributePerformTaskActivityInjector();
