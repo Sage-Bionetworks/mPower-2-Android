@@ -17,7 +17,7 @@ import dagger.BindsInstance;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {MPowerApplicationModule.class, InputFieldsModule.class, ActionModule.class,
+@Component(modules = {MPowerApplicationModule.class,
         MPowerResearchStackModule.class, MPowerSageResearchModule.class,
         S3Module.class, BridgeServiceModule.class})
 public interface MPowerApplicationComponent {

@@ -3,7 +3,7 @@ package org.sagebionetworks.research.mpower.inject;
 import android.app.Application;
 import android.content.Context;
 
-import org.sagebionetworks.research.mpower.PerformTaskActivity;
+import org.sagebionetworks.research.mpower.sageresearch.PerformTaskActivity;
 import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
 import org.sagebionetworks.research.mpower.history.HistoryFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;

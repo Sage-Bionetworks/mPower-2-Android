@@ -17,18 +17,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.sagebionetworks.research.domain.interfaces.HashCodeHelper;
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.SageResearchTaskLauncher;
 import org.sagebionetworks.research.mpower.TaskLauncher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
