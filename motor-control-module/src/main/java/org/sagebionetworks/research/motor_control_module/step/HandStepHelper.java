@@ -14,7 +14,10 @@ import org.sagebionetworks.research.presentation.DisplayString;
 
 import java.util.List;
 
-public abstract class HandStepHelper {
+public class HandStepHelper {
+    // private constructor to prevent instantiation
+    private HandStepHelper() {}
+
     public static final String REGEX_PLACEHOLDER = "<>";
     public static final String JSON_PLACEHOLDER = "%@";
     // Matches any step with the REGEX_PLACEHOLDER anywhere in it's identifier or parent's identifiers.

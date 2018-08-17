@@ -81,6 +81,12 @@ public class TrackingFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        ViewCompat.requestApplyInsets(this.getView());
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         trackingViewModel = ViewModelProviders.of(

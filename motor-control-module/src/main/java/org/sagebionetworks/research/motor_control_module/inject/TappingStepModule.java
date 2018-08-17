@@ -5,6 +5,7 @@ import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.Show
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.StepViewKey;
 import org.sagebionetworks.research.motor_control_module.inject.subcomponents.ShowTappingStepFragmentSubcomponent;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.ShowTappingStepFragment;
+import org.sagebionetworks.research.motor_control_module.show_step_view_model.ShowTappingStepViewModelFactory;
 import org.sagebionetworks.research.motor_control_module.step.AppStepType;
 import org.sagebionetworks.research.motor_control_module.step.TappingStep;
 import org.sagebionetworks.research.motor_control_module.step_view.TappingStepView;
@@ -41,7 +42,7 @@ public abstract class TappingStepModule {
     @IntoMap
     @StepViewClassKey(TappingStepView.TYPE)
     static AbstractShowStepViewModelFactory<?, ? extends StepView> provideTappingStepVMF() {
-        return new ShowActiveUIStepViewModelFactory<>();
+        return new ShowTappingStepViewModelFactory();
     }
 
     @Provides

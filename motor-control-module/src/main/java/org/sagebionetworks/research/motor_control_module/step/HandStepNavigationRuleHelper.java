@@ -8,7 +8,10 @@ import org.sagebionetworks.research.domain.step.interfaces.SectionStep;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.domain.task.Task;
 
-public abstract class HandStepNavigationRuleHelper {
+public class HandStepNavigationRuleHelper {
+    // private constructor to prevent instantiation
+    private HandStepNavigationRuleHelper() {}
+
     public static boolean shouldSkip(@NonNull String stepIdentifier, @NonNull TaskResult taskResult) {
         HandStepHelper.Hand hand = HandStepHelper.whichHand(stepIdentifier);
         HandStepHelper.Hand nextHand = HandStepHelper.nextHand(taskResult);

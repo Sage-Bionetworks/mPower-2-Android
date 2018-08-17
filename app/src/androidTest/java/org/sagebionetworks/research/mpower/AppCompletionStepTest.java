@@ -13,8 +13,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-@SuppressWarnings("PMD")
-public class AppCompletionStepTests extends UITestHelper {
+public class AppCompletionStepTest extends UITestHelper {
     public static final String TREMOR_COMPLETION_TITLE = "Great job!";
     public static final String TREMOR_COMPLETION_TEXT = "You just completed your Tremor Test activity.";
     public static final String COMPLETION_FORWARD_ACTION_TEXT = "Done";

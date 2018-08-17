@@ -14,7 +14,10 @@ import org.sagebionetworks.research.presentation.DisplayString;
 import org.sagebionetworks.research.presentation.model.interfaces.UIStepView;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowUIStepViewModel;
 
-public abstract class HandStepUIHelper {
+public class HandStepUIHelper {
+    // private constructor to prevent instantiation
+    private HandStepUIHelper() {}
+
     public static <S extends UIStepView, SB extends UIStepViewBinding<S>>
     void update(TaskResult taskResult, S stepView, SB stepViewBinding) {
         // First we figure out which hand will go next.
