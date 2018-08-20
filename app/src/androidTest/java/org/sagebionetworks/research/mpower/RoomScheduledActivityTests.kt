@@ -162,6 +162,7 @@ class RoomScheduledActivityTests {
         val dbActivities = activityDao?.get("Medication", date)
         assertNotNull(dbActivities)
         assertEquals(1, dbActivities?.size)
+        assertMedicationTaskReferenceActivity(dbActivities?.first())
     }
 
     @Test
@@ -171,6 +172,7 @@ class RoomScheduledActivityTests {
         val dbActivities = activityDao?.get("Medication", date)
         assertNotNull(dbActivities)
         assertEquals(1, dbActivities?.size)
+        assertMedicationTaskReferenceActivity(dbActivities?.first())
     }
 
     @Test
@@ -182,12 +184,40 @@ class RoomScheduledActivityTests {
         assertEquals(0, dbActivities?.size)
     }
 
+    @Test
+    fun query_testTaskGroup() {
+        reconfigureRoomDb()
+        val dbActivities = activityDao?.get(arrayOf("Medication", "Motivation"))
+        assertNotNull(dbActivities)
+        assertEquals(2, dbActivities?.size)
+        assertMedicationTaskReferenceActivity(dbActivities?.first())
+        assertMotivationSurveyReferenceActivity(dbActivities?.get(1))
+    }
+
+    @Test
+    fun query_testAvailableOn() {
+        reconfigureRoomDb()
+        val date = DateTime.parse("2018-08-17T14:00:0.000-04:00")
+        val dbActivities = activityDao?.getAvailableOn(date)
+        assertNotNull(dbActivities)
+        if (dbActivities == null) return
+        assertEquals(4, dbActivities?.size)
+        assertTaskContains(arrayOf("273c4518-7cb6-4496-b1dd-c0b5bf291b09:2018-08-17T00:00:00.000",
+                "fe79d987-28a2-4ccd-bcf3-b3d07b925a6b:2018-08-17T00:00:00.000",
+                "178ef89c-78b9-4861-b308-3dda0daf756d:2018-08-17T13:40:39.183",
+                "e6fe761f-6187-4e8f-b659-bce4edc98f06:2018-08-17T13:40:39.183"), dbActivities)
+    }
+
     fun reconfigureRoomDb() {
         assertNotNull(roomActivityList)
         activityDao?.clear()
         roomActivityList?.let {
             activityDao?.insert(it)
         }
+    }
+
+    fun assertTaskContains(guids: Array<String>, activityList: List<RoomScheduledActivity>) {
+        assertEquals(0, activityList.filter { !guids.contains(it.guid) }.size)
     }
 
     fun resourceAsString(filename: String): String? {

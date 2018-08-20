@@ -13,8 +13,14 @@ interface RoomScheduledActivityDao {
     @Query("SELECT * FROM roomscheduledactivity WHERE " + RoomQuery.TASK_ID)
     fun get(identifier: String): List<RoomScheduledActivity>
 
+    @Query("SELECT * FROM roomscheduledactivity WHERE " + RoomQuery.TASK_GROUP_ID)
+    fun get(taskGroup: Array<String>): List<RoomScheduledActivity>
+
     @Query("SELECT * FROM roomscheduledactivity WHERE " + RoomQuery.AVAILABLE_DATE)
     fun get(date: DateTime): List<RoomScheduledActivity>
+
+    @Query("SELECT * FROM roomscheduledactivity WHERE " + RoomQuery.NOT_FINISHED + " AND " + RoomQuery.AVAILABLE_DATE)
+    fun getAvailableOn(date: DateTime): List<RoomScheduledActivity>
 
     @Query("SELECT * FROM roomscheduledactivity WHERE " + RoomQuery.TASK_ID + " AND " + RoomQuery.AVAILABLE_DATE)
     fun get(identifier: String, date: DateTime): List<RoomScheduledActivity>
@@ -35,9 +41,15 @@ private class RoomQuery {
                 "activity_survey_identifier=:identifier OR " +
                 "activity_compound_taskIdentifier=:identifier)"
 
+        const val TASK_GROUP_ID = "(activity_task_identifier IN (:taskGroup) OR " +
+                "activity_survey_identifier IN (:taskGroup) OR " +
+                "activity_compound_taskIdentifier IN (:taskGroup))"
+
         const val NOT_FINISHED = "finishedOn IS NULL"
         const val FINISHED = "finishedOn IS NOT NULL"
 
-        const val AVAILABLE_DATE = ":date BETWEEN scheduledOn AND expiresOn"
+        const val AVAILABLE_DATE =
+                "((:date BETWEEN scheduledOn AND expiresOn) OR " +
+                "(expiresOn IS NULL AND :date >= scheduledOn))"
     }
 }

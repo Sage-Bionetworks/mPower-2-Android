@@ -1,7 +1,9 @@
 package org.sagebionetworks.research.mpower.room
 
+import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import org.joda.time.DateTime
@@ -19,12 +21,15 @@ data class RoomScheduledActivity(@SerializedName("guid") @PrimaryKey var guid: S
     var startedOn: DateTime? = null
 
     @SerializedName("finishedOn")
+    @ColumnInfo(index = true)
     var finishedOn: DateTime? = null
 
     @SerializedName("scheduledOn")
+    @ColumnInfo(index = true)
     var scheduledOn: DateTime? = null
 
     @SerializedName("expiresOn")
+    @ColumnInfo(index = true)
     var expiresOn: DateTime? = null
 
     @SerializedName("activity")
@@ -86,7 +91,7 @@ data class RoomSchemaReference(@SerializedName("guid") var guid: String) {
     var type: String? = null
 }
 
-data class RoomTaskReference(@SerializedName("identifier") var identifier: String) {
+data class RoomTaskReference(@SerializedName("identifier") @ColumnInfo(index = true) var identifier: String) {
     @SerializedName("schema")
     @Embedded(prefix = "schema_")
     var schema: RoomSchemaReference? = null
@@ -97,6 +102,7 @@ data class RoomTaskReference(@SerializedName("identifier") var identifier: Strin
 
 data class RoomSurveyReference(@SerializedName("guid") var guid: String) {
     @SerializedName("identifier")
+    @ColumnInfo(index = true)
     var identifier: String? = null
 
     @SerializedName("createdOn")
@@ -109,7 +115,7 @@ data class RoomSurveyReference(@SerializedName("guid") var guid: String) {
     var type: String? = null
 }
 
-data class RoomCompoundActivity(@SerializedName("taskIdentifier") var taskIdentifier: String) {
+data class RoomCompoundActivity(@SerializedName("taskIdentifier") @ColumnInfo(index = true) var taskIdentifier: String) {
     @SerializedName("schemaList")
     var schemaList: List<RoomSchemaReference> = ArrayList()
 
