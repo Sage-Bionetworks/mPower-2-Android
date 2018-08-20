@@ -38,9 +38,6 @@ public interface MPowerApplicationModule {
     TrackingMenuFragment contributeTrackingMenuFragmentInjector();
 
     @ContributesAndroidInjector
-    PerformTaskActivity contributePerformTaskActivityInjector();
-
-    @ContributesAndroidInjector
     MainActivity contributeMainActivityInjector();
 
     @ContributesAndroidInjector
