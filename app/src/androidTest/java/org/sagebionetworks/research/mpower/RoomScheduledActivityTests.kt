@@ -25,8 +25,6 @@ import java.nio.charset.Charset
 @RunWith(AndroidJUnit4::class)
 class RoomScheduledActivityTests {
 
-    private val DATE_FORMATTER = ISODateTimeFormat.dateTime().withOffsetParsed()
-
     private var database: ResearchDatabase? = null
     private var activityDao: RoomScheduledActivityDao? = null
     private var activityList: ScheduledActivityListV4? = null

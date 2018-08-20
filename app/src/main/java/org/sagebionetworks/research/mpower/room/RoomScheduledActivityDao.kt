@@ -5,32 +5,80 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import org.joda.time.DateTime
 
+/**
+ * All interactions with the RoomScheduledActivity table will be done through this interface.
+ * Room auto-generates the implementations of these methods as well as checks the syntax of the SQL statements
+ */
 @Dao
 interface RoomScheduledActivityDao {
+
+    /// TODO: mdephillips 8/20/18 create the rest of the queries in iOS code repo file 'SBBScheduledActivity+Filters'
+    /// TODO: mdephillips 8/20/18 should we return live data objects?
+
+    /**
+     * Get all the scheduled activities from the table
+     * This may take a long time and use a lot of memory if the table is large, call with caution
+     * @return all the scheduled activities in the table
+     */
     @Query("SELECT * FROM roomscheduledactivity")
     fun getAll(): List<RoomScheduledActivity>
 
+    /**
+     * Get all the scheduled activities with the identifier specified
+     * @param identifier to use as a filter scheduled items
+     * @return the list of scheduled activities
+     */
     @Query("SELECT * FROM roomscheduledactivity WHERE " + RoomQuery.TASK_ID)
     fun get(identifier: String): List<RoomScheduledActivity>
 
+    /**
+     * Get all the scheduled activities that have one of the identifiers specified in the task group
+     * @param taskGroup a set of identifiers to use as a filter for scheduled items
+     * @return the list of scheduled activities
+     */
     @Query("SELECT * FROM roomscheduledactivity WHERE " + RoomQuery.TASK_GROUP_ID)
     fun get(taskGroup: Array<String>): List<RoomScheduledActivity>
 
+    /**
+     * Get all the scheduled activities that are scheduled during and not expired yet during this date
+     * @param date to filter the scheduled activities
+     * @return the list of scheduled activities
+     */
     @Query("SELECT * FROM roomscheduledactivity WHERE " + RoomQuery.AVAILABLE_DATE)
     fun get(date: DateTime): List<RoomScheduledActivity>
 
+    /**
+     * Get all the scheduled activities that are available (not finished yet) and available schedule-wise at this date
+     * @param date to filter the scheduled activities
+     * @return the list of scheduled activities
+     */
     @Query("SELECT * FROM roomscheduledactivity WHERE " + RoomQuery.NOT_FINISHED + " AND " + RoomQuery.AVAILABLE_DATE)
     fun getAvailableOn(date: DateTime): List<RoomScheduledActivity>
 
+    /**
+     * Get all the scheduled activities that are available schedule-wise at this date and have the identifier
+     * @param identifier to filter the scheduled activities
+     * @param date to filter the scheduled activities
+     * @return the list of scheduled activities
+     */
     @Query("SELECT * FROM roomscheduledactivity WHERE " + RoomQuery.TASK_ID + " AND " + RoomQuery.AVAILABLE_DATE)
     fun get(identifier: String, date: DateTime): List<RoomScheduledActivity>
 
+    /**
+     * @param roomScheduledActivity to insert into the database
+     */
     @Insert
     fun insert(roomScheduledActivity: RoomScheduledActivity)
 
+    /**
+     * @param roomScheduledActivityList to insert into the database
+     */
     @Insert
     fun insert(roomScheduledActivityList: List<RoomScheduledActivity>)
 
+    /**
+     * Deletes all rows in the table.  To be called on sign out or a cache clear.
+     */
     @Query("DELETE FROM roomscheduledactivity")
     fun clear()
 }

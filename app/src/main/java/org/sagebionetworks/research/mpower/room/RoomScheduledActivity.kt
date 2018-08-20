@@ -39,7 +39,10 @@ data class RoomScheduledActivity(@SerializedName("guid") @PrimaryKey var guid: S
     @SerializedName("persistent")
     var persistent: Boolean? = null
 
-    /// TODO: how do we store a weak type
+    /// TODO: mdephillips 8/20/18 how do we store a weak type?
+    // One way we could do it, is create our own class type "ClientData" which stores "var data: Any?"
+    // and it will have a type converter to and from String that is dynamic based on type of data: Any.
+    // Thoughts?
 //    @SerializedName("clientData")
 //    var clientData: Any? = null
 

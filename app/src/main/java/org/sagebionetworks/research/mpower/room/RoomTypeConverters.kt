@@ -9,6 +9,11 @@ import org.sagebionetworks.bridge.rest.model.ActivityType
 import org.sagebionetworks.bridge.rest.model.ScheduleStatus
 import org.sagebionetworks.bridge.rest.model.ScheduledActivityListV4
 
+/**
+ * This class controls how objects are converted to and from data types supported by SqlLite
+ * Room recognizes which class types can be converted by
+ * the @TypeConverter annotation, and inferred by the method structure
+ */
 class RoomTypeConverters {
 
     private val schemaRefListType = object : TypeToken<List<RoomSchemaReference>>() {}.type
