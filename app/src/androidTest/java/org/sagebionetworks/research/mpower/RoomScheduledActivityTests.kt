@@ -6,8 +6,9 @@ import android.support.test.runner.AndroidJUnit4
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
+import junit.framework.Assert.assertTrue
 import org.joda.time.DateTime
-import org.joda.time.format.ISODateTimeFormat
+
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -76,6 +77,7 @@ class RoomScheduledActivityTests {
         assertEquals("273c4518-7cb6-4496-b1dd-c0b5bf291b09", activity?.activity?.guid)
         assertNotNull(activity?.activity?.task)
         assertEquals("Medication", activity?.activity?.task?.identifier)
+        assertNull(activity?.clientData?.data)
     }
 
     @Test
@@ -94,6 +96,7 @@ class RoomScheduledActivityTests {
         assertEquals("Motivation", activity?.activity?.survey?.identifier)
         assertEquals("https://ws.sagebridge.org/v3/surveys/7beb8a71-65d0-4217" +
                 "-a4fb-3bb029b55258/revisions/2018-08-07T22:41:52.186Z", activity?.activity?.survey?.href)
+        assertEquals("{motivation_II_T=eat}", activity?.clientData?.data.toString())
     }
 
     @Test

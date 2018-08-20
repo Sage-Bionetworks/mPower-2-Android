@@ -1,7 +1,7 @@
 package org.sagebionetworks.research.mpower.room
 
 import android.arch.persistence.room.TypeConverter
-import com.google.gson.GsonBuilder
+
 import com.google.gson.reflect.TypeToken
 import org.joda.time.DateTime
 import org.sagebionetworks.bridge.rest.RestUtils
@@ -29,6 +29,18 @@ class RoomTypeConverters {
     fun toTimestamp(value: DateTime?): Long? {
         val valueChecked = value ?: return null
         return valueChecked.toDate().time
+    }
+
+    @TypeConverter
+    fun toClientData(value: String?): ClientData? {
+        val valueChecked = value ?: return null
+        return RestUtils.GSON.fromJson(valueChecked, ClientData::class.java)
+    }
+
+    @TypeConverter
+    fun fromClientData(value: ClientData?): String? {
+        val valueChecked = value ?: return null
+        return RestUtils.GSON.toJson(valueChecked)
     }
 
     @TypeConverter
@@ -80,8 +92,15 @@ class RoomTypeConverters {
 
     fun fromScheduledActivityListV4(value: ScheduledActivityListV4?): List<RoomScheduledActivity>? {
         val valueChecked = value ?: return null
-        return valueChecked.items.map {
-            RestUtils.GSON.fromJson(RestUtils.GSON.toJson(it), RoomScheduledActivity::class.java)
+        var activities = ArrayList<RoomScheduledActivity>()
+        for (scheduledActivity in valueChecked.items) {
+            var roomActivity = RestUtils.GSON.fromJson(
+                    RestUtils.GSON.toJson(scheduledActivity), RoomScheduledActivity::class.java)
+            scheduledActivity.clientData.let {
+                roomActivity.clientData = ClientData(it)
+            }
+            activities.add(roomActivity)
         }
+        return activities
     }
 }
