@@ -3,76 +3,80 @@ package org.sagebionetworks.research.mpower.room
 import android.arch.persistence.room.TypeConverter
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import org.joda.time.DateTime
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.ActivityType
 import org.sagebionetworks.bridge.rest.model.ScheduleStatus
-import org.threeten.bp.OffsetDateTime
+import org.sagebionetworks.bridge.rest.model.ScheduledActivityListV4
 
 class RoomTypeConverters {
-    val roomGson = GsonBuilder()
-            .registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeTypeAdapter())
-            .create()
 
     private val schemaRefListType = object : TypeToken<List<RoomSchemaReference>>() {}.type
     private val surveyRefListType = object : TypeToken<List<RoomSurveyReference>>() {}.type
 
     @TypeConverter
-    fun toOffsetDateTime(value: String?): OffsetDateTime? {
-        return value?.let {
-            return roomGson.fromJson(value, OffsetDateTime::class.java)
-        }
+    fun fromTimestamp(value: Long?): DateTime? {
+        val valueChecked = value ?: return null
+        return DateTime(valueChecked)
     }
 
     @TypeConverter
-    fun fromOffsetDateTime(date: OffsetDateTime?): String? {
-        return roomGson.toJson(date)
+    fun toTimestamp(value: DateTime?): Long? {
+        val valueChecked = value ?: return null
+        return valueChecked.toDate().time
     }
 
     @TypeConverter
     fun toScheduleStatus(value: String?): ScheduleStatus? {
-        return value?.let {
-            return ScheduleStatus.fromValue(value)
-        }
+        val valueChecked = value ?: return null
+        return ScheduleStatus.fromValue(valueChecked)
     }
 
     @TypeConverter
-    fun fromActivityType(type: ActivityType?): String? {
-        return type.toString()
+    fun fromActivityType(value: ActivityType?): String? {
+        val valueCheck = value ?: return null
+        return valueCheck.toString()
     }
 
     @TypeConverter
     fun toActivityType(value: String?): ActivityType? {
-        return value?.let {
-            return ActivityType.fromValue(value)
-        }
+        val valueChecked = value ?: return null
+        return ActivityType.fromValue(valueChecked)
     }
 
     @TypeConverter
-    fun fromScheduleStatus(status: ScheduleStatus?): String? {
-        return status.toString()
+    fun fromScheduleStatus(value: ScheduleStatus?): String? {
+        val valueCheck = value ?: return null
+        return valueCheck.toString()
     }
 
     @TypeConverter
     fun toSchemaReferenceList(value: String?): List<RoomSchemaReference>? {
-        return value?.let {
-            return roomGson.fromJson<List<RoomSchemaReference>>(value, schemaRefListType)
-        }
+        val valueChecked = value ?: return null
+        return RestUtils.GSON.fromJson<List<RoomSchemaReference>>(valueChecked, schemaRefListType)
     }
 
     @TypeConverter
-    fun fromSchemaReferenceList(refList: List<RoomSchemaReference>?): String? {
-        return RestUtils.GSON.toJson(refList, schemaRefListType)
+    fun fromSchemaReferenceList(value: List<RoomSchemaReference>?): String? {
+        val valueCheck = value ?: return null
+        return RestUtils.GSON.toJson(valueCheck, schemaRefListType)
     }
 
     @TypeConverter
     fun toSurveyReferenceList(value: String?): List<RoomSurveyReference>? {
-        return value?.let {
-            return roomGson.fromJson<List<RoomSurveyReference>>(value, surveyRefListType)
-        }
+        val valueChecked = value ?: return null
+        return RestUtils.GSON.fromJson<List<RoomSurveyReference>>(valueChecked, surveyRefListType)
     }
 
     @TypeConverter
     fun fromRoomSurveyReferenceList(refList: List<RoomSurveyReference>?): String? {
         return RestUtils.GSON.toJson(refList, surveyRefListType)
+    }
+
+    fun fromScheduledActivityListV4(value: ScheduledActivityListV4?): List<RoomScheduledActivity>? {
+        val valueChecked = value ?: return null
+        return valueChecked.items.map {
+            RestUtils.GSON.fromJson(RestUtils.GSON.toJson(it), RoomScheduledActivity::class.java)
+        }
     }
 }

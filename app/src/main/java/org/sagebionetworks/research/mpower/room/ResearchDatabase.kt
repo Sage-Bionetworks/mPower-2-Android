@@ -5,12 +5,7 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 
 @Database(entities = arrayOf(
-        RoomSchemaReference::class,
-        RoomSurveyReference::class,
-        RoomTaskReference::class,
-        RoomActivity::class,
-        RoomScheduledActivity::class,
-        RoomCompoundActivity::class),
+        RoomScheduledActivity::class),
         version = 1)
 @TypeConverters(RoomTypeConverters::class)
 abstract class ResearchDatabase : RoomDatabase() {
