@@ -14,7 +14,7 @@ import org.sagebionetworks.bridge.rest.model.ScheduledActivityListV4
  * Room recognizes which class types can be converted by
  * the @TypeConverter annotation, and inferred by the method structure
  */
-class RoomTypeConverters {
+class EntityTypeConverters {
 
     private val schemaRefListType = object : TypeToken<List<RoomSchemaReference>>() {}.type
     private val surveyRefListType = object : TypeToken<List<RoomSurveyReference>>() {}.type
@@ -90,12 +90,12 @@ class RoomTypeConverters {
         return RestUtils.GSON.toJson(refList, surveyRefListType)
     }
 
-    fun fromScheduledActivityListV4(value: ScheduledActivityListV4?): List<RoomScheduledActivity>? {
+    fun fromScheduledActivityListV4(value: ScheduledActivityListV4?): List<ScheduledActivityEntity>? {
         val valueChecked = value ?: return null
-        var activities = ArrayList<RoomScheduledActivity>()
+        var activities = ArrayList<ScheduledActivityEntity>()
         for (scheduledActivity in valueChecked.items) {
             var roomActivity = RestUtils.GSON.fromJson(
-                    RestUtils.GSON.toJson(scheduledActivity), RoomScheduledActivity::class.java)
+                    RestUtils.GSON.toJson(scheduledActivity), ScheduledActivityEntity::class.java)
             scheduledActivity.clientData.let {
                 roomActivity.clientData = ClientData(it)
             }

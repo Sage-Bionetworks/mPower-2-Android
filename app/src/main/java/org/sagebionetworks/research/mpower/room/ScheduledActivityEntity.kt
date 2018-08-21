@@ -3,7 +3,6 @@ package org.sagebionetworks.research.mpower.room
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import org.joda.time.DateTime
@@ -13,7 +12,7 @@ import org.sagebionetworks.bridge.rest.model.ScheduleStatus
 import java.util.ArrayList
 
 @Entity
-data class RoomScheduledActivity(@SerializedName("guid") @PrimaryKey var guid: String) {
+data class ScheduledActivityEntity(@SerializedName("guid") @PrimaryKey var guid: String) {
     @SerializedName("schedulePlanGuid")
     var schedulePlanGuid: String? = null
 
@@ -78,15 +77,9 @@ data class RoomActivity(@SerializedName("guid") var guid: String) {
 }
 
 
-data class RoomSchemaReference(@SerializedName("guid") var guid: String) {
-    @SerializedName("identifier")
-    var identifier: String? = null
-
-    @SerializedName("createdOn")
-    var createdOn: DateTime? = null
-
-    @SerializedName("href")
-    var href: String? = null
+data class RoomSchemaReference(@SerializedName("id") var id: String? = null) {
+    @SerializedName("revision")
+    var revision: Long? = null
 
     @SerializedName("type")
     var type: String? = null

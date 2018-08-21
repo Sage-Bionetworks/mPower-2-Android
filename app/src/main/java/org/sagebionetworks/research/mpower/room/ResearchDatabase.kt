@@ -5,9 +5,9 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 
 @Database(entities = arrayOf(
-        RoomScheduledActivity::class),
+        ScheduledActivityEntity::class),
         version = 1)
-@TypeConverters(RoomTypeConverters::class)
+@TypeConverters(EntityTypeConverters::class)
 abstract class ResearchDatabase : RoomDatabase() {
     abstract fun activitiesDao(): RoomScheduledActivityDao
 }
