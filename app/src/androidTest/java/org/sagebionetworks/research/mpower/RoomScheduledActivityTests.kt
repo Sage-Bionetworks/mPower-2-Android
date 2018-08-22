@@ -42,7 +42,7 @@ class RoomScheduledActivityTests {
             activityDao = database.activitiesDao()
 
             activityList = RestUtils.GSON.fromJson(
-                    resourceAsString("mpower_activities.json"),
+                    resourceAsString("test_scheduled_activities.json"),
                     ScheduledActivityListV4::class.java)
 
             roomActivityList = EntityTypeConverters().fromScheduledActivityListV4(activityList) ?: ArrayList()
@@ -78,10 +78,30 @@ class RoomScheduledActivityTests {
     @Test
     fun setup_testInitialDatabaseAndJsonSetup() {
         assertNotNull(activityList)
-        assertEquals(6, activityList.items?.size)
+        assertEquals(8, activityList.items?.size)
 
         assertNotNull(roomActivityList)
-        assertEquals(6, roomActivityList.size)
+        assertEquals(8, roomActivityList.size)
+    }
+
+    @Test
+    fun insert_test() {
+        activityDao.clear()
+        activityDao.insert(roomActivityList.first())
+        assertTaskContains(arrayOf(roomActivityList.first().guid), activityDao.getAll())
+    }
+
+    @Test
+    fun insert_testAll() {
+        activityDao.clear()
+        activityDao.insert(arrayListOf(roomActivityList[0], roomActivityList[1]))
+        assertTaskContains(arrayOf(roomActivityList[0].guid, roomActivityList[1].guid), activityDao.getAll())
+    }
+
+    @Test
+    fun delete_test() {
+        activityDao.clear()
+        assertEquals(0, activityDao.getAll().size)
     }
 
     @Test
@@ -131,9 +151,42 @@ class RoomScheduledActivityTests {
     @Test
     fun query_testAll() {
         val dbActivities = activityDao.getAll()
-        assertEquals(6, dbActivities.size)
+        assertEquals(8, dbActivities.size)
         assertMedicationTaskReferenceActivity(dbActivities.first())
         assertMotivationSurveyReferenceActivity(dbActivities[2])
+        assertCompoundActivity(dbActivities[6])
+        assertActivityWithSchemaActivity(dbActivities[7])
+    }
+
+    fun assertCompoundActivity(activity: ScheduledActivityEntity?) {
+        assertNotNull(activity)
+        assertEquals("2dc5dddb-cdb8-4291-9e98-183dd9b20e5f:2016-03-08T17:24:02.103", activity?.guid)
+        assertEquals("Compound Activity From Definition", activity?.activity?.label)
+        assertEquals(ActivityType.COMPOUND, activity?.activity?.activityType)
+        assertNotNull(activity?.activity?.compoundActivity)
+        assertEquals("compound-from-def", activity?.activity?.compoundActivity?.taskIdentifier)
+        assertNotNull(activity?.activity?.compoundActivity?.schemaList)
+        assertEquals(1, activity?.activity?.compoundActivity?.schemaList?.size)
+        assertEquals("simple-test-schema", activity?.activity?.compoundActivity?.schemaList?.get(0)?.id)
+        assertEquals(2L, activity?.activity?.compoundActivity?.schemaList?.get(0)?.revision)
+        assertNotNull(activity?.activity?.compoundActivity?.surveyList)
+        assertEquals(1, activity?.activity?.compoundActivity?.surveyList?.size)
+        assertEquals("simple-survey-1", activity?.activity?.compoundActivity?.surveyList?.get(0)?.identifier)
+        assertEquals("2a93e632-c760-4b52-b567-ec36b26acfa4", activity?.activity?.compoundActivity?.surveyList?.get(0)?.guid)
+        assertEquals("http://localhost:9000/v3/surveys/2a93e632-c760-4b52-b567-ec36b26acfa4/revisions/2017-02-09T02:26:14.644Z",
+                activity?.activity?.compoundActivity?.surveyList?.get(0)?.href)
+        assertEquals(DateTime.parse("2017-02-09T02:26:14.644Z").toDate().time,
+                activity?.activity?.compoundActivity?.surveyList?.get(0)?.createdOn?.toDate()?.time)
+    }
+
+    fun assertActivityWithSchemaActivity(activity: ScheduledActivityEntity?) {
+        assertNotNull(activity)
+        assertEquals("f34e5be9-df81-46a1-bf21-5a2994c44e9d:2016-03-08T17:24:02.103", activity?.guid)
+        assertNotNull(activity?.activity?.task)
+        assertEquals("back-compat-task", activity?.activity?.task?.identifier)
+        assertNotNull(activity?.activity?.task?.schema)
+        assertEquals("upload-v2-manual-test", activity?.activity?.task?.schema?.id)
+        assertEquals(1L, activity?.activity?.task?.schema?.revision)
     }
 
     @Test
@@ -148,6 +201,13 @@ class RoomScheduledActivityTests {
         val dbActivities = activityDao.get("Motivation")
         assertEquals(1, dbActivities.size)
         assertMotivationSurveyReferenceActivity(dbActivities.first())
+    }
+
+    @Test
+    fun query_testCompoundIdentifier() {
+        val dbActivities = activityDao.get("compound-from-def")
+        assertEquals(1, dbActivities.size)
+        assertCompoundActivity(dbActivities.first())
     }
 
     @Test

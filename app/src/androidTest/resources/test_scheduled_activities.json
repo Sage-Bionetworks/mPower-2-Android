@@ -125,5 +125,73 @@
       "scheduledOn": "2018-08-18T13:40:39.183-04:00",
       "status": "available",
       "type": "ScheduledActivity"
-    }]
+    },
+    {
+      "guid": "2dc5dddb-cdb8-4291-9e98-183dd9b20e5f:2016-03-08T17:24:02.103",
+      "schedulePlanGuid": "0ef97f95-9b47-445a-b7c3-99864aab1454",
+      "activity": {
+        "label": "Compound Activity From Definition",
+        "guid": "2dc5dddb-cdb8-4291-9e98-183dd9b20e5f",
+        "compoundActivity": {
+          "schemaList": [
+            {
+              "id": "simple-test-schema",
+              "revision": 2,
+              "type": "SchemaReference"
+            }
+          ],
+          "surveyList": [
+            {
+              "identifier": "simple-survey-1",
+              "guid": "2a93e632-c760-4b52-b567-ec36b26acfa4",
+              "createdOn": "2017-02-09T02:26:14.644Z",
+              "href": "http://localhost:9000/v3/surveys/2a93e632-c760-4b52-b567-ec36b26acfa4/revisions/2017-02-09T02:26:14.644Z",
+              "type": "SurveyReference"
+            }
+          ],
+          "taskIdentifier": "compound-from-def",
+          "type": "CompoundActivity"
+        },
+        "activityType": "compound",
+        "type": "Activity"
+      },
+      "persistent": false,
+      "scheduledOn": "2016-03-08T17:24:02.103-07:00",
+      "expiresOn": "2016-03-09T17:24:02.103-07:00",
+      "status": "expired",
+      "type": "ScheduledActivity"
+    },
+    {
+      "guid": "f34e5be9-df81-46a1-bf21-5a2994c44e9d:2016-03-08T17:24:02.103",
+      "schedulePlanGuid": "0ef97f95-9b47-445a-b7c3-99864aab1454",
+      "activity": {
+        "label": "Task Activity with Schema",
+        "guid": "f34e5be9-df81-46a1-bf21-5a2994c44e9d",
+        "task": {
+          "identifier": "back-compat-task",
+          "schema": {
+            "id": "upload-v2-manual-test",
+            "revision": 1,
+            "type": "SchemaReference"
+          },
+          "type": "TaskReference"
+        },
+        "activityType": "task",
+        "type": "Activity"
+      },
+      "persistent": false,
+      "scheduledOn": "2016-03-08T17:24:02.103-07:00",
+      "expiresOn": "2016-03-09T17:24:02.103-07:00",
+      "status": "expired",
+      "type": "ScheduledActivity"
+    }],
+  "requestParams": {
+    "startTime": "2018-08-21T00:00:00.000-07:00",
+    "endTime": "2018-08-24T00:00:00.000-07:00",
+    "type": "RequestParams"
+  },
+  "startTime": "2018-08-21T00:00:00.000-07:00",
+  "endTime": "2018-08-24T00:00:00.000-07:00",
+  "total": 2,
+  "type": "DateTimeRangeResourceList"
 }
