@@ -18,6 +18,12 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         resConfigs "en" // english only
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ['autovaluegson.mutableAdaptersWithDefaultSetters': 'true']
+            }
+        }
     }
     buildTypes {
         debug {

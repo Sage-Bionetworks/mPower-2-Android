@@ -55,8 +55,8 @@ import dagger.android.AndroidInjectionModule;
 import dagger.android.ContributesAndroidInjector;
 
 @Module(includes = {AndroidInjectionModule.class, ShowStepModule.class, InputFieldsModule.class, ActionModule.class,
-        DataModule.class, StepModule.class, AsyncActionModule.class,
-        PerformTaskModule.class, InstructionStepModule.class, OverviewStepModule.class, MPowerActiveStepModule.class,
+        StepModule.class, AsyncActionModule.class, PerformTaskModule.class, InstructionStepModule.class,
+        OverviewStepModule.class, MPowerActiveStepModule.class,
         TappingCompletionStepModule.class, TappingStepModule.class, HandSelectionStepModule.class})
 public abstract class MPowerSageResearchModule {
     @ContributesAndroidInjector

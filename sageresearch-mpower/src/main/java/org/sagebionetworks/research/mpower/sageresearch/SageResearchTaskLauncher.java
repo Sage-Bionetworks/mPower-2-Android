@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.common.collect.ImmutableSet;
+
 import org.sagebionetworks.research.domain.repository.TaskRepository;
 import org.sagebionetworks.research.domain.task.TaskInfo;
 import org.sagebionetworks.research.presentation.model.TaskView;
@@ -27,7 +29,6 @@ public class SageResearchTaskLauncher {
 
         //TODO: mapper
         TaskView taskView = TaskView.builder().setIdentifier(taskInfo.getIdentifier()).build();
-
         Intent intent = PerformTaskActivity.createIntent(context, taskView, taskRunUUID);
         context.startActivity(intent);
     }

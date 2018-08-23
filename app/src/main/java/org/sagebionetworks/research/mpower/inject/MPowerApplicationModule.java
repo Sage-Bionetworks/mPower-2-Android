@@ -11,16 +11,20 @@ import org.sagebionetworks.research.mpower.tracking.TrackingFragment;
 import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
 import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.SelectionFragment;
 
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
 
-@Module
+@Module(includes = {TrackingStepModule.class, AppDataModule.class})
 public interface MPowerApplicationModule {
     @Binds
     Context provideApplicationContext(Application application);
+
+    @ContributesAndroidInjector
+    SelectionFragment contributeSelectionFragmentInjector();
 
     @ContributesAndroidInjector
     ExternalIdSignInActivity contributeExternalIdSignInActivityInjector();
@@ -36,9 +40,6 @@ public interface MPowerApplicationModule {
 
     @ContributesAndroidInjector
     TrackingMenuFragment contributeTrackingMenuFragmentInjector();
-
-    @ContributesAndroidInjector
-    PerformTaskActivity contributePerformTaskActivityInjector();
 
     @ContributesAndroidInjector
     MainActivity contributeMainActivityInjector();

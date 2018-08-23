@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
+import org.sagebionetworks.research.mpower.Tasks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,38 +130,42 @@ public class TrackingMenuFragment extends Fragment {
         for (int i = 0; i < this.imageViews.size(); i++) {
             final int copy = i;
             this.imageViews.get(i).setOnClickListener(view -> {
-                String selection = null;
+                int selection = 0;
                 if (this.selectedId == R.id.tracking_tab) {
-                    selection = this.getResources().getString(TRACKING_LABELS.get(copy));
+                    selection = TRACKING_LABELS.get(copy);
                 } else if (this.selectedId == R.id.measuring_tab) {
-                    selection = this.getResources().getString(MEASURING_LABELS.get(copy));
-                    String taskIdentifier = this.getTaskIdentifierFromLabel(selection);
-                    if (taskIdentifier != null) {
-                        launcher.launchTask(this.getContext(), taskIdentifier, null);
-                    } else {
-                        LOGGER.warn("Selected Icon " + selection + " doesn't map to a task identifier");
-                    }
+                    selection = MEASURING_LABELS.get(copy);
                 }
 
-                if (selection != null) {
-                    // TODO Do something with the button the user pressed;
-                    LOGGER.debug("Icon " + selection.trim() + " was selected.");
+                String taskIdentifier = this.getTaskIdentifierFromLabel(selection);
+                if (taskIdentifier != null) {
+                    launcher.launchTask(this.getContext(), taskIdentifier, null);
+                } else {
+                    LOGGER.warn("Selected Icon " + selection + " doesn't map to a task identifier");
+                }
+
+                if (LOGGER.isDebugEnabled()) {
+                    String selectionString = this.getResources().getString(selection);
+                    LOGGER.debug("Icon " + selectionString.trim() + " was selected.");
                 }
             });
         }
     }
 
     @Nullable
-    private String getTaskIdentifierFromLabel(@NonNull String label) {
-        String walkAndBalanceIconLabel = this.getResources().getString(MEASURING_LABELS.get(0));
-        String tappingIconLabel = this.getResources().getString(MEASURING_LABELS.get(1));
-        String tremorIconLabel = this.getResources().getString(MEASURING_LABELS.get(2));
-        if (label.equals(walkAndBalanceIconLabel)) {
-            return "WalkAndBalance";
-        } else if (label.equals(tappingIconLabel)) {
-            return "Tapping";
-        } else if (label.equals(tremorIconLabel)) {
-            return "Tremor";
+    private String getTaskIdentifierFromLabel(@NonNull int label) {
+        if (label == MEASURING_LABELS.get(0)) {
+            return Tasks.WALK_AND_BALANCE;
+        } else if (label == MEASURING_LABELS.get(1)) {
+            return Tasks.TAPPING;
+        } else if (label == MEASURING_LABELS.get(2)) {
+            return Tasks.TREMOR;
+        } else if (label == TRACKING_LABELS.get(0)) {
+            return Tasks.MEDICATION;
+        } else if (label == TRACKING_LABELS.get(1)) {
+            return Tasks.SYMPTOMS;
+        } else if (label == TRACKING_LABELS.get(2)) {
+            return Tasks.TRIGGERS;
         }
 
         return null;

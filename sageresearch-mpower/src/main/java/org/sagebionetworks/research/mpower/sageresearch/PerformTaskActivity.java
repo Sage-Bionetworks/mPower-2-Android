@@ -41,7 +41,6 @@ public class PerformTaskActivity extends AppCompatActivity implements HasSupport
     @Inject
     DispatchingAndroidInjector<Fragment> supportFragmentInjector;
 
-
     public static Intent createIntent(@NonNull Context context, @NonNull TaskView taskView,
             @Nullable UUID taskRunUUID) {
         checkNotNull(context);
