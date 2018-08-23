@@ -47,6 +47,7 @@
 
     <string name="study_burst_progress_bar_day">Day</string>
     <string name="study_burst_progress_bar_title">Study Burst</string>
+    <string name="study_burst_progress_message">Progress expires in <b>%1$s</b></string>
     <string name="measuring_center_label">Walk And Balance</string>
     <string name="measuring_left_label">Finger Tapping</string>
     <string name="measuring_right_label">Tremor Test</string>
