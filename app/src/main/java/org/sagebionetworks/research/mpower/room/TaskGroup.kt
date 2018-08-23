@@ -1,8 +1,7 @@
 package org.sagebionetworks.research.mpower.room
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
+import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme
+import org.sagebionetworks.research.domain.task.TaskInfo
 
 //
 //  Copyright © 2016-2018 Sage Bionetworks. All rights reserved.
@@ -34,10 +33,42 @@ import android.arch.persistence.room.TypeConverters
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-@Database(entities = arrayOf(
-        ScheduledActivityEntity::class),
-        version = 1)
-@TypeConverters(EntityTypeConverters::class)
-abstract class ResearchDatabase : RoomDatabase() {
-    abstract fun activitiesDao(): RoomScheduledActivityDao
+/**
+ * `TaskGroup` defines a sub-grouping of tasks.  This is used in UI presentations where
+ * the researchers wish to tie a group of activities and surveys together but allow the
+ * user to perform them non-sequentially or with a break between the activities.
+ */
+interface TaskGroup {
+
+    /**
+     * @property identifier A short string that uniquely identifies the task group.
+     */
+    val identifier: String
+
+    /**
+     * @property The primary text to display for the task group in a localized string.
+     */
+    val title: String?
+
+    /**
+     * @property Additional detail text to display for the task group in a localized string.
+     */
+    val detail: String?
+
+    /**
+     * TODO: mdephillips 8/23/18 is this the correct equivalent of iOS' RSDImageVendor?
+     * @property An icon image that can be used for displaying the choice.
+     */
+    val imageVendor: ImageTheme?
+
+    /**
+     * TODO: mdephillips 8/23/18 the TaskInfo interface is missing a few fields from it's iOS equivalent 'RSDTaskGroup'
+     * @property An array of the task references included in this group.
+     */
+    val tasks: Array<TaskInfo>
+
+    /**
+     * TODO: mdephillips 8/23/18 we're not sure if we are using TaskPaths yet on Android or not, leaving out for now
+     */
+    //fun instantiateTaskPath(taskInfo: TaskInfo): TaskPath?
 }

@@ -1,8 +1,8 @@
 package org.sagebionetworks.research.mpower.room
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
+import org.joda.time.DateTime
+import org.sagebionetworks.bridge.android.BridgeConfig
+import org.sagebionetworks.bridge.researchstack.BridgeDataProvider
 
 //
 //  Copyright © 2016-2018 Sage Bionetworks. All rights reserved.
@@ -34,10 +34,43 @@ import android.arch.persistence.room.TypeConverters
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-@Database(entities = arrayOf(
-        ScheduledActivityEntity::class),
-        version = 1)
-@TypeConverters(EntityTypeConverters::class)
-abstract class ResearchDatabase : RoomDatabase() {
-    abstract fun activitiesDao(): RoomScheduledActivityDao
+/**
+ * Default data source handler for scheduled activities. This manager is used to get `ScheduledActivityEntity`
+ * objects and upload the task results for Bridge services. By default, this manager will fetch all the
+ * activities, but will *not* cache them all in memory. Instead, it will filter out those activities that are
+ * valid for today and the most recent finished activity (if any) for each activity identifier.
+ */
+open class ScheduleManager {
+    /**
+     * @property configuration Pointer to the shared configuration to use.
+     */
+    val configuration: BridgeConfig = BridgeDataProvider.getInstance().bridgeConfig
+
+    /**
+     * @property now This is an internal value that can be used in testing instead of using `DateTime.now()` directly.
+     * It can then be overridden by a test subclass of this manager in order to return a known date.
+     */
+    open val now: DateTime get() = DateTime.now()
+
+    /**
+     * @property identifier that can be used for mapping this schedule manager to the displayed schedules.
+     */
+    open var identifier: String = "Today"
+
+    /**
+     * @property scheduledActivities This is an array of the activities fetched by the the server or database
+     * after being filtered to ignore unwanted activities
+     */
+    open var scheduledActivities: Array<ScheduledActivityEntity> = arrayOf()
+
+    init {
+
+    }
+
+    /**
+     * Load the scheduled activities from cache using the `fetchRequests()` for this schedule manager.
+     */
+    fun loadScheduledActivities() {
+
+    }
 }
