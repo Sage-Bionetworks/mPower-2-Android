@@ -1,7 +1,6 @@
-package org.sagebionetworks.research.mpower.tracking.fragment;
+package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -13,16 +12,17 @@ import org.sagebionetworks.research.mpower.tracking.model.SelectionUIFormItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingActiveTaskViewModel;
+import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class TrackingItemAdapter extends RecyclerView.Adapter<TrackingItemViewHolder> {
+public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemViewHolder> {
     private final ImmutableList<SelectionUIFormItem> selectionItems;
     private final TrackingActiveTaskViewModel<?, ?> viewModel;
 
-    public TrackingItemAdapter(@NonNull Map<TrackingSection, Set<TrackingItem>> selectionItems,
+    public SelectionItemAdapter(@NonNull Map<TrackingSection, Set<TrackingItem>> selectionItems,
             @NonNull TrackingActiveTaskViewModel<?, ?> viewModel) {
         this.viewModel = viewModel;
         ImmutableList.Builder<SelectionUIFormItem> selectionItemsBuilder = new ImmutableList.Builder<>();
@@ -36,14 +36,14 @@ public class TrackingItemAdapter extends RecyclerView.Adapter<TrackingItemViewHo
 
     @NonNull
     @Override
-    public TrackingItemViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
+    public SelectionItemViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
         SelectionUIFormItemWidget widget = (SelectionUIFormItemWidget) LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.mpower2_selection_view_holder, parent, false);
-        return new TrackingItemViewHolder(widget, this.viewModel);
+        return new SelectionItemViewHolder(widget, this.viewModel);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final TrackingItemViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final SelectionItemViewHolder holder, final int position) {
         SelectionUIFormItem selectionUIFormItem = this.selectionItems.get(position);
         if (selectionUIFormItem instanceof TrackingSection) {
             TrackingSection trackingSection = (TrackingSection)selectionUIFormItem;

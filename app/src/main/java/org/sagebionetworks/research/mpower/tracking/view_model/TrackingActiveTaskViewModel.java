@@ -17,6 +17,7 @@ import java.util.Set;
 
 public abstract class TrackingActiveTaskViewModel<ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog>
         extends ViewModel {
+    protected LiveData<Boolean> selectionMade;
     protected MutableLiveData<Map<TrackingSection, Set<TrackingItem>>> availableElements;
     protected MutableLiveData<Set<ConfigType>> activeElements;
     protected LiveData<Set<ConfigType>> unconfiguredElements;
@@ -27,6 +28,7 @@ public abstract class TrackingActiveTaskViewModel<ConfigType extends TrackingIte
         this.availableElements.setValue(stepView.getSelectionItems());
         this.activeElements = new MutableLiveData<>();
         this.activeElements.setValue(new HashSet<>());
+        this.selectionMade = Transformations.map(this.activeElements, (elements) -> !elements.isEmpty());
         this.unconfiguredElements = Transformations.map(this.activeElements, (elements) -> {
             Set<ConfigType> result = new HashSet<>();
             for (ConfigType config : elements) {
@@ -40,6 +42,10 @@ public abstract class TrackingActiveTaskViewModel<ConfigType extends TrackingIte
 
         this.loggedElements = new MutableLiveData<>();
         this.loggedElements.setValue(new HashSet<>());
+    }
+
+    public LiveData<Boolean> getSelectionMade() {
+        return this.selectionMade;
     }
 
     public LiveData<Map<TrackingSection, Set<TrackingItem>>> getAvailableElements() {
@@ -98,8 +104,18 @@ public abstract class TrackingActiveTaskViewModel<ConfigType extends TrackingIte
         }
     }
 
+    public boolean isLogged(@NonNull ConfigType config) {
+        Set<LogType> loggedElements = this.loggedElements.getValue();
+        if (loggedElements != null) {
+            return TrackingActiveTaskViewModel
+                    .containsMatchingTrackingItem(loggedElements, config.getTrackingItem());
+        } else {
+            return false;
+        }
+    }
+
     private static <E extends HasTrackingItem> boolean containsMatchingTrackingItem(@NonNull Set<E> items,
-            @NonNull TrackingItem item) { ;
+            @NonNull TrackingItem item) {
         for (HasTrackingItem hasTrackingItem : items) {
             if (hasTrackingItem.getTrackingItem().equals(item)) {
                 return true;
@@ -126,19 +142,28 @@ public abstract class TrackingActiveTaskViewModel<ConfigType extends TrackingIte
     }
 
     public void addLoggedElement(@NonNull LogType log) {
+        Set<LogType> result = this.removeLoggedElementHelper(log.getTrackingItem().getIdentifier());
+        result.add(log);
+        this.loggedElements.setValue(result);
+    }
+
+    public void removeLoggedElement(@NonNull String identifier) {
+        this.loggedElements.setValue(this.removeLoggedElementHelper(identifier));
+    }
+
+    private Set<LogType> removeLoggedElementHelper(@NonNull String identifier) {
         Set<LogType> result = new HashSet<>();
         Set<LogType> loggedElements = this.loggedElements.getValue();
         if (loggedElements != null) {
             for (LogType currentLog : loggedElements) {
                 // Filter out the old log if there is one.
-                if (!currentLog.getTrackingItem().equals(log.getTrackingItem())) {
+                if (!currentLog.getTrackingItem().getIdentifier().equals(identifier)) {
                     result.add(currentLog);
                 }
             }
         }
 
-        result.add(log);
-        this.loggedElements.setValue(result);
+        return result;
     }
 
     protected abstract ConfigType instantiateConfigFromSelection(@NonNull TrackingItem item);

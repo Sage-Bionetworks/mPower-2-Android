@@ -72,4 +72,10 @@
         <item name="android:textColor">@color/appLightGray</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="Widget.MPower.ActionButton.TriggersLogging.UnderlinedButton" parent="">
+        <item name="android:gravity">left</item>
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textColor">@color/royal500</item>
+    </style>
 </resources>

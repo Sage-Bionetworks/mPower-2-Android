@@ -6,7 +6,7 @@ import org.sagebionetworks.research.domain.inject.GsonModule;
 import org.sagebionetworks.research.domain.inject.StepModule.StepClassKey;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.ShowStepFragmentFactory;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.StepViewKey;
-import org.sagebionetworks.research.mpower.tracking.fragment.SelectionFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.TriggersSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStep;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 import org.sagebionetworks.research.presentation.inject.StepViewModule.InternalStepViewFactory;
@@ -43,6 +43,6 @@ public abstract class TrackingStepModule {
     @IntoMap
     @StepViewKey(TrackingStepView.TYPE)
     static ShowStepFragmentFactory provideTrackingFragmentFactory() {
-        return SelectionFragment::newInstance;
+        return TriggersSelectionFragment::newInstance;
     }
 }

@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower.tracking.fragment;
+package org.sagebionetworks.research.mpower.tracking.widget;
 
 import android.content.Context;
 import android.support.annotation.ColorRes;

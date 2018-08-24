@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/record_button"
+        style="@style/Widget.ResearchStack.NavigationActionBar.PrimaryButton.Forward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:paddingEnd="28dp"
+        android:paddingStart="28dp"
+        android:text="Record"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/item_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <TextView
+        android:id="@+id/item_title"
+        style="@style/Widget.ResearchStack.StepBody.TitleLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="28dp"
+        android:text="Item Title"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/record_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1" />
+
+    <ImageView
+        android:id="@+id/checkmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/item_title"
+        app:layout_constraintTop_toTopOf="@+id/recorded_label"
+        app:srcCompat="@drawable/checkbox" />
+
+    <TextView
+        android:id="@+id/recorded_label"
+        style="@style/Widget.ResearchStack.StepBody.TextLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Recorded"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/add_detail_button"
+        app:layout_constraintStart_toStartOf="@+id/add_detail_button"
+        app:layout_constraintTop_toBottomOf="@+id/item_title" />
+
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/add_detail_button"
+        style="@style/Widget.MPower.ActionButton.TriggersLogging.UnderlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:text="Add details"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/checkmark"
+        app:layout_constraintTop_toBottomOf="@+id/recorded_label" />
+
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/undo_button"
+        style="@style/Widget.MPower.ActionButton.TriggersLogging.UnderlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:text="Undo"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recorded_label" />
+</android.support.constraint.ConstraintLayout>

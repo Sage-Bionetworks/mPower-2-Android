@@ -2,25 +2,22 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/royal500"
-        app:layout_constraintBottom_toTopOf="@+id/rs2_step_navigation_action_bar"
+        app:layout_constraintBottom_toTopOf="@id/rs2_step_navigation_action_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/contentView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-            android:id="@+id/contentView">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -47,7 +44,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rs2_step_navigation_action_cancel" />
+                app:layout_constraintTop_toBottomOf="@id/rs2_step_navigation_action_cancel" />
 
             <TextView
                 android:id="@+id/rs2_detail"
@@ -70,12 +67,29 @@
                 android:id="@+id/rs2_recycler_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="28dp"
                 android:layout_marginTop="20dp"
                 android:background="@color/appWhite"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/rs2_step_navigation_action_add_more"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rs2_detail" />
+
+            <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+                android:id="@+id/rs2_step_navigation_action_add_more"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/mp_rounded_button_height"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="28dp"
+                android:layout_marginStart="28dp"
+                android:background="@drawable/mp_round_button_white"
+                android:gravity="center"
+                android:text="Edit Triggers"
+                android:textColor="@color/royal500"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <org.sagebionetworks.research.mobile_ui.widget.ActionButton
                 android:id="@id/rs2_step_navigation_action_cancel"
@@ -87,6 +101,7 @@
                 app:layout_constraintDimensionRatio="H,1:1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
 
