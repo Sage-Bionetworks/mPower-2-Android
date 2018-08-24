@@ -10,12 +10,14 @@ class StudyBurstViewModel : ViewModel() {
     private val title = MutableLiveData<String>()
     private val message = MutableLiveData<String>()
     private val expires = MutableLiveData<String>()
+    private val dayNumber = MutableLiveData<Int>()
     private var items = MutableLiveData<List<StudyBurstItem>>()
 
     fun init() {
-        title.setValue("Great start!")
-        message.setValue("Complete the rest of todays activities within the next hour in order to complete the study burst for Day 12.")
-        expires.setValue("00:53:04")
+        title.value = "Great start!"
+        message.value = "Complete the rest of todays activities within the next hour in order to complete the study burst for Day 12."
+        expires.value = "00:53:04"
+        dayNumber.value = 9
 
         // TODO: remove when we have real data
         val list = arrayListOf<StudyBurstItem>()
@@ -72,6 +74,10 @@ class StudyBurstViewModel : ViewModel() {
 
     fun getItems(): LiveData<List<StudyBurstItem>> {
         return items
+    }
+
+    fun getDayCount(): LiveData<Int> {
+        return dayNumber
     }
 
 }

@@ -32,6 +32,7 @@ class StudyBurstActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         LOGGER.debug("StudyBurstActivity.onCreate()")
         setContentView(R.layout.activity_study_burst)
+        studyBurstStatusWheel.setMaxProgress(14) // TODO: need to get this from somewhere
 
         studyBurstViewModel.getMessage().observe(this, Observer {
             text -> studyBurstMessage.setText(text)
@@ -40,16 +41,21 @@ class StudyBurstActivity : AppCompatActivity() {
             text -> studyBurstTitle.setText(text)
         })
         studyBurstViewModel.getExpires().observe(this, Observer {
-            text -> expiresText.setText(getResources().getString(R.string.study_burst_progress_message, text))
+            text ->
+                expiresText.text = getResources().getString(R.string.study_burst_progress_message, text)
+        })
+        studyBurstViewModel.getDayCount().observe(this, Observer {
+            count ->
+                studyBurstStatusWheel.setDayCount(count!!)
+                studyBurstStatusWheel.setProgress(count!!)
         })
 
         studyBurstViewModel.getItems().observe(this, Observer {
             items ->
                 LOGGER.debug("How many items: " + items?.size)
                 var completed = items?.count { it.completed }
-                LOGGER.debug("Number complted: " + completed)
-                studyBurstStatusWheel.setProgress(completed!!)
-                studyBurstTopProgressBar.progress = completed
+                LOGGER.debug("Number complted: $completed")
+                studyBurstTopProgressBar.progress = completed!!
 
                 val layoutInflater:LayoutInflater = LayoutInflater.from(applicationContext)
                 for(i in 1..4) {
