@@ -151,9 +151,9 @@ class RoomScheduledActivityTests {
         assertNotNull(activity)
         assertEquals("a341c893-615d-48e1-ab6a-d418af720269:2018-08-17T13:40:39.183", activity?.guid)
         assertNotNull(activity?.startedOn)
-        assertEquals(DateTime.parse("2018-08-17T17:44:05.114Z").toDate().time, activity?.startedOn?.toDate()?.time)
+        assertEquals(DateTime.parse("2018-08-17T17:44:05.114Z").toDate().time, activity?.startedOn?.toEpochMilli())
         assertNotNull(activity?.finishedOn)
-        assertEquals(DateTime.parse("2018-08-17T18:09:28.610Z").toDate().time, activity?.finishedOn?.toDate()?.time)
+        assertEquals(DateTime.parse("2018-08-17T18:09:28.610Z").toDate().time, activity?.finishedOn?.toEpochMilli())
         assertNotNull(activity?.activity?.survey)
         assertEquals("Motivation", activity?.activity?.survey?.identifier)
         assertEquals("https://ws.sagebridge.org/v3/surveys/7beb8a71-65d0-4217" +
@@ -190,7 +190,7 @@ class RoomScheduledActivityTests {
         assertEquals("http://localhost:9000/v3/surveys/2a93e632-c760-4b52-b567-ec36b26acfa4/revisions/2017-02-09T02:26:14.644Z",
                 activity?.activity?.compoundActivity?.surveyList?.get(0)?.href)
         assertEquals(DateTime.parse("2017-02-09T02:26:14.644Z").toDate().time,
-                activity?.activity?.compoundActivity?.surveyList?.get(0)?.createdOn?.toDate()?.time)
+                activity?.activity?.compoundActivity?.surveyList?.get(0)?.createdOn?.toEpochMilli())
     }
 
     fun assertActivityWithSchemaActivity(activity: ScheduledActivityEntity?) {

@@ -16,6 +16,7 @@ import org.sagebionetworks.bridge.rest.gson.LocalDateTypeAdapter
 import org.sagebionetworks.bridge.rest.model.ActivityType
 import org.sagebionetworks.bridge.rest.model.ScheduleStatus
 import org.sagebionetworks.bridge.rest.model.ScheduledActivityListV4
+import org.threeten.bp.Instant
 
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -33,6 +34,7 @@ class EntityTypeConverters {
             .registerTypeAdapter(LocalDate::class.java, LocalDateTypeAdapter())
             .registerTypeAdapter(DateTime::class.java, DateTimeTypeAdapter())
             .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+            .registerTypeAdapter(Instant::class.java, InstantAdapter())
             .create()
 
     private val schemaRefListType = object : TypeToken<List<RoomSchemaReference>>() {}.type
@@ -51,15 +53,15 @@ class EntityTypeConverters {
     }
 
     @TypeConverter
-    fun fromDateTimeString(value: String?): DateTime? {
+    fun fromInstant(value: Long?): Instant? {
         val valueChecked = value ?: return null
-        return DateTime(valueChecked)
+        return Instant.ofEpochMilli(valueChecked)
     }
 
     @TypeConverter
-    fun fromDateTime(value: DateTime?): String? {
+    fun fromInstantTimestamp(value: Instant?): Long? {
         val valueChecked = value ?: return null
-        return valueChecked.toString()
+        return valueChecked.toEpochMilli()
     }
 
     @TypeConverter
@@ -151,6 +153,27 @@ class LocalDateTimeAdapter: TypeAdapter<LocalDateTime>() {
     override fun write(writer: JsonWriter, date: LocalDateTime?) {
         if (date != null) {
             writer.value(DateTimeFormatter.ISO_DATE_TIME.format(date))
+        } else {
+            writer.nullValue()
+        }
+    }
+}
+
+/**
+ * 'InstantAdapter' is needed when going from
+ * ScheduledActivity.finishedOn: DateTime to ScheduledActivityEntity.finishedOn: Instant
+ */
+class InstantAdapter: TypeAdapter<Instant>() {
+    @Throws(IOException::class)
+    override fun read(reader: JsonReader): Instant {
+        val src = reader.nextString()
+        return Instant.ofEpochMilli(DateTime.parse(src).toDate().time)
+    }
+
+    @Throws(IOException::class)
+    override fun write(writer: JsonWriter, instant: Instant?) {
+        if (instant != null) {
+            writer.value(DateTime(instant.toEpochMilli()).toString())
         } else {
             writer.nullValue()
         }
