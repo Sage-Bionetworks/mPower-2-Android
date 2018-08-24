@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName
 import org.joda.time.DateTime
 import org.sagebionetworks.bridge.rest.model.ActivityType
 import org.sagebionetworks.bridge.rest.model.ScheduleStatus
+import org.threeten.bp.LocalDateTime
 
 import java.util.ArrayList
 
@@ -25,11 +26,11 @@ data class ScheduledActivityEntity(@SerializedName("guid") @PrimaryKey var guid:
 
     @SerializedName("scheduledOn")
     @ColumnInfo(index = true)
-    var scheduledOn: DateTime? = null
+    var scheduledOn: LocalDateTime? = null
 
     @SerializedName("expiresOn")
     @ColumnInfo(index = true)
-    var expiresOn: DateTime? = null
+    var expiresOn: LocalDateTime? = null
 
     @SerializedName("activity")
     @Embedded(prefix = "activity_")

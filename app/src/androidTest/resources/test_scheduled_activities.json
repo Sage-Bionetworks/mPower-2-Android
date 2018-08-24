@@ -156,8 +156,8 @@
         "type": "Activity"
       },
       "persistent": false,
-      "scheduledOn": "2016-03-08T17:24:02.103-07:00",
-      "expiresOn": "2016-03-09T17:24:02.103-07:00",
+      "scheduledOn": "2016-03-08T17:24:02.103-04:00",
+      "expiresOn": "2016-03-09T17:24:02.103-04:00",
       "status": "expired",
       "type": "ScheduledActivity"
     },
@@ -180,18 +180,18 @@
         "type": "Activity"
       },
       "persistent": false,
-      "scheduledOn": "2016-03-08T17:24:02.103-07:00",
-      "expiresOn": "2016-03-09T17:24:02.103-07:00",
+      "scheduledOn": "2016-03-08T17:24:02.103-04:00",
+      "expiresOn": "2016-03-09T17:24:02.103-04:00",
       "status": "expired",
       "type": "ScheduledActivity"
     }],
   "requestParams": {
-    "startTime": "2018-08-21T00:00:00.000-07:00",
-    "endTime": "2018-08-24T00:00:00.000-07:00",
+    "startTime": "2018-08-21T00:00:00.000-04:00",
+    "endTime": "2018-08-24T00:00:00.000-04:00",
     "type": "RequestParams"
   },
-  "startTime": "2018-08-21T00:00:00.000-07:00",
-  "endTime": "2018-08-24T00:00:00.000-07:00",
+  "startTime": "2018-08-21T00:00:00.000-04:00",
+  "endTime": "2018-08-24T00:00:00.000-04:00",
   "total": 2,
   "type": "DateTimeRangeResourceList"
 }
