@@ -1,13 +1,26 @@
 package org.sagebionetworks.research.mpower.room
 
 import android.arch.persistence.room.TypeConverter
+import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
 
 import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
 import org.joda.time.DateTime
-import org.sagebionetworks.bridge.rest.RestUtils
+import org.joda.time.LocalDate
+
+import org.sagebionetworks.bridge.rest.gson.ByteArrayToBase64TypeAdapter
+import org.sagebionetworks.bridge.rest.gson.DateTimeTypeAdapter
+import org.sagebionetworks.bridge.rest.gson.LocalDateTypeAdapter
 import org.sagebionetworks.bridge.rest.model.ActivityType
 import org.sagebionetworks.bridge.rest.model.ScheduleStatus
 import org.sagebionetworks.bridge.rest.model.ScheduledActivityListV4
+import org.threeten.bp.Instant
+
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.format.DateTimeFormatter
+import java.io.IOException
 
 //
 //  Copyright © 2016-2018 Sage Bionetworks. All rights reserved.
@@ -46,31 +59,51 @@ import org.sagebionetworks.bridge.rest.model.ScheduledActivityListV4
  */
 class EntityTypeConverters {
 
+    private val bridgeGson = GsonBuilder()
+            .registerTypeAdapter(ByteArray::class.java, ByteArrayToBase64TypeAdapter())
+            .registerTypeAdapter(LocalDate::class.java, LocalDateTypeAdapter())
+            .registerTypeAdapter(DateTime::class.java, DateTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+            .registerTypeAdapter(Instant::class.java, InstantAdapter())
+            .create()
+
     private val schemaRefListType = object : TypeToken<List<RoomSchemaReference>>() {}.type
     private val surveyRefListType = object : TypeToken<List<RoomSurveyReference>>() {}.type
 
     @TypeConverter
-    fun fromTimestamp(value: Long?): DateTime? {
+    fun fromLocalDateTimeString(value: String?): LocalDateTime? {
         val valueChecked = value ?: return null
-        return DateTime(valueChecked)
+        return LocalDateTime.parse(valueChecked)
     }
 
     @TypeConverter
-    fun toTimestamp(value: DateTime?): Long? {
+    fun fromLocalDateTime(value: LocalDateTime?): String? {
         val valueChecked = value ?: return null
-        return valueChecked.toDate().time
+        return valueChecked.toString()
+    }
+
+    @TypeConverter
+    fun fromInstant(value: Long?): Instant? {
+        val valueChecked = value ?: return null
+        return Instant.ofEpochMilli(valueChecked)
+    }
+
+    @TypeConverter
+    fun fromInstantTimestamp(value: Instant?): Long? {
+        val valueChecked = value ?: return null
+        return valueChecked.toEpochMilli()
     }
 
     @TypeConverter
     fun toClientData(value: String?): ClientData? {
         val valueChecked = value ?: return null
-        return RestUtils.GSON.fromJson(valueChecked, ClientData::class.java)
+        return bridgeGson.fromJson(valueChecked, ClientData::class.java)
     }
 
     @TypeConverter
     fun fromClientData(value: ClientData?): String? {
         val valueChecked = value ?: return null
-        return RestUtils.GSON.toJson(valueChecked)
+        return bridgeGson.toJson(valueChecked)
     }
 
     @TypeConverter
@@ -100,37 +133,79 @@ class EntityTypeConverters {
     @TypeConverter
     fun toSchemaReferenceList(value: String?): List<RoomSchemaReference>? {
         val valueChecked = value ?: return null
-        return RestUtils.GSON.fromJson<List<RoomSchemaReference>>(valueChecked, schemaRefListType)
+        return bridgeGson.fromJson<List<RoomSchemaReference>>(valueChecked, schemaRefListType)
     }
 
     @TypeConverter
     fun fromSchemaReferenceList(value: List<RoomSchemaReference>?): String? {
         val valueCheck = value ?: return null
-        return RestUtils.GSON.toJson(valueCheck, schemaRefListType)
+        return bridgeGson.toJson(valueCheck, schemaRefListType)
     }
 
     @TypeConverter
     fun toSurveyReferenceList(value: String?): List<RoomSurveyReference>? {
         val valueChecked = value ?: return null
-        return RestUtils.GSON.fromJson<List<RoomSurveyReference>>(valueChecked, surveyRefListType)
+        return bridgeGson.fromJson<List<RoomSurveyReference>>(valueChecked, surveyRefListType)
     }
 
     @TypeConverter
     fun fromRoomSurveyReferenceList(refList: List<RoomSurveyReference>?): String? {
-        return RestUtils.GSON.toJson(refList, surveyRefListType)
+        return bridgeGson.toJson(refList, surveyRefListType)
     }
 
     fun fromScheduledActivityListV4(value: ScheduledActivityListV4?): List<ScheduledActivityEntity>? {
         val valueChecked = value ?: return null
         var activities = ArrayList<ScheduledActivityEntity>()
         for (scheduledActivity in valueChecked.items) {
-            var roomActivity = RestUtils.GSON.fromJson(
-                    RestUtils.GSON.toJson(scheduledActivity), ScheduledActivityEntity::class.java)
+            var roomActivity = bridgeGson.fromJson(
+                    bridgeGson.toJson(scheduledActivity), ScheduledActivityEntity::class.java)
             scheduledActivity.clientData.let {
                 roomActivity.clientData = ClientData(it)
             }
             activities.add(roomActivity)
         }
         return activities
+    }
+}
+
+/**
+ * 'LocalDateTimeAdapter' is needed when going from
+ * ScheduledActivity.scheduledOn: DateTime to ScheduledActivityEntity.scheduledOn: LocalDateTime
+ */
+class LocalDateTimeAdapter: TypeAdapter<LocalDateTime>() {
+    @Throws(IOException::class)
+    override fun read(reader: JsonReader): LocalDateTime {
+        val src = reader.nextString()
+        return LocalDateTime.parse(src, DateTimeFormatter.ISO_DATE_TIME)
+    }
+
+    @Throws(IOException::class)
+    override fun write(writer: JsonWriter, date: LocalDateTime?) {
+        if (date != null) {
+            writer.value(DateTimeFormatter.ISO_DATE_TIME.format(date))
+        } else {
+            writer.nullValue()
+        }
+    }
+}
+
+/**
+ * 'InstantAdapter' is needed when going from
+ * ScheduledActivity.finishedOn: DateTime to ScheduledActivityEntity.finishedOn: Instant
+ */
+class InstantAdapter: TypeAdapter<Instant>() {
+    @Throws(IOException::class)
+    override fun read(reader: JsonReader): Instant {
+        val src = reader.nextString()
+        return Instant.ofEpochMilli(DateTime.parse(src).toDate().time)
+    }
+
+    @Throws(IOException::class)
+    override fun write(writer: JsonWriter, instant: Instant?) {
+        if (instant != null) {
+            writer.value(DateTime(instant.toEpochMilli()).toString())
+        } else {
+            writer.nullValue()
+        }
     }
 }

@@ -5,9 +5,11 @@ import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import org.joda.time.DateTime
+
 import org.sagebionetworks.bridge.rest.model.ActivityType
 import org.sagebionetworks.bridge.rest.model.ScheduleStatus
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDateTime
 
 import java.util.ArrayList
 
@@ -47,19 +49,19 @@ data class ScheduledActivityEntity(@SerializedName("guid") @PrimaryKey var guid:
     var schedulePlanGuid: String? = null
 
     @SerializedName("startedOn")
-    var startedOn: DateTime? = null
+    var startedOn: Instant? = null
 
     @SerializedName("finishedOn")
     @ColumnInfo(index = true)
-    var finishedOn: DateTime? = null
+    var finishedOn: Instant? = null
 
     @SerializedName("scheduledOn")
     @ColumnInfo(index = true)
-    var scheduledOn: DateTime? = null
+    var scheduledOn: LocalDateTime? = null
 
     @SerializedName("expiresOn")
     @ColumnInfo(index = true)
-    var expiresOn: DateTime? = null
+    var expiresOn: LocalDateTime? = null
 
     @SerializedName("activity")
     @Embedded(prefix = "activity_")
@@ -130,7 +132,7 @@ data class RoomSurveyReference(@SerializedName("guid") var guid: String) {
     var identifier: String? = null
 
     @SerializedName("createdOn")
-    var createdOn: DateTime? = null
+    var createdOn: Instant? = null
 
     @SerializedName("href")
     var href: String? = null

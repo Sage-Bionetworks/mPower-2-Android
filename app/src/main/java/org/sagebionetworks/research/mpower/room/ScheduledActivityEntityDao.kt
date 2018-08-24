@@ -3,7 +3,8 @@ package org.sagebionetworks.research.mpower.room
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
-import org.joda.time.DateTime
+
+import org.threeten.bp.LocalDateTime
 
 //
 //  Copyright © 2016-2018 Sage Bionetworks. All rights reserved.
@@ -75,7 +76,7 @@ interface RoomScheduledActivityDao {
      * @return the list of scheduled activities
      */
     @Query("SELECT * FROM scheduledactivityentity WHERE " + RoomQuery.AVAILABLE_DATE)
-    fun get(date: DateTime): List<ScheduledActivityEntity>
+    fun get(date: LocalDateTime): List<ScheduledActivityEntity>
 
     /**
      * Get all the scheduled activities that are available (not finished yet) and available schedule-wise at this date
@@ -83,7 +84,7 @@ interface RoomScheduledActivityDao {
      * @return the list of scheduled activities
      */
     @Query("SELECT * FROM scheduledactivityentity WHERE " + RoomQuery.NOT_FINISHED + " AND " + RoomQuery.AVAILABLE_DATE)
-    fun getAvailableOn(date: DateTime): List<ScheduledActivityEntity>
+    fun getAvailableOn(date: LocalDateTime): List<ScheduledActivityEntity>
 
     /**
      * Get all the scheduled activities that are available schedule-wise at this date and have the identifier
@@ -92,7 +93,7 @@ interface RoomScheduledActivityDao {
      * @return the list of scheduled activities
      */
     @Query("SELECT * FROM scheduledactivityentity WHERE " + RoomQuery.TASK_ID + " AND " + RoomQuery.AVAILABLE_DATE)
-    fun get(identifier: String, date: DateTime): List<ScheduledActivityEntity>
+    fun get(identifier: String, date: LocalDateTime): List<ScheduledActivityEntity>
 
     /**
      * @param roomScheduledActivity to insert into the database

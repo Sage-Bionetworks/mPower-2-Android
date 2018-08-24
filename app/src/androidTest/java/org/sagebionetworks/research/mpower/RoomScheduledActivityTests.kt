@@ -6,7 +6,6 @@ import android.support.test.runner.AndroidJUnit4
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
-
 import org.joda.time.DateTime
 
 import org.junit.AfterClass
@@ -22,6 +21,8 @@ import org.sagebionetworks.research.mpower.room.ResearchDatabase
 import org.sagebionetworks.research.mpower.room.ScheduledActivityEntity
 import org.sagebionetworks.research.mpower.room.RoomScheduledActivityDao
 import org.sagebionetworks.research.mpower.room.EntityTypeConverters
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import java.io.IOException
 import java.nio.charset.Charset
 
@@ -61,8 +62,13 @@ class RoomScheduledActivityTests {
     companion object {
         lateinit var database: ResearchDatabase
         lateinit var activityDao: RoomScheduledActivityDao
-        lateinit var activityList: ScheduledActivityListV4
+
+        // List to test most queries
         lateinit var roomActivityList: List<ScheduledActivityEntity>
+
+        // List to test timezone changes
+        lateinit var timeZoneEstActivityList: List<ScheduledActivityEntity>
+        lateinit var timeZonePstActivityList: List<ScheduledActivityEntity>
 
         @BeforeClass @JvmStatic fun setup() {
             database = Room.inMemoryDatabaseBuilder(
@@ -71,11 +77,20 @@ class RoomScheduledActivityTests {
 
             activityDao = database.activitiesDao()
 
-            activityList = RestUtils.GSON.fromJson(
+            val dbTestActivityList = RestUtils.GSON.fromJson(
                     resourceAsString("test_scheduled_activities.json"),
                     ScheduledActivityListV4::class.java)
+            roomActivityList = EntityTypeConverters().fromScheduledActivityListV4(dbTestActivityList) ?: ArrayList()
 
-            roomActivityList = EntityTypeConverters().fromScheduledActivityListV4(activityList) ?: ArrayList()
+            val timeZoneEstTestList = RestUtils.GSON.fromJson(
+                    resourceAsString("test_activities_timezones_est.json"),
+                    ScheduledActivityListV4::class.java)
+            timeZoneEstActivityList = EntityTypeConverters().fromScheduledActivityListV4(timeZoneEstTestList) ?: ArrayList()
+
+            val timeZonePstTestList = RestUtils.GSON.fromJson(
+                    resourceAsString("test_activities_timezones_pst.json"),
+                    ScheduledActivityListV4::class.java)
+            timeZonePstActivityList = EntityTypeConverters().fromScheduledActivityListV4(timeZonePstTestList) ?: ArrayList()
         }
 
         @AfterClass @JvmStatic fun teardown() {
@@ -107,9 +122,6 @@ class RoomScheduledActivityTests {
 
     @Test
     fun setup_testInitialDatabaseAndJsonSetup() {
-        assertNotNull(activityList)
-        assertEquals(8, activityList.items?.size)
-
         assertNotNull(roomActivityList)
         assertEquals(8, roomActivityList.size)
     }
@@ -145,9 +157,11 @@ class RoomScheduledActivityTests {
         assertEquals("e24e6601-1822-48b0-8770-00870d870708", activity?.schedulePlanGuid)
         assertEquals(false, activity?.persistent)
         assertNotNull(activity?.scheduledOn)
-        assertEquals(DateTime.parse("2018-08-17T00:00-04:00").toDate().time, activity?.scheduledOn?.toDate()?.time)
+        assertEquals(LocalDateTime.parse(
+                "2018-08-17T00:00-04:00", DateTimeFormatter.ISO_DATE_TIME), activity?.scheduledOn)
         assertNotNull(activity?.expiresOn)
-        assertEquals(DateTime.parse("2018-08-18T00:00-04:00").toDate().time, activity?.expiresOn?.toDate()?.time)
+        assertEquals(LocalDateTime.parse(
+                "2018-08-18T00:00-04:00", DateTimeFormatter.ISO_DATE_TIME), activity?.expiresOn)
         assertEquals(ScheduleStatus.EXPIRED, activity?.status)
         assertNotNull(activity?.activity)
         assertEquals("Medication", activity?.activity?.label)
@@ -167,9 +181,9 @@ class RoomScheduledActivityTests {
         assertNotNull(activity)
         assertEquals("a341c893-615d-48e1-ab6a-d418af720269:2018-08-17T13:40:39.183", activity?.guid)
         assertNotNull(activity?.startedOn)
-        assertEquals(DateTime.parse("2018-08-17T17:44:05.114Z").toDate().time, activity?.startedOn?.toDate()?.time)
+        assertEquals(DateTime.parse("2018-08-17T17:44:05.114Z").toDate().time, activity?.startedOn?.toEpochMilli())
         assertNotNull(activity?.finishedOn)
-        assertEquals(DateTime.parse("2018-08-17T18:09:28.610Z").toDate().time, activity?.finishedOn?.toDate()?.time)
+        assertEquals(DateTime.parse("2018-08-17T18:09:28.610Z").toDate().time, activity?.finishedOn?.toEpochMilli())
         assertNotNull(activity?.activity?.survey)
         assertEquals("Motivation", activity?.activity?.survey?.identifier)
         assertEquals("https://ws.sagebridge.org/v3/surveys/7beb8a71-65d0-4217" +
@@ -206,7 +220,7 @@ class RoomScheduledActivityTests {
         assertEquals("http://localhost:9000/v3/surveys/2a93e632-c760-4b52-b567-ec36b26acfa4/revisions/2017-02-09T02:26:14.644Z",
                 activity?.activity?.compoundActivity?.surveyList?.get(0)?.href)
         assertEquals(DateTime.parse("2017-02-09T02:26:14.644Z").toDate().time,
-                activity?.activity?.compoundActivity?.surveyList?.get(0)?.createdOn?.toDate()?.time)
+                activity?.activity?.compoundActivity?.surveyList?.get(0)?.createdOn?.toEpochMilli())
     }
 
     fun assertActivityWithSchemaActivity(activity: ScheduledActivityEntity?) {
@@ -242,7 +256,7 @@ class RoomScheduledActivityTests {
 
     @Test
     fun query_testMedicationDateFound() {
-        val date = DateTime.parse("2018-08-17T12:00:00.000-04:00")
+        val date = LocalDateTime.parse("2018-08-17T12:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
         val dbActivities = activityDao.get("Medication", date)
         assertEquals(1, dbActivities.size)
         assertMedicationTaskReferenceActivity(dbActivities.first())
@@ -250,14 +264,14 @@ class RoomScheduledActivityTests {
 
     @Test
     fun query_testMedicationDateNotFound() {
-        val date = DateTime.parse("2018-08-14T00:00:00.000-04:00")
+        val date = LocalDateTime.parse("2018-08-14T00:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
         val dbActivities = activityDao.get("Medication", date)
         assertEquals(0, dbActivities.size)
     }
 
     @Test
     fun query_testMedicationDateStartEdgeCaseFound() {
-        val date = DateTime.parse("2018-08-17T00:00:00.000-04:00")
+        val date = LocalDateTime.parse("2018-08-17T00:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
         val dbActivities = activityDao.get("Medication", date)
         assertEquals(1, dbActivities.size)
         assertMedicationTaskReferenceActivity(dbActivities.first())
@@ -265,7 +279,7 @@ class RoomScheduledActivityTests {
 
     @Test
     fun query_testMedicationDateEndEdgeCaseFound() {
-        val date = DateTime.parse("2018-08-18T00:00:00.000-04:00")
+        val date = LocalDateTime.parse("2018-08-18T00:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
         val dbActivities = activityDao.get("Medication", date)
         assertEquals(1, dbActivities.size)
         assertMedicationTaskReferenceActivity(dbActivities.first())
@@ -273,7 +287,7 @@ class RoomScheduledActivityTests {
 
     @Test
     fun query_testMedicationDateEndEdgeCaseNotFound() {
-        val date = DateTime.parse("2018-08-18T00:00:0.001-04:00")
+        val date = LocalDateTime.parse("2018-08-18T00:00:00.001-04:00", DateTimeFormatter.ISO_DATE_TIME)
         val dbActivities = activityDao.get("Medication", date)
         assertEquals(0, dbActivities.size)
     }
@@ -288,7 +302,7 @@ class RoomScheduledActivityTests {
 
     @Test
     fun query_testDate() {
-        val date = DateTime.parse("2018-08-17T14:00:0.000-04:00")
+        val date = LocalDateTime.parse("2018-08-17T14:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
         val dbActivities = activityDao.get(date)
         assertEquals(5, dbActivities.size)
         assertTaskContains(arrayOf("273c4518-7cb6-4496-b1dd-c0b5bf291b09:2018-08-17T00:00:00.000",
@@ -300,13 +314,47 @@ class RoomScheduledActivityTests {
 
     @Test
     fun query_testAvailableOn() {
-        val date = DateTime.parse("2018-08-17T14:00:0.000-04:00")
+        val date = LocalDateTime.parse("2018-08-17T14:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
         val dbActivities = activityDao.getAvailableOn(date)
         assertEquals(4, dbActivities.size)
         assertTaskContains(arrayOf("273c4518-7cb6-4496-b1dd-c0b5bf291b09:2018-08-17T00:00:00.000",
                 "fe79d987-28a2-4ccd-bcf3-b3d07b925a6b:2018-08-17T00:00:00.000",
                 "178ef89c-78b9-4861-b308-3dda0daf756d:2018-08-17T13:40:39.183",
                 "e6fe761f-6187-4e8f-b659-bce4edc98f06:2018-08-17T13:40:39.183"), dbActivities)
+    }
+
+    @Test fun query_testTimezoneChangePstToEst() {
+        activityDao.clear()
+        activityDao.insert(timeZonePstActivityList)
+
+        // Tests if user switched time zones from the db stored data which was inserted in PST
+        val estDateInclude = LocalDateTime.parse("2018-08-17T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME)
+
+        // We should still get the activity in the db because scheduledOn is considered a LocalTimeZone
+        val dbActivitiesInclude = activityDao.getAvailableOn(estDateInclude)
+        assertEquals(1, dbActivitiesInclude.size)
+
+        val estDateExclude = LocalDateTime.parse("2018-08-18T00:00:01.000-05:00", DateTimeFormatter.ISO_DATE_TIME)
+
+        val dbActivitiesExclude = activityDao.getAvailableOn(estDateExclude)
+        assertEquals(0, dbActivitiesExclude.size)
+    }
+
+    @Test fun query_testTimezoneChangeEstToPst() {
+        activityDao.clear()
+        activityDao.insert(timeZoneEstActivityList)
+
+        // Tests if user switched time zones from the db stored data which was inserted in PST
+        val pstDateInclude = LocalDateTime.parse("2018-08-17T23:59:00.000-08:00", DateTimeFormatter.ISO_DATE_TIME)
+
+        // We should still get the activity in the db because scheduledOn is considered a LocalTimeZone
+        val dbActivitiesInclude = activityDao.getAvailableOn(pstDateInclude)
+        assertEquals(1, dbActivitiesInclude.size)
+
+        val estDateExclude = LocalDateTime.parse("2018-08-16T23:59:00.000-08:00", DateTimeFormatter.ISO_DATE_TIME)
+
+        val dbActivitiesExclude = activityDao.getAvailableOn(estDateExclude)
+        assertEquals(0, dbActivitiesExclude.size)
     }
 
     fun assertTaskContains(guids: Array<String>, activityList: List<ScheduledActivityEntity>) {
