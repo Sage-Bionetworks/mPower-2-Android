@@ -17,18 +17,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.sagebionetworks.research.domain.interfaces.HashCodeHelper;
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.SageResearchTaskLauncher;
 import org.sagebionetworks.research.mpower.TaskLauncher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -141,7 +136,7 @@ public class TrackingMenuFragment extends Fragment {
                     selection = this.getResources().getString(MEASURING_LABELS.get(copy));
                     String taskIdentifier = this.getTaskIdentifierFromLabel(selection);
                     if (taskIdentifier != null) {
-                        launcher.launchTask(this.getContext(), taskIdentifier, UUID.randomUUID());
+                        launcher.launchTask(this.getContext(), taskIdentifier, null);
                     } else {
                         LOGGER.warn("Selected Icon " + selection + " doesn't map to a task identifier");
                     }

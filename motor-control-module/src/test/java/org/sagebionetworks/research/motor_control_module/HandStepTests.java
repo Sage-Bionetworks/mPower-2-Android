@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +59,7 @@ public class HandStepTests {
     public void init() {
        this.task = mock(Task.class);
        when(this.task.getIdentifier()).thenReturn("testTask");
-       when(this.task.getAsyncActions()).thenReturn(ImmutableList.of());
+       when(this.task.getAsyncActions()).thenReturn(ImmutableSet.of());
        List<String> progressMarkers = Arrays.asList("instruction", "left.instruction", "completion");
        when(this.task.getProgressMarkers()).thenReturn(ImmutableList.copyOf(progressMarkers));
        List<Step> steps = new ArrayList<>();

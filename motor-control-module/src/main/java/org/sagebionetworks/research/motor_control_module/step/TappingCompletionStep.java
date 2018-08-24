@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
+import org.sagebionetworks.research.domain.async.AsyncActionConfiguration;
 import org.sagebionetworks.research.domain.result.implementations.ResultBase;
 import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.step.interfaces.ThemedUIStep;
@@ -19,6 +20,8 @@ import org.threeten.bp.Instant;
 
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.concurrent.Immutable;
 
 @AutoValue
 public abstract class TappingCompletionStep implements ThemedUIStep {
@@ -31,6 +34,9 @@ public abstract class TappingCompletionStep implements ThemedUIStep {
 
         @NonNull
         public abstract Builder setActions(@NonNull Map<String, Action> actions);
+
+        @NonNull
+        public abstract Builder setAsyncActions(@NonNull Set<AsyncActionConfiguration> asyncActions);
 
         @NonNull
         public abstract Builder setColorTheme(@Nullable ColorTheme colorTheme);
@@ -58,12 +64,16 @@ public abstract class TappingCompletionStep implements ThemedUIStep {
     }
 
     public static Builder builder() {
-        return new AutoValue_TappingCompletionStep.Builder();
+        return new AutoValue_TappingCompletionStep.Builder()
+                .setActions(ImmutableMap.of())
+                .setAsyncActions(ImmutableSet.of())
+                .setHiddenActions(ImmutableSet.of());
     }
 
     public static TypeAdapter<TappingCompletionStep> typeAdapter(Gson gson) {
         return new AutoValue_TappingCompletionStep.GsonTypeAdapter(gson)
                 .setDefaultActions(ImmutableMap.of())
+                .setDefaultAsyncActions(ImmutableSet.of())
                 .setDefaultHiddenActions(ImmutableSet.of());
     }
 

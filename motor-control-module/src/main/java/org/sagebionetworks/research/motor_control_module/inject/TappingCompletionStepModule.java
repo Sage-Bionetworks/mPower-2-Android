@@ -5,6 +5,7 @@ import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.Show
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.StepViewKey;
 import org.sagebionetworks.research.motor_control_module.inject.subcomponents.ShowTappingCompletionStepFragmentSubcomponent;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowTappingCompletionStepFragment;
+import org.sagebionetworks.research.motor_control_module.show_step_view_model.ShowTappingCompletionStepViewModelFactory;
 import org.sagebionetworks.research.motor_control_module.step.AppStepType;
 import org.sagebionetworks.research.motor_control_module.step.TappingCompletionStep;
 import org.sagebionetworks.research.motor_control_module.step_view.TappingCompletionStepView;
@@ -42,7 +43,7 @@ public abstract class TappingCompletionStepModule {
     @IntoMap
     @StepViewClassKey(TappingCompletionStepView.TYPE)
     static AbstractShowStepViewModelFactory<?, ? extends StepView> provideTappingCompletionStepVMF() {
-        return new ShowUIStepViewModelFactory<TappingStepView>();
+        return new ShowTappingCompletionStepViewModelFactory();
     }
 
     @Provides

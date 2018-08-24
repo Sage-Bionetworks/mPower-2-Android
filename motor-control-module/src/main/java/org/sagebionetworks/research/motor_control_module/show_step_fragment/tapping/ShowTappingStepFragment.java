@@ -36,6 +36,7 @@
 
 package org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping;
 
+import android.animation.Animator;
 import android.arch.lifecycle.Observer;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -61,6 +62,7 @@ import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.motor_control_module.R;
 import org.sagebionetworks.research.motor_control_module.result.TappingResult;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.HandStepUIHelper;
+import org.sagebionetworks.research.motor_control_module.show_step_view_model.ShowTappingStepViewModel;
 import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
 import org.sagebionetworks.research.motor_control_module.step_view.TappingStepView;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
@@ -74,21 +76,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ShowTappingStepFragment extends
-        ShowActiveUIStepFragmentBase<TappingStepView, ShowActiveUIStepViewModel<TappingStepView>,
-                TappingStepViewBinding> {
+        ShowActiveUIStepFragmentBase<TappingStepView, ShowTappingStepViewModel, TappingStepViewBinding> {
     private String nextButtonTitle;
-    private List<TappingSample> samples;
-    private Instant tappingStart;
-    private boolean expired;
-    private Rect buttonRect1;
-    private Rect buttonRect2;
-    // View Size is stored as a Point to avoid pre API 21 issues.
-    private Point viewSize;
-    private int hitButtonCount;
-    @TappingButtonIdentifier
-    private String lastTappedButton;
-    private Map<String, TappingSample> lastSample;
-
 
     // region Fragment
     @NonNull
@@ -97,6 +86,20 @@ public class ShowTappingStepFragment extends
         Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
         fragment.setArguments(arguments);
         return fragment;
+    }
+
+    @Override
+    public Observer<Long> getCountdownObserver() {
+        return count -> {
+            if (count == null || count == 0) {
+                return;
+            }
+
+            Integer duration = ((Long) this.stepView.getDuration().getSeconds()).intValue();
+            int from = (int) (duration - count);
+            Animator animator = this.getCountdownAnimator(from, from + 1);
+            animator.start();
+        };
     }
 
     @Override
@@ -121,29 +124,9 @@ public class ShowTappingStepFragment extends
     protected TappingStepViewBinding instantiateAndBindBinding(View view) {
         return new TappingStepViewBinding(view);
     }
-
-    @Override
-    @Nullable
-    protected Observer<Long> getCountdownObserver() {
-        // The countdown observer now calls tapping finished when the countdown finishes and doesn't
-        // update the count label.
-        return count -> {
-           if (count != null && count == 0) {
-               this.tappingFinished(Instant.now());
-           }
-        };
-    }
     // endregion
 
     // region Fragment Lifecycle
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        // onCreate initializes samples and lastSample.
-        super.onCreate(savedInstanceState);
-        this.samples = new ArrayList<>();
-        this.lastSample = new HashMap<>();
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         // onCreateView registers the listeners for the tapping buttons, and overall view.
@@ -168,175 +151,95 @@ public class ShowTappingStepFragment extends
             return true;
         });
 
-        String countLabelText = this.hitButtonCount + "";
-        this.stepViewBinding.getCountLabel().setText(countLabelText);
+        this.stepViewBinding.getCountLabel().setText("0");
+        this.showStepViewModel.getHitButtonCount().observe(this, count -> {
+            count = count != null ? count : 0;
+            String countLabelText = count + "";
+            this.stepViewBinding.getCountLabel().setText(countLabelText);
+        });
+
         // Hide the navigation action bar, so the user cannot press navigation buttons until the tapping
         // is finished.
         this.stepViewBinding.getNavigationActionBar().setVisibility(View.GONE);
         this.stepViewBinding.getNavigationActionBar().setAlpha(0f);
-        this.updateTapCountLabel();
         // Add a PreDrawListener that updates the locations of the buttons for the tapping result.
         this.stepViewBinding.getRootView().getViewTreeObserver()
                 .addOnPreDrawListener(this::updateButtonBounds);
-        this.nextButtonTitle = this.getNextButtonLabel();
+        this.nextButtonTitle = this.getResources().getString(this.showStepViewModel.getNextButtonLabel());
+        this.nextButtonTitle.replaceAll(HandStepHelper.JSON_PLACEHOLDER,
+                HandStepHelper.whichHand(this.stepView.getIdentifier()).toString());
+        this.showStepViewModel.isExpired().observe(this, expired -> {
+            if (expired != null && expired) {
+                this.tappingFinished();
+            }
+        });
+
         return result;
     }
 
     /**
-     * Private helper that can function as a PreDrawListener that updates the positions of the buttons,
-     * and root view on the screen for the tapping result. Always returns true so drawing proceeds as normal.
+     * Private helper that can function as a PreDrawListener that updates the positions of the buttons, and root view
+     * on the screen for the tapping result. Always returns true so drawing proceeds as normal.
+     *
      * @return true so drawing always happens as normal when used as a PreDrawListener.
      */
     private boolean updateButtonBounds() {
         ActionButton leftButton = this.stepViewBinding.getLeftTapButton();
         if (leftButton != null) {
-            this.buttonRect1 = new Rect();
-            this.buttonRect1.set(leftButton.getLeft(), leftButton.getTop(), leftButton.getRight(), leftButton.getBottom());
+            Rect buttonRect1 = new Rect();
+            buttonRect1.set(leftButton.getLeft(), leftButton.getTop(), leftButton.getRight(), leftButton.getBottom());
+            this.showStepViewModel.getButtonRect1().setValue(buttonRect1);
         }
 
         ActionButton rightButton = this.stepViewBinding.getRightTapButton();
         if (rightButton != null) {
-            this.buttonRect2 = new Rect();
-            this.buttonRect2.set(rightButton.getLeft(), rightButton.getTop(), rightButton.getRight(), rightButton.getBottom());
+            Rect buttonRect2 = new Rect();
+            buttonRect2.set(rightButton.getLeft(), rightButton.getTop(), rightButton.getRight(),
+                    rightButton.getBottom());
+            this.showStepViewModel.getButtonRect2().setValue(buttonRect2);
         }
 
         View view = this.stepViewBinding.getRootView();
         if (view != null) {
-            this.viewSize = new Point(view.getWidth(), view.getHeight());
+            this.showStepViewModel.getViewSize().setValue(new Point(view.getWidth(), view.getHeight()));
         }
 
         // Always return true to proceed with drawing.
         return true;
     }
-    // endregion
-
-    // region Samples
-    // TODO rkolmos 08/16/2018 move this to the view model
-    /**
-     * Returns true if the user is currently tapping, false otherwise.
-     * @return true if the user is currently tapping, false otherwise.
-     */
-    private boolean userIsTapping() {
-        return !this.expired && this.tappingStart != null;
-    }
-
-    // TODO rkolmos 08/16/2018 move this to the view model
-    /**
-     * Creates a sample for the given motion event and buttonIdentifier
-     * @param event The event to create a sample for.
-     * @param buttonIdentifier The identifier of the button to create the sample for.
-     */
-    private void createSample(MotionEvent event, @TappingButtonIdentifier String buttonIdentifier) {
-        if (!this.userIsTapping()) {
-            return;
-        }
-
-        Instant uptime = Instant.ofEpochMilli(event.getEventTime());
-        TappingSample tappingSample = TappingSample.builder()
-                .setUptime(uptime)
-                .setTimestamp(uptime.minusMillis(this.tappingStart.toEpochMilli()))
-                .setButtonIdentifier(buttonIdentifier)
-                // TODO create a real step pat:h.
-                .setStepPath(this.stepView.getIdentifier())
-                .setLocation(new Point((int)event.getX(), (int)event.getY()))
-                .setDuration(Duration.ofMillis(0))
-                .build();
-
-        this.samples.add(tappingSample);
-        this.lastSample.put(buttonIdentifier, tappingSample);
-    }
 
     /**
-     * Updates the lastSample using the given timestamp as the end of the sample.
-     * @param timestamp The timestamp of when the sample should end.
-     * @param buttonIdentifier The identifier of the button which corresponds to the sample.
+     * Called when this tapping step finishes.
      */
-    private void updateLastSample(Instant timestamp, @TappingButtonIdentifier String buttonIdentifier) {
-        final TappingSample lastSample = this.lastSample.get(buttonIdentifier);
-        if (lastSample == null) {
-            return;
-        }
-
-        int lastIndex = this.lastIndexMatching(lastSample);
-        if (lastIndex == -1) {
-            return;
-        }
-
-        this.lastSample.put(buttonIdentifier, null);
-        TappingSample updatedSample = lastSample.toBuilder()
-                .setDuration(Duration.ofMillis((timestamp.toEpochMilli() - lastSample.getUptime().toEpochMilli())))
-                .build();
-        this.samples.set(lastIndex, updatedSample);
-    }
-
-    /**
-     * Returns the last index in samples of a TappingSample that matches the given sample.
-     * @param sample The sample to get the last matching index of.
-     * @return the last index in samples of a TappingSample that matches the given sample.
-     */
-    private int lastIndexMatching(TappingSample sample) {
-        int lastIndex = -1;
-        for (int i = 0; i < this.samples.size(); i++) {
-            TappingSample currentSample = this.samples.get(i);
-            if (currentSample.getUptime().equals(sample.getUptime())
-                    && currentSample.getButtonIdentifier().equals(sample.getButtonIdentifier())) {
-                lastIndex = i;
-            }
-        }
-
-        return lastIndex;
-    }
-    // endregion
-
-    // region Results
-    /**
-     * Updates the result for this step in the task to match the current state of this fragment.
-     */
-    private void updateTappingResult() {
-        Result previousResult = this.findStepResult();
-        String identifier;
-        Instant startTime;
-        if (previousResult instanceof TappingResult) {
-            // If the previous result is a TappingResult we use it's identifier and startTime.
-            TappingResult tappingResult = (TappingResult)previousResult;
-            identifier = tappingResult.getIdentifier();
-            startTime = tappingResult.getStartTime();
-        } else {
-            // Otherwise we default to the stepView's identifier, and now as the startTime.
-            identifier = this.stepView.getIdentifier();
-            startTime = previousResult != null ? previousResult.getStartTime() : Instant.now();
-        }
-
-        TappingResult updatedResult = TappingResult.builder()
-                .setIdentifier(identifier)
-                .setStartTime(startTime)
-                .setEndTime(Instant.now())
-                .setButtonRect1(this.buttonRect1)
-                .setButtonRect2(this.buttonRect2)
-                .setStepViewSize(this.viewSize)
-                .setSamples(ImmutableList.copyOf(this.samples))
-                .build();
-
-        if (previousResult instanceof CollectionResult) {
-            // If the step previously had a collection result we append the tapping result to it.
-            CollectionResult collectionResult = (CollectionResult) previousResult;
-            collectionResult = collectionResult.appendInputResult(updatedResult);
-            this.performTaskViewModel.addStepResult(collectionResult);
-        } else {
-            // Otherwise we directly add the tapping result to the step history.
-            this.performTaskViewModel.addStepResult(updatedResult);
-        }
+    private void tappingFinished() {
+        Instant timestamp = Instant.now();
+        this.showStepViewModel.updateLastSample(timestamp, TappingButtonIdentifier.LEFT);
+        this.showStepViewModel.updateLastSample(timestamp, TappingButtonIdentifier.RIGHT);
+        this.showStepViewModel.updateTappingResult();
+        this.stepViewBinding.getNavigationActionBar().setVisibility(View.VISIBLE);
+        this.stepViewBinding.getNextButton().setText(this.nextButtonTitle);
+        this.stepViewBinding.getTappingButtonView().animate().alpha(0f).setDuration(300)
+                .withEndAction(() -> {
+                    this.stepViewBinding.getLeftTapButton().setVisibility(View.GONE);
+                    this.stepViewBinding.getRightTapButton().setVisibility(View.GONE);
+                })
+                .start();
+        this.stepViewBinding.getNavigationActionBar().animate().alpha(1f).setDuration(300).start();
     }
     // endregion
 
     // region User Input Listeners
+
     /**
      * Called when a MotionEvent has occurred.
-     * @param buttonIdentifier The identifier of the button that has been tapped.
-     * @param motionEvent The MotionEvent that occurred.
+     *
+     * @param buttonIdentifier
+     *         The identifier of the button that has been tapped.
+     * @param motionEvent
+     *         The MotionEvent that occurred.
      */
     private void handleMotionEvent(@TappingButtonIdentifier String buttonIdentifier,
-                                   MotionEvent motionEvent) {
+            MotionEvent motionEvent) {
         if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
             this.buttonPressed(buttonIdentifier, motionEvent);
         } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
@@ -346,40 +249,33 @@ public class ShowTappingStepFragment extends
 
     /**
      * Called when one of the tapping button's is pressed.
-     * @param buttonIdentifier The identifer of the button that was pressed.
-     * @param event The motion event corresponding to the button release.
+     *
+     * @param buttonIdentifier
+     *         The identifer of the button that was pressed.
+     * @param event
+     *         The motion event corresponding to the button release.
      */
-    private void buttonPressed(@TappingButtonIdentifier String buttonIdentifier, MotionEvent event) {
+    private void buttonPressed(@TappingButtonIdentifier String buttonIdentifier, @NonNull MotionEvent event) {
         int actionType = event.getAction();
         if (actionType != MotionEvent.ACTION_DOWN) {
             return;
         }
 
-        if (this.tappingStart == null) {
-            this.hitButtonCount = 0;
-            this.tappingStart = Instant.ofEpochMilli(event.getEventTime());
-            this.startCountdown();
-        }
-
-        if (this.lastTappedButton != buttonIdentifier) {
+        if (this.showStepViewModel.getLastTappedButtonIdentifier().getValue() != buttonIdentifier) {
             // TODO say the word tap if accessibility voice is turned on.
         }
 
-        this.lastTappedButton = buttonIdentifier;
-
-        this.createSample(event, buttonIdentifier);
-        // update the tap count
-        if (!buttonIdentifier.equals(TappingButtonIdentifier.NONE) && !this.expired) {
-            this.hitButtonCount++;
-        }
-
-        this.updateTapCountLabel();
+        // Forward the button press to the view model.
+        this.showStepViewModel.handleButtonPress(buttonIdentifier, event);
     }
 
     /**
      * Called when one of the tapping button's is released.
-     * @param buttonIdentifier The identifier of the button that was released.
-     * @param event The motion event corresponding to the button release.
+     *
+     * @param buttonIdentifier
+     *         The identifier of the button that was released.
+     * @param event
+     *         The motion event corresponding to the button release.
      */
     private void buttonReleased(@TappingButtonIdentifier String buttonIdentifier, MotionEvent event) {
         int actionType = event.getAction();
@@ -387,67 +283,9 @@ public class ShowTappingStepFragment extends
             return;
         }
 
-        if (!this.expired && this.tappingStart != null) {
-            this.updateLastSample(Instant.ofEpochMilli(event.getEventTime()), buttonIdentifier);
+        if (this.showStepViewModel.userIsTapping()) {
+            this.showStepViewModel.updateLastSample(Instant.ofEpochMilli(event.getEventTime()), buttonIdentifier);
         }
     }
     // endregion
-
-    // region UI
-    /**
-     * Updates the count label to display the number of times the user has hit a tap button.
-     */
-    private void updateTapCountLabel() {
-        TextView tappingCountLabel = this.stepViewBinding.getCountLabel();
-        if (tappingCountLabel != null) {
-            String text = this.hitButtonCount + "";
-            tappingCountLabel.setText(text);
-        }
-    }
-
-    /**
-     * Returns the String to display on the nextButton, either "Continue with <left or right> hand" or
-     * or "Next" depending on whether there is another hand that is supposed to go after this one.
-     * @return the String to display on the nextButton.
-     */
-    private String getNextButtonLabel() {
-        TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
-        if (taskResult != null) {
-            HandStepHelper.Hand thisHand = HandStepHelper.whichHand(this.stepView.getIdentifier());
-            if (thisHand != null) {
-                List<String> handOrder = HandStepHelper.getHandOrder(taskResult);
-                if (handOrder != null) {
-                    String last = handOrder.size() == 2 ? handOrder.get(1) : handOrder.get(0);
-                    if (!thisHand.toString().equals(last)) {
-                        String nextButtonString = this.getResources().getString(R.string.tapping_continue_with_text);
-                        return nextButtonString.replaceAll(HandStepHelper.JSON_PLACEHOLDER, last);
-
-                    }
-                }
-            }
-        }
-
-        return this.getResources().getString(R.string.tapping_continue);
-    }
-    // endregion
-
-    /**
-     * Called when this tapping step finishes.
-     * @param timestamp The Instant that tapping step finished  at.
-     */
-    private void tappingFinished(Instant timestamp) {
-        this.expired = true;
-        this.updateLastSample(timestamp, TappingButtonIdentifier.LEFT);
-        this.updateLastSample(timestamp, TappingButtonIdentifier.RIGHT);
-        this.updateTappingResult();
-        this.stepViewBinding.getNavigationActionBar().setVisibility(View.VISIBLE);
-        this.stepViewBinding.getNextButton().setText(this.nextButtonTitle);
-        this.stepViewBinding.getTappingButtonView().animate().alpha(0f).setDuration(300)
-                .withEndAction(() ->  {
-                    this.stepViewBinding.getLeftTapButton().setVisibility(View.GONE);
-                    this.stepViewBinding.getRightTapButton().setVisibility(View.GONE);
-                })
-                .start();
-        this.stepViewBinding.getNavigationActionBar().animate().alpha(1f).setDuration(300).start();
-    }
 }
