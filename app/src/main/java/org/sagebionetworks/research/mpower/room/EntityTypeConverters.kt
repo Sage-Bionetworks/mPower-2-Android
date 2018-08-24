@@ -136,6 +136,10 @@ class EntityTypeConverters {
     }
 }
 
+/**
+ * 'LocalDateTimeAdapter' is needed when going from
+ * ScheduledActivity.scheduledOn: DateTime to ScheduledActivityEntity.scheduledOn: LocalDateTime
+ */
 class LocalDateTimeAdapter: TypeAdapter<LocalDateTime>() {
     @Throws(IOException::class)
     override fun read(reader: JsonReader): LocalDateTime {
