@@ -8,21 +8,22 @@ import org.sagebionetworks.research.mpower.R
 class StudyBurstViewModel : ViewModel() {
 
     private val title = MutableLiveData<String>()
-    private val message = MutableLiveData<String>()
     private val expires = MutableLiveData<String>()
     private val dayNumber = MutableLiveData<Int>()
+    private val dayCount = MutableLiveData<Int>()
+    private val daysMissed = MutableLiveData<Int>()
     private var items = MutableLiveData<List<StudyBurstItem>>()
 
     fun init() {
         title.value = "Great start!"
-        message.value = "Complete the rest of todays activities within the next hour in order to complete the study burst for Day 12."
         expires.value = "00:53:04"
         dayNumber.value = 9
+        daysMissed.value = 2
+        dayCount.value = 14
 
         // TODO: remove when we have real data
         val list = arrayListOf<StudyBurstItem>()
-        var sb1 = StudyBurstItem()
-        sb1.title = "Finger Tapping"
+        var sb1 = StudyBurstItem("Finger Tapping")
         sb1.detail = "1 minute"
         sb1.activeImageResId = R.drawable.ic_finger_tapping
         sb1.inactiveImageResId = R.drawable.ic_finger_tapping_inactive
@@ -30,8 +31,7 @@ class StudyBurstViewModel : ViewModel() {
         sb1.active = true
         sb1.completed = false
         list.add(sb1)
-        var sb2 = StudyBurstItem()
-        sb2.title = "Tremor Test"
+        var sb2 = StudyBurstItem("Tremor Test")
         sb2.detail = "4 minutes"
         sb2.activeImageResId = R.drawable.ic_tremor
         sb2.inactiveImageResId = R.drawable.ic_tremor_inactive
@@ -39,8 +39,7 @@ class StudyBurstViewModel : ViewModel() {
         sb2.active = true
         sb2.completed = true
         list.add(sb2)
-        var sb3 = StudyBurstItem()
-        sb3.title = "Walk and Stand"
+        var sb3 = StudyBurstItem("Walk and Stand")
         sb3.detail = "6 minutes"
         sb3.activeImageResId = R.drawable.ic_walk_and_stand
         sb3.inactiveImageResId = R.drawable.ic_walk_and_stand_inactive
@@ -48,8 +47,7 @@ class StudyBurstViewModel : ViewModel() {
         sb3.active = false
         sb3.completed = false
         list.add(sb3)
-        var sb4 = StudyBurstItem()
-        sb4.title = "Cognition"
+        var sb4 = StudyBurstItem("Cognition")
         sb4.detail = "3 minutes"
         sb4.activeImageResId = R.drawable.ic_cognitive
         sb4.inactiveImageResId = R.drawable.ic_cognitive_inactive
@@ -58,10 +56,6 @@ class StudyBurstViewModel : ViewModel() {
         sb4.completed = false
         list.add(sb4)
         items.value = list
-    }
-
-    fun getMessage(): LiveData<String> {
-        return message
     }
 
     fun getTitle(): LiveData<String> {
@@ -76,8 +70,16 @@ class StudyBurstViewModel : ViewModel() {
         return items
     }
 
-    fun getDayCount(): LiveData<Int> {
+    fun getDayNumber(): LiveData<Int> {
         return dayNumber
+    }
+
+    fun getDayCount(): LiveData<Int> {
+        return dayCount
+    }
+
+    fun getDaysMissed(): LiveData<Int> {
+        return daysMissed
     }
 
 }

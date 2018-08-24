@@ -48,6 +48,10 @@
     <string name="study_burst_progress_bar_day">Day</string>
     <string name="study_burst_progress_bar_title">Study Burst</string>
     <string name="study_burst_progress_message">Progress expires in <b>%1$s</b></string>
+    <string name="study_burst_message_day">Activities should be done every day and ideally all at once. You can begin them at any point during the day.</string>
+    <string name="study_burst_message_days_missed">In %1$d days you’ve only missed %2$d Study Burst days!</string>
+    <string name="study_burst_message_days_missed_one">In %1$d days you’ve only missed 1 Study Burst day!</string>
+
     <string name="measuring_center_label">Walk And Balance</string>
     <string name="measuring_left_label">Finger Tapping</string>
     <string name="measuring_right_label">Tremor Test</string>

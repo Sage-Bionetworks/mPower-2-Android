@@ -59,4 +59,17 @@
         <item name="android:fontFamily">@font/lato_bold</item>
         <item name="android:textSize">19sp</item>
     </style>
+
+    <style name="MPowerTextAppearance.StatusWheel.DayCount" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/lato_light</item>
+        <item name="android:textColor">@color/appTextDark</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="MPowerTextAppearance.StatusWheel.DayLabel" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/appTextDark</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

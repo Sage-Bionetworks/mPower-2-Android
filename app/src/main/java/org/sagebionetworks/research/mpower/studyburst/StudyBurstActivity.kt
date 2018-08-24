@@ -32,10 +32,20 @@ class StudyBurstActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         LOGGER.debug("StudyBurstActivity.onCreate()")
         setContentView(R.layout.activity_study_burst)
-        studyBurstStatusWheel.setMaxProgress(14) // TODO: need to get this from somewhere
 
-        studyBurstViewModel.getMessage().observe(this, Observer {
-            text -> studyBurstMessage.setText(text)
+        studyBurstViewModel.getDaysMissed().observe(this, Observer {
+            missed ->
+                var message: String
+                var total: Int? = studyBurstViewModel.getDayCount().value
+                when(missed) {
+                    0 -> message = getString(R.string.study_burst_message_day)
+                    1 -> message = getString(R.string.study_burst_message_days_missed_one, total)
+                    else -> {
+                        message = getString(R.string.study_burst_message_days_missed, total, missed)
+                    }
+
+                }
+                studyBurstMessage.setText(message)
         })
         studyBurstViewModel.getTitle().observe(this, Observer {
             text -> studyBurstTitle.setText(text)
@@ -44,18 +54,22 @@ class StudyBurstActivity : AppCompatActivity() {
             text ->
                 expiresText.text = getResources().getString(R.string.study_burst_progress_message, text)
         })
-        studyBurstViewModel.getDayCount().observe(this, Observer {
+        studyBurstViewModel.getDayNumber().observe(this, Observer {
             count ->
-                studyBurstStatusWheel.setDayCount(count!!)
-                studyBurstStatusWheel.setProgress(count!!)
+                studyBurstStatusWheel.setDayCount(count ?: 0)
+                studyBurstStatusWheel.setProgress(count ?: 0)
+        })
+        studyBurstViewModel.getDayCount().observe(this, Observer {
+            count -> studyBurstStatusWheel.setMaxProgress(count ?: 0)
+
         })
 
         studyBurstViewModel.getItems().observe(this, Observer {
             items ->
                 LOGGER.debug("How many items: " + items?.size)
-                var completed = items?.count { it.completed }
-                LOGGER.debug("Number complted: $completed")
-                studyBurstTopProgressBar.progress = completed!!
+                var completed = items?.count { it.completed } ?: 0
+                LOGGER.debug("Number completed: $completed")
+                studyBurstTopProgressBar.progress = completed
 
                 val layoutInflater:LayoutInflater = LayoutInflater.from(applicationContext)
                 for(i in 1..4) {

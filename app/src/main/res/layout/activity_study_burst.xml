@@ -79,61 +79,12 @@
             android:background="@color/appLightGray"/>
         <org.sagebionetworks.research.mpower.studyburst.StudyBurstStatusWheel
             android:id="@+id/studyBurstStatusWheel"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="@dimen/study_burst_status_wheel_size"
+            android:layout_height="@dimen/study_burst_status_wheel_size"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp">
 
         </org.sagebionetworks.research.mpower.studyburst.StudyBurstStatusWheel>
-        <!--android.support.constraint.ConstraintLayout
-            android:layout_width="70dp"
-            android:layout_height="70dp">
-
-            <ProgressBar
-                android:id="@+id/study_burst_progress_bar_dial"
-                android:layout_width="0dp"
-                android:layout_height="70dp"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:background="@drawable/study_burst_progress_bar_background"
-                android:progressDrawable="@drawable/study_burst_progress_bar"
-                android:progress="2" android:max="4"
-                app:layout_constraintDimensionRatio="H,1:1"/>
-
-            <TextView
-                android:id="@+id/study_burst_progress_bar_day"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/app_margin_medium"
-                android:layout_marginRight="@dimen/app_margin_medium"
-                android:layout_marginTop="12dp"
-                android:fontFamily="@font/lato"
-                android:gravity="center"
-                android:text="Day"
-                android:textColor="@color/appTextDark"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/study_burst_progress_bar_dial"
-                app:layout_constraintStart_toStartOf="@+id/study_burst_progress_bar_dial"
-                app:layout_constraintTop_toTopOf="@+id/study_burst_progress_bar_dial" />
-
-            <TextView
-                android:id="@+id/study_burst_progress_bar_day_count"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginTop="12dp"
-                android:fontFamily="@font/lato_light"
-                android:gravity="center"
-                android:text="14"
-                android:textColor="@color/appTextDark"
-                android:textSize="30sp"
-                app:layout_constraintEnd_toEndOf="@+id/study_burst_progress_bar_dial"
-                app:layout_constraintStart_toStartOf="@+id/study_burst_progress_bar_dial"
-                app:layout_constraintTop_toTopOf="@id/study_burst_progress_bar_day" />
-        </android.support.constraint.ConstraintLayout-->
 
         <View
             android:layout_width="0dp"
@@ -148,14 +99,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:text="Progress expires in 00:59:04"
+        android:text="Progress expires"
         android:textStyle="italic"
         android:layout_margin="10dp"
         app:layout_constraintTop_toBottomOf="@id/middle_container"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@id/taskContainer"/>
-
 
     <LinearLayout
         android:id="@+id/taskContainer"
@@ -211,7 +161,7 @@
             android:id="@+id/study_burst_next"
             android:layout_width="match_parent"
             android:layout_height="@dimen/mp_rounded_button_height"
-            android:text="Next"
+            android:text="@string/rsb_next"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             app:layout_constraintTop_toBottomOf="@id/top_container"
