@@ -23,6 +23,8 @@ import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
+import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStep;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingActiveTaskViewModel;
@@ -32,6 +34,9 @@ import org.sagebionetworks.research.mpower.tracking.view_model.TrackingActiveTas
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingActiveTaskViewModelFactory;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -40,7 +45,7 @@ import butterknife.Unbinder;
 import dagger.android.support.AndroidSupportInjection;
 
 public class SelectionFragment extends Fragment {
-    public static final String ARGUMENT_STEP = "step";
+    public static final String ARGUMENT_STEP_VIEW = "stepView";
     @BindView(R.id.rs2_recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.rs2_title)
@@ -51,7 +56,7 @@ public class SelectionFragment extends Fragment {
     ActionButton cancelButton;
 
     private Unbinder unbinder;
-    private TrackingStep step;
+    private TrackingStepView stepView;
     @Inject
     TrackingActiveTaskViewModelFactory trackingActiveTaskViewModelFactory;
     private TrackingActiveTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> viewModel;
@@ -75,45 +80,46 @@ public class SelectionFragment extends Fragment {
         checkNotNull(step);
 
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARGUMENT_STEP, step);
+        bundle.putSerializable(ARGUMENT_STEP_VIEW, step);
         return bundle;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TrackingStep step = null;
+        TrackingStepView stepView = null;
         if (savedInstanceState == null) {
             Bundle arguments = getArguments();
             if (arguments != null) {
                 // noinspection unchecked
-                step = (TrackingStep)this.getArguments().getSerializable(ARGUMENT_STEP);
+                stepView = (TrackingStepView)this.getArguments().getSerializable(ARGUMENT_STEP_VIEW);
             }
         } else {
             // noinspection unchecked
-            step = (TrackingStep)savedInstanceState.getSerializable(ARGUMENT_STEP);
+            stepView = (TrackingStepView)savedInstanceState.getSerializable(ARGUMENT_STEP_VIEW);
         }
 
-        checkState(step != null, "step cannot be null");
-        this.step = step;
-        this.viewModel = ViewModelProviders.of(this, this.trackingActiveTaskViewModelFactory.create(this.step))
+        checkState(stepView != null, "stepView cannot be null");
+        this.stepView = stepView;
+        this.viewModel = ViewModelProviders.of(this, this.trackingActiveTaskViewModelFactory.create(this.stepView))
                 .get(SimpleTrackingActiveTaskViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.mpower2_selection_step, container, false);
+        this.unbinder = ButterKnife.bind(this, result);
         OnApplyWindowInsetsListener topInsetListener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
         ViewCompat.setOnApplyWindowInsetsListener(this.cancelButton, topInsetListener);
-        this.unbinder = ButterKnife.bind(this, result);
-        this.title.setText(this.step.getSelectionInfo().getTitle());
-        this.detail.setText(this.step.getSelectionInfo().getDetail());
+        this.title.setText(this.stepView.getSelectionInfo().getTitle());
+        this.detail.setText(this.stepView.getSelectionInfo().getDetail());
         LinearLayoutManager manager = new LinearLayoutManager(this.recyclerView.getContext());
         this.recyclerView.setLayoutManager(manager);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(this.recyclerView.getContext(), manager.getOrientation());
         Drawable drawable = this.getContext().getResources().getDrawable(R.drawable.form_step_divider);
         itemDecoration.setDrawable(drawable);
-        TrackingItemAdapter adapter = new TrackingItemAdapter(this.step.getSelectionItems(), this.viewModel);
+        this.recyclerView.addItemDecoration(itemDecoration);
+        TrackingItemAdapter adapter = new TrackingItemAdapter(this.viewModel.getAvailableElements().getValue(), this.viewModel);
         this.recyclerView.setAdapter(adapter);
         return result;
     }

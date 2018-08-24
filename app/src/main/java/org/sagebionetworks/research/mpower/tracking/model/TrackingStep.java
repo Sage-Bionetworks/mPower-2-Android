@@ -7,6 +7,7 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.SerializedName;
 
 import org.sagebionetworks.research.domain.async.AsyncActionConfiguration;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
@@ -54,31 +55,12 @@ public abstract class TrackingStep implements Step, Serializable {
     public abstract ImmutableSet<TrackingSection> getSections();
 
     @NonNull
+    @SerializedName("selection")
     public abstract TrackingSubstepInfo getSelectionInfo();
 
     @NonNull
+    @SerializedName("logging")
     public abstract TrackingSubstepInfo getLoggingInfo();
-
-    /**
-     * Returns a Map that maps from TrackingSection to a set of TrackingItems in that section. The map orders both
-     * sections and items alphabetically.
-     * @return a Map that maps from TrackingSection to a set of TrackingItems in that section.
-     */
-    @NonNull
-    public Map<TrackingSection, Set<TrackingItem>> getSelectionItems() {
-        Map<TrackingSection, Set<TrackingItem>> result = new TreeMap<>((o1, o2) -> o1.getIdentifier().compareTo(o2.getIdentifier()));
-        for (TrackingSection section : this.getSections()) {
-            result.put(section, new TreeSet<>((o1, o2) -> o1.getIdentifier().compareTo(o2.getIdentifier())));
-            Set<TrackingItem> itemSet = result.get(section);
-            for (TrackingItem item : this.getItems()) {
-                if (section.getIdentifier().equals(item.getSectionIdentifier())) {
-                    itemSet.add(item);
-                }
-            }
-        }
-
-        return result;
-    }
 
     @Override
     @NonNull

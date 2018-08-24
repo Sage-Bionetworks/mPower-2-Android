@@ -35,7 +35,9 @@ public class AppResourceTaskRepository extends ResourceTaskRepository {
 
         return Single.fromCallable(() -> {
             TrackingStep trackingStep = gson.fromJson(this.getJsonTaskAsset(taskIdentifier), TrackingStep.class);
-            Task task = TaskBase.builder().setSteps(Collections.singletonList(trackingStep)).build();
+            Task task = TaskBase.builder()
+                    .setIdentifier(trackingStep.getIdentifier())
+                    .setSteps(Collections.singletonList(trackingStep)).build();
             return task;
         });
     }

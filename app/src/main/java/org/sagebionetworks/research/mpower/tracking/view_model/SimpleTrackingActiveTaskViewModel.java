@@ -4,11 +4,12 @@ import android.support.annotation.NonNull;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStep;
+import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 
 public class SimpleTrackingActiveTaskViewModel extends TrackingActiveTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> {
     protected SimpleTrackingActiveTaskViewModel(
-            @NonNull final TrackingStep step) {
-        super(step);
+            @NonNull final TrackingStepView stepView) {
+        super(stepView);
     }
 
     @Override

@@ -17,25 +17,13 @@ import java.util.Map;
 import java.util.Set;
 
 @AutoValue
-public abstract class TrackingSubstepInfo implements UIStep {
+public abstract class TrackingSubstepInfo {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract TrackingSubstepInfo build();
 
         @NonNull
-        public abstract Builder setIdentifier(@NonNull String identifier);
-
-        @NonNull
-        public abstract Builder setType(@NonNull String type);
-
-        @NonNull
-        public abstract Builder setAsyncActions(@NonNull Set<AsyncActionConfiguration> asyncActions);
-
-        @NonNull
-        public abstract Builder setActions(@NonNull Map<String, Action> actions);
-
-        @NonNull
-        public abstract Builder setHiddenActions(@NonNull Set<String> hiddenActions);
+        public abstract Builder setActions(@Nullable Map<String, Action> actions);
 
         @NonNull
         public abstract Builder setTitle(@Nullable String title);
@@ -50,17 +38,25 @@ public abstract class TrackingSubstepInfo implements UIStep {
         public abstract Builder setFootnote(@Nullable String footnote);
     }
 
-    @NonNull
-    public TrackingSubstepInfo copyWithIdentifier(@NonNull String identifier) {
-        return this.toBuilder().setIdentifier(identifier).build();
-    }
+    @Nullable
+    public abstract Map<String, Action> getActions();
+
+    @Nullable
+    public abstract String getTitle();
+
+    @Nullable
+    public abstract String getText();
+
+    @Nullable
+    public abstract String getDetail();
+
+    @Nullable
+    public abstract String getFootnote();
 
     @NonNull
     public static Builder builder() {
         return new AutoValue_TrackingSubstepInfo.Builder()
-                .setActions(ImmutableMap.of())
-                .setAsyncActions(ImmutableSet.of())
-                .setHiddenActions(ImmutableSet.of());
+                .setActions(ImmutableMap.of());
     }
 
     @NonNull
@@ -69,10 +65,6 @@ public abstract class TrackingSubstepInfo implements UIStep {
     @NonNull
     public static TypeAdapter<TrackingSubstepInfo> typeAdapter(Gson gson) {
         return new AutoValue_TrackingSubstepInfo.GsonTypeAdapter(gson)
-                .setDefaultActions(ImmutableMap.of())
-                .setDefaultAsyncActions(ImmutableSet.of())
-                .setDefaultHiddenActions(ImmutableSet.of());
+                .setDefaultActions(ImmutableMap.of());
     }
-
-
 }

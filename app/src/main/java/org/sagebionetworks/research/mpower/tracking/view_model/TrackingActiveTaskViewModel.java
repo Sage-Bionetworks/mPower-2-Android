@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStep;
+import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -21,9 +22,9 @@ public abstract class TrackingActiveTaskViewModel<ConfigType extends TrackingIte
     protected LiveData<Set<ConfigType>> unconfiguredElements;
     protected MutableLiveData<Set<LogType>> loggedElements;
 
-    protected TrackingActiveTaskViewModel(@NonNull final TrackingStep step) {
+    protected TrackingActiveTaskViewModel(@NonNull final TrackingStepView stepView) {
         this.availableElements = new MutableLiveData<>();
-        this.availableElements.setValue(step.getSelectionItems());
+        this.availableElements.setValue(stepView.getSelectionItems());
         this.activeElements = new MutableLiveData<>();
         this.activeElements.setValue(new HashSet<>());
         this.unconfiguredElements = Transformations.map(this.activeElements, (elements) -> {

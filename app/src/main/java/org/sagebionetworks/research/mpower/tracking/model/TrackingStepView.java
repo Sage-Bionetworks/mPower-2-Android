@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
@@ -12,6 +13,7 @@ import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.presentation.mapper.DrawableMapper;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -102,12 +104,35 @@ public abstract class TrackingStepView implements StepView {
         }
 
         TrackingStep trackingStep = (TrackingStep)step;
+        Set<TrackingSection> sections = !trackingStep.getSections().isEmpty() ? trackingStep.getSections() :
+                TrackingStepView.getSectionsFromItems(trackingStep.getItems());
         return TrackingStepView.builder()
                 .setIdentifier(trackingStep.getIdentifier())
                 .setItems(trackingStep.getItems())
                 .setLoggingInfo(trackingStep.getLoggingInfo())
-                .setSections(trackingStep.getSections())
+                .setSections(sections)
                 .setSelectionInfo(trackingStep.getSelectionInfo())
                 .build();
+    }
+
+    private static Set<TrackingSection> getSectionsFromItems(ImmutableSet<TrackingItem> trackingItems) {
+        Set<TrackingSection> sections = new HashSet<>();
+        for (TrackingItem item : trackingItems) {
+            if (!TrackingStepView.containsSectionWithIdentifier(sections, item.getSectionIdentifier())) {
+                sections.add(TrackingSection.builder().setIdentifier(item.getSectionIdentifier()).build());
+            }
+        }
+
+        return sections;
+    }
+
+    private static boolean containsSectionWithIdentifier(Set<TrackingSection> sections, String identifier) {
+        for (TrackingSection section : sections) {
+            if (section.getIdentifier().equals(identifier)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
