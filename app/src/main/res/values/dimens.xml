@@ -6,4 +6,5 @@
     <dimen name="study_burst_status_wheel_size">70dp</dimen>
     <dimen name="study_burst_status_wheel_margin">12dp</dimen>
     <dimen name="study_burst_progress_radius">8dp</dimen>
+    <dimen name="study_burst_cell_height">100dp</dimen>
 </resources>

@@ -5,11 +5,8 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.support.v7.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_study_burst.*
-import kotlinx.android.synthetic.main.study_burst_cell.view.*
 import org.slf4j.LoggerFactory
 
 import org.sagebionetworks.research.mpower.R
@@ -33,6 +30,8 @@ class StudyBurstActivity : AppCompatActivity() {
         LOGGER.debug("StudyBurstActivity.onCreate()")
         setContentView(R.layout.activity_study_burst)
 
+        studyBurstRecycler.layoutManager = GridLayoutManager(this, 2)
+
         studyBurstViewModel.getDaysMissed().observe(this, Observer {
             missed ->
                 var message: String
@@ -45,7 +44,7 @@ class StudyBurstActivity : AppCompatActivity() {
                     }
 
                 }
-                studyBurstMessage.setText(message)
+                studyBurstMessage.text = message
         })
         studyBurstViewModel.getTitle().observe(this, Observer {
             text -> studyBurstTitle.setText(text)
@@ -71,38 +70,8 @@ class StudyBurstActivity : AppCompatActivity() {
                 LOGGER.debug("Number completed: $completed")
                 studyBurstTopProgressBar.progress = completed
 
-                val layoutInflater:LayoutInflater = LayoutInflater.from(applicationContext)
-                for(i in 1..4) {
-                    var cell: ViewGroup? = null
-                    val sbi = items?.get(i-1)
-                    // TODO: a better way to do this dynamically?
-                    when(i) {
-                        1 -> cell = cell_1
-                        2 -> cell = cell_2
-                        3 -> cell = cell_3
-                        4 -> cell = cell_4
-                    }
+                studyBurstRecycler.adapter = StudyBurstAdapter(items, this)
 
-                    val view: View = layoutInflater.inflate(R.layout.study_burst_cell, cell, false)
-                    view.cell_number.text = "#"+i
-                    view.cell_message.text = sbi?.title
-                    view.cell_details.text = sbi?.detail
-                    if(sbi != null && sbi.active) {
-                        view.cell_message.setTextColor(getResources().getColor(R.color.black))
-                        view.cell_details.setTextColor(getResources().getColor(R.color.black))
-                        if(sbi != null && sbi.completed) {
-                            view.cell_image.setImageResource(sbi?.completedImageResId!!)
-                        } else {
-                            view.cell_image.setImageResource(sbi?.activeImageResId!!)
-                        }
-                    } else {
-                        view.cell_message.setTextColor(getResources().getColor(R.color.appLightGray))
-                        view.cell_details.setTextColor(getResources().getColor(R.color.appLightGray))
-                        view.cell_image.setImageResource(sbi?.inactiveImageResId!!)
-                    }
-                    cell?.addView(view)
-
-                }
         })
         studyBurstViewModel.init()
 
@@ -111,6 +80,5 @@ class StudyBurstActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        LOGGER.debug("StudyBurstActivity.onResume()")
     }
 }
