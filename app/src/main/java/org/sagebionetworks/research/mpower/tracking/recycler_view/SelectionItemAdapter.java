@@ -11,7 +11,7 @@ import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.model.SelectionUIFormItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingActiveTaskViewModel;
+import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
 import java.util.Map;
@@ -20,10 +20,10 @@ import java.util.Set;
 
 public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemViewHolder> {
     private final ImmutableList<SelectionUIFormItem> selectionItems;
-    private final TrackingActiveTaskViewModel<?, ?> viewModel;
+    private final TrackingTaskViewModel<?, ?> viewModel;
 
     public SelectionItemAdapter(@NonNull Map<TrackingSection, Set<TrackingItem>> selectionItems,
-            @NonNull TrackingActiveTaskViewModel<?, ?> viewModel) {
+            @NonNull TrackingTaskViewModel<?, ?> viewModel) {
         this.viewModel = viewModel;
         ImmutableList.Builder<SelectionUIFormItem> selectionItemsBuilder = new ImmutableList.Builder<>();
         for (Entry<TrackingSection, Set<TrackingItem>> entry : selectionItems.entrySet()) {

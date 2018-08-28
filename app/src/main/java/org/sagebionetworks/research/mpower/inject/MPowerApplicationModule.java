@@ -10,8 +10,12 @@ import org.sagebionetworks.research.mpower.tracking.TrackingFragment;
 import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
 import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TriggersLoggingFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.SelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TriggersSelectionFragment;
+import org.sagebionetworks.research.presentation.recorder.service.RecorderService;
 
 import dagger.Binds;
 import dagger.Module;
@@ -27,6 +31,12 @@ public interface MPowerApplicationModule {
 
     @ContributesAndroidInjector
     TriggersLoggingFragment contributeTriggersLoggingFragmentInjector();
+
+    @ContributesAndroidInjector
+    SymptomSelectionFragment contributeSymptomSelectionFragmentInjector();
+
+    @ContributesAndroidInjector
+    SymptomLoggingFragment contributeSymptomLogginFragmentInjector();
 
     @ContributesAndroidInjector
     ExternalIdSignInActivity contributeExternalIdSignInActivityInjector();

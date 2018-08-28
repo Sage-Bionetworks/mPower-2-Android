@@ -23,6 +23,9 @@ public abstract class TrackingSubstepInfo {
         public abstract TrackingSubstepInfo build();
 
         @NonNull
+        public abstract Builder setType(@Nullable String type);
+
+        @NonNull
         public abstract Builder setActions(@Nullable Map<String, Action> actions);
 
         @NonNull
@@ -40,6 +43,9 @@ public abstract class TrackingSubstepInfo {
 
     @Nullable
     public abstract Map<String, Action> getActions();
+
+    @Nullable
+    public abstract String getType();
 
     @Nullable
     public abstract String getTitle();

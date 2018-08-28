@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.OnApplyWindowInsetsListener;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DividerItemDecoration;
@@ -23,15 +22,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
+import org.sagebionetworks.research.mobile_ui.show_step.ShowStepFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
-import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingActiveTaskViewModel;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingActiveTaskViewModel;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingActiveTaskViewModelFactory;
+import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingTaskViewModel;
+import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
+import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModelFactory;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingItemLog;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
@@ -44,8 +45,8 @@ import butterknife.Unbinder;
 import dagger.android.support.AndroidSupportInjection;
 
 public abstract class RecyclerViewTrackingFragment
-        <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog, ViewModelType extends TrackingActiveTaskViewModel<ConfigType, LogType>>
-        extends Fragment {
+        <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog, ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
+        extends ShowStepFragment {
     public static final String ARGUMENT_STEP_VIEW = "stepView";
 
     @BindView(R.id.rs2_recycler_view)
@@ -63,13 +64,14 @@ public abstract class RecyclerViewTrackingFragment
     protected NavigationActionBar navigationActionBar;
 
     @Inject
-    protected TrackingActiveTaskViewModelFactory trackingActiveTaskViewModelFactory;
+    protected TrackingTaskViewModelFactory trackingActiveTaskViewModelFactory;
     protected Unbinder unbinder;
 
     protected TrackingStepView stepView;
     protected ViewModelType viewModel;
 
     protected LayoutManager layoutManager;
+    protected PerformTaskFragment performTaskFragment;
 
     @NonNull
     public static Bundle createArguments(@NonNull StepView step) {
@@ -100,7 +102,7 @@ public abstract class RecyclerViewTrackingFragment
         // noinspection unchecked
         this.viewModel =
                 (ViewModelType) ViewModelProviders.of(this.getParentFragment(), this.trackingActiveTaskViewModelFactory.create(this.stepView))
-                .get(SimpleTrackingActiveTaskViewModel.class);
+                .get(TrackingTaskViewModel.class);
     }
 
     @Override
@@ -111,13 +113,7 @@ public abstract class RecyclerViewTrackingFragment
         ViewCompat.setOnApplyWindowInsetsListener(this.cancelButton, topInsetListener);
         this.layoutManager = this.initializeLayoutManager();
         this.recyclerView.setLayoutManager(this.layoutManager);
-        ItemDecoration itemDecoration = this.initializeItemDecoration();
         this.recyclerView.setFocusable(false);
-        if (itemDecoration != null) {
-            this.recyclerView.addItemDecoration(itemDecoration);
-        }
-
-        this.recyclerView.setAdapter(this.initializeAdapter());
         return result;
     }
 
@@ -130,6 +126,13 @@ public abstract class RecyclerViewTrackingFragment
     @Override
     public void onStart() {
         super.onStart();
+        // Recycler view initialization deliberately in on start so up to date information is received from the view
+        // model every time the fragment starts.
+        this.recyclerView.setAdapter(this.initializeAdapter());
+        ItemDecoration itemDecoration = this.initializeItemDecoration();
+        if (itemDecoration != null) {
+            this.recyclerView.addItemDecoration(itemDecoration);
+        }
         ViewCompat.requestApplyInsets(this.getView());
     }
 
@@ -137,6 +140,11 @@ public abstract class RecyclerViewTrackingFragment
     public void onDestroyView() {
         super.onDestroyView();
         this.unbinder.unbind();
+    }
+
+    @Override
+    public void setPerformTaskFragment(@NonNull PerformTaskFragment performTaskFragment) {
+        this.performTaskFragment = performTaskFragment;
     }
 
     /**

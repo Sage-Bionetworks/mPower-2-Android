@@ -3,20 +3,19 @@ package org.sagebionetworks.research.mpower.tracking.recycler_view;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
-import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingItemLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingActiveTaskViewModel;
+import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.TriggersLoggingUIFormItemWidget;
 import org.threeten.bp.Instant;
 
 public class TriggersLoggingItemViewHolder extends ViewHolder {
     private TriggersLoggingUIFormItemWidget widget;
-    private TrackingActiveTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> viewModel;
+    private TrackingTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> viewModel;
     private SimpleTrackingItemConfig config;
 
     public TriggersLoggingItemViewHolder(final TriggersLoggingUIFormItemWidget itemView,
-            final TrackingActiveTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> viewModel) {
+            final TrackingTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> viewModel) {
         super(itemView);
         this.widget = itemView;
         this.viewModel = viewModel;

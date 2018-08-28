@@ -1,11 +1,15 @@
 package org.sagebionetworks.research.mpower.inject;
 
+import static org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModelFactory.SYMPTOM_LOGGING_TYPE_KEY;
+
 import com.google.gson.TypeAdapterFactory;
 
 import org.sagebionetworks.research.domain.inject.GsonModule;
 import org.sagebionetworks.research.domain.inject.StepModule.StepClassKey;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.ShowStepFragmentFactory;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule.StepViewKey;
+import org.sagebionetworks.research.mpower.tracking.fragment.SelectionFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TriggersSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStep;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
@@ -43,6 +47,23 @@ public abstract class TrackingStepModule {
     @IntoMap
     @StepViewKey(TrackingStepView.TYPE)
     static ShowStepFragmentFactory provideTrackingFragmentFactory() {
-        return TriggersSelectionFragment::newInstance;
+        return (stepView -> {
+            if (!(stepView instanceof TrackingStepView)) {
+                throw new IllegalArgumentException("Provided StepView " + stepView + " is not a TrackingStepView");
+            }
+
+            TrackingStepView trackingStepView = (TrackingStepView)stepView;
+            String selectionType = trackingStepView.getSelectionInfo().getType();
+            String loggingType = trackingStepView.getLoggingInfo().getType();
+            if (selectionType == null && loggingType == null) {
+                return TriggersSelectionFragment.newInstance(trackingStepView);
+            } else if (selectionType == null && loggingType.equals(SYMPTOM_LOGGING_TYPE_KEY)) {
+                return SymptomSelectionFragment.newInstance(trackingStepView);
+            }
+
+            throw new IllegalArgumentException(
+                    "Cannot instantiate fragment from TrackingStepView with selectionType: " + selectionType + " and loggingType: "
+                            + loggingType);
+        });
     }
 }

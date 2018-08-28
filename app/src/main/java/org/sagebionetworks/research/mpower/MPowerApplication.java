@@ -1,6 +1,7 @@
 package org.sagebionetworks.research.mpower;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.support.annotation.VisibleForTesting;
@@ -19,15 +20,20 @@ import javax.inject.Inject;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
+import dagger.android.HasServiceInjector;
 import dagger.android.support.HasSupportFragmentInjector;
+import dagger.multibindings.IntoSet;
 
 public class MPowerApplication extends BridgeApplication implements HasSupportFragmentInjector,
-        HasActivityInjector {
+        HasActivityInjector, HasServiceInjector {
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
 
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingSupportFragmentInjector;
+
+    @Inject
+    DispatchingAndroidInjector<Service> dispatchingServiceInjector;
 
     // this causes ResearchStack provider method, which also initializes RS, to be called during onCreate
     @Inject
@@ -37,6 +43,11 @@ public class MPowerApplication extends BridgeApplication implements HasSupportFr
     public void onCreate() {
         super.onCreate();
         initAppComponent().inject(this);
+    }
+
+    @Override
+    public AndroidInjector<Service> serviceInjector() {
+        return dispatchingServiceInjector;
     }
 
     @VisibleForTesting

@@ -8,17 +8,17 @@ import android.view.ViewGroup;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingItemLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingActiveTaskViewModel;
+import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.TriggersLoggingUIFormItemWidget;
 
 import java.util.List;
 
 public class TriggersLoggingItemAdapter extends Adapter<TriggersLoggingItemViewHolder> {
     private List<SimpleTrackingItemConfig> items;
-    private TrackingActiveTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> viewModel;
+    private TrackingTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> viewModel;
 
     public TriggersLoggingItemAdapter(List<SimpleTrackingItemConfig> items,
-            TrackingActiveTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> viewModel) {
+            TrackingTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> viewModel) {
         this.items = items;
         this.viewModel = viewModel;
     }

@@ -5,17 +5,17 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
-import org.sagebionetworks.research.mpower.tracking.model.TrackingStep;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class TrackingActiveTaskViewModel<ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog>
+public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog>
         extends ViewModel {
     protected LiveData<Boolean> selectionMade;
     protected MutableLiveData<Map<TrackingSection, Set<TrackingItem>>> availableElements;
@@ -23,7 +23,7 @@ public abstract class TrackingActiveTaskViewModel<ConfigType extends TrackingIte
     protected LiveData<Set<ConfigType>> unconfiguredElements;
     protected MutableLiveData<Set<LogType>> loggedElements;
 
-    protected TrackingActiveTaskViewModel(@NonNull final TrackingStepView stepView) {
+    protected TrackingTaskViewModel(@NonNull final TrackingStepView stepView) {
         this.availableElements = new MutableLiveData<>();
         this.availableElements.setValue(stepView.getSelectionItems());
         this.activeElements = new MutableLiveData<>();
@@ -70,7 +70,7 @@ public abstract class TrackingActiveTaskViewModel<ConfigType extends TrackingIte
             activeElements = new HashSet<>();
         }
 
-        if (!TrackingActiveTaskViewModel.containsMatchingTrackingItem(activeElements, item)) {
+        if (!TrackingTaskViewModel.containsMatchingTrackingItem(activeElements, item)) {
             activeElements.add(this.instantiateConfigFromSelection(item));
         }
 
@@ -97,7 +97,7 @@ public abstract class TrackingActiveTaskViewModel<ConfigType extends TrackingIte
     public boolean isSelected(@NonNull TrackingItem trackingItem) {
         Set<ConfigType> activeElements = this.activeElements.getValue();
         if (activeElements != null) {
-            return TrackingActiveTaskViewModel
+            return TrackingTaskViewModel
                     .containsMatchingTrackingItem(activeElements, trackingItem);
         } else {
             return false;
@@ -107,22 +107,36 @@ public abstract class TrackingActiveTaskViewModel<ConfigType extends TrackingIte
     public boolean isLogged(@NonNull ConfigType config) {
         Set<LogType> loggedElements = this.loggedElements.getValue();
         if (loggedElements != null) {
-            return TrackingActiveTaskViewModel
+            return TrackingTaskViewModel
                     .containsMatchingTrackingItem(loggedElements, config.getTrackingItem());
         } else {
             return false;
         }
     }
 
+    public LogType getLog(@NonNull TrackingItem trackingItem) {
+        return getMatchingTrackingItem(this.loggedElements.getValue(), trackingItem);
+    }
+
+    public ConfigType getConfig(@NonNull TrackingItem trackingItem) {
+        return getMatchingTrackingItem(this.activeElements.getValue(), trackingItem);
+    }
+
     private static <E extends HasTrackingItem> boolean containsMatchingTrackingItem(@NonNull Set<E> items,
             @NonNull TrackingItem item) {
-        for (HasTrackingItem hasTrackingItem : items) {
+        E reuslt = getMatchingTrackingItem(items, item);
+        return reuslt != null;
+    }
+
+    @Nullable
+    private static <E extends HasTrackingItem> E getMatchingTrackingItem(@NonNull Set<E> items, @NonNull TrackingItem item) {
+        for (E hasTrackingItem : items) {
             if (hasTrackingItem.getTrackingItem().equals(item)) {
-                return true;
+                return hasTrackingItem;
             }
         }
 
-        return false;
+        return null;
     }
 
     public void addActiveElement(@NonNull ConfigType config) {

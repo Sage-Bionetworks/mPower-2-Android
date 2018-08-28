@@ -8,7 +8,7 @@ import android.view.View;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingActiveTaskViewModel;
+import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.PaddingUtil;
 import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
@@ -16,9 +16,9 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
     private SelectionUIFormItemWidget widget;
     private TrackingItem trackingItem;
     private boolean selected;
-    private TrackingActiveTaskViewModel<?, ?> viewModel;
+    private TrackingTaskViewModel<?, ?> viewModel;
 
-    public SelectionItemViewHolder(final SelectionUIFormItemWidget itemView, TrackingActiveTaskViewModel<?, ?> viewModel) {
+    public SelectionItemViewHolder(final SelectionUIFormItemWidget itemView, TrackingTaskViewModel<?, ?> viewModel) {
         super(itemView);
         this.viewModel = viewModel;
         this.widget = itemView;
