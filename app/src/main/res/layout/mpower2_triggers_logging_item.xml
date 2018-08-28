@@ -41,9 +41,9 @@
         android:id="@+id/checkmark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintStart_toStartOf="@+id/item_title"
-        app:layout_constraintTop_toTopOf="@+id/recorded_label"
+        app:layout_constraintTop_toBottomOf="@+id/item_title"
         app:srcCompat="@drawable/checkbox" />
 
     <TextView
@@ -51,26 +51,15 @@
         style="@style/Widget.ResearchStack.StepBody.TextLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="12dp"
         android:text="Recorded"
+
         android:textStyle="bold"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="@+id/add_detail_button"
-        app:layout_constraintStart_toStartOf="@+id/add_detail_button"
-        app:layout_constraintTop_toBottomOf="@+id/item_title" />
-
-    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
-        android:id="@+id/add_detail_button"
-        style="@style/Widget.MPower.ActionButton.TriggersLogging.UnderlinedButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:text="Add details"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/checkmark"
         app:layout_constraintStart_toEndOf="@+id/checkmark"
-        app:layout_constraintTop_toBottomOf="@+id/recorded_label" />
+        app:layout_constraintTop_toTopOf="@+id/checkmark"
+        app:layout_constraintVertical_bias="0.5" />
 
     <org.sagebionetworks.research.mobile_ui.widget.ActionButton
         android:id="@+id/undo_button"

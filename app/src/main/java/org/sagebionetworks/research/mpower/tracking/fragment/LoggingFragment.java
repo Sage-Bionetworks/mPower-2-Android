@@ -41,7 +41,7 @@ public abstract class LoggingFragment
     @Nullable
     public ItemDecoration initializeItemDecoration() {
         DividerItemDecoration itemDecoration = new DividerItemDecoration(this.getContext(), DividerItemDecoration.VERTICAL);
-        Drawable drawable = this.getResources().getDrawable(R.drawable.mpower2_triggers_logging_item_decoration);
+        Drawable drawable = this.getResources().getDrawable(R.drawable.mpower2_logging_item_decoration);
         itemDecoration.setDrawable(drawable);
         return itemDecoration;
     }

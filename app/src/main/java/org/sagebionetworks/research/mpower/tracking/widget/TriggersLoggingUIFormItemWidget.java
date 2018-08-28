@@ -27,9 +27,6 @@ public class TriggersLoggingUIFormItemWidget extends ConstraintLayout {
     @BindView(R.id.recorded_label)
     TextView recordedLabel;
 
-    @BindView(R.id.add_detail_button)
-    ActionButton addDetailButton;
-
     @BindView(R.id.undo_button)
     ActionButton undoButton;
 
@@ -53,10 +50,9 @@ public class TriggersLoggingUIFormItemWidget extends ConstraintLayout {
     public void commonInit() {
         inflate(this.getContext(), R.layout.mpower2_triggers_logging_item, this);
         ButterKnife.bind(this);
-        this.addDetailButton.setPaintFlags(this.addDetailButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         this.undoButton.setPaintFlags(this.undoButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         PaddingUtil.setTopPadding(this.title, 28);
-        PaddingUtil.setBottomPadding(this.addDetailButton, 24);
+        PaddingUtil.setBottomPadding(this.undoButton, 28);
         this.displayedUnloggedState();
     }
 
@@ -70,10 +66,6 @@ public class TriggersLoggingUIFormItemWidget extends ConstraintLayout {
 
     public ActionButton getUndoButton() {
         return this.undoButton;
-    }
-
-    public ActionButton getAddDetailButton() {
-        return this.addDetailButton;
     }
 
     public void setLogged(boolean logged) {
@@ -93,7 +85,6 @@ public class TriggersLoggingUIFormItemWidget extends ConstraintLayout {
         this.recordButton.setVisibility(View.GONE);
         this.checkmark.setVisibility(View.VISIBLE);
         this.recordedLabel.setVisibility(View.VISIBLE);
-        this.addDetailButton.setVisibility(View.VISIBLE);
         this.undoButton.setVisibility(View.VISIBLE);
     }
 
@@ -102,7 +93,6 @@ public class TriggersLoggingUIFormItemWidget extends ConstraintLayout {
         this.recordButton.setVisibility(View.VISIBLE);
         this.checkmark.setVisibility(View.GONE);
         this.recordedLabel.setVisibility(View.GONE);
-        this.addDetailButton.setVisibility(View.GONE);
         this.undoButton.setVisibility(View.GONE);
     }
 }

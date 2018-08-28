@@ -31,8 +31,6 @@ public class TriggersLoggingItemViewHolder extends ViewHolder {
             this.viewModel.removeLoggedElement(identifier);
             this.widget.setLogged(false);
         });
-
-        // TODO rkolmos 08/24/2018 add the add detail button behavior.
     }
 
     public void setContent(@NonNull SimpleTrackingItemConfig config) {
