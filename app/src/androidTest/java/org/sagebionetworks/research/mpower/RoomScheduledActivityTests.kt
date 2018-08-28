@@ -26,6 +26,7 @@ import java.io.IOException
 import java.nio.charset.Charset
 
 @RunWith(AndroidJUnit4::class)
+// ran into multidex issues moving this to a library project, leaving it here for now
 class RoomScheduledActivityTests {
 
     companion object {
