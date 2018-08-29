@@ -20,6 +20,13 @@ import org.sagebionetworks.research.presentation.model.action.ActionType;
 
 import java.util.Map;
 
+/**
+ * A LoggingFragment represents the screen where the user is asked to enter information about the specific Symptoms,
+ * Triggers or Medications, that they have elected to log.
+ * @param <ConfigType> The type of TrackingItemConfig.
+ * @param <LogType> The type of TrackingItemLog.
+ * @param <ViewModelType> The type of TrackingTaskViewModel.
+ */
 public abstract class LoggingFragment
         <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog,
         ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
