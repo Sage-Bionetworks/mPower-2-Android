@@ -13,6 +13,8 @@ import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
 public class SymptomLoggingFragment extends
         LoggingFragment<SimpleTrackingItemConfig, SymptomLog, SymptomTrackingTaskViewModel> {
+    public static final String SYMPTOM_LOGGING_FRAGMENT_TAG = "symptomLoggingFragment";
+
     @NonNull
     public static SymptomLoggingFragment newInstance(@NonNull StepView stepView) {
         SymptomLoggingFragment fragment = new SymptomLoggingFragment();
@@ -23,15 +25,13 @@ public class SymptomLoggingFragment extends
 
     @NonNull
     @Override
-    public ShowStepFragment getNextFragment() {
+    public TrackingFragment<?, ?, ?> getNextFragment() {
         return SymptomSelectionFragment.newInstance(this.stepView);
     }
 
     @NonNull
     @Override
     public Adapter<?> initializeAdapter() {
-        return new SymptomsLoggingItemAdapter(this.viewModel);
+        return new SymptomsLoggingItemAdapter(this.viewModel, this);
     }
-
-
 }

@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.OnApplyWindowInsetsListener;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ public class AddNoteFragment
         <ConfigType extends TrackingItemConfig, LogType extends NoteLog, ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
         extends TrackingFragment<ConfigType, LogType, ViewModelType> {
     public static final String ARGUMENT_TRACKING_ITEM = "trackingItem";
+    public static final String ARGUMENT_PARENT_FRAGMENT_TAG = "parentFragmentTag";
     private static final Logger LOGGER = LoggerFactory.getLogger(AddNoteFragment.class);
 
 
@@ -41,19 +43,6 @@ public class AddNoteFragment
     ActionButton forwardButton;
 
     protected TrackingItem trackingItem;
-
-    @NonNull
-    public static <ConfigType extends TrackingItemConfig,
-            LogType extends NoteLog,
-            ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
-    AddNoteFragment<ConfigType, LogType, ViewModelType> newInstance(@NonNull StepView stepView,
-            @NonNull TrackingItem trackingItem) {
-        AddNoteFragment<ConfigType, LogType, ViewModelType> addNoteFragment = new AddNoteFragment<>();
-        Bundle args = TrackingFragment.createArguments(stepView);
-        args.putParcelable(ARGUMENT_TRACKING_ITEM, trackingItem);
-        addNoteFragment.setArguments(args);
-        return addNoteFragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,7 +97,7 @@ public class AddNoteFragment
     }
 
     private void goToParentFragment() {
-        // TODO Use the backstack to put the fragment the fragment that launched this note fragmnet back
-        this.getFragmentManager().beginTransaction().remove(this).commit();
+        // Pop the back stack once to go back to the parent fragment.
+        this.getFragmentManager().popBackStackImmediate();
     }
 }

@@ -1,6 +1,5 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
-import static org.sagebionetworks.research.mpower.tracking.fragment.AddNoteFragment.newInstance;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,9 +9,9 @@ import android.widget.RadioButton;
 
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.MPowerRadioButton;
-import org.sagebionetworks.research.mpower.tracking.fragment.AddNoteFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.SymptomAddNoteFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
-import org.sagebionetworks.research.mpower.tracking.view_model.SymptomTrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
@@ -27,12 +26,14 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     private TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel;
     private SymptomsLoggingUIFormItemWidget widget;
+    private SymptomLoggingFragment symptomLoggingFragment;
 
     public SymptomsLoggingItemViewHolder(final SymptomsLoggingUIFormItemWidget itemView, final
-    TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel) {
+    TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel, final SymptomLoggingFragment symptomLoggingFragment) {
         super(itemView);
         this.widget = itemView;
         this.viewModel = viewModel;
+        this.symptomLoggingFragment = symptomLoggingFragment;
     }
 
     public void setContent(@NonNull SimpleTrackingItemConfig config) {
@@ -157,9 +158,12 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     private void setAddNoteButtonListener(@NonNull TrackingItem trackingItem) {
         this.widget.getAddNoteButton().setOnClickListener(view -> {
-            AddNoteFragment<SimpleTrackingItemConfig, SymptomLog, SymptomTrackingTaskViewModel> addNoteFragment =
-                    AddNoteFragment.newInstance(this.viewModel.getStepView(), trackingItem);
-            // TODO add the new fragment and put the current fragment on the back stack.
+            SymptomAddNoteFragment addNoteFragment =
+                    SymptomAddNoteFragment.newInstance(this.viewModel.getStepView(), trackingItem);
+            // Done to ensure a log is instantiated before the add note fragment gets added.
+            SymptomLog previousLog = getPreviousLogOrInstantiate(trackingItem);
+            this.viewModel.addLoggedElement(previousLog);
+            this.symptomLoggingFragment.addChildFragmentOnTop(addNoteFragment, SymptomLoggingFragment.SYMPTOM_LOGGING_FRAGMENT_TAG);
         });
     }
 
@@ -168,7 +172,6 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
         SymptomLog result = this.viewModel.getLog(trackingItem);
         result = createLogIfNull(result, trackingItem);
         return result;
-
     }
 
     @NonNull

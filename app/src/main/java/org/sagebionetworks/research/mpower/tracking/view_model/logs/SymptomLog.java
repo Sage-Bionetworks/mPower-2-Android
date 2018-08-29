@@ -8,8 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
-import org.sagebionetworks.research.mpower.tracking.view_model.$AutoValue_SymptomLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.AutoValue_SymptomLog.GsonTypeAdapter;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.AutoValue_SymptomLog.GsonTypeAdapter;
 import org.threeten.bp.Instant;
 
 @AutoValue
@@ -30,7 +29,10 @@ public abstract class SymptomLog implements NoteLog {
         @NonNull
         public abstract Builder setNote(@Nullable String note);
 
-        // TODO add time and duration.
+        // TODO add time
+
+        @NonNull
+        public abstract Builder setDuration(@Nullable String duration);
 
         @NonNull
         public abstract Builder setMedicationTiming(@Nullable String medicationTiming);
@@ -42,6 +44,9 @@ public abstract class SymptomLog implements NoteLog {
     @Nullable
     public abstract String getMedicationTiming();
 
+    @Nullable
+    public abstract String getDuration();
+
     @Override
     @NonNull
     public SymptomLog copyWithNote(@Nullable String note) {
@@ -49,7 +54,7 @@ public abstract class SymptomLog implements NoteLog {
     }
 
     public static Builder builder() {
-        return new $AutoValue_SymptomLog.Builder();
+        return new AutoValue_SymptomLog.Builder();
     }
 
     public static TypeAdapter<SymptomLog> typeAdapter(Gson gson) {

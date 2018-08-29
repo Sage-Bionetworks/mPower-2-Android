@@ -26,7 +26,7 @@ public class TriggersLoggingFragment extends LoggingFragment<SimpleTrackingItemC
 
     @NonNull
     @Override
-    public ShowStepFragment getNextFragment() {
+    public TrackingFragment<?, ?, ?> getNextFragment() {
         return TriggersSelectionFragment.newInstance(this.stepView);
     }
 

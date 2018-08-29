@@ -8,12 +8,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.ShowStepFragment;
+import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
@@ -89,6 +91,20 @@ public abstract class TrackingFragment
     public void onDestroyView() {
         super.onDestroyView();
         this.unbinder.unbind();
+    }
+
+    /**
+     * Adds a child fragment on top of this fragment and adds this fragment to the back stack with the provided tag.
+     * @param trackingFragment The fragment to add on top of this fragment.
+     * @param tag The tag for this fragment on the back stack.
+     */
+    public void addChildFragmentOnTop(TrackingFragment<?, ?, ?> trackingFragment, @Nullable String tag) {
+        getFragmentManager()
+                .beginTransaction()
+                .detach(this)
+                .add(((ViewGroup)this.getView().getParent()).getId(), trackingFragment)
+                .addToBackStack(tag)
+                .commit();
     }
 
     @Override

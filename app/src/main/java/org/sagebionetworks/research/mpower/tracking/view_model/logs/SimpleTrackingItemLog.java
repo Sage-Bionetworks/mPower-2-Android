@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import com.google.auto.value.AutoValue;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
-import org.sagebionetworks.research.mpower.tracking.view_model.AutoValue_SimpleTrackingItemLog;
 import org.threeten.bp.Instant;
 
 @AutoValue

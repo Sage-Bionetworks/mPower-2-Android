@@ -12,6 +12,7 @@ import android.widget.TextView;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.MPowerRadioButton;
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 
 import java.util.List;
 

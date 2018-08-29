@@ -26,7 +26,9 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
         this.navigationActionBar.setActionButtonClickListener((actionButton -> {
             if (actionButton.getId() == R.id.rs2_step_navigation_action_forward) {
                 ShowStepFragment nextFragment = this.getNextFragment();
-                this.getFragmentManager().beginTransaction().replace(R.id.rs2_step_container, nextFragment).commit();
+                this.getFragmentManager().beginTransaction()
+                        .replace(((ViewGroup)this.getView().getParent()).getId(), nextFragment)
+                        .commit();
             }
         }));
 
@@ -52,5 +54,5 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
         return R.layout.mpower2_selection_step;
     }
 
-    public abstract ShowStepFragment getNextFragment();
+    public abstract TrackingFragment<?, ?, ?> getNextFragment();
 }

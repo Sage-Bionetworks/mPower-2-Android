@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
@@ -17,11 +18,13 @@ import java.util.List;
 public class SymptomsLoggingItemAdapter extends Adapter<SymptomsLoggingItemViewHolder> {
     private TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel;
     private List<SimpleTrackingItemConfig> configs;
+    private SymptomLoggingFragment symptomLoggingFragment;
 
-    public SymptomsLoggingItemAdapter(TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel) {
+    public SymptomsLoggingItemAdapter(TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel,
+            SymptomLoggingFragment symptomLoggingFragment) {
         this.viewModel = viewModel;
         this.configs = new ArrayList<>(viewModel.getActiveElements().getValue());
-
+        this.symptomLoggingFragment = symptomLoggingFragment;
     }
 
     @NonNull
@@ -29,7 +32,7 @@ public class SymptomsLoggingItemAdapter extends Adapter<SymptomsLoggingItemViewH
     public SymptomsLoggingItemViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
         SymptomsLoggingUIFormItemWidget widget = (SymptomsLoggingUIFormItemWidget)
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.mpower2_symptoms_logging_view_holder, parent,false);
-        return new SymptomsLoggingItemViewHolder(widget, this.viewModel);
+        return new SymptomsLoggingItemViewHolder(widget, this.viewModel, this.symptomLoggingFragment);
     }
 
     @Override

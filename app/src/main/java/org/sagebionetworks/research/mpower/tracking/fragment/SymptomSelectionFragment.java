@@ -19,7 +19,7 @@ public class SymptomSelectionFragment extends SelectionFragment<SimpleTrackingIt
     }
 
     @Override
-    public ShowStepFragment getNextFragment() {
+    public TrackingFragment<?, ?, ?> getNextFragment() {
         return SymptomLoggingFragment.newInstance(this.stepView);
     }
 }

@@ -41,7 +41,8 @@ public abstract class LoggingFragment
         if (this.addMore != null) {
             this.addMore.setOnClickListener((view) -> {
                 ShowStepFragment nextFragment = this.getNextFragment();
-                this.getFragmentManager().beginTransaction().replace(R.id.rs2_step_container, nextFragment)
+                this.getFragmentManager().beginTransaction()
+                        .replace(((ViewGroup)this.getView().getParent()).getId(), nextFragment)
                         .commit();
             });
         }
@@ -64,5 +65,5 @@ public abstract class LoggingFragment
     }
 
     @NonNull
-    public abstract ShowStepFragment getNextFragment();
+    public abstract TrackingFragment<?, ?, ?> getNextFragment();
 }
