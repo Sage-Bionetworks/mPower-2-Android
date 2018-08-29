@@ -5,19 +5,23 @@
     <application
         android:name=".MPowerApplication"
         android:allowBackup="true"
-        android:icon="@drawable/mpower2_ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/mpower2_ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PerformTaskActivity">
+        <service android:name="org.sagebionetworks.research.presentation.recorder.service.RecorderService"
+            android:exported="true"
+            />
+        <activity android:name=".sageresearch.PerformTaskActivity">
+
         </activity>
         <activity android:name=".sageresearch.TappingTaskActivity">
 
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />

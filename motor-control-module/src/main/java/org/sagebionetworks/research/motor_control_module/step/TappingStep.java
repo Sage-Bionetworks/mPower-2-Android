@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
+import org.sagebionetworks.research.domain.async.AsyncActionConfiguration;
 import org.sagebionetworks.research.domain.result.implementations.ResultBase;
 import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
@@ -34,6 +35,9 @@ public abstract class TappingStep implements ActiveUIStep, StepNavigationStrateg
 
         @NonNull
         public abstract Builder setActions(@NonNull Map<String, Action> actions);
+
+        @NonNull
+        public abstract Builder setAsyncActions(@NonNull Set<AsyncActionConfiguration> asyncActions);
 
         @NonNull
         public abstract Builder setBackgroundAudioRequired(boolean isBackgroundAudioRequired);
@@ -75,6 +79,7 @@ public abstract class TappingStep implements ActiveUIStep, StepNavigationStrateg
     public static TypeAdapter<TappingStep> typeAdapter(Gson gson) {
         return new AutoValue_TappingStep.GsonTypeAdapter(gson)
                 .setDefaultActions(ImmutableMap.of())
+                .setDefaultAsyncActions(ImmutableSet.of())
                 .setDefaultCommands(ImmutableSet.of())
                 .setDefaultHiddenActions(ImmutableSet.of())
                 .setDefaultSpokenInstructions(ImmutableMap.of());
@@ -83,6 +88,7 @@ public abstract class TappingStep implements ActiveUIStep, StepNavigationStrateg
     public static Builder builder() {
         return new AutoValue_TappingStep.Builder()
                 .setActions(ImmutableMap.of())
+                .setAsyncActions(ImmutableSet.of())
                 .setCommands(ImmutableSet.of())
                 .setBackgroundAudioRequired(false)
                 .setHiddenActions(ImmutableSet.of());

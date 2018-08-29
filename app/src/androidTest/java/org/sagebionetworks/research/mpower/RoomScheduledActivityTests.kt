@@ -7,7 +7,6 @@ import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
 import org.joda.time.DateTime
-
 import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
@@ -17,10 +16,10 @@ import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.ActivityType
 import org.sagebionetworks.bridge.rest.model.ScheduleStatus
 import org.sagebionetworks.bridge.rest.model.ScheduledActivityListV4
-import org.sagebionetworks.research.mpower.room.ResearchDatabase
-import org.sagebionetworks.research.mpower.room.ScheduledActivityEntity
-import org.sagebionetworks.research.mpower.room.RoomScheduledActivityDao
-import org.sagebionetworks.research.mpower.room.EntityTypeConverters
+import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters
+import org.sagebionetworks.research.sageresearch.dao.room.ResearchDatabase
+import org.sagebionetworks.research.sageresearch.dao.room.RoomScheduledActivityDao
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import java.io.IOException
@@ -57,6 +56,7 @@ import java.nio.charset.Charset
 //
 
 @RunWith(AndroidJUnit4::class)
+// ran into multidex issues moving this to a library project, leaving it here for now
 class RoomScheduledActivityTests {
 
     companion object {

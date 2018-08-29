@@ -7,7 +7,7 @@ import org.sagebionetworks.research.domain.result.ResultType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.SOURCE)
 @StringDef({ResultType.TASK, ResultType.FILE, ResultType.ERROR, ResultType.COLLECTION, ResultType.ANSWER,
         ResultType.BASE, AppResultType.TAPPING})
 public @interface AppResultType {
