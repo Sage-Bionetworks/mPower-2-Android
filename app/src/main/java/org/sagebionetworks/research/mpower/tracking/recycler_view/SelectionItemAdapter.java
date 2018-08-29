@@ -18,6 +18,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+/**
+ * Adapter for a Recycler view which produces items for the selection screen in a TrackingTask.
+ */
 public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemViewHolder> {
     private final ImmutableList<SelectionUIFormItem> selectionItems;
     private final TrackingTaskViewModel<?, ?> viewModel;

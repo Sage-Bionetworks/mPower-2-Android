@@ -12,6 +12,9 @@ import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewM
 import org.sagebionetworks.research.mpower.tracking.widget.PaddingUtil;
 import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
+/**
+ * View Holder for the Selection options from the Selection Screen in a Tracking Task.
+ */
 public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
     private SelectionUIFormItemWidget widget;
     private TrackingItem trackingItem;

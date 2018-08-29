@@ -7,6 +7,9 @@ import com.google.auto.value.AutoValue;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.threeten.bp.Instant;
 
+/**
+ * A Basic TrackingItemLog which logs only which Item was logged, and a timestamp for when the log was created.
+ */
 @AutoValue
 public abstract class SimpleTrackingItemLog implements TrackingItemLog {
     @AutoValue.Builder

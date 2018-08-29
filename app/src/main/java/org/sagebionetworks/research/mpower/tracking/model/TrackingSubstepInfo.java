@@ -16,6 +16,11 @@ import org.sagebionetworks.research.domain.step.ui.action.Action;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Represents the information about what type of screen should be displayed for on of the parts (Selection, Logging)
+ * for a Tracking Task. This information includes what language should be displayed as well as what type of screen
+ * this substep should use.
+ */
 @AutoValue
 public abstract class TrackingSubstepInfo {
     @AutoValue.Builder

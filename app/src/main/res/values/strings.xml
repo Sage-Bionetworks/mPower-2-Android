@@ -53,4 +53,13 @@
     <string name="tracking_center_label">Medication</string>
     <string name="tracking_left_label">Symptom</string>
     <string name="tracking_right_label">Trigger</string>
+
+    <string name="symptoms_duration_title">Duration</string>
+    <string name="symptoms_duration_detail">Select one</string>
+    <string name="symptoms_duration_0">Currently occurring</string>
+    <string name="symptoms_duration_1">A short period of time</string>
+    <string name="symptoms_duration_2">A little while</string>
+    <string name="symptoms_duration_3">All [morning / afternoon / evening]</string>
+    <string name="symptoms_duration_4">Half the day</string>
+    <string name="symptoms_duration_5">All day long</string>
 </resources>

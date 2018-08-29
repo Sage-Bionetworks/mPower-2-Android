@@ -30,6 +30,14 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItem
 
 import butterknife.BindView;
 
+/**
+ * A RecyclerViewTrackingFragment allows for easier creation of TrackingFragments that use a recycler view to display
+ * their options. It requires a subclass to override initializeAdapter to give the recycler view it's adapter but handles
+ * the logic of setting up the recycler view, and laying it out appropriately.
+ * @param <ConfigType> The type of TrackingItemConfig.
+ * @param <LogType> The type of TrackingItemLog.
+ * @param <ViewModelType> The type of TrackingTaskViewModel.
+ */
 public abstract class RecyclerViewTrackingFragment
         <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog, ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
         extends TrackingFragment<ConfigType, LogType, ViewModelType> {

@@ -9,6 +9,9 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTracki
 import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingTaskViewModel;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
+/**
+ * A subclass of SelectionFragment specific to the Triggers Task.
+ */
 public class TriggersSelectionFragment extends SelectionFragment<SimpleTrackingItemConfig, SimpleTrackingItemLog, SimpleTrackingTaskViewModel> {
     @NonNull
     public static SelectionFragment newInstance(@NonNull StepView step) {

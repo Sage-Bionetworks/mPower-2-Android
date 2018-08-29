@@ -9,6 +9,7 @@ import android.widget.RadioButton;
 
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.MPowerRadioButton;
+import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomAddNoteFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
@@ -20,6 +21,9 @@ import org.threeten.bp.Instant;
 
 import java.util.List;
 
+/**
+ * View Holder for the Logging Items in the Symptoms task.
+ */
 public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
     private static final float FULL_ALPHA = 1.0f;
     private static final float FADED_ALPHA = .35f;
@@ -57,7 +61,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
         // Setup the button listeners.
         this.setSeverityButtonListeners(trackingItem);
         // TODO set time button listener to bring up the time wheel.
-        // TODO set duration button listener to bring up the duration selection.
+        this.setDurationButtonListener(trackingItem);
         this.setPreMedsButtonListener(trackingItem);
         this.setPostMedsButtonListener(trackingItem);
         this.setAddNoteButtonListener(trackingItem);
@@ -124,6 +128,16 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
                 this.viewModel.addLoggedElement(log);
             });
         }
+    }
+
+    private void setDurationButtonListener(@NonNull TrackingItem trackingItem) {
+        this.widget.getDurationButton().setOnClickListener(view -> {
+            DurationFragment durationFragment = DurationFragment.newInstance(this.viewModel.getStepView(), trackingItem);
+            // Done to ensure a log is instantiated before the add note fragment gets added.
+            SymptomLog previousLog = getPreviousLogOrInstantiate(trackingItem);
+            this.viewModel.addLoggedElement(previousLog);
+            this.symptomLoggingFragment.addChildFragmentOnTop(durationFragment, SymptomLoggingFragment.SYMPTOM_LOGGING_FRAGMENT_TAG);
+        });
     }
 
     private void setPreMedsButtonListener(@NonNull TrackingItem trackingItem) {

@@ -21,6 +21,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+/**
+ * Map a TrackingStep to a TrackingStepView when data is moving from the domain to presentation layer.
+ */
 @AutoValue
 public abstract class TrackingStepView implements StepView {
     public static final String TYPE = "tracking";

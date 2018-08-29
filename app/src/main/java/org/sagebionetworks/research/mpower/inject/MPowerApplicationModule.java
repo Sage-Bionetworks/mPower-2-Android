@@ -11,6 +11,7 @@ import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
 import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.AddNoteFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomAddNoteFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFragment;
@@ -57,6 +58,9 @@ public interface MPowerApplicationModule {
 
     @ContributesAndroidInjector
     SymptomAddNoteFragment contributeSymptomAddNoteFragmentInjector();
+
+    @ContributesAndroidInjector
+    DurationFragment contributeDurationFragmentInjector();
 
     @ContributesAndroidInjector
     TrackingMenuFragment contributeTrackingMenuFragmentInjector();

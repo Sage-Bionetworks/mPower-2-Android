@@ -15,6 +15,9 @@ import org.sagebionetworks.research.mpower.tracking.widget.SymptomsLoggingUIForm
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter which produces Logging Items for the Symptoms Task.
+ */
 public class SymptomsLoggingItemAdapter extends Adapter<SymptomsLoggingItemViewHolder> {
     private TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel;
     private List<SimpleTrackingItemConfig> configs;

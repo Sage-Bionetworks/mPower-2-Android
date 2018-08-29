@@ -13,6 +13,9 @@ import org.sagebionetworks.research.mpower.tracking.widget.TriggersLoggingUIForm
 
 import java.util.List;
 
+/**
+ * Adapter which produces Logging Items for the Triggers task.
+ */
 public class TriggersLoggingItemAdapter extends Adapter<TriggersLoggingItemViewHolder> {
     private List<SimpleTrackingItemConfig> items;
     private TrackingTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> viewModel;

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    e
+
+    <TextView
+        android:id="@+id/duration_0"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="24dp"
+        android:paddingEnd="28dp"
+        android:paddingStart="28dp"
+        android:paddingTop="24dp"
+        android:text="@string/symptoms_duration_0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/divider_0"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/form_step_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/duration_0" />
+
+    <TextView
+        android:id="@+id/duration_1"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/symptoms_duration_1"
+        android:paddingBottom="24dp"
+        android:paddingEnd="28dp"
+        android:paddingStart="28dp"
+        android:paddingTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider_0" />
+
+    <View
+        android:id="@+id/divider_1"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/form_step_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/duration_1" />
+
+    <TextView
+        android:id="@+id/duration_2"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/symptoms_duration_2"
+        android:paddingBottom="24dp"
+        android:paddingEnd="28dp"
+        android:paddingStart="28dp"
+        android:paddingTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider_1" />
+
+    <View
+        android:id="@+id/divider_2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/form_step_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/duration_2" />
+
+    <TextView
+        android:id="@+id/duration_3"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/symptoms_duration_3"
+        android:paddingBottom="24dp"
+        android:paddingEnd="28dp"
+        android:paddingStart="28dp"
+        android:paddingTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider_2" />
+
+    <View
+        android:id="@+id/divider_3"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/form_step_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/duration_3" />
+
+    <TextView
+        android:id="@+id/duration_4"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/symptoms_duration_4"
+        android:paddingBottom="24dp"
+        android:paddingEnd="28dp"
+        android:paddingStart="28dp"
+        android:paddingTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider_3" />
+
+    <View
+        android:id="@+id/divider_4"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/form_step_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/duration_4" />
+
+    <TextView
+        android:id="@+id/duration_5"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/symptoms_duration_5"
+        android:paddingBottom="24dp"
+        android:paddingEnd="28dp"
+        android:paddingStart="28dp"
+        android:paddingTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider_4" />
+
+    <View
+        android:id="@+id/divider_5"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/form_step_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/duration_5" />
+
+</android.support.constraint.ConstraintLayout>

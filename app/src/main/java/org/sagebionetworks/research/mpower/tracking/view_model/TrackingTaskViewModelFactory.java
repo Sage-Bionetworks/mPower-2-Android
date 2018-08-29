@@ -12,6 +12,10 @@ import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+/**
+ * Factory which produces TrackingTaskViewModels for TrackingStepViews. The decision for which type of
+ * TrackingTaskViewModel to create is made based on what type of selection and logging info types the stepView has.
+ */
 @Singleton
 public class TrackingTaskViewModelFactory {
     public static final String SYMPTOM_LOGGING_TYPE_KEY = "symptomLogging";

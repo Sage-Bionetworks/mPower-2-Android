@@ -29,6 +29,13 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import dagger.android.support.AndroidSupportInjection;
 
+/**
+ * A TrackingFragment is an Fragment used in the TrackingTask. This class provides functionality common to all fragments
+ * used in the Tracking Tasks such as getting access to the shared view model.
+ * @param <ConfigType> The type of TrackingItemConfig.
+ * @param <LogType> The type of TrackingItemLog.
+ * @param <ViewModelType> The type of TrackingTaskViewModel.
+ */
 public abstract class TrackingFragment
         <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog, ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
         extends ShowStepFragment {

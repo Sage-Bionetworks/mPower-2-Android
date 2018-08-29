@@ -7,6 +7,9 @@ import com.google.auto.value.AutoValue;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 
+/**
+ * A basic TrackingItemConfig which only stores the TrackingItem it is a configuration for.
+ */
 @AutoValue
 public abstract class SimpleTrackingItemConfig implements TrackingItemConfig {
     @AutoValue.Builder
@@ -23,6 +26,7 @@ public abstract class SimpleTrackingItemConfig implements TrackingItemConfig {
 
     @Override
     public boolean isConfigured() {
+        // This config has no data beyond it's TrackingItem so it is always configured.
         return true;
     }
 }

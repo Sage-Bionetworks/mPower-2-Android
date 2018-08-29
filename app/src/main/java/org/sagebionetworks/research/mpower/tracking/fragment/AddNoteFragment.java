@@ -25,13 +25,19 @@ import org.slf4j.LoggerFactory;
 
 import butterknife.BindView;
 
+/**
+ * This fragment displays the add note screen to the user and allows the user to edit/add a new note. It is an
+ * invariant in this fragment that there is already a log in the view model for the tracking item provided as an
+ * argument and the client of this fragment is responsible for ensuring this is correct.
+ * @param <ConfigType> The type of TrackingItemConfig
+ * @param <LogType> The type of TrackingItemLog
+ * @param <ViewModelType> The type of view model.
+ */
 public class AddNoteFragment
         <ConfigType extends TrackingItemConfig, LogType extends NoteLog, ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
         extends TrackingFragment<ConfigType, LogType, ViewModelType> {
     public static final String ARGUMENT_TRACKING_ITEM = "trackingItem";
-    public static final String ARGUMENT_PARENT_FRAGMENT_TAG = "parentFragmentTag";
     private static final Logger LOGGER = LoggerFactory.getLogger(AddNoteFragment.class);
-
 
     @BindView(R.id.note_input)
     EditText noteInput;
@@ -64,9 +70,15 @@ public class AddNoteFragment
         View result = super.onCreateView(inflater, container, savedInstanceState);
         OnApplyWindowInsetsListener topListener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
         ViewCompat.setOnApplyWindowInsetsListener(this.backButton, topListener);
+        LogType log = this.viewModel.getLog(this.trackingItem);
+        String previousNote = log.getNote();
+        if (previousNote != null) {
+            this.noteInput.setText(previousNote);
+        }
+
+        // The forward button writes the note result to the log in the view model and then navigates back to the parent.
         this.forwardButton.setOnClickListener(view -> {
             String note = noteInput.getText().toString();
-            LogType log = this.viewModel.getLog(this.trackingItem);
             NoteLog noteLog = log.copyWithNote(note);
             if (noteLog.getClass() != log.getClass()) {
                 LOGGER.warn("Note log copyWithNote() returned a different class, most likely caused by forgetting to "
@@ -96,6 +108,9 @@ public class AddNoteFragment
         return R.layout.mpower2_add_note;
     }
 
+    /**
+     * Returns to the parent fragment that added this fragment.
+     */
     private void goToParentFragment() {
         // Pop the back stack once to go back to the parent fragment.
         this.getFragmentManager().popBackStackImmediate();

@@ -23,6 +23,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+/**
+ * A TrackingStep stores all of hte required information for a TrackingTask to run, from which TrackingItems to allow the
+ * user to select and which TrackingSections those items belong to, to what language should be displayed on the Tracking
+ * and Selection screens while the task is run.
+ */
 @AutoValue
 public abstract class TrackingStep implements Step, Serializable {
     public static final String TYPE_KEY = "tracking";

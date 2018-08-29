@@ -11,6 +11,11 @@ import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.AutoValue_SymptomLog.GsonTypeAdapter;
 import org.threeten.bp.Instant;
 
+/**
+ * A subclass of Note log specific to the Symptoms Task. Stores the TrackingItem that is being logged, a timestamp,
+ * the severity of the symptom (integer 0-3), a note from the user, a time and duration of the symptom,
+ * and the symptoms timing relative to when the user has taken their medication.
+ */
 @AutoValue
 public abstract class SymptomLog implements NoteLog {
     @AutoValue.Builder

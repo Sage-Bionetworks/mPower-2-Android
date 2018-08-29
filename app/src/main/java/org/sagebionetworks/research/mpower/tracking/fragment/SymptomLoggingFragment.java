@@ -11,6 +11,9 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.SymptomTrackingTaskViewModel;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
+/**
+ * A subclass of LoggingFragment specific to the Symptoms task.
+ */
 public class SymptomLoggingFragment extends
         LoggingFragment<SimpleTrackingItemConfig, SymptomLog, SymptomTrackingTaskViewModel> {
     public static final String SYMPTOM_LOGGING_FRAGMENT_TAG = "symptomLoggingFragment";

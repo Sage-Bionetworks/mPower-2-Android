@@ -14,6 +14,14 @@ import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingI
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 
+/**
+ * A SelectionFragment represents the screen where the user selects which Symptoms, Triggers, or Medications, apply to
+ * them to narrow down the list of choices. The SelectionFragment allows a subclass to override which fragment is navigated
+ * to next by overriding getNextFragment();
+ * @param <ConfigType> The type of TrackingItemConfig.
+ * @param <LogType> The type of TrackingItemLog.
+ * @param <ViewModelType> The type of TrackingTaskViewModel.
+ */
 public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog,
                 ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
         extends RecyclerViewTrackingFragment<ConfigType, LogType, ViewModelType> {
@@ -32,14 +40,6 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
             }
         }));
 
-        this.navigationActionBar.setEnabled(false);
-        this.viewModel.getSelectionMade().observe(this, (selectionMade) -> {
-            if (selectionMade != null && selectionMade) {
-                this.navigationActionBar.setEnabled(true);
-            } else {
-                this.navigationActionBar.setEnabled(false);
-            }
-        });
         return result;
     }
 
@@ -54,5 +54,9 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
         return R.layout.mpower2_selection_step;
     }
 
+    /**
+     * Returns the Fragment that should replace this fragment when the forward button is pressed.
+     * @return the Fragment that should replace this fragment when the forward button is pressed.
+     */
     public abstract TrackingFragment<?, ?, ?> getNextFragment();
 }

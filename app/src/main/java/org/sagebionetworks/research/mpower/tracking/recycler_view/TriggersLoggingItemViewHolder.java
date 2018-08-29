@@ -9,6 +9,9 @@ import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewM
 import org.sagebionetworks.research.mpower.tracking.widget.TriggersLoggingUIFormItemWidget;
 import org.threeten.bp.Instant;
 
+/**
+ * View Holder for the Logging Items from the Triggers Task.
+ */
 public class TriggersLoggingItemViewHolder extends ViewHolder {
     private TriggersLoggingUIFormItemWidget widget;
     private TrackingTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> viewModel;

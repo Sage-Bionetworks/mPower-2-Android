@@ -14,6 +14,9 @@ import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A subclass of LoggingFragment specific to the Triggers Task.
+ */
 public class TriggersLoggingFragment extends LoggingFragment<SimpleTrackingItemConfig, SimpleTrackingItemLog,
         SimpleTrackingTaskViewModel> {
     @NonNull

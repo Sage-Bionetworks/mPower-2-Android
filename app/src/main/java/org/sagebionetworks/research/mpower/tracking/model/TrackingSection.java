@@ -7,6 +7,9 @@ import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
+/**
+ * A TrackingSection represents a grouping of TrackingItems used by the UI to display the items in a logical way.
+ */
 @AutoValue
 public abstract class TrackingSection implements SelectionUIFormItem {
     @AutoValue.Builder
