@@ -10,7 +10,7 @@ import android.support.annotation.StringDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.SOURCE)
 @StringDef({TappingButtonIdentifier.LEFT, TappingButtonIdentifier.RIGHT, TappingButtonIdentifier.NONE})
 public @interface TappingButtonIdentifier {
     String LEFT = "left";

@@ -33,17 +33,18 @@
 package org.sagebionetworks.research.motor_control_module.step;
 
 import android.support.annotation.StringDef;
+
 import org.sagebionetworks.research.domain.step.StepType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 // Adds the app specific steps to the StepType annotation
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 @StringDef({StepType.COMPLETION, StepType.OVERVIEW, StepType.INSTRUCTION, StepType.UI, StepType.FORM,
-    StepType.ACTIVE, StepType.BASE, StepType.COUNTDOWN, StepType.IMAGE_PICKER, StepType.IMAGE_PICKER,
-    StepType.LOGGING, StepType.REVIEW, StepType.SECTION, StepType.SELECTION, StepType.TASK_INFO,
-    StepType.TRANSFORM, AppStepType.HAND_SELECTION, AppStepType.MPOWER_ACTIVE, AppStepType.TAPPING})
+        StepType.ACTIVE, StepType.BASE, StepType.COUNTDOWN, StepType.IMAGE_PICKER, StepType.IMAGE_PICKER,
+        StepType.LOGGING, StepType.REVIEW, StepType.SECTION, StepType.SELECTION, StepType.TASK_INFO,
+        StepType.TRANSFORM, AppStepType.HAND_SELECTION, AppStepType.MPOWER_ACTIVE, AppStepType.TAPPING})
 public @interface AppStepType {
     String HAND_SELECTION = "handSelection";
     String MPOWER_ACTIVE = "mpowerActive";
