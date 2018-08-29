@@ -10,6 +10,8 @@ import android.support.annotation.Nullable;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -22,8 +24,10 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     protected MutableLiveData<Set<ConfigType>> activeElements;
     protected LiveData<Set<ConfigType>> unconfiguredElements;
     protected MutableLiveData<Set<LogType>> loggedElements;
+    protected TrackingStepView stepView;
 
     protected TrackingTaskViewModel(@NonNull final TrackingStepView stepView) {
+        this.stepView = stepView;
         this.availableElements = new MutableLiveData<>();
         this.availableElements.setValue(stepView.getSelectionItems());
         this.activeElements = new MutableLiveData<>();
@@ -163,6 +167,10 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
 
     public void removeLoggedElement(@NonNull String identifier) {
         this.loggedElements.setValue(this.removeLoggedElementHelper(identifier));
+    }
+
+    public TrackingStepView getStepView() {
+        return this.stepView;
     }
 
     private Set<LogType> removeLoggedElementHelper(@NonNull String identifier) {

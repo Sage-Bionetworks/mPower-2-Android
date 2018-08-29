@@ -10,13 +10,9 @@ import android.view.ViewGroup;
 import org.sagebionetworks.research.mobile_ui.show_step.ShowStepFragment;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.SelectionItemAdapter;
-import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingTaskViewModel;
-import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingItemLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingItemLog;
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
-import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
 public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog,
                 ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>

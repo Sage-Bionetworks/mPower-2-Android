@@ -6,8 +6,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.SymptomLog;
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.SymptomsLoggingUIFormItemWidget;
 

@@ -1,5 +1,7 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
+import static org.sagebionetworks.research.mpower.tracking.fragment.AddNoteFragment.newInstance;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -8,9 +10,11 @@ import android.widget.RadioButton;
 
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.MPowerRadioButton;
+import org.sagebionetworks.research.mpower.tracking.fragment.AddNoteFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
-import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.SymptomLog;
+import org.sagebionetworks.research.mpower.tracking.view_model.SymptomTrackingTaskViewModel;
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.SymptomsLoggingUIFormItemWidget;
 import org.threeten.bp.Instant;
@@ -33,7 +37,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     public void setContent(@NonNull SimpleTrackingItemConfig config) {
         TrackingItem trackingItem = config.getTrackingItem();
-        // Setup the title and detail Lables
+        // Setup the title and detail labels
         this.widget.getTitle().setText(trackingItem.getIdentifier());
         String detail = trackingItem.getDetail();
         if (detail != null) {
@@ -55,6 +59,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
         // TODO set duration button listener to bring up the duration selection.
         this.setPreMedsButtonListener(trackingItem);
         this.setPostMedsButtonListener(trackingItem);
+        this.setAddNoteButtonListener(trackingItem);
     }
 
     private void setContentFromLog(@NonNull SymptomLog previousLog) {
@@ -147,6 +152,14 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
                     .setTimestamp(Instant.now())
                     .build();
             this.viewModel.addLoggedElement(log);
+        });
+    }
+
+    private void setAddNoteButtonListener(@NonNull TrackingItem trackingItem) {
+        this.widget.getAddNoteButton().setOnClickListener(view -> {
+            AddNoteFragment<SimpleTrackingItemConfig, SymptomLog, SymptomTrackingTaskViewModel> addNoteFragment =
+                    AddNoteFragment.newInstance(this.viewModel.getStepView(), trackingItem);
+            // TODO add the new fragment and put the current fragment on the back stack.
         });
     }
 

@@ -1,6 +1,7 @@
-package org.sagebionetworks.research.mpower.tracking.view_model;
+package org.sagebionetworks.research.mpower.tracking.view_model.configs;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
+import org.sagebionetworks.research.mpower.tracking.view_model.HasTrackingItem;
 
 public interface TrackingItemConfig extends HasTrackingItem {
     /**

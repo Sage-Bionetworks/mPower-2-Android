@@ -10,11 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.mobile_ui.show_step.ShowStepFragment;
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingItemLog;
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
+import org.sagebionetworks.research.presentation.model.action.ActionType;
+
+import java.util.Map;
 
 public abstract class LoggingFragment
         <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog,
@@ -24,6 +28,14 @@ public abstract class LoggingFragment
     @NonNull
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
+        Map<String, Action> actions = this.stepView.getLoggingInfo().getActions();
+        if (actions != null && !actions.isEmpty()) {
+            Action addMore = actions.get(ActionType.ADD_MORE);
+            if (this.addMore != null) {
+                this.addMore.setText(addMore.getButtonTitle());
+            }
+        }
+
         this.title.setText(this.stepView.getLoggingInfo().getTitle());
         this.detail.setText(this.stepView.getLoggingInfo().getDetail());
         if (this.addMore != null) {

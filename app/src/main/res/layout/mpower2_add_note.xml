@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/add_note_label"
+        style="@style/Widget.MPower.TextView.SelectionSectionTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:text="Add a note"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rs2_step_navigation_action_backward" />
+
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/rs2_step_navigation_action_backward"
+        android:layout_width="32dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/mpower2_purple_arrow"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/today_label"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="Today, December 14th, 2017 "
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_note_label" />
+
+    <EditText
+        android:id="@+id/note_input"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/mpower2_note_input_border"
+        android:ems="10"
+        android:gravity="left"
+        android:inputType="textMultiLine"
+        android:paddingBottom="4dp"
+        android:paddingEnd="8dp"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/rs2_step_navigation_action_forward"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/today_label" />
+
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/rs2_step_navigation_action_forward"
+        style="@style/Widget.ResearchStack.NavigationActionBar.PrimaryButton.Forward"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginStart="28dp"
+        android:text="Submit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</android.support.constraint.ConstraintLayout>

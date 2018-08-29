@@ -30,6 +30,8 @@ public class SymptomsLoggingUIFormItemWidget extends ConstraintLayout {
     ActionButton timeButton;
     @BindView(R.id.duration_button)
     ActionButton durationButton;
+    @BindView(R.id.add_note_button)
+    ActionButton addNoteButton;
     @BindView(R.id.pre_meds_button)
     MPowerRadioButton preMedsButton;
     @BindView(R.id.post_meds_button)
@@ -67,6 +69,10 @@ public class SymptomsLoggingUIFormItemWidget extends ConstraintLayout {
 
     public List<RadioButton> getSeverityButtons() {
         return this.severityButtons;
+    }
+
+    public ActionButton getAddNoteButton() {
+        return this.addNoteButton;
     }
 
     public ActionButton getTimeButton() {

@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import org.sagebionetworks.research.mobile_ui.show_step.ShowStepFragment;
-import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingItemLog;
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingTaskViewModel;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
@@ -13,7 +13,7 @@ public class TriggersSelectionFragment extends SelectionFragment<SimpleTrackingI
     @NonNull
     public static SelectionFragment newInstance(@NonNull StepView step) {
         TriggersSelectionFragment fragment = new TriggersSelectionFragment();
-        Bundle args = RecyclerViewTrackingFragment.createArguments(step);
+        Bundle args = TrackingFragment.createArguments(step);
         fragment.setArguments(args);
         return fragment;
     }

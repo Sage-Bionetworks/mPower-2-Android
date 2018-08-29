@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.tracking.model;
 
 
 import android.os.Build;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -11,7 +12,7 @@ import com.google.gson.TypeAdapter;
 
 
 @AutoValue
-public abstract class TrackingItem implements SelectionUIFormItem {
+public abstract class TrackingItem implements SelectionUIFormItem, Parcelable {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract TrackingItem build();
