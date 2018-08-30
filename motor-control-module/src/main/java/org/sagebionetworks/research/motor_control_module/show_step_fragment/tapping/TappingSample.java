@@ -5,7 +5,6 @@
 
 package org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping;
 
-import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -13,7 +12,6 @@ import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
-import org.threeten.bp.Duration;
 import org.threeten.bp.Instant;
 
 @AutoValue
@@ -22,45 +20,57 @@ public abstract class TappingSample {
     public abstract static class Builder {
         public abstract TappingSample build();
 
-        public abstract Builder setUptime(@NonNull Instant uptime);
+        public abstract Builder setButtonIdentifier(@TappingButtonIdentifier @NonNull String buttonIdentifier);
 
-        public abstract Builder setTimestamp(@Nullable Instant timestamp);
+        public abstract Builder setDuration(@NonNull double duration);
+
+        public abstract Builder setLocation(float[] location);
 
         public abstract Builder setStepPath(@NonNull String stepPath);
 
-        public abstract Builder setButtonIdentifier(@TappingButtonIdentifier @NonNull String buttonIdentifier);
+        public Builder setTimestamp(@Nullable Instant timestamp) {
+            return setTimestamp(toEpochSeconds(timestamp));
+        }
 
-        public abstract Builder setLocation(@NonNull Point location);
+        public abstract Builder setTimestamp(double timestamp);
 
-        public abstract Builder setDuration(@NonNull Duration duration);
+        public abstract Builder setUptime(double uptime);
+
+        public Builder setUptime(@NonNull Instant uptimeInstant) {
+            return setUptime(toEpochSeconds(uptimeInstant));
+        }
     }
 
     public static Builder builder() {
         return new AutoValue_TappingSample.Builder();
     }
 
+    public static double toEpochSeconds(Instant instant) {
+        return (double) instant.getEpochSecond()
+                + (double) instant.getNano() / 1_000_000_000;
+    }
+
     public static TypeAdapter<TappingSample> typeAdapter(Gson gson) {
         return new AutoValue_TappingSample.GsonTypeAdapter(gson);
     }
-
-    public abstract Builder toBuilder();
-
-    @NonNull
-    public abstract Instant getUptime();
-
-    @Nullable
-    public abstract Instant getTimestamp();
-
-    @NonNull
-    public abstract String getStepPath();
 
     @TappingButtonIdentifier
     @NonNull
     public abstract String getButtonIdentifier();
 
-    @NonNull
-    public abstract Point getLocation();
+    public abstract double getDuration();
 
     @NonNull
-    public abstract Duration getDuration();
+    public abstract float[] getLocation();
+
+    @NonNull
+    public abstract String getStepPath();
+
+    public abstract double getTimestamp();
+
+    @NonNull
+    public abstract double getUptime();
+
+    @NonNull
+    public abstract Builder toBuilder();
 }
