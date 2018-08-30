@@ -34,6 +34,11 @@
             android:label="@string/title_activity_external_id_sign_in"
             android:theme="@style/MPowerTheme"
             android:windowSoftInputMode="adjustResize"/>
+
+        <activity android:name=".studyburst.StudyBurstActivity"
+                  android:screenOrientation="portrait">
+
+        </activity>
     </application>
 
 </manifest>
