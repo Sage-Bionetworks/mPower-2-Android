@@ -39,7 +39,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import org.sagebionetworks.research.domain.form.interfaces.Choice;
-import org.sagebionetworks.research.domain.mobile_ui.R;
+import org.sagebionetworks.research.mobile_ui.R;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 
 public class HandSelectionViewHolder extends RecyclerView.ViewHolder {

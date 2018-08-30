@@ -6,16 +6,12 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
-import org.sagebionetworks.research.domain.task.Task;
-import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowActiveUIStepFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowActiveUIStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.view_binding.ActiveUIStepViewBinding;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.motor_control_module.R;
 import org.sagebionetworks.research.motor_control_module.step_view.MPowerActiveUIStepView;
-import org.sagebionetworks.research.presentation.model.interfaces.ActiveUIStepView;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowActiveUIStepViewModel;
 
@@ -49,7 +45,7 @@ public class ShowMPowerActiveUIStepFragment extends ShowActiveUIStepFragmentBase
     @Override
     protected void update(MPowerActiveUIStepView stepView) {
         super.update(stepView);
-        TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
+        TaskResult taskResult = this.performTaskViewModel.getTaskResult();
         HandStepUIHelper.update(taskResult, stepView, this.stepViewBinding);
         // Underline the skip button
         ActionButton skipButton = this.stepViewBinding.getSkipButton();

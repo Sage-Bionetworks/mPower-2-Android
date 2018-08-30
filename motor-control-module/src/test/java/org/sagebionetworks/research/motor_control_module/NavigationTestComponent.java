@@ -7,7 +7,6 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 
-@Singleton
 @Component(modules = TaskModule.class)
 public interface NavigationTestComponent {
     StepNavigatorFactory stepNavigatorFactory();

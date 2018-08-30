@@ -1,7 +1,6 @@
 package org.sagebionetworks.research.motor_control_module.show_step_view_model;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.graphics.Point;
@@ -9,9 +8,7 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.view.MotionEvent;
-
 import com.google.common.collect.ImmutableList;
-
 import org.sagebionetworks.research.domain.result.interfaces.CollectionResult;
 import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
@@ -32,15 +29,17 @@ import java.util.List;
 import java.util.Map;
 
 public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingStepView> {
+    private static final String RESULT_POSTFIX_TAPPING_SAMPLES = ".samples";
+
     LiveData<Boolean> expired;
     List<TappingSample> samples;
-    private Map<String, TappingSample> lastSample;
     MutableLiveData<Instant> tappingStart;
     MutableLiveData<Rect> buttonRect1;
     MutableLiveData<Rect> buttonRect2;
     MutableLiveData<Point> viewSize;
     MutableLiveData<Integer> hitButtonCount;
     MutableLiveData<String> lastTappedButtonIdentifier;
+    private Map<String, TappingSample> lastSample;
 
 
     public ShowTappingStepViewModel(
@@ -113,6 +112,7 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
 
     /**
      * Returns the last index in samples of a TappingSample that matches the given sample.
+     *
      * @param sample The sample to get the last matching index of.
      * @return the last index in samples of a TappingSample that matches the given sample.
      */
@@ -131,7 +131,8 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
 
     /**
      * Creates a sample for the given motion event and buttonIdentifier
-     * @param event The event to create a sample for.
+     *
+     * @param event            The event to create a sample for.
      * @param buttonIdentifier The identifier of the button to create the sample for.
      */
     public void createSample(MotionEvent event, @TappingButtonIdentifier String buttonIdentifier) {
@@ -146,7 +147,7 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
                 .setButtonIdentifier(buttonIdentifier)
                 // TODO create a real step path.
                 .setStepPath(this.stepView.getIdentifier())
-                .setLocation(new Point((int)event.getX(), (int)event.getY()))
+                .setLocation(new Point((int) event.getX(), (int) event.getY()))
                 .setDuration(Duration.ofMillis(0))
                 .build();
 
@@ -156,7 +157,8 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
 
     /**
      * Updates the lastSample using the given timestamp as the end of the sample.
-     * @param timestamp The timestamp of when the sample should end.
+     *
+     * @param timestamp        The timestamp of when the sample should end.
      * @param buttonIdentifier The identifier of the button which corresponds to the sample.
      */
     public void updateLastSample(Instant timestamp, @TappingButtonIdentifier String buttonIdentifier) {
@@ -180,11 +182,12 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
     /**
      * Returns the String to display on the nextButton, either "Continue with <left or right> hand" or
      * or "Next" depending on whether there is another hand that is supposed to go after this one.
+     *
      * @return the String to display on the nextButton.
      */
     @StringRes
     public int getNextButtonLabel() {
-        TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
+        TaskResult taskResult = this.performTaskViewModel.getTaskResult();
         if (taskResult != null) {
             HandStepHelper.Hand thisHand = HandStepHelper.whichHand(this.stepView.getIdentifier());
             if (thisHand != null) {
@@ -210,7 +213,7 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
         Instant startTime;
         if (previousResult instanceof TappingResult) {
             // If the previous result is a TappingResult we use it's identifier and startTime.
-            TappingResult tappingResult = (TappingResult)previousResult;
+            TappingResult tappingResult = (TappingResult) previousResult;
             identifier = tappingResult.getIdentifier();
             startTime = tappingResult.getStartTime();
         } else {
@@ -220,7 +223,7 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
         }
 
         TappingResult updatedResult = TappingResult.builder()
-                .setIdentifier(identifier)
+                .setIdentifier(identifier + RESULT_POSTFIX_TAPPING_SAMPLES)
                 .setStartTime(startTime)
                 .setEndTime(Instant.now())
                 .setButtonRect1(this.buttonRect1.getValue())
