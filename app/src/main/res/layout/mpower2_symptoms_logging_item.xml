@@ -149,7 +149,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
         android:layout_marginTop="18dp"
-        android:text="7:00 AM"
+        android:text="@string/symptoms_logging_time_button_default"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
@@ -159,7 +159,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
-        android:text="Add duration"
+        android:text="@string/symptoms_logging_duration_button_default"
         app:layout_constraintStart_toEndOf="@+id/time_button"
         app:layout_constraintTop_toTopOf="@+id/time_button" />
 

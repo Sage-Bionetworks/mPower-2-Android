@@ -15,6 +15,7 @@ import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomAddNoteFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.TimePickerFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TriggersLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TriggersSelectionFragment;
@@ -61,6 +62,9 @@ public interface MPowerApplicationModule {
 
     @ContributesAndroidInjector
     DurationFragment contributeDurationFragmentInjector();
+
+    @ContributesAndroidInjector
+    TimePickerFragment contributeTimePickerFragmentInjector();
 
     @ContributesAndroidInjector
     TrackingMenuFragment contributeTrackingMenuFragmentInjector();

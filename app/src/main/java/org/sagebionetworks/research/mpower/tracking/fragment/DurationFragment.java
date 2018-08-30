@@ -159,7 +159,6 @@ public class DurationFragment extends TrackingFragment<SimpleTrackingItemConfig,
             SymptomLog log = this.viewModel.getLog(this.trackingItem);
             log = log.toBuilder()
                     .setDuration(selected)
-                    .setTimestamp(Instant.now())
                     .build();
             this.viewModel.addLoggedElement(log);
             this.goToParentFragment();

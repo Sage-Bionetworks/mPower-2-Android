@@ -54,6 +54,10 @@
     <string name="tracking_left_label">Symptom</string>
     <string name="tracking_right_label">Trigger</string>
 
+    <string name="symptoms_logging_time_button_default">Add time</string>
+    <string name="symptoms_logging_duration_button_default">Add duration</string>
+    <string name="symptoms_logging_duration_button_logged">Edit duration</string>
+
     <string name="symptoms_duration_title">Duration</string>
     <string name="symptoms_duration_detail">Select one</string>
     <string name="symptoms_duration_0">Currently occurring</string>
@@ -62,4 +66,7 @@
     <string name="symptoms_duration_3">All [morning / afternoon / evening]</string>
     <string name="symptoms_duration_4">Half the day</string>
     <string name="symptoms_duration_5">All day long</string>
+
+    <string name="time_picker_ok_button">Ok</string>
+    <string name="time_picker_cancel_button">Cancel</string>
 </resources>
