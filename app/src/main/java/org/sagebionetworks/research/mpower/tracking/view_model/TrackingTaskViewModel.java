@@ -120,21 +120,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
 
         this.activeElements.setValue(result);
     }
-
-    /**
-     * Returns true if the user has selected the given TrackingItem as one they would like to track, false otherwise.
-     * @param trackingItem The TrackingItem to test if the user would like to track.
-     * @return true if the user has selected the given TrackingItem as one they would ike to track, false otherwise.
-     */
-    public boolean isSelected(@NonNull TrackingItem trackingItem) {
-        Set<ConfigType> activeElements = this.activeElements.getValue();
-        if (activeElements != null) {
-            return TrackingTaskViewModel
-                    .containsMatchingTrackingItem(activeElements, trackingItem);
-        } else {
-            return false;
-        }
-    }
     // endregion
 
     // region Configuration

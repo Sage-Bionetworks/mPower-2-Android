@@ -1,14 +1,18 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.widget.PaddingUtil;
 import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
@@ -17,37 +21,48 @@ import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWi
  */
 public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
     private SelectionUIFormItemWidget widget;
-    private TrackingItem trackingItem;
-    private boolean selected;
-    private TrackingTaskViewModel<?, ?> viewModel;
 
-    public SelectionItemViewHolder(final SelectionUIFormItemWidget itemView, TrackingTaskViewModel<?, ?> viewModel) {
+    private TrackingItem trackingItem;
+    private LiveData<Boolean> selected;
+    private TrackingTaskViewModel<? extends TrackingItemConfig, ?> viewModel;
+    private TrackingFragment<?, ?, ?> trackingFragment;
+
+    public SelectionItemViewHolder(final SelectionUIFormItemWidget itemView,
+            TrackingTaskViewModel<? extends TrackingItemConfig, ?> viewModel, TrackingFragment<?, ?, ?> trackingFragment) {
         super(itemView);
+        this.trackingFragment = trackingFragment;
         this.viewModel = viewModel;
-        this.widget = itemView;
         this.trackingItem = null;
+        this.widget = itemView;
         this.widget.setOnClickListener(view -> {
             // We only care about the user click if it occurred on a tracking item and not a section.
             if (this.trackingItem != null) {
-                this.setSelected(!this.selected);
-                if (this.selected) {
+                if (this.selected.getValue() == null || !this.selected.getValue()) {
                     this.viewModel.itemSelected(this.trackingItem);
                 } else {
                     this.viewModel.itemDeselected(this.trackingItem);
                 }
             }
         });
-        this.selected = false;
+
+        this.selected = Transformations.map(this.viewModel.getActiveElements(), elements -> {
+            if (this.trackingItem != null) {
+                for (TrackingItemConfig config : elements) {
+                    if (config.getTrackingItem().getIdentifier().equals(this.trackingItem.getIdentifier())) {
+                        // If there is an active config with the same identifier as this's content this is selected
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        });
+
+        this.selected.observe(this.trackingFragment, this::updateSelected);
     }
 
     public void setContent(@NonNull TrackingItem trackingItem) {
         this.trackingItem = trackingItem;
-        if (this.viewModel.isSelected(trackingItem)) {
-            this.setSelected(true);
-        } else {
-            this.setSelected(false);
-        }
-
         // Set the top padding for an item to 16.
         PaddingUtil.setTopPadding(this.widget.getText(), 16);
         this.widget.getText().setTextSize(16f);
@@ -56,26 +71,21 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
 
     public void setContent(@NonNull TrackingSection trackingSection) {
         this.trackingItem = null;
-        // A section cannot be selected.
-        this.setSelected(false);
         // Increase the top padding for a section to 28.
         PaddingUtil.setTopPadding(this.widget.getText(), 28);
         this.widget.getText().setTextSize(20f);
         this.setLabels(trackingSection.getIdentifier(), trackingSection.getDetail());
     }
 
-    private void setSelected(boolean selected) {
-        if (this.selected != selected) {
-            if (selected) {
-                this.widget.getBackgroundView()
-                        .setBackgroundColor(this.widget.getResources().getColor(R.color.royal200));
-            } else {
-                this.widget.getBackgroundView()
-                        .setBackgroundColor(this.widget.getResources().getColor(R.color.transparent));
-            }
-
-            this.selected = selected;
+    private void updateSelected(@Nullable Boolean selected) {
+        if (selected != null && selected) {
+            this.widget.getBackgroundView()
+                    .setBackgroundColor(this.widget.getResources().getColor(R.color.royal200));
+        } else {
+            this.widget.getBackgroundView()
+                    .setBackgroundColor(this.widget.getResources().getColor(R.color.transparent));
         }
+
     }
 
     private void setLabels(@NonNull String text, @Nullable String detail) {

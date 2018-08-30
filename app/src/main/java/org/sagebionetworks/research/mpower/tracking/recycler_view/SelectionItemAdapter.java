@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.google.common.collect.ImmutableList;
 
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.SelectionUIFormItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
@@ -24,10 +25,12 @@ import java.util.Set;
 public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemViewHolder> {
     private final ImmutableList<SelectionUIFormItem> selectionItems;
     private final TrackingTaskViewModel<?, ?> viewModel;
+    private final TrackingFragment<?, ?, ?> trackingFragment;
 
     public SelectionItemAdapter(@NonNull Map<TrackingSection, Set<TrackingItem>> selectionItems,
-            @NonNull TrackingTaskViewModel<?, ?> viewModel) {
+            @NonNull TrackingTaskViewModel<?, ?> viewModel, TrackingFragment<?, ?, ?> trackingFragment) {
         this.viewModel = viewModel;
+        this.trackingFragment = trackingFragment;
         ImmutableList.Builder<SelectionUIFormItem> selectionItemsBuilder = new ImmutableList.Builder<>();
         for (Entry<TrackingSection, Set<TrackingItem>> entry : selectionItems.entrySet()) {
             selectionItemsBuilder.add(entry.getKey());
@@ -42,7 +45,7 @@ public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemView
     public SelectionItemViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
         SelectionUIFormItemWidget widget = (SelectionUIFormItemWidget) LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.mpower2_selection_view_holder, parent, false);
-        return new SelectionItemViewHolder(widget, this.viewModel);
+        return new SelectionItemViewHolder(widget, this.viewModel, this.trackingFragment);
     }
 
     @Override

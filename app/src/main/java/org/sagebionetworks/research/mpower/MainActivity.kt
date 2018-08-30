@@ -16,7 +16,7 @@ import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.navigation
 import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity
 import org.sagebionetworks.research.mpower.profile.ProfileFragment
-import org.sagebionetworks.research.mpower.tracking.TrackingFragment
+import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     // Mapping of a tag to a creation method for a fragment
     private val FRAGMENT_TAG_TO_CREATOR = ImmutableMap.Builder<String, Supplier<Fragment>>()
-            .put(TAG_FRAGMENT_TRACKING, Supplier { TrackingFragment() })
+            .put(TAG_FRAGMENT_TRACKING, Supplier { TrackingTabFragment() })
             .put(TAG_FRAGMENT_PROFILE, Supplier { ProfileFragment() })
             .build()
 

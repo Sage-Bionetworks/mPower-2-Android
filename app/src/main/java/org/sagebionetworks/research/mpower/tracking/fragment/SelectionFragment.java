@@ -46,7 +46,7 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
     @Override
     @NonNull
     public Adapter<?> initializeAdapter() {
-        return new SelectionItemAdapter(this.viewModel.getAvailableElements().getValue(), this.viewModel);
+        return new SelectionItemAdapter(this.viewModel.getAvailableElements().getValue(), this.viewModel, this);
     }
 
     @Override

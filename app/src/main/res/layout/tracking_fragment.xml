@@ -5,7 +5,7 @@
     android:id="@+id/fragment_tracking"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".tracking.TrackingFragment">
+    tools:context=".tracking.TrackingTabFragment">
 
     <TextView
         android:id="@+id/textview_scheduled_activities"
