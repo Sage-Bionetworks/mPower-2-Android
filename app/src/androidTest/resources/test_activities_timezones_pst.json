@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "guid": "273c4518-7cb6-4496-b1dd-c0b5bf291b09:2018-08-17T00:00:00.000",
+      "schedulePlanGuid": "e24e6601-1822-48b0-8770-00870d870708",
+      "activity": {
+        "label": "Medication",
+        "guid": "273c4518-7cb6-4496-b1dd-c0b5bf291b09",
+        "task": {
+          "identifier": "Medication",
+          "type": "TaskReference"
+        },
+        "activityType": "task",
+        "type": "Activity"
+      },
+      "persistent": false,
+      "scheduledOn": "2018-08-17T00:00:00.000-08:00",
+      "expiresOn": "2018-08-18T00:00:00.000-08:00",
+      "status": "expired",
+      "type": "ScheduledActivity"
+    }],
+  "requestParams": {
+    "startTime": "2018-08-21T00:00:00.000-08:00",
+    "endTime": "2018-08-24T00:00:00.000-08:00",
+    "type": "RequestParams"
+  },
+  "startTime": "2018-08-21T00:00:00.000-08:00",
+  "endTime": "2018-08-24T00:00:00.000-08:00",
+  "total": 2,
+  "type": "DateTimeRangeResourceList"
+}

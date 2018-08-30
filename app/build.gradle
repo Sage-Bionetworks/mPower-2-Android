@@ -70,6 +70,7 @@ dependencies {
     implementation project(':data')
     implementation project(':sageresearch-mpower')
     implementation project(':researchstack-mpower')
+    implementation project(path: ':motor-control-module')
 
     // ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
@@ -108,6 +109,11 @@ dependencies {
     implementation "com.android.support:support-v4:$support_library_version"
     implementation "com.android.support:appcompat-v7:$support_library_version"
 
+    // room db functionality
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
+    kapt 'android.arch.persistence.room:compiler:1.1.1'
+    androidTestImplementation'android.arch.persistence.room:testing:1.1.1'
+
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
     implementation 'nl.littlerobots.rxlint:rxlint:1.6.1'
@@ -120,5 +126,4 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
     implementation 'com.android.support:support-v4:27.1.1'
-    compile project(path: ':motor-control-module')
 }

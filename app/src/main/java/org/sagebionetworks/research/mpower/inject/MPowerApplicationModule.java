@@ -3,11 +3,11 @@ package org.sagebionetworks.research.mpower.inject;
 import android.app.Application;
 import android.content.Context;
 
+import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
 import org.sagebionetworks.research.mpower.history.HistoryFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;
 import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment;
-import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
 import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
@@ -15,6 +15,7 @@ import org.sagebionetworks.research.mpower.tracking.fragment.SymptomAddNoteFragm
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TimePickerFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TriggersLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TriggersSelectionFragment;
 
@@ -49,7 +50,7 @@ public interface MPowerApplicationModule {
     InsightsFragment contributeInsightsFragmentInjector();
 
     @ContributesAndroidInjector
-    TrackingTabFragment contributeTrackingFragmentInjector();
+    TrackingTabFragment contributeTrackingTabFragmentInjector();
 
     @ContributesAndroidInjector
     SymptomAddNoteFragment contributeSymptomAddNoteFragmentInjector();

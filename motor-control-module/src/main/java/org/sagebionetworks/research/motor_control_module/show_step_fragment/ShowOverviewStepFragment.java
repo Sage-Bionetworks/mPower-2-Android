@@ -42,6 +42,7 @@ import android.view.ViewPropertyAnimator;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 import org.sagebionetworks.research.domain.result.implementations.ResultBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragmentBase;
