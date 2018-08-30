@@ -37,7 +37,7 @@ public class TriggersLoggingFragment extends LoggingFragment<SimpleTrackingItemC
     @Override
     public Adapter<?> initializeAdapter() {
         List<SimpleTrackingItemConfig> activeElements = new ArrayList<>(this.viewModel.getActiveElements().getValue());
-        return new TriggersLoggingItemAdapter(activeElements, this.viewModel);
+        return new TriggersLoggingItemAdapter(activeElements, this.viewModel, this);
     }
 
 }

@@ -40,11 +40,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
     private TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel;
     private SymptomsLoggingUIFormItemWidget widget;
     private SymptomLoggingFragment symptomLoggingFragment;
-    private LiveData<SymptomLog> logLiveData;
-    private LiveData<Integer> severityLiveData;
-    private LiveData<Instant> timestampLiveData;
-    private LiveData<String> durationLiveData;
-    private LiveData<String> medicationTimingLiveData;
+
     private RadioButton previousSelectedSeverityButton;
 
     public SymptomsLoggingItemViewHolder(final SymptomsLoggingUIFormItemWidget itemView, final
@@ -57,24 +53,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     public void setContent(@NonNull SimpleTrackingItemConfig config) {
         TrackingItem trackingItem = config.getTrackingItem();
-        this.logLiveData = Transformations.map(this.viewModel.getLoggedElements(), elements -> {
-            for (SymptomLog log : elements) {
-                if (log.getTrackingItem().getIdentifier().equals(trackingItem.getIdentifier())) {
-                    return log;
-                }
-            }
-
-            return null;
-        });
-
-        this.severityLiveData = Transformations.map(this.logLiveData, log -> log != null ? log.getSeverity() : null);
-        this.severityLiveData.observe(this.symptomLoggingFragment, this::updateSeverityUI);
-        this.timestampLiveData = Transformations.map(this.logLiveData, log -> log != null ? log.getTimestamp() : null);
-        this.timestampLiveData.observe(this.symptomLoggingFragment, this::updateTimestampUI);
-        this.durationLiveData = Transformations.map(this.logLiveData, log -> log != null ? log.getDuration() : null);
-        this.durationLiveData.observe(this.symptomLoggingFragment, this::updateDurationUI);
-        this.medicationTimingLiveData = Transformations.map(this.logLiveData, log -> log != null ? log.getMedicationTiming() : null);
-        this.medicationTimingLiveData.observe(this.symptomLoggingFragment, this::updateMedicationTimingUI);
+        this.setLogObservers(trackingItem);
 
         // Setup the title and detail labels
         this.widget.getTitle().setText(trackingItem.getIdentifier());
@@ -93,6 +72,31 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
         this.setPreMedsButtonListener(trackingItem);
         this.setPostMedsButtonListener(trackingItem);
         this.setAddNoteButtonListener(trackingItem);
+    }
+
+    private void setLogObservers(@NonNull TrackingItem trackingItem) {
+        final LiveData<SymptomLog> logLiveData = Transformations.map(this.viewModel.getLoggedElements(), elements -> {
+            for (SymptomLog log : elements) {
+                if (log.getTrackingItem().getIdentifier().equals(trackingItem.getIdentifier())) {
+                    return log;
+                }
+            }
+
+            return null;
+        });
+
+        final LiveData<Integer> severityLiveData = Transformations
+                .map(logLiveData, log -> log != null ? log.getSeverity() : null);
+        severityLiveData.observe(this.symptomLoggingFragment, this::updateSeverityUI);
+        final LiveData<Instant> timestampLiveData = Transformations
+                .map(logLiveData, log -> log != null ? log.getTimestamp() : null);
+        timestampLiveData.observe(this.symptomLoggingFragment, this::updateTimestampUI);
+        final LiveData<String> durationLiveData = Transformations
+                .map(logLiveData, log -> log != null ? log.getDuration() : null);
+        durationLiveData.observe(this.symptomLoggingFragment, this::updateDurationUI);
+        final LiveData<String> medicationTimingLiveData = Transformations
+                .map(logLiveData, log -> log != null ? log.getMedicationTiming() : null);
+        medicationTimingLiveData.observe(this.symptomLoggingFragment, this::updateMedicationTimingUI);
     }
 
     private void setSeverityButtonListeners(@NonNull TrackingItem trackingItem) {
