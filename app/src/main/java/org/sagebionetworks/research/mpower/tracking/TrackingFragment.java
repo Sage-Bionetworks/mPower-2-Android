@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.tracking;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.google.common.base.Strings;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.tracking.TrackingViewModel.ScheduledActivityView;
 
 import java.util.List;
@@ -77,6 +79,10 @@ public class TrackingFragment extends Fragment {
         // Move the status bar down by the window insets.
         OnApplyWindowInsetsListener listener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
         ViewCompat.setOnApplyWindowInsetsListener(this.trackingStatusBar, listener);
+
+        this.trackingStatusBar.setOnClickListener((View v) -> {
+                startActivity(new Intent(getActivity(), StudyBurstActivity.class));
+            });
         return view;
     }
 

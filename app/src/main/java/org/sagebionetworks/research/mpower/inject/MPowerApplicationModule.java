@@ -13,6 +13,7 @@ import org.sagebionetworks.research.mpower.history.HistoryFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
 import org.sagebionetworks.research.mpower.sageresearch.archive.TappingResultArchiveFactory;
+import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.tracking.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AbstractResultArchiveFactory.ResultArchiveFactory;
@@ -44,6 +45,9 @@ public abstract class MPowerApplicationModule {
 
     @ContributesAndroidInjector
     abstract ProfileFragment contributeProfileFragmentInjector();
+
+    @ContributesAndroidInjector
+    abstract StudyBurstActivity contributeStudyBurstActivityInjector();
 
     @ContributesAndroidInjector
     abstract TrackingFragment contributeTrackingFragmentInjector();

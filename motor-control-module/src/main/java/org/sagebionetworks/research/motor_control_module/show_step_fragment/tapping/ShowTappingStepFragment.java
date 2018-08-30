@@ -236,6 +236,7 @@ public class ShowTappingStepFragment extends
         DisplayMetrics dm = this.getResources().getDisplayMetrics();
         this.showStepViewModel.setViewSize(new int[]{dm.widthPixels, dm.heightPixels});
         long finishTimeInUptimeMillis = SystemClock.uptimeMillis();
+        // TODO: verify whether button up is appropriate @liujoshua 2018/08/30
         this.showStepViewModel.handleButtonUp(finishTimeInUptimeMillis, TappingButtonIdentifier.LEFT);
         this.showStepViewModel.handleButtonUp(finishTimeInUptimeMillis, TappingButtonIdentifier.RIGHT);
         this.showStepViewModel.updateTappingResult();
