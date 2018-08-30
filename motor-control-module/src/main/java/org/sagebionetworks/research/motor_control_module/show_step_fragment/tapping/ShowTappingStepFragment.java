@@ -39,41 +39,25 @@ package org.sagebionetworks.research.motor_control_module.show_step_fragment.tap
 import android.animation.Animator;
 import android.arch.lifecycle.Observer;
 import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.google.common.collect.ImmutableList;
-
-import org.sagebionetworks.research.domain.result.interfaces.CollectionResult;
-import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
-import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowActiveUIStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.motor_control_module.R;
-import org.sagebionetworks.research.motor_control_module.result.TappingResult;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.HandStepUIHelper;
 import org.sagebionetworks.research.motor_control_module.show_step_view_model.ShowTappingStepViewModel;
 import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
 import org.sagebionetworks.research.motor_control_module.step_view.TappingStepView;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
-import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowActiveUIStepViewModel;
-import org.threeten.bp.Duration;
-import org.threeten.bp.Instant;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ShowTappingStepFragment extends
         ShowActiveUIStepFragmentBase<TappingStepView, ShowTappingStepViewModel, TappingStepViewBinding> {
@@ -87,44 +71,6 @@ public class ShowTappingStepFragment extends
         fragment.setArguments(arguments);
         return fragment;
     }
-
-    @Override
-    public Observer<Long> getCountdownObserver() {
-        return count -> {
-            if (count == null || count == 0) {
-                return;
-            }
-
-            Integer duration = ((Long) this.stepView.getDuration().getSeconds()).intValue();
-            int from = (int) (duration - count);
-            Animator animator = this.getCountdownAnimator(from, from + 1);
-            animator.start();
-        };
-    }
-
-    @Override
-    public void update(TappingStepView stepView) {
-        super.update(stepView);
-        TaskResult taskResult = this.performTaskViewModel.getTaskResult();
-        HandStepUIHelper.update(taskResult, stepView, this.stepViewBinding);
-        // Underline the skip button
-        ActionButton skipButton = this.stepViewBinding.getSkipButton();
-        if (skipButton != null) {
-            skipButton.setPaintFlags(skipButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        }
-    }
-
-    @Override
-    protected int getLayoutId() {
-        return R.layout.mpower2_tapping_step;
-    }
-
-    @NonNull
-    @Override
-    protected TappingStepViewBinding instantiateAndBindBinding(View view) {
-        return new TappingStepViewBinding(view);
-    }
-    // endregion
 
     // region Fragment Lifecycle
     @Override
@@ -164,7 +110,7 @@ public class ShowTappingStepFragment extends
         this.stepViewBinding.getNavigationActionBar().setAlpha(0f);
         // Add a PreDrawListener that updates the locations of the buttons for the tapping result.
         this.stepViewBinding.getRootView().getViewTreeObserver()
-                .addOnPreDrawListener(this::updateButtonBounds);
+                .addOnGlobalLayoutListener(this::updateButtonBounds);
         this.nextButtonTitle = this.getResources().getString(this.showStepViewModel.getNextButtonLabel());
         this.nextButtonTitle.replaceAll(HandStepHelper.JSON_PLACEHOLDER,
                 HandStepHelper.whichHand(this.stepView.getIdentifier()).toString());
@@ -177,74 +123,42 @@ public class ShowTappingStepFragment extends
         return result;
     }
 
-    /**
-     * Private helper that can function as a PreDrawListener that updates the positions of the buttons, and root view
-     * on the screen for the tapping result. Always returns true so drawing proceeds as normal.
-     *
-     * @return true so drawing always happens as normal when used as a PreDrawListener.
-     */
-    private boolean updateButtonBounds() {
-        ActionButton leftButton = this.stepViewBinding.getLeftTapButton();
-        if (leftButton != null) {
-            Rect buttonRect1 = new Rect();
-            buttonRect1.set(leftButton.getLeft(), leftButton.getTop(), leftButton.getRight(), leftButton.getBottom());
-            this.showStepViewModel.getButtonRect1().setValue(buttonRect1);
-        }
+    @Override
+    public Observer<Long> getCountdownObserver() {
+        return count -> {
+            if (count == null || count == 0) {
+                return;
+            }
 
-        ActionButton rightButton = this.stepViewBinding.getRightTapButton();
-        if (rightButton != null) {
-            Rect buttonRect2 = new Rect();
-            buttonRect2.set(rightButton.getLeft(), rightButton.getTop(), rightButton.getRight(),
-                    rightButton.getBottom());
-            this.showStepViewModel.getButtonRect2().setValue(buttonRect2);
-        }
-
-        View view = this.stepViewBinding.getRootView();
-        if (view != null) {
-            this.showStepViewModel.getViewSize().setValue(new Point(view.getWidth(), view.getHeight()));
-        }
-
-        // Always return true to proceed with drawing.
-        return true;
+            Integer duration = ((Long) this.stepView.getDuration().getSeconds()).intValue();
+            int from = (int) (duration - count);
+            Animator animator = this.getCountdownAnimator(from, from + 1);
+            animator.start();
+        };
     }
 
-    /**
-     * Called when this tapping step finishes.
-     */
-    private void tappingFinished() {
-        Instant timestamp = Instant.now();
-        this.showStepViewModel.updateLastSample(timestamp, TappingButtonIdentifier.LEFT);
-        this.showStepViewModel.updateLastSample(timestamp, TappingButtonIdentifier.RIGHT);
-        this.showStepViewModel.updateTappingResult();
-        this.stepViewBinding.getNavigationActionBar().setVisibility(View.VISIBLE);
-        this.stepViewBinding.getNextButton().setText(this.nextButtonTitle);
-        this.stepViewBinding.getTappingButtonView().animate().alpha(0f).setDuration(300)
-                .withEndAction(() -> {
-                    this.stepViewBinding.getLeftTapButton().setVisibility(View.GONE);
-                    this.stepViewBinding.getRightTapButton().setVisibility(View.GONE);
-                })
-                .start();
-        this.stepViewBinding.getNavigationActionBar().animate().alpha(1f).setDuration(300).start();
+    @Override
+    public void update(TappingStepView stepView) {
+        super.update(stepView);
+        TaskResult taskResult = this.performTaskViewModel.getTaskResult();
+        HandStepUIHelper.update(taskResult, stepView, this.stepViewBinding);
+        // Underline the skip button
+        ActionButton skipButton = this.stepViewBinding.getSkipButton();
+        if (skipButton != null) {
+            skipButton.setPaintFlags(skipButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        }
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.mpower2_tapping_step;
     }
     // endregion
 
-    // region User Input Listeners
-
-    /**
-     * Called when a MotionEvent has occurred.
-     *
-     * @param buttonIdentifier
-     *         The identifier of the button that has been tapped.
-     * @param motionEvent
-     *         The MotionEvent that occurred.
-     */
-    private void handleMotionEvent(@TappingButtonIdentifier String buttonIdentifier,
-            MotionEvent motionEvent) {
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-            this.buttonPressed(buttonIdentifier, motionEvent);
-        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-            this.buttonReleased(buttonIdentifier, motionEvent);
-        }
+    @NonNull
+    @Override
+    protected TappingStepViewBinding instantiateAndBindBinding(View view) {
+        return new TappingStepViewBinding(view);
     }
 
     /**
@@ -261,12 +175,19 @@ public class ShowTappingStepFragment extends
             return;
         }
 
+        // y converted to top-left -> bottom-right coordinate system. may be float for devices with sub-pixel accuracy
+        float yTouchFromTopLeft = (float) this.getResources().getDisplayMetrics().heightPixels - event.getRawY();
+        float xTouch = event.getRawX();
+        long eventTimeInUptimeMillis = event.getEventTime();
+
         if (this.showStepViewModel.getLastTappedButtonIdentifier().getValue() != buttonIdentifier) {
             // TODO say the word tap if accessibility voice is turned on.
         }
 
+        // TODO: send non-Android class to VM
         // Forward the button press to the view model.
-        this.showStepViewModel.handleButtonPress(buttonIdentifier, event);
+        this.showStepViewModel
+                .handleButtonPress(buttonIdentifier, eventTimeInUptimeMillis, xTouch, yTouchFromTopLeft);
     }
 
     /**
@@ -284,8 +205,75 @@ public class ShowTappingStepFragment extends
         }
 
         if (this.showStepViewModel.userIsTapping()) {
-            this.showStepViewModel.updateLastSample(Instant.ofEpochMilli(event.getEventTime()), buttonIdentifier);
+            this.showStepViewModel.handleButtonUp(event.getEventTime(), buttonIdentifier);
         }
+    }
+
+    /**
+     * Called when a MotionEvent has occurred.
+     *
+     * @param buttonIdentifier
+     *         The identifier of the button that has been tapped.
+     * @param motionEvent
+     *         The MotionEvent that occurred.
+     */
+    private void handleMotionEvent(@TappingButtonIdentifier String buttonIdentifier,
+            MotionEvent motionEvent) {
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            this.buttonPressed(buttonIdentifier, motionEvent);
+        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+            this.buttonReleased(buttonIdentifier, motionEvent);
+        }
+    }
+    // endregion
+
+    // region User Input Listeners
+
+    /**
+     * Called when this tapping step finishes.
+     */
+    private void tappingFinished() {
+        DisplayMetrics dm = this.getResources().getDisplayMetrics();
+        this.showStepViewModel.setViewSize(new int[]{dm.widthPixels, dm.heightPixels});
+        long finishTimeInUptimeMillis = SystemClock.uptimeMillis();
+        this.showStepViewModel.handleButtonUp(finishTimeInUptimeMillis, TappingButtonIdentifier.LEFT);
+        this.showStepViewModel.handleButtonUp(finishTimeInUptimeMillis, TappingButtonIdentifier.RIGHT);
+        this.showStepViewModel.updateTappingResult();
+        this.stepViewBinding.getNavigationActionBar().setVisibility(View.VISIBLE);
+        this.stepViewBinding.getNextButton().setText(this.nextButtonTitle);
+        this.stepViewBinding.getTappingButtonView().animate().alpha(0f).setDuration(300)
+                .withEndAction(() -> {
+                    this.stepViewBinding.getLeftTapButton().setVisibility(View.GONE);
+                    this.stepViewBinding.getRightTapButton().setVisibility(View.GONE);
+                })
+                .start();
+        this.stepViewBinding.getNavigationActionBar().animate().alpha(1f).setDuration(300).start();
+    }
+
+    /**
+     * Private helper that can function as a PreDrawListener that updates the positions of the buttons, and root view
+     * on the screen for the tapping result. Always returns true so drawing proceeds as normal.
+     *
+     * @return true so drawing always happens as normal when used as a PreDrawListener.
+     */
+    private boolean updateButtonBounds() {
+        ActionButton leftButton = this.stepViewBinding.getLeftTapButton();
+        updateButtonBounds(leftButton);
+        ActionButton rightButton = this.stepViewBinding.getRightTapButton();
+        updateButtonBounds(rightButton);
+
+        return true;
+    }
+
+    private void updateButtonBounds(ActionButton actionButton) {
+        if (actionButton == null) {
+            return;
+        }
+        int buttonId = actionButton.getId();
+        int[] topLeft = new int[2];
+        actionButton.getLocationOnScreen(topLeft);
+        showStepViewModel.setTappingButtonBounds(buttonId,
+                new int[]{topLeft[0], topLeft[1], actionButton.getWidth(), actionButton.getHeight()});
     }
     // endregion
 }

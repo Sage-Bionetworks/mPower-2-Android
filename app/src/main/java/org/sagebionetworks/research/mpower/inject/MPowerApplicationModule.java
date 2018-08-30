@@ -1,9 +1,6 @@
 package org.sagebionetworks.research.mpower.inject;
 
-import android.app.Application;
 import com.google.common.collect.ImmutableList;
-
-import android.content.Context;
 
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule;
@@ -39,8 +36,9 @@ public abstract class MPowerApplicationModule {
     abstract InsightsFragment contributeInsightsFragmentInjector();
 
     @ContributesAndroidInjector
-    abstract MainActivity contributeMainActivityInjector();    
+    abstract MainActivity contributeMainActivityInjector();
 
+    // these modules contain an aggregate of ShowStepFragment subcomponents, so they are scoped under the PerformTaskFragment
     @ContributesAndroidInjector(modules = {ShowStepFragmentModule.class, MotorControlShowStepFragmentsModule.class})
     abstract PerformTaskFragment contributePerformTaskFragmentInjector();
 

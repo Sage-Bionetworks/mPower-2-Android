@@ -11,10 +11,10 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import org.researchstack.backbone.ResearchStack;
-import org.sagebionetworks.bridge.android.BridgeApplication;
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
 import org.sagebionetworks.research.mpower.inject.DaggerMPowerApplicationComponent;
 import org.sagebionetworks.research.mpower.inject.MPowerApplicationComponent;
+import org.sagebionetworks.research.sageresearch.BridgeSageResearchApp;
 
 import javax.inject.Inject;
 
@@ -24,7 +24,7 @@ import dagger.android.HasActivityInjector;
 import dagger.android.HasServiceInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
-public class MPowerApplication extends BridgeApplication implements HasSupportFragmentInjector,
+public class MPowerApplication extends BridgeSageResearchApp implements HasSupportFragmentInjector,
         HasActivityInjector, HasServiceInjector {
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingActivityInjector;

@@ -22,22 +22,18 @@ public abstract class TappingSample {
 
         public abstract Builder setButtonIdentifier(@TappingButtonIdentifier @NonNull String buttonIdentifier);
 
-        public abstract Builder setDuration(@NonNull double duration);
+        public abstract Builder setDuration(double duration);
 
-        public abstract Builder setLocation(float[] location);
+        public abstract Builder setLocation(@NonNull float[] location);
 
         public abstract Builder setStepPath(@NonNull String stepPath);
-
-        public Builder setTimestamp(@Nullable Instant timestamp) {
-            return setTimestamp(toEpochSeconds(timestamp));
-        }
 
         public abstract Builder setTimestamp(double timestamp);
 
         public abstract Builder setUptime(double uptime);
 
-        public Builder setUptime(@NonNull Instant uptimeInstant) {
-            return setUptime(toEpochSeconds(uptimeInstant));
+        public Builder setUptime(long uptimeMillis) {
+            return setUptime((double) uptimeMillis / 1_000);
         }
     }
 
@@ -58,6 +54,7 @@ public abstract class TappingSample {
     @NonNull
     public abstract String getButtonIdentifier();
 
+    // duration in seconds
     public abstract double getDuration();
 
     @NonNull
@@ -66,9 +63,10 @@ public abstract class TappingSample {
     @NonNull
     public abstract String getStepPath();
 
+    // timestamp in seconds
     public abstract double getTimestamp();
 
-    @NonNull
+    // uptime in seconds
     public abstract double getUptime();
 
     @NonNull
