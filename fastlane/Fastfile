@@ -64,7 +64,7 @@ platform :android do
     ensure_git_status_clean
     version_name = get_version_name(gradle_file_path:"app/build.gradle")
     next_version_code = increment_version_code(gradle_file_path: "app/build.gradle")
-    gradle(task: "assembleRelease")
+    gradle(task: ":app:assembleRelease")
     sign_apk(
       alias: options[:alias],
       storepass: options[:storepass],
