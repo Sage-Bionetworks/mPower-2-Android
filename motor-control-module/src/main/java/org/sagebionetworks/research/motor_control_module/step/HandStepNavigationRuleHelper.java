@@ -15,6 +15,7 @@ public class HandStepNavigationRuleHelper {
     public static boolean shouldSkip(@NonNull String stepIdentifier, @NonNull TaskResult taskResult) {
         HandStepHelper.Hand hand = HandStepHelper.whichHand(stepIdentifier);
         HandStepHelper.Hand nextHand = HandStepHelper.nextHand(taskResult);
+        // TODO: check accuracy of logic
         return hand != null && hand != nextHand;
     }
 

@@ -42,9 +42,7 @@ import android.view.ViewPropertyAnimator;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import org.sagebionetworks.research.domain.result.implementations.ResultBase;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.motor_control_module.R;
@@ -72,7 +70,7 @@ public class ShowOverviewStepFragment extends
     @NonNull
     public static ShowOverviewStepFragment newInstance(@NonNull StepView stepView) {
         ShowOverviewStepFragment fragment = new ShowOverviewStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
+        Bundle arguments = ShowOverviewStepFragment.createArguments(stepView);
         fragment.setArguments(arguments);
         return fragment;
     }
@@ -81,7 +79,7 @@ public class ShowOverviewStepFragment extends
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View returnValue = super.onCreateView(inflater, container, savedInstanceState);
-        this.isFirstRun = FirstRunHelper.isFirstRun(this.performTaskViewModel.getTaskResult().getValue());
+        this.isFirstRun = FirstRunHelper.isFirstRun(this.performTaskViewModel.getTaskResult());
         return returnValue;
     }
 

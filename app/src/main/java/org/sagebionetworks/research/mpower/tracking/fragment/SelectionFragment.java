@@ -2,12 +2,12 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.sagebionetworks.research.mobile_ui.show_step.ShowStepFragment;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.SelectionItemAdapter;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
@@ -33,7 +33,7 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
         this.detail.setText(this.stepView.getSelectionInfo().getDetail());
         this.navigationActionBar.setActionButtonClickListener((actionButton -> {
             if (actionButton.getId() == R.id.rs2_step_navigation_action_forward) {
-                ShowStepFragment nextFragment = this.getNextFragment();
+                Fragment nextFragment = this.getNextFragment();
                 this.getFragmentManager().beginTransaction()
                         .replace(((ViewGroup)this.getView().getParent()).getId(), nextFragment)
                         .commit();

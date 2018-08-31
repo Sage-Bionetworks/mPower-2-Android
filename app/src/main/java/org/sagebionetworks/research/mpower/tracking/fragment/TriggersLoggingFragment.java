@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView.Adapter;
 
-import org.sagebionetworks.research.mobile_ui.show_step.ShowStepFragment;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.TriggersLoggingItemAdapter;
 import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;

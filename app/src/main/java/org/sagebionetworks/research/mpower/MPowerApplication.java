@@ -11,9 +11,10 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import org.researchstack.backbone.ResearchStack;
-import org.sagebionetworks.bridge.android.BridgeApplication;
+import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
 import org.sagebionetworks.research.mpower.inject.DaggerMPowerApplicationComponent;
 import org.sagebionetworks.research.mpower.inject.MPowerApplicationComponent;
+import org.sagebionetworks.research.sageresearch.BridgeSageResearchApp;
 
 import javax.inject.Inject;
 
@@ -24,7 +25,7 @@ import dagger.android.HasServiceInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 import dagger.multibindings.IntoSet;
 
-public class MPowerApplication extends BridgeApplication implements HasSupportFragmentInjector,
+public class MPowerApplication extends BridgeSageResearchApp implements HasSupportFragmentInjector,
         HasActivityInjector, HasServiceInjector {
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
@@ -45,22 +46,13 @@ public class MPowerApplication extends BridgeApplication implements HasSupportFr
         initAppComponent().inject(this);
     }
 
-    @Override
-    public AndroidInjector<Service> serviceInjector() {
-        return dispatchingServiceInjector;
-    }
-
     @VisibleForTesting
     protected MPowerApplicationComponent initAppComponent() {
         return DaggerMPowerApplicationComponent
                 .builder()
+                .bridgeManagerProvider(BridgeManagerProvider.getInstance())
                 .application(this)
                 .build();
-    }
-
-    @Override
-    public AndroidInjector<Activity> activityInjector() {
-        return dispatchingActivityInjector;
     }
 
     @Override
@@ -86,14 +78,24 @@ public class MPowerApplication extends BridgeApplication implements HasSupportFr
     }
 
     @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
-        return dispatchingSupportFragmentInjector;
-    }
-
-    @Override
     protected void attachBaseContext(Context base) {
         // This is needed for android versions < 5.0 or you can extend MultiDexApplication
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    @Override
+    public AndroidInjector<Activity> activityInjector() {
+        return dispatchingActivityInjector;
+    }
+
+    @Override
+    public AndroidInjector<Service> serviceInjector() {
+        return dispatchingServiceInjector;
+    }
+
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return dispatchingSupportFragmentInjector;
     }
 }

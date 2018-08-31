@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView.ItemDecoration;
 import android.view.LayoutInflater;
@@ -11,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.sagebionetworks.research.domain.step.ui.action.Action;
-import org.sagebionetworks.research.mobile_ui.show_step.ShowStepFragment;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
@@ -47,7 +47,7 @@ public abstract class LoggingFragment
         this.detail.setText(this.stepView.getLoggingInfo().getDetail());
         if (this.addMore != null) {
             this.addMore.setOnClickListener((view) -> {
-                ShowStepFragment nextFragment = this.getNextFragment();
+                Fragment nextFragment = this.getNextFragment();
                 this.getFragmentManager().beginTransaction()
                         .replace(((ViewGroup)this.getView().getParent()).getId(), nextFragment)
                         .commit();

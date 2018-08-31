@@ -1,7 +1,8 @@
 include ':backbone'
 project(':backbone').projectDir = new File('BridgeAndroidSDK/ResearchStack/backbone')
 
-include ':domain', ':data', ':mobile-ui', ':presentation'
+include ':domain', ':data', ':mobile-ui', ':presentation', ':sageresearch-demo-app'
+project(':sageresearch-demo-app').projectDir = new File('BridgeAndroidSDK/SageResearch-Android/app')
 project(':domain').projectDir = new File('BridgeAndroidSDK/SageResearch-Android/domain')
 project(':data').projectDir = new File('BridgeAndroidSDK/SageResearch-Android/data')
 project(':mobile-ui').projectDir = new File('BridgeAndroidSDK/SageResearch-Android/mobile-ui')

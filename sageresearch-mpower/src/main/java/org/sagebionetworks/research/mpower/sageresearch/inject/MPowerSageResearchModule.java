@@ -32,13 +32,11 @@
 
 package org.sagebionetworks.research.mpower.sageresearch.inject;
 
-import org.sagebionetworks.research.data.inject.DataModule;
 import org.sagebionetworks.research.domain.inject.ActionModule;
 import org.sagebionetworks.research.domain.inject.AsyncActionModule;
 import org.sagebionetworks.research.domain.inject.InputFieldsModule;
 import org.sagebionetworks.research.domain.inject.StepModule;
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
-import org.sagebionetworks.research.domain.inject.TaskModule;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.HandSelectionStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.InstructionStepModule;
@@ -46,9 +44,8 @@ import org.sagebionetworks.research.motor_control_module.inject.MPowerActiveStep
 import org.sagebionetworks.research.motor_control_module.inject.OverviewStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.TappingCompletionStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.TappingStepModule;
-import org.sagebionetworks.research.mpower.sageresearch.PerformTaskActivity;
-import org.sagebionetworks.research.mpower.sageresearch.TappingTaskActivity;
-import org.sagebionetworks.research.presentation.inject.StepViewModule;
+import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskActivity;
+import org.sagebionetworks.research.sageresearch_app_sdk.inject.SageResearchAppSDKModule;
 
 import dagger.Module;
 import dagger.android.AndroidInjectionModule;
@@ -61,7 +58,4 @@ import dagger.android.ContributesAndroidInjector;
 public abstract class MPowerSageResearchModule {
     @ContributesAndroidInjector
     abstract PerformTaskActivity contributePerformTaskActivityInjector();
-
-    @ContributesAndroidInjector
-    abstract TappingTaskActivity contributesTappingTaskActivityInjector();
 }

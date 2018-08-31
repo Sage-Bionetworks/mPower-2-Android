@@ -1,3 +1,34 @@
 {
-
+  "Medication": {
+    "id": "Medication",
+    "revision": 3
+  },
+  "StudyBurst": {
+    "id": "StudyBurst",
+    "revision": 1
+  },
+  "StudyBurstReminder": {
+    "id": "StudyBurstReminder",
+    "revision": 1
+  },
+  "Symptoms": {
+    "id": "Symptoms",
+    "revision": 3
+  },
+  "Tapping": {
+    "id": "Tapping",
+    "revision": 4
+  },
+  "Tremor": {
+    "id": "Tremor",
+    "revision": 3
+  },
+  "Triggers": {
+    "id": "Triggers",
+    "revision": 3
+  },
+  "WalkAndBalance": {
+    "id": "WalkAndBalance",
+    "revision": 1
+  }
 }

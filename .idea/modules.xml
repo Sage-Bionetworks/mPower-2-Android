@@ -14,6 +14,7 @@
       <module fileurl="file://$PROJECT_DIR$/researchstack-mpower/researchstack-mpower.iml" filepath="$PROJECT_DIR$/researchstack-mpower/researchstack-mpower.iml" />
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/researchstack-sdk/researchstack-sdk.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/researchstack-sdk/researchstack-sdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/sageresearch-app-sdk/sageresearch-app-sdk.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/sageresearch-app-sdk/sageresearch-app-sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/app/sageresearch-demo-app.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android/app/sageresearch-demo-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/sageresearch-mpower/sageresearch-mpower.iml" filepath="$PROJECT_DIR$/sageresearch-mpower/sageresearch-mpower.iml" />
       <module fileurl="file://$PROJECT_DIR$/BridgeAndroidSDK/test-utils/test-utils.iml" filepath="$PROJECT_DIR$/BridgeAndroidSDK/test-utils/test-utils.iml" />
     </modules>

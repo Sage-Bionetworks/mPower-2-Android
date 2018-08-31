@@ -9,13 +9,12 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
-import org.sagebionetworks.research.mobile_ui.show_step.ShowStepFragment;
-import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
@@ -38,7 +37,7 @@ import dagger.android.support.AndroidSupportInjection;
  */
 public abstract class TrackingFragment
         <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog, ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
-        extends ShowStepFragment {
+        extends Fragment  {
     public static final String ARGUMENT_STEP_VIEW = "stepView";
 
     protected TrackingStepView stepView;
@@ -112,11 +111,6 @@ public abstract class TrackingFragment
                 .add(((ViewGroup)this.getView().getParent()).getId(), trackingFragment)
                 .addToBackStack(tag)
                 .commit();
-    }
-
-    @Override
-    public void setPerformTaskFragment(@NonNull PerformTaskFragment performTaskFragment) {
-        this.performTaskFragment = performTaskFragment;
     }
 
     /**

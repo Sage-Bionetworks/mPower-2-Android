@@ -3,7 +3,6 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import org.sagebionetworks.research.mobile_ui.show_step.ShowStepFragment;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingTaskViewModel;

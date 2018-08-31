@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.widget.TimePicker;
 
-import org.sagebionetworks.research.mobile_ui.show_step.ShowStepFragment;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.SymptomsLoggingItemAdapter;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;

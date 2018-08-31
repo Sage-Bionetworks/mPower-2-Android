@@ -8,7 +8,8 @@ import android.support.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 
 import org.sagebionetworks.research.domain.repository.TaskRepository;
-import org.sagebionetworks.research.domain.task.TaskInfo;
+import org.sagebionetworks.research.domain.task.TaskInfoView;
+import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskActivity;
 import org.sagebionetworks.research.presentation.model.TaskView;
 
 import java.util.UUID;
@@ -25,10 +26,11 @@ public class SageResearchTaskLauncher {
 
     public void launchTask(@NonNull Context context, @NonNull String taskIdentifier,
             @Nullable UUID taskRunUUID) {
-        TaskInfo taskInfo = taskRepository.getTaskInfo(taskIdentifier).blockingGet();
+        TaskInfoView taskInfoView = taskRepository.getTaskInfo(taskIdentifier).blockingGet();
 
         //TODO: mapper
-        TaskView taskView = TaskView.builder().setIdentifier(taskInfo.getIdentifier()).build();
+        TaskView taskView = TaskView.builder().setIdentifier(taskInfoView.getIdentifier()).build();
+
         Intent intent = PerformTaskActivity.createIntent(context, taskView, taskRunUUID);
         context.startActivity(intent);
     }
