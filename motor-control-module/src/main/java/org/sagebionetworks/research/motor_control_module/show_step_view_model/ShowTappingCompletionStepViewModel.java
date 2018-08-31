@@ -1,7 +1,5 @@
 package org.sagebionetworks.research.motor_control_module.show_step_view_model;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -19,10 +17,14 @@ import org.sagebionetworks.research.motor_control_module.step.TappingStep;
 import org.sagebionetworks.research.motor_control_module.step_view.TappingCompletionStepView;
 import org.sagebionetworks.research.presentation.perform_task.PerformTaskViewModel;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowUIStepViewModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class ShowTappingCompletionStepViewModel extends ShowUIStepViewModel<TappingCompletionStepView> {
+    private static Logger LOGGER = LoggerFactory.getLogger(ShowTappingCompletionStepViewModel.class);
+
     public ShowTappingCompletionStepViewModel(
             final PerformTaskViewModel performTaskViewModel,
             final TappingCompletionStepView stepView) {
@@ -49,11 +51,15 @@ public class ShowTappingCompletionStepViewModel extends ShowUIStepViewModel<Tapp
      */
     @Nullable
     private TappingResult getTappingResult(@NonNull HandStepHelper.Hand hand) {
-        TaskResult taskResult = this.performTaskViewModel.getTaskResult().getValue();
+        TaskResult taskResult = this.performTaskViewModel.getTaskResult();
         if (taskResult != null) {
             TappingStep step = this.getTappingStep(hand);
             if (step != null) {
-                return (TappingResult) taskResult.getResult(step);
+                if (taskResult.getResult(step) instanceof  TappingResult) {
+                    return (TappingResult) taskResult.getResult(step);
+                } else {
+                    LOGGER.warn("Not a tapping step result: {}", taskResult.getResult(step));
+                }
             }
         }
 

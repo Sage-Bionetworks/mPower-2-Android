@@ -1,6 +1,7 @@
 package org.sagebionetworks.research.mpower;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.support.annotation.VisibleForTesting;
@@ -10,24 +11,29 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import org.researchstack.backbone.ResearchStack;
-import org.sagebionetworks.bridge.android.BridgeApplication;
+import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
 import org.sagebionetworks.research.mpower.inject.DaggerMPowerApplicationComponent;
 import org.sagebionetworks.research.mpower.inject.MPowerApplicationComponent;
+import org.sagebionetworks.research.sageresearch.BridgeSageResearchApp;
 
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
+import dagger.android.HasServiceInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
-public class MPowerApplication extends BridgeApplication implements HasSupportFragmentInjector,
-        HasActivityInjector {
+public class MPowerApplication extends BridgeSageResearchApp implements HasSupportFragmentInjector,
+        HasActivityInjector, HasServiceInjector {
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
 
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingSupportFragmentInjector;
+
+    @Inject
+    DispatchingAndroidInjector<Service> dispatchingServiceInjector;
 
     // this causes ResearchStack provider method, which also initializes RS, to be called during onCreate
     @Inject
@@ -43,13 +49,9 @@ public class MPowerApplication extends BridgeApplication implements HasSupportFr
     protected MPowerApplicationComponent initAppComponent() {
         return DaggerMPowerApplicationComponent
                 .builder()
+                .bridgeManagerProvider(BridgeManagerProvider.getInstance())
                 .application(this)
                 .build();
-    }
-
-    @Override
-    public AndroidInjector<Activity> activityInjector() {
-        return dispatchingActivityInjector;
     }
 
     @Override
@@ -75,14 +77,24 @@ public class MPowerApplication extends BridgeApplication implements HasSupportFr
     }
 
     @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
-        return dispatchingSupportFragmentInjector;
-    }
-
-    @Override
     protected void attachBaseContext(Context base) {
         // This is needed for android versions < 5.0 or you can extend MultiDexApplication
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    @Override
+    public AndroidInjector<Activity> activityInjector() {
+        return dispatchingActivityInjector;
+    }
+
+    @Override
+    public AndroidInjector<Service> serviceInjector() {
+        return dispatchingServiceInjector;
+    }
+
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return dispatchingSupportFragmentInjector;
     }
 }

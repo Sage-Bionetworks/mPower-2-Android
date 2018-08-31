@@ -1,8 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.sagebionetworks.research.mpower.sageresearch">
     <application>
-        <activity android:name=".PerformTaskActivity">
-
-        </activity>
     </application>
 </manifest>

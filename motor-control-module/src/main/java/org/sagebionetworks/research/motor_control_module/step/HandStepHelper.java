@@ -28,8 +28,8 @@ public class HandStepHelper {
     public static final String SECTION_TREMOR_STEP_IDENTIFIER = "tremor";
 
     static {
-        String startRegexFormat = "^" + REGEX_PLACEHOLDER + "(\\..*)?";
-        String middleRegexFormat = ".*\\." + REGEX_PLACEHOLDER + "(\\..*)?";
+        String startRegexFormat = "^" + REGEX_PLACEHOLDER + "(_.*)?";
+        String middleRegexFormat = ".*_" + REGEX_PLACEHOLDER + "(_..*)?";
         REGEX_FORMAT = "(" + startRegexFormat + ")" + "|(" + middleRegexFormat + ")";
     }
 
@@ -154,9 +154,9 @@ public class HandStepHelper {
         List<Result> resultMatches = taskResult.getResultsMatchingRegex(handRegex);
         for (Result result : resultMatches) {
             String identifier = result.getIdentifier();
-            if (identifier.endsWith("." + SECTION_ACTIVE_STEP_IDENTIFIER)
-                    || identifier.endsWith("." + SECTION_TAPPING_STEP_IDENTIFIER)
-                    || identifier.equals("." + SECTION_TREMOR_STEP_IDENTIFIER)) {
+            if (identifier.endsWith("_" + SECTION_ACTIVE_STEP_IDENTIFIER)
+                    || identifier.endsWith("_" + SECTION_TAPPING_STEP_IDENTIFIER)
+                    || identifier.equals("_" + SECTION_TREMOR_STEP_IDENTIFIER)) {
                 return true;
             }
         }
@@ -179,7 +179,7 @@ public class HandStepHelper {
                 SectionStep sectionStep = (SectionStep)step;
                 // The given section step should have an identifier of the form <anything>.identifier
                 // since it could be nested in other section steps.
-                if (step.getIdentifier().matches("(.*\\.)?" + identifier)) {
+                if (step.getIdentifier().matches("(.*_)?" + identifier)) {
                     return sectionStep;
                 } else {
                     SectionStep substepResult = findHandSectionStep(sectionStep.getSteps(), hand);

@@ -19,7 +19,7 @@ skip_docs
 
 platform :android do
   before_all do
-    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
+    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
   end
 
   desc "Runs all the tests"

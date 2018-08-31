@@ -1,47 +1,66 @@
 package org.sagebionetworks.research.mpower.inject;
 
-import android.app.Application;
-import android.content.Context;
+import com.google.common.collect.ImmutableList;
 
+import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
+import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule;
+import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
+import org.sagebionetworks.research.motor_control_module.inject.MotorControlShowStepFragmentsModule;
+import org.sagebionetworks.research.motor_control_module.inject.MotorControlStepModule;
 import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
 import org.sagebionetworks.research.mpower.history.HistoryFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
+import org.sagebionetworks.research.mpower.sageresearch.archive.TappingResultArchiveFactory;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.tracking.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment;
+import org.sagebionetworks.research.sageresearch_app_sdk.archive.AbstractResultArchiveFactory.ResultArchiveFactory;
+import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerResultArchiveFactory;
+import org.sagebionetworks.research.sageresearch_app_sdk.archive.BaseResultArchiveFactory;
+import org.sagebionetworks.research.sageresearch_app_sdk.archive.FileResultArchiveFactory;
 
-import dagger.Binds;
 import dagger.Module;
+import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
 
-@Module
-public interface MPowerApplicationModule {
+@Module(includes = {PerformTaskModule.class, MotorControlStepModule.class})
+public abstract class MPowerApplicationModule {
     @ContributesAndroidInjector
-    ExternalIdSignInActivity contributeExternalIdSignInActivityInjector();
+    abstract ExternalIdSignInActivity contributeExternalIdSignInActivityInjector();
 
     @ContributesAndroidInjector
-    HistoryFragment contributeHistoryFragmentInjector();
+    abstract HistoryFragment contributeHistoryFragmentInjector();
 
     @ContributesAndroidInjector
-    InsightsFragment contributeInsightsFragmentInjector();
+    abstract InsightsFragment contributeInsightsFragmentInjector();
 
     @ContributesAndroidInjector
-    MainActivity contributeMainActivityInjector();
+    abstract MainActivity contributeMainActivityInjector();
+
+    // these modules contain an aggregate of ShowStepFragment subcomponents, so they are scoped under the PerformTaskFragment
+    @ContributesAndroidInjector(modules = {ShowStepFragmentModule.class, MotorControlShowStepFragmentsModule.class})
+    abstract PerformTaskFragment contributePerformTaskFragmentInjector();
 
     @ContributesAndroidInjector
-    ProfileFragment contributeProfileFragmentInjector();
+    abstract ProfileFragment contributeProfileFragmentInjector();
 
     @ContributesAndroidInjector
-    StudyBurstActivity contributeStudyBurstActivityInjector();
+    abstract StudyBurstActivity contributeStudyBurstActivityInjector();
 
     @ContributesAndroidInjector
-    TrackingFragment contributeTrackingFragmentInjector();
+    abstract TrackingFragment contributeTrackingFragmentInjector();
 
     @ContributesAndroidInjector
-    TrackingMenuFragment contributeTrackingMenuFragmentInjector();
+    abstract TrackingMenuFragment contributeTrackingMenuFragmentInjector();
 
-    @Binds
-    Context provideApplicationContext(Application application);
+    @Provides
+    static ImmutableList<ResultArchiveFactory> provideAbstractResultArchiveFactory(
+            TappingResultArchiveFactory tappingResultArchiveFactory,
+            FileResultArchiveFactory fileResultArchiveFactory, AnswerResultArchiveFactory answerResultArchiveFactory,
+            BaseResultArchiveFactory baseResultArchiveFactory) {
+        return ImmutableList.of(tappingResultArchiveFactory, fileResultArchiveFactory, answerResultArchiveFactory,
+                baseResultArchiveFactory);
+    }
 }
