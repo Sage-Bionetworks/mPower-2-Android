@@ -51,8 +51,7 @@
             <TextView
                 android:id="@+id/rs2_detail"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_height="18dp"
                 android:layout_marginEnd="52dp"
                 android:layout_marginStart="52dp"
                 android:layout_marginTop="12dp"
@@ -61,6 +60,7 @@
                 android:text="@string/symptoms_duration_detail"
                 android:textColor="@color/appWhite"
                 android:textSize="16sp"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rs2_title" />

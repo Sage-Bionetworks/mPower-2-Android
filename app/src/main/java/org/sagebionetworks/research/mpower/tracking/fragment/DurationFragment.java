@@ -3,6 +3,9 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.OnApplyWindowInsetsListener;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
@@ -14,51 +17,64 @@ import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
-import org.sagebionetworks.research.mpower.tracking.view_model.SymptomTrackingTaskViewModel;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
-import org.sagebionetworks.research.presentation.model.interfaces.StepView;
-import org.threeten.bp.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.BindViews;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * The DurationFragment allows the user to select from the duration options to specify how long a symptom has occurred for.
- * It is an invariant that there is a log in the view model for the TrackingItem provided to this fragment as an argument,
- * and the client of this fragment is responsible for ensuring this is correct.
+ * In order to receive updates when the user selects a new duration the creator of this fragment should set an
+ * OnDurationChangeListener via setOnDurationChangeListener.
  */
-public class DurationFragment extends TrackingFragment<SimpleTrackingItemConfig, SymptomLog, SymptomTrackingTaskViewModel> {
-    public static final String ARGUMENT_TRACKING_ITEM = "trackingItem";
-    public static final String FORWARD_BUTTON_TEXT = "Save";
+public class DurationFragment extends Fragment {
+    public static final String ARGUMENT_TITLE = "title";
+    public static final String ARGUMENT_DETAIL = "detail";
+    public static final String ARGUMENT_PREVIOUS_SELECTION = "previousSelection";
 
-    private TrackingItem trackingItem;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DurationFragment.class);
+
     @ColorRes
     private static final int SELECTED_COLOR = R.color.royal200;
     @ColorRes
     private static final int UNSELECTED_COLOR = R.color.transparent;
-    private TextView selectedTextView;
 
+    /**
+     * Interface for receiving a callback from this fragment when the user submits a new duration.
+     */
+    public interface OnDurationChangeListener {
+        void durationChanged(String duration);
+    }
+
+    private TextView selectedTextView;
     @BindView(R.id.rs2_step_navigation_action_backward)
     ActionButton backButton;
     @BindView(R.id.rs2_step_navigation_action_forward)
     ActionButton forwardButton;
     @BindViews({R.id.duration_0, R.id.duration_1, R.id.duration_2, R.id.duration_3, R.id.duration_4, R.id.duration_5})
     List<TextView> durationSelections;
+    @BindView(R.id.rs2_title)
+    TextView titleLabel;
+    @BindView(R.id.rs2_detail)
+    TextView detailLabel;
 
-    /**
-     * Creates and returns a new DurationFragment from the given StepView and TrackingItem.
-     * @param stepView The TrackingStepView to create the fragment with.
-     * @param trackingItem The TrackingItem that the DurationFragment is for.
-     * @return a new DurationFragment from the given StepView and TrackingItem.
-     */
-    public static DurationFragment newInstance(@NonNull StepView stepView, @NonNull TrackingItem trackingItem) {
+    private String title;
+    private String detail;
+    private String previousSelection;
+    private Unbinder unbinder;
+    private OnDurationChangeListener onDurationChangeListener;
+
+    public static DurationFragment newInstance(@Nullable String title, @Nullable String detail, @Nullable String previousSelection) {
         DurationFragment fragment = new DurationFragment();
-        Bundle args = TrackingFragment.createArguments(stepView);
-        args.putParcelable(ARGUMENT_TRACKING_ITEM, trackingItem);
+        Bundle args = new Bundle();
+        args.putString(ARGUMENT_TITLE, title);
+        args.putString(ARGUMENT_DETAIL, detail);
+        args.putString(ARGUMENT_PREVIOUS_SELECTION, previousSelection);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,12 +85,14 @@ public class DurationFragment extends TrackingFragment<SimpleTrackingItemConfig,
         if (savedInstanceState == null) {
             Bundle arguments = getArguments();
             if (arguments != null) {
-                // noinspection unchecked
-                this.trackingItem = arguments.getParcelable(ARGUMENT_TRACKING_ITEM);
+                this.title = arguments.getString(ARGUMENT_TITLE);
+                this.detail = arguments.getString(ARGUMENT_DETAIL);
+                this.previousSelection = arguments.getString(ARGUMENT_PREVIOUS_SELECTION);
             }
         } else {
-            // noinspection unchecked
-            this.trackingItem = savedInstanceState.getParcelable(ARGUMENT_STEP_VIEW);
+            this.title = savedInstanceState.getString(ARGUMENT_TITLE);
+            this.detail = savedInstanceState.getString(ARGUMENT_DETAIL);
+            this.previousSelection = savedInstanceState.getString(ARGUMENT_PREVIOUS_SELECTION);
         }
 
         this.selectedTextView = null;
@@ -82,39 +100,72 @@ public class DurationFragment extends TrackingFragment<SimpleTrackingItemConfig,
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View result = super.onCreateView(inflater, container, savedInstanceState);
+        View result = inflater.inflate(R.layout.mpower2_duration_step, container, false);
+        this.unbinder = ButterKnife.bind(this, result);
         OnApplyWindowInsetsListener topListener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
         ViewCompat.setOnApplyWindowInsetsListener(this.backButton, topListener);
-        int unselectedColor = this.getResources().getColor(UNSELECTED_COLOR);
-        for (TextView seleciton : this.durationSelections) {
-            seleciton.setBackgroundColor(unselectedColor);
+        if (this.title != null) {
+            this.titleLabel.setText(this.title);
+        } else {
+            this.titleLabel.setVisibility(View.GONE);
         }
 
-        SymptomLog previousLog = this.viewModel.getLog(this.trackingItem);
-        if (previousLog != null) {
-            String previousDuration = previousLog.getDuration();
-            if (previousDuration != null) {
-                this.initializeFromPreviousLog(previousDuration);
+        if (this.detail != null) {
+            this.detailLabel.setText(this.detail);
+        } else {
+            this.detailLabel.setVisibility(View.GONE);
+        }
+
+        int unselectedColor = this.getResources().getColor(UNSELECTED_COLOR);
+        int selectedColor = this.getResources().getColor(SELECTED_COLOR);
+        for (TextView selection : this.durationSelections) {
+            if (selection.getText().toString().equals(this.previousSelection)) {
+                selection.setBackgroundColor(selectedColor);
+                this.selectedTextView = selection;
+            } else {
+                selection.setBackgroundColor(unselectedColor);
             }
         }
 
+        this.initializeWithPreviousDuration();
         this.setSelectionListeners();
         this.setForwardButtonListener();
-        this.forwardButton.setText(FORWARD_BUTTON_TEXT);
         this.setBackButtonListener();
+        this.forwardButton.setText(this.getResources().getText(R.string.duration_fragment_forward_button));
         return result;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        ViewCompat.requestApplyInsets(this.getView());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        this.unbinder.unbind();
+    }
+
     /**
-     * Initializes the state of this fragment based on the previous duration selection already made in the log.
-     * @param previousDuration The previous duration selection from the log.
+     * Sets the OnDurationChangeListener for this fragment.
+     * @param onDurationChangeListener the OnDurationChangeListener to call when the user submits a duration.
      */
-    private void initializeFromPreviousLog(@NonNull String previousDuration) {
-        int selectedColor = this.getResources().getColor(SELECTED_COLOR);
-        for (TextView selection : this.durationSelections) {
-            if (selection.getText().toString().equals(previousDuration)) {
-                this.selectedTextView = selection;
-                selection.setBackgroundColor(selectedColor);
+    public void setOnDurationChangeListener(OnDurationChangeListener onDurationChangeListener) {
+        this.onDurationChangeListener = onDurationChangeListener;
+    }
+
+    /**
+     * Initializes the state of this fragment based on the previous duration selection.
+     */
+    private void initializeWithPreviousDuration() {
+        if (this.previousSelection != null) {
+            int selectedColor = this.getResources().getColor(SELECTED_COLOR);
+            for (TextView selection : this.durationSelections) {
+                if (selection.getText().toString().equals(this.previousSelection)) {
+                    this.selectedTextView = selection;
+                    selection.setBackgroundColor(selectedColor);
+                }
             }
         }
     }
@@ -151,29 +202,22 @@ public class DurationFragment extends TrackingFragment<SimpleTrackingItemConfig,
      */
     private void setForwardButtonListener() {
         this.forwardButton.setOnClickListener(view -> {
-            String selected = null;
             if (this.selectedTextView != null) {
-                selected = this.selectedTextView.getText().toString();
+                String selected = this.selectedTextView.getText().toString();
+                if (this.onDurationChangeListener != null) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Duration entered by user: " + selected);
+                    }
+
+                    this.onDurationChangeListener.durationChanged(selected);
+                } else {
+                    LOGGER.warn("DurationFragment could not submit duration because listener was null");
+                }
             }
 
-            SymptomLog log = this.viewModel.getLog(this.trackingItem);
-            log = log.toBuilder()
-                    .setDuration(selected)
-                    .build();
-            this.viewModel.addLoggedElement(log);
+
             this.goToParentFragment();
         });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        ViewCompat.requestApplyInsets(this.getView());
-    }
-
-    @Override
-    public int getLayoutId() {
-        return R.layout.mpower2_duration_step;
     }
 
     /**
@@ -181,6 +225,11 @@ public class DurationFragment extends TrackingFragment<SimpleTrackingItemConfig,
      */
     private void goToParentFragment() {
         // Pop the back stack once to go back to the parent fragment.
-        this.getFragmentManager().popBackStackImmediate();
+        FragmentManager fragmentManager = this.getFragmentManager();
+        if (fragmentManager != null) {
+            fragmentManager.popBackStackImmediate();
+        } else {
+            LOGGER.warn("FragmentManager is null cannot navigate back to parent fragment.");
+        }
     }
 }

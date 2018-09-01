@@ -127,11 +127,24 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     private void setDurationButtonListener(@NonNull TrackingItem trackingItem) {
         this.widget.getDurationButton().setOnClickListener(view -> {
-            DurationFragment durationFragment = DurationFragment.newInstance(this.viewModel.getStepView(), trackingItem);
-            // Done to ensure a log is instantiated before the add note fragment gets added.
-            SymptomLog previousLog = getPreviousLogOrInstantiate(trackingItem);
-            this.viewModel.addLoggedElement(previousLog);
-            this.symptomLoggingFragment.addChildFragmentOnTop(durationFragment, SymptomLoggingFragment.SYMPTOM_LOGGING_FRAGMENT_TAG);
+            String title = this.widget.getResources().getString(R.string.duration_fragment_title);
+            String detail = this.widget.getResources().getString(R.string.duration_fragment_detail);
+            final SymptomLog previousLog = this.viewModel.getLog(trackingItem);
+            String previousSelection = previousLog != null ? previousLog.getDuration() : null;
+            DurationFragment durationFragment = DurationFragment.newInstance(title, detail ,previousSelection);
+            durationFragment.setOnDurationChangeListener(duration -> {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Duration received by view holder: " + duration);
+                }
+
+                SymptomLog log = createLogIfNull(this.viewModel.getLog(trackingItem), trackingItem).toBuilder()
+                        .setDuration(duration)
+                        .build();
+                this.viewModel.addLoggedElement(log);
+            });
+
+            this.symptomLoggingFragment.addChildFragmentOnTop(durationFragment,
+                    SymptomLoggingFragment.SYMPTOM_LOGGING_FRAGMENT_TAG);
         });
     }
 

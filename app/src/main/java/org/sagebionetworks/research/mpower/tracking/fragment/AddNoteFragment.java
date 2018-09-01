@@ -44,9 +44,9 @@ public class AddNoteFragment extends Fragment {
 
     @BindView(R.id.note_input)
     EditText noteInput;
-    @BindView(R.id.title)
+    @BindView(R.id.rs2_title)
     TextView titleLabel;
-    @BindView(R.id.detail)
+    @BindView(R.id.rs2_detail)
     TextView detailLabel;
     @BindView(R.id.rs2_step_navigation_action_backward)
     ActionButton backButton;
@@ -76,13 +76,11 @@ public class AddNoteFragment extends Fragment {
         if (savedInstanceState == null) {
             Bundle arguments = getArguments();
             if (arguments != null) {
-                // noinspection unchecked
                 this.title = arguments.getString(ARGUMENT_TITLE);
                 this.detail = arguments.getString(ARGUMENT_DETAIL);
                 this.previousNote = arguments.getString(ARGUMENT_PREVIOUS_NOTE);
             }
         } else {
-            // noinspection unchecked
             this.title = savedInstanceState.getString(ARGUMENT_TITLE);
             this.detail = savedInstanceState.getString(ARGUMENT_DETAIL);
             this.previousNote = savedInstanceState.getString(ARGUMENT_PREVIOUS_NOTE);
@@ -123,7 +121,7 @@ public class AddNoteFragment extends Fragment {
 
                 this.onNoteChangeListener.noteChanged(note);
             } else {
-                LOGGER.warn("Add note fragment could not submit note because listener was null");
+                LOGGER.warn("AddNoteFragment could not submit note because listener was null");
             }
 
             this.goToParentFragment();
