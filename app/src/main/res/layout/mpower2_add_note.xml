@@ -2,10 +2,11 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/add_note_label"
+        android:id="@+id/title"
         style="@style/Widget.MPower.TextView.SelectionSectionTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -15,7 +16,10 @@
         android:gravity="center"
         android:text="Add a note"
         android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/detail"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rs2_step_navigation_action_backward" />
 
@@ -31,7 +35,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/today_label"
+        android:id="@+id/detail"
         style="@style/Widget.MPower.TextView.SelectionItemTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -40,9 +44,12 @@
         android:layout_marginTop="4dp"
         android:gravity="center"
         android:text="Today, December 14th, 2017 "
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/note_input"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_note_label" />
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <EditText
         android:id="@+id/note_input"
@@ -63,8 +70,9 @@
         android:paddingTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/rs2_step_navigation_action_forward"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/today_label" />
+        app:layout_constraintTop_toBottomOf="@+id/detail" />
 
     <org.sagebionetworks.research.mobile_ui.widget.ActionButton
         android:id="@+id/rs2_step_navigation_action_forward"

@@ -2,6 +2,8 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.OnApplyWindowInsetsListener;
 import android.support.v4.view.ViewCompat;
@@ -9,46 +11,64 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.logs.NoteLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
-import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
- * This fragment displays the add note screen to the user and allows the user to edit/add a new note. It is an
- * invariant in this fragment that there is already a log in the view model for the tracking item provided as an
- * argument and the client of this fragment is responsible for ensuring this is correct.
- * @param <ConfigType> The type of TrackingItemConfig
- * @param <LogType> The type of TrackingItemLog
- * @param <ViewModelType> The type of view model.
+ * This fragment displays the add note screen to the user and allows the user to edit/add a new note. In order to receive
+ * updates when the user submits a note the fragment the creator of this fragment should provide an OnNoteChangeListener
+ * via setOnNoteChangeListener.
  */
-public class AddNoteFragment
-        <ConfigType extends TrackingItemConfig, LogType extends NoteLog, ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
-        extends TrackingFragment<ConfigType, LogType, ViewModelType> {
-    public static final String ARGUMENT_TRACKING_ITEM = "trackingItem";
+public class AddNoteFragment extends Fragment {
+    public static final String ARGUMENT_TITLE = "title";
+    public static final String ARGUMENT_DETAIL = "detail";
+    public static final String ARGUMENT_PREVIOUS_NOTE = "previousNote";
     private static final Logger LOGGER = LoggerFactory.getLogger(AddNoteFragment.class);
+
+    /**
+     * Interface for receiving a callback from this fragment when the user submits a new note.
+     */
+    public interface OnNoteChangeListener {
+        void noteChanged(String note);
+    }
 
     @BindView(R.id.note_input)
     EditText noteInput;
-
+    @BindView(R.id.title)
+    TextView titleLabel;
+    @BindView(R.id.detail)
+    TextView detailLabel;
     @BindView(R.id.rs2_step_navigation_action_backward)
     ActionButton backButton;
-
     @BindView(R.id.rs2_step_navigation_action_forward)
     ActionButton forwardButton;
 
-    protected TrackingItem trackingItem;
+    @Nullable
+    private OnNoteChangeListener onNoteChangeListener;
+    private String previousNote;
+    private String title;
+    private String detail;
+    private Unbinder unbinder;
+
+    public static AddNoteFragment newInstance(@Nullable String title, @Nullable String detail, @Nullable String previousNote) {
+        AddNoteFragment addNoteFragment = new AddNoteFragment();
+        Bundle args = new Bundle();
+        args.putString(ARGUMENT_TITLE, title);
+        args.putString(ARGUMENT_DETAIL, detail);
+        args.putString(ARGUMENT_PREVIOUS_NOTE, previousNote);
+        addNoteFragment.setArguments(args);
+        return addNoteFragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,36 +77,53 @@ public class AddNoteFragment
             Bundle arguments = getArguments();
             if (arguments != null) {
                 // noinspection unchecked
-                this.trackingItem = arguments.getParcelable(ARGUMENT_TRACKING_ITEM);
+                this.title = arguments.getString(ARGUMENT_TITLE);
+                this.detail = arguments.getString(ARGUMENT_DETAIL);
+                this.previousNote = arguments.getString(ARGUMENT_PREVIOUS_NOTE);
             }
         } else {
             // noinspection unchecked
-            this.trackingItem = savedInstanceState.getParcelable(ARGUMENT_STEP_VIEW);
+            this.title = savedInstanceState.getString(ARGUMENT_TITLE);
+            this.detail = savedInstanceState.getString(ARGUMENT_DETAIL);
+            this.previousNote = savedInstanceState.getString(ARGUMENT_PREVIOUS_NOTE);
         }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View result = super.onCreateView(inflater, container, savedInstanceState);
+        View result = inflater.inflate(R.layout.mpower2_add_note,  container, false);
+        this.unbinder = ButterKnife.bind(this, result);
         OnApplyWindowInsetsListener topListener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
         ViewCompat.setOnApplyWindowInsetsListener(this.backButton, topListener);
-        LogType log = this.viewModel.getLog(this.trackingItem);
-        String previousNote = log.getNote();
-        if (previousNote != null) {
-            this.noteInput.setText(previousNote);
+        if (this.previousNote != null) {
+            this.noteInput.setText(this.previousNote);
+        } else {
+            this.noteInput.setText("");
         }
 
-        // The forward button writes the note result to the log in the view model and then navigates back to the parent.
+        if (this.title != null) {
+            this.titleLabel.setText(this.title);
+        } else {
+            this.titleLabel.setVisibility(View.GONE);
+        }
+
+        if (this.detail != null) {
+            this.detailLabel.setText(this.detail);
+        } else {
+            this.detailLabel.setVisibility(View.GONE);
+        }
+
+        // The forward button sends a note to its listener.
         this.forwardButton.setOnClickListener(view -> {
-            String note = noteInput.getText().toString();
-            NoteLog noteLog = log.copyWithNote(note);
-            if (noteLog.getClass() != log.getClass()) {
-                LOGGER.warn("Note log copyWithNote() returned a different class, most likely caused by forgetting to "
-                        + "override the method in class " + log.getClass());
+            if (this.onNoteChangeListener != null) {
+                String note = noteInput.getText().toString();
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Note entered by user: " + note);
+                }
+
+                this.onNoteChangeListener.noteChanged(note);
             } else {
-                // noteLog.getClass() == log.getClass() and LogType is assignable from log.getClass() so this is safe.
-                // noinspection unchecked
-                this.viewModel.addLoggedElement((LogType) noteLog);
+                LOGGER.warn("Add note fragment could not submit note because listener was null");
             }
 
             this.goToParentFragment();
@@ -104,8 +141,17 @@ public class AddNoteFragment
     }
 
     @Override
-    public int getLayoutId() {
-        return R.layout.mpower2_add_note;
+    public void onDestroyView() {
+        super.onDestroyView();
+        this.unbinder.unbind();
+    }
+
+    /**
+     * Sets the OnNoteChangeListener for this fragment.
+     * @param onNoteChangeListener the OnNoteChangeListener to call when the user submits a note.
+     */
+    public void setOnNoteChangeListener(@Nullable OnNoteChangeListener onNoteChangeListener) {
+        this.onNoteChangeListener = onNoteChangeListener;
     }
 
     /**
@@ -113,6 +159,11 @@ public class AddNoteFragment
      */
     private void goToParentFragment() {
         // Pop the back stack once to go back to the parent fragment.
-        this.getFragmentManager().popBackStackImmediate();
+        FragmentManager fragmentManager = this.getFragmentManager();
+        if (fragmentManager != null) {
+            fragmentManager.popBackStackImmediate();
+        } else {
+            LOGGER.warn("FragmentManager is null cannot navigate back to parent fragment.");
+        }
     }
 }

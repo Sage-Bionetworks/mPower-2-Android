@@ -1,8 +1,5 @@
 package org.sagebionetworks.research.mpower.inject;
 
-import android.app.Application;
-import android.content.Context;
-
 import com.google.common.collect.ImmutableList;
 
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
@@ -24,7 +21,6 @@ import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerResultArc
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.BaseResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.FileResultArchiveFactory;
 import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.SymptomAddNoteFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TimePickerFragment;
@@ -64,9 +60,6 @@ public abstract class MPowerApplicationModule {
 
     @ContributesAndroidInjector
     abstract TrackingTabFragment contributeTrackingTabFragmentInjector();
-
-    @ContributesAndroidInjector
-    abstract SymptomAddNoteFragment contributeSymptomAddNoteFragmentInjector();
 
     @ContributesAndroidInjector
     abstract DurationFragment contributeDurationFragmentInjector();

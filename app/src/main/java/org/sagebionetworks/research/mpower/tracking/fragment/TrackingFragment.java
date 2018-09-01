@@ -101,14 +101,14 @@ public abstract class TrackingFragment
 
     /**
      * Adds a child fragment on top of this fragment and adds this fragment to the back stack with the provided tag.
-     * @param trackingFragment The fragment to add on top of this fragment.
+     * @param childFragment The fragment to add on top of this fragment.
      * @param tag The tag for this fragment on the back stack.
      */
-    public void addChildFragmentOnTop(TrackingFragment<?, ?, ?> trackingFragment, @Nullable String tag) {
+    public void addChildFragmentOnTop(Fragment childFragment, @Nullable String tag) {
         getFragmentManager()
                 .beginTransaction()
                 .detach(this)
-                .add(((ViewGroup)this.getView().getParent()).getId(), trackingFragment)
+                .add(((ViewGroup)this.getView().getParent()).getId(), childFragment)
                 .addToBackStack(tag)
                 .commit();
     }

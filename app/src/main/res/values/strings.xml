@@ -75,4 +75,6 @@
 
     <string name="time_picker_ok_button">Ok</string>
     <string name="time_picker_cancel_button">Cancel</string>
+
+    <string name="add_note_fragment_title">Add a note</string>
 </resources>

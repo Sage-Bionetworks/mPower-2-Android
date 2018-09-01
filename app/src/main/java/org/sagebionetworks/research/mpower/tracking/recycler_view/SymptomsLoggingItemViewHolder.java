@@ -10,11 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RadioButton;
 
-import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.MPowerRadioButton;
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.fragment.AddNoteFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.SymptomAddNoteFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TimePickerFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
@@ -22,6 +21,8 @@ import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTra
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.SymptomsLoggingUIFormItemWidget;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
@@ -34,6 +35,7 @@ import java.util.List;
  * View Holder for the Logging Items in the Symptoms task.
  */
 public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SymptomsLoggingItemViewHolder.class);
     private static final float FULL_ALPHA = 1.0f;
     private static final float FADED_ALPHA = .35f;
 
@@ -157,12 +159,24 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     private void setAddNoteButtonListener(@NonNull TrackingItem trackingItem) {
         this.widget.getAddNoteButton().setOnClickListener(view -> {
-            SymptomAddNoteFragment addNoteFragment =
-                    SymptomAddNoteFragment.newInstance(this.viewModel.getStepView(), trackingItem);
-            // Done to ensure a log is instantiated before the add note fragment gets added.
-            SymptomLog previousLog = getPreviousLogOrInstantiate(trackingItem);
-            this.viewModel.addLoggedElement(previousLog);
-            this.symptomLoggingFragment.addChildFragmentOnTop(addNoteFragment, SymptomLoggingFragment.SYMPTOM_LOGGING_FRAGMENT_TAG);
+            String title = this.widget.getResources().getString(R.string.add_note_fragment_title);
+            String text = "";
+            final SymptomLog previousLog = this.viewModel.getLog(trackingItem);
+            String previousNote = previousLog != null ? previousLog.getNote() : null;
+            AddNoteFragment addNoteFragment = AddNoteFragment.newInstance(title, text, previousNote);
+            addNoteFragment.setOnNoteChangeListener(note -> {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Note received by view holder: " + note);
+                }
+
+                SymptomLog log = createLogIfNull(previousLog, trackingItem).toBuilder()
+                        .setNote(note)
+                        .build();
+                this.viewModel.addLoggedElement(log);
+            });
+
+            this.symptomLoggingFragment.addChildFragmentOnTop(addNoteFragment,
+                    SymptomLoggingFragment.SYMPTOM_LOGGING_FRAGMENT_TAG);
         });
     }
 
