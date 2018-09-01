@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.tracking;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
@@ -13,12 +14,14 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
+import org.sagebionetworks.research.mpower.studyburst.MedicationActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,6 +123,15 @@ public class TrackingMenuFragment extends Fragment {
         result.setOnTouchListener((view, event) -> {
             view.performClick();
             return this.gestureDetector.onTouchEvent(event);
+        });
+
+        //TODO: temporary
+        this.imageViews.get(0).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                Intent intent = new Intent(getActivity(), MedicationActivity.class);
+                getActivity().startActivity(intent);
+            }
         });
 
         return result;

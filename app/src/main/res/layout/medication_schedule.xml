@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/appWhite"
+    android:layout_marginBottom="10dp"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/schedule_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/appTextDark"
+        android:text="@string/schedule_title"
+        android:textSize="16dp"
+        android:fontFamily="@font/lato_bold"
+        android:textStyle="bold"
+        android:layout_margin="20dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/appVeryLightGray"/>
+    <CheckBox
+        android:id="@+id/schedule_anytime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="16sp"
+        android:fontFamily="@font/lato"
+        android:text="@string/schedule_anytime"
+        android:paddingTop="2dp"
+        android:layout_margin="20dp"
+        android:layout_gravity="center_vertical"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/appVeryLightGray"/>
+
+    <TextView
+        android:id="@+id/schedule_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/appTextDark"
+        android:text="7:00 AM"
+        android:textSize="16dp"
+        android:layout_margin="20dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/appVeryLightGray"/>
+
+
+    <TextView
+        android:id="@+id/schedule_everyday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/appTextDark"
+        android:text="Everyday"
+        android:textSize="16dp"
+        android:layout_margin="20dp"/>
+</LinearLayout>

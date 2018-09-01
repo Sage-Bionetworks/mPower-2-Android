@@ -17,7 +17,6 @@
   -->
 <selector
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@drawable/mpower2_rounded_shape_pressed_butterscotch"/>
-    <item android:state_enabled="false" android:drawable="@drawable/mpower2_rounded_shape_disabled_butterscotch"/>
-    <item android:drawable="@drawable/mpower2_rounded_shape_butterscotch"/>
+    <item android:state_pressed="true" android:drawable="@drawable/mpower2_rounded_shape_pressed_gray"/>
+    <item android:drawable="@drawable/mpower2_rounded_shape_gray"/>
 </selector>

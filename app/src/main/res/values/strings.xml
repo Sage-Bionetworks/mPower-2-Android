@@ -59,4 +59,11 @@
     <string name="tracking_center_label">Medication</string>
     <string name="tracking_left_label">Symptom</string>
     <string name="tracking_right_label">Trigger</string>
+
+    <string name="remove_medication">Remove medication</string>
+    <string name="schedule_title">Schedule</string>
+    <string name="schedule_anytime">Take this medication anytime</string>
+    <string name="schedule_add_label">Add another schedule</string>
+    <string name="dosage_title">Dosage</string>
+    <string name="dosage_hint">e.g.: 10/100 mg</string>
 </resources>
