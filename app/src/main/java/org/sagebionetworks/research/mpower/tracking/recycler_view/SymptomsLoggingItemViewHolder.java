@@ -6,6 +6,7 @@ import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RadioButton;
@@ -27,6 +28,7 @@ import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.temporal.ChronoUnit;
 import org.threeten.bp.zone.ZoneRulesException;
 
 import java.util.List;
@@ -117,11 +119,35 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     private void setTimeButtonListener(@NonNull TrackingItem trackingItem) {
         this.widget.getTimeButton().setOnClickListener(view -> {
-            // Done to ensure a log is instantiated before the add note fragment gets added.
-            SymptomLog previousLog = getPreviousLogOrInstantiate(trackingItem);
-            this.viewModel.addLoggedElement(previousLog);
-            TimePickerFragment timePickerFragment = TimePickerFragment.newInstance(this.viewModel.getStepView(), trackingItem);
-            timePickerFragment.show(this.symptomLoggingFragment.getFragmentManager(), null);
+            SymptomLog previousLog = this.viewModel.getLog(trackingItem);
+            TimePickerFragment timePickerFragment = new TimePickerFragment();
+            timePickerFragment.setOnTimeSetListener((timePickerView, hour, minute) -> {
+                ZoneId zoneId;
+                try {
+                    zoneId = ZoneId.systemDefault();
+                } catch (ZoneRulesException e) {
+                    // UTC time.
+                    zoneId = ZoneId.of("Z");
+                }
+
+                Instant startOfDay = ZonedDateTime.ofInstant(Instant.now(), zoneId).toLocalDate().atStartOfDay(zoneId).toInstant();
+                Instant selectedInstant = startOfDay.plus(hour, ChronoUnit.HOURS).plus(minute, ChronoUnit.MINUTES);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("View holder received time selection of: " + selectedInstant);
+                }
+
+                SymptomLog log = createLogIfNull(previousLog, trackingItem).toBuilder()
+                        .setTimestamp(selectedInstant)
+                        .build();
+                this.viewModel.addLoggedElement(log);
+            });
+
+            FragmentManager fragmentManager = this.symptomLoggingFragment.getFragmentManager();
+            if (fragmentManager != null) {
+                timePickerFragment.show(fragmentManager, null);
+            } else {
+                LOGGER.warn("TimePickerFragment should have been launched but FragmentManager was null.");
+            }
         });
     }
 
