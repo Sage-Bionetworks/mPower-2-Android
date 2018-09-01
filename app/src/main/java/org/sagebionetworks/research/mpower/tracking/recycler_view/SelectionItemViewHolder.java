@@ -44,7 +44,30 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
+    }
 
+    public void setContent(@NonNull TrackingItem trackingItem) {
+        this.trackingItem = trackingItem;
+        // Set the top padding for an item to 16.
+        PaddingUtil.setTopPadding(this.widget.getText(), 16);
+        this.widget.getText().setTextSize(16f);
+        this.setLabels(trackingItem.getIdentifier(), trackingItem.getDetail());
+        this.setupSelectedObserver();
+    }
+
+    public void setContent(@NonNull TrackingSection trackingSection) {
+        this.trackingItem = null;
+        // Increase the top padding for a section to 28.
+        PaddingUtil.setTopPadding(this.widget.getText(), 28);
+        this.widget.getText().setTextSize(20f);
+        this.setLabels(trackingSection.getIdentifier(), trackingSection.getDetail());
+        this.setupSelectedObserver();
+    }
+
+    /**
+     * Sets up the observer for whether or not this item is selected.
+     * */
+    private void setupSelectedObserver() {
         this.selected = Transformations.map(this.viewModel.getActiveElements(), elements -> {
             if (this.trackingItem != null) {
                 for (TrackingItemConfig config : elements) {
@@ -59,22 +82,6 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
         });
 
         this.selected.observe(this.trackingFragment, this::updateSelected);
-    }
-
-    public void setContent(@NonNull TrackingItem trackingItem) {
-        this.trackingItem = trackingItem;
-        // Set the top padding for an item to 16.
-        PaddingUtil.setTopPadding(this.widget.getText(), 16);
-        this.widget.getText().setTextSize(16f);
-        this.setLabels(trackingItem.getIdentifier(), trackingItem.getDetail());
-    }
-
-    public void setContent(@NonNull TrackingSection trackingSection) {
-        this.trackingItem = null;
-        // Increase the top padding for a section to 28.
-        PaddingUtil.setTopPadding(this.widget.getText(), 28);
-        this.widget.getText().setTextSize(20f);
-        this.setLabels(trackingSection.getIdentifier(), trackingSection.getDetail());
     }
 
     private void updateSelected(@Nullable Boolean selected) {
