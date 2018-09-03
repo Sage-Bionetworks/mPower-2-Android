@@ -60,7 +60,7 @@ public class HandStepTests {
        this.task = mock(Task.class);
        when(this.task.getIdentifier()).thenReturn("testTask");
        when(this.task.getAsyncActions()).thenReturn(ImmutableSet.of());
-       List<String> progressMarkers = Arrays.asList("instruction", "left.instruction", "completion");
+       List<String> progressMarkers = Arrays.asList("instruction", "left_instruction", "completion");
        when(this.task.getProgressMarkers()).thenReturn(ImmutableList.copyOf(progressMarkers));
        List<Step> steps = new ArrayList<>();
         steps.add(StepTestHelper.mockStepWithIdentifier("introduction"));
@@ -68,14 +68,14 @@ public class HandStepTests {
                .setIdentifier("instruction").build();
        steps.add(instruction);
        InstructionStep leftInstruction = InstructionStep.builder().setActions(ImmutableMap.of())
-               .setIdentifier("left.instruction").build();
+               .setIdentifier("left_instruction").build();
        MPowerActiveUIStep leftActive = MPowerActiveUIStep.builder().setActions(ImmutableMap.of())
-               .setIdentifier("left.active").build();
+               .setIdentifier("left_active").build();
        steps.add(mockSectionStep("left", leftInstruction, leftActive));
        InstructionStep rightInstruction = InstructionStep.builder().setActions(ImmutableMap.of())
-               .setIdentifier("right.instruction").build();
+               .setIdentifier("right_instruction").build();
        MPowerActiveUIStep rightActive = MPowerActiveUIStep.builder().setActions(ImmutableMap.of())
-               .setIdentifier("right.active").build();
+               .setIdentifier("right_active").build();
        steps.add(mockSectionStep("right", rightInstruction, rightActive));
        steps.add(StepTestHelper.mockStepWithIdentifier("completion"));
        when(this.task.getSteps()).thenReturn(ImmutableList.copyOf(steps));
