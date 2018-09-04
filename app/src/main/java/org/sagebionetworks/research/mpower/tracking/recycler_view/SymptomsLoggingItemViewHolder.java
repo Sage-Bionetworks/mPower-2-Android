@@ -79,16 +79,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setLogObservers(@NonNull TrackingItem trackingItem) {
-        final LiveData<SymptomLog> logLiveData = Transformations.map(this.viewModel.getLoggedElements(), elements -> {
-            for (SymptomLog log : elements) {
-                if (log.getTrackingItem().getIdentifier().equals(trackingItem.getIdentifier())) {
-                    return log;
-                }
-            }
-
-            return null;
-        });
-
+        final LiveData<SymptomLog> logLiveData = this.viewModel.getLoggedElement(trackingItem.getIdentifier());
         final LiveData<Integer> severityLiveData = Transformations
                 .map(logLiveData, log -> log != null ? log.getSeverity() : null);
         severityLiveData.observe(this.symptomLoggingFragment, this::updateSeverityUI);

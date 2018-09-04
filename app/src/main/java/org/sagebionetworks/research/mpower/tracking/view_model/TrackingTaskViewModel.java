@@ -68,7 +68,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     }
 
     // region Selection
-
     /**
      * Returns a LiveData which is true whenever the user has selected at least on item, and false otherwise.
      *
@@ -87,15 +86,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      */
     public LiveData<Map<TrackingSection, Set<TrackingItem>>> getAvailableElements() {
         return this.availableElements;
-    }
-
-    /**
-     * Returns a LiveData containing all of the logs which have been created.
-     *
-     * @return a LiveData containing all of the logs which have been created.
-     */
-    public LiveData<Set<LogType>> getLoggedElements() {
-        return this.loggedElements;
     }
 
     /**
@@ -144,6 +134,26 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     }
 
     /**
+     * Returns a LiveData containing the Config with the given identifier or null if there is no Config with the given
+     * identifier.
+     *
+     * @param identifier the identifier of the Config to get.
+     * @return a LiveData containing the Config with the given identifier or null if there is no Config with the given
+     * identifier.
+     */
+    public LiveData<ConfigType> getActiveElement(@NonNull String identifier) {
+        return Transformations.map(this.activeElements, elements -> {
+            for (ConfigType element : elements) {
+                if (element.getTrackingItem().getIdentifier().equals(identifier)) {
+                    return element;
+                }
+            }
+
+            return null;
+        });
+    }
+
+    /**
      * Returns a LiveData containing the set of Configs which the user has not finished adding data to. For example in
      * the medication task this set would contain the medication configs which do not yet have a time and dosage set.
      *
@@ -185,6 +195,33 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     // endregion
 
     // region Logging
+    /**
+     * Returns a LiveData containing all of the logs which have been created.
+     *
+     * @return a LiveData containing all of the logs which have been created.
+     */
+    public LiveData<Set<LogType>> getLoggedElements() {
+        return this.loggedElements;
+    }
+
+    /**
+     * Returns a LiveData containing the log with the given identifier or null if there is no log with the given
+     * identifier.
+     * @param identifier The identifier of the log to get.
+     * @return a LiveData containing the log with the given identifier or null if there is no log with the given
+     * identifier.
+     */
+    public LiveData<LogType> getLoggedElement(@NonNull String identifier) {
+        return Transformations.map(this.loggedElements, (elements) -> {
+            for (LogType element : elements) {
+                if (element.getTrackingItem().getIdentifier().equals(identifier)) {
+                    return element;
+                }
+            }
+
+            return null;
+        });
+    }
 
     /**
      * Returns true if the item with the given config has been logged by the user, false otherwise.

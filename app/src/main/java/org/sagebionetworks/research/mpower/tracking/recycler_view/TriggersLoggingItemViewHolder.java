@@ -42,16 +42,7 @@ public class TriggersLoggingItemViewHolder extends ViewHolder {
     }
 
     private void setLogObservers(@NonNull TrackingItem trackingItem) {
-        LiveData<SimpleTrackingItemLog> logLiveData = Transformations.map(this.viewModel.getLoggedElements(), elements -> {
-            for (SimpleTrackingItemLog log : elements) {
-                if (log.getTrackingItem().getIdentifier().equals(trackingItem.getIdentifier())) {
-                    return log;
-                }
-            }
-
-            return null;
-        });
-
+        final LiveData<SimpleTrackingItemLog> logLiveData = this.viewModel.getLoggedElement(trackingItem.getIdentifier());
         logLiveData.observe(this.triggersLoggingFragment, log -> this.widget.setLogged(log != null));
     }
 

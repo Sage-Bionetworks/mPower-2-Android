@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.google.common.base.Preconditions;
+
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
@@ -68,19 +70,8 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
      * Sets up the observer for whether or not this item is selected.
      * */
     private void setupSelectedObserver() {
-        this.selected = Transformations.map(this.viewModel.getActiveElements(), elements -> {
-            if (this.trackingItem != null) {
-                for (TrackingItemConfig config : elements) {
-                    if (config.getTrackingItem().getIdentifier().equals(this.trackingItem.getIdentifier())) {
-                        // If there is an active config with the same identifier as this's content this is selected
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        });
-
+        this.selected = Transformations.map(this.viewModel.getActiveElement(this.trackingItem.getIdentifier()),
+                activeElement -> activeElement != null);
         this.selected.observe(this.trackingFragment, this::updateSelected);
     }
 
