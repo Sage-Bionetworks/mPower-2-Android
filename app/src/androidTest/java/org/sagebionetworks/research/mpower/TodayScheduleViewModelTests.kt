@@ -54,7 +54,7 @@ import org.threeten.bp.ZonedDateTime
 //
 
 @RunWith(AndroidJUnit4::class)
-class FinishedTodayScheduleViewModelTests: RoomTestHelper() {
+class TodayScheduleViewModelTests: RoomTestHelper() {
 
     companion object {
         lateinit var application: Application
