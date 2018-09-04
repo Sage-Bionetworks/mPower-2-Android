@@ -84,11 +84,11 @@ open class FinishedTodayScheduleViewModel(app: Application): ScheduleViewModel(a
      * @return the live data for history item updates, will always be the same live data object
      */
     fun liveData(): LiveData<List<TodayHistoryItem>> {
-        if (finishedTodayLiveData == null) {
-            finishedTodayLiveData = map(scheduleDao().excludeActivityGroupFinishedBetween(
-                    excludeTaskGroup, queryDateStart, queryDateEnd)) { consolidate(it) }
-        }
-        return finishedTodayLiveData!!
+        val liveDataChecked = finishedTodayLiveData ?:
+            map(scheduleDao().excludeActivityGroupFinishedBetween(
+                excludeTaskGroup, queryDateStart, queryDateEnd)) { consolidate(it) }
+        finishedTodayLiveData = liveDataChecked
+        return liveDataChecked
     }
 
     /**
