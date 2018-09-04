@@ -7,6 +7,6 @@ wget https://github.com/AGWA/git-crypt/archive/ccdcc76f8e1a639847a8accd801f5a284
 unzip git-crypt.zip
 cd git-crypt-ccdcc76f8e1a639847a8accd801f5a284194e43f
 make
-sudo ln -s /usr/local/bin/git-crypt /tmp/git-crypt-ccdcc76f8e1a639847a8accd801f5a284194e43f/git-crypt
+sudo ln -s ./git-crypt /usr/local/bin/git-crypt
 popd
 
