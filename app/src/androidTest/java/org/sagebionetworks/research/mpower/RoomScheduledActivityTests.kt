@@ -56,12 +56,14 @@ class RoomScheduledActivityTests: RoomTestHelper() {
         val timeZonePstActivityList = "test_activities_timezones_pst.json"
         val timeZoneEstActivityList = "test_activities_timezones_est.json"
         val finishedBetweenActivityList = "test_schedules_finished_between.json"
+        val recentlyFinishedActivityList = "test_schedules_recently_finished.json"
 
         val testResourceMap = TestResourceHelper.testResourceMap(setOf(
                 activityList,
                 timeZonePstActivityList,
                 timeZoneEstActivityList,
-                finishedBetweenActivityList))
+                finishedBetweenActivityList,
+                recentlyFinishedActivityList))
     }
 
     @Before
@@ -372,6 +374,24 @@ class RoomScheduledActivityTests: RoomTestHelper() {
         val dbActivities = getValue(activityDao.excludeSurveyGroupUnfinishedAvailableOn(setOf(), availableOn))
         // There are no surveys available during that time
         assertEquals(0, dbActivities.size)
+    }
+
+    @Test fun query_mostRecentFinishedActivityNoneFinished() {
+        activityDao.clear()
+        activityDao.upsert(testResourceMap[recentlyFinishedActivityList]!!)
+        val activityGroup = setOf("Motivation")
+        val dbActivities = getValue(activityDao.mostRecentFinishedActivity(activityGroup))
+        // There are no finished Motivation activities
+        assertEquals(0, dbActivities.size)
+    }
+
+    @Test fun query_mostRecentFinishedActivity() {
+        activityDao.clear()
+        activityDao.upsert(testResourceMap[recentlyFinishedActivityList]!!)
+        val activityGroup = setOf("Medication")
+        val dbActivities = getValue(activityDao.mostRecentFinishedActivity(activityGroup))
+        // There are 2 finished Medication activities, but the most recent is this guid
+        assertTaskContains(arrayOf("273c4518-7cb6-4496-b1dd-c0b5bf291b09:2018-08-18T00:00:00.000-04:00"), dbActivities)
     }
 
     fun assertTaskContains(guids: Array<String>, activityList: List<ScheduledActivityEntity>) {
