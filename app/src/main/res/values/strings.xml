@@ -59,4 +59,17 @@
     <string name="tracking_center_label">Medication</string>
     <string name="tracking_left_label">Symptom</string>
     <string name="tracking_right_label">Trigger</string>
+
+    <!-- Today Fragment -->
+    <!-- The term to use when referring to multiple instances of a task, such as when describing-->
+    <!-- how may times the user has logged taking medication.-->
+    <string name="task_plural_term_for_medication">"%1$d Doses"</string>
+    <string name="task_plural_term_for_triggers">"%1$d Triggers"</string>
+    <string name="task_plural_term_for_symptoms">"%1$d Symptoms"</string>
+    <string name="task_plural_term_for_activities">"%1$d Activities"</string>
+    <string name="task_singular_term_for_medication">"%1$d Dose"</string>
+    <string name="task_singular_term_for_triggers">"%1$d Trigger"</string>
+    <string name="task_singular_term_for_symptoms">"%1$d Symptom"</string>
+    <string name="task_singular_term_for_activities">"%1$d Activity"</string>
+
 </resources>

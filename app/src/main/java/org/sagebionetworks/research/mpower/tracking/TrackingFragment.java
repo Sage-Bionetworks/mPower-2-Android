@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.tracking.TrackingViewModel.ScheduledActivityView;
+import org.sagebionetworks.research.mpower.viewmodel.FinishedTodayScheduleViewModel;
 
 import java.util.List;
 
@@ -58,6 +60,7 @@ public class TrackingFragment extends Fragment {
     TrackingViewModelFactory trackingViewModelFactory;
 
     private TrackingViewModel trackingViewModel;
+    private FinishedTodayScheduleViewModel todayScheduleViewModel;
 
     private Unbinder unbinder;
 
@@ -105,6 +108,13 @@ public class TrackingFragment extends Fragment {
                 .observe(this, this::updateScheduledActivitiesErrorMessage);
         trackingViewModel.getScheduledActivitiesLoadingLiveData()
                 .observe(this, this::updateScheduledActivitiesLoading);
+
+        if (getActivity() != null) {
+            todayScheduleViewModel = FinishedTodayScheduleViewModel.create(getActivity());
+            todayScheduleViewModel.liveData().observe(this, todayHistoryItems -> {
+                // TODO: mdephillips 9/4/18 mimic with iOS does with the history items, see TodayViewController
+            });
+        }
     }
 
     @Override

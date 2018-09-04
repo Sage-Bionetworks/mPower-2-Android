@@ -7,12 +7,14 @@ import junit.framework.Assert.assertNull
 
 
 import org.joda.time.DateTime
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.sagebionetworks.bridge.rest.model.ActivityType
 import org.sagebionetworks.bridge.rest.model.ScheduleStatus
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 
 //
@@ -49,35 +51,56 @@ import org.threeten.bp.format.DateTimeFormatter
 // ran into multidex issues moving this to a library project, leaving it here for now
 class RoomScheduledActivityTests: RoomTestHelper() {
 
+    companion object {
+        val activityList = "test_scheduled_activities.json"
+        val timeZonePstActivityList = "test_activities_timezones_pst.json"
+        val timeZoneEstActivityList = "test_activities_timezones_est.json"
+        val finishedBetweenActivityList = "test_schedules_finished_between.json"
+
+        val testResourceMap = TestResourceHelper.testResourceMap(setOf(
+                activityList,
+                timeZonePstActivityList,
+                timeZoneEstActivityList,
+                finishedBetweenActivityList))
+    }
+
+    @Before
+    fun setupForEachTest() {
+        activityDao.clear()
+        activityDao.upsert(testResourceMap[activityList] ?: listOf())
+    }
+
     @Test
     fun setup_testInitialDatabaseAndJsonSetup() {
-        assertNotNull(roomActivityList)
-        assertEquals(8, roomActivityList.size)
+        assertNotNull(testResourceMap[activityList])
+        assertEquals(8, testResourceMap[activityList]?.size)
     }
 
     @Test
     fun insert_test() {
         activityDao.clear()
-        activityDao.insert(roomActivityList.first())
-        assertTaskContains(arrayOf(roomActivityList.first().guid), getValue(activityDao.getAll()))
+        val first = testResourceMap[activityList]!!.first()
+        activityDao.upsert(listOf(first))
+        assertTaskContains(arrayOf(first.guid), getValue(activityDao.all()))
     }
 
     @Test
     fun insert_testAll() {
         activityDao.clear()
-        activityDao.upsert(arrayListOf(roomActivityList[0], roomActivityList[1]))
-        assertTaskContains(arrayOf(roomActivityList[0].guid, roomActivityList[1].guid), getValue(activityDao.getAll()))
+        activityDao.upsert(arrayListOf(testResourceMap[activityList]!![0], testResourceMap[activityList]!![1]))
+        assertTaskContains(arrayOf(testResourceMap[activityList]!![0].guid,
+                testResourceMap[activityList]!![1].guid), getValue(activityDao.all()))
     }
 
     @Test
     fun delete_test() {
         activityDao.clear()
-        assertEquals(0, getValue(activityDao.getAll()).size)
+        assertEquals(0, getValue(activityDao.all()).size)
     }
 
     @Test
     fun serialization_testTaskReference() {
-        assertMedicationTaskReferenceActivity(roomActivityList.first())
+        assertMedicationTaskReferenceActivity(testResourceMap[activityList]!!.first())
     }
 
     fun assertMedicationTaskReferenceActivity(activity: ScheduledActivityEntity?) {
@@ -103,7 +126,7 @@ class RoomScheduledActivityTests: RoomTestHelper() {
 
     @Test
     fun serialization_testSurveyReference() {
-        assertMotivationSurveyReferenceActivity(roomActivityList.get(2))
+        assertMotivationSurveyReferenceActivity(testResourceMap[activityList]!!.get(2))
     }
 
     fun assertMotivationSurveyReferenceActivity(activity: ScheduledActivityEntity?) {
@@ -123,7 +146,7 @@ class RoomScheduledActivityTests: RoomTestHelper() {
 
     @Test
     fun query_testAll() {
-        val dbActivities = getValue(activityDao.getAll())
+        val dbActivities = getValue(activityDao.all())
         assertEquals(8, dbActivities.size)
         assertMedicationTaskReferenceActivity(dbActivities.first())
         assertMotivationSurveyReferenceActivity(dbActivities[2])
@@ -164,28 +187,21 @@ class RoomScheduledActivityTests: RoomTestHelper() {
 
     @Test
     fun query_testTaskIdentifier() {
-        val dbActivities = getValue(activityDao.get("Medication"))
+        val dbActivities = getValue(activityDao.activityGroup(setOf("Medication")))
         assertEquals(1, dbActivities.size)
         assertMedicationTaskReferenceActivity(dbActivities.first())
     }
 
     @Test
-    fun query_testTaskIdentifierNew() {
-        val dbActivities = getValue(activityDao.get("Medication"))
-        assertEquals(1, dbActivities?.size)
-        assertMedicationTaskReferenceActivity(dbActivities?.first())
-    }
-
-    @Test
     fun query_testSurveyIdentifier() {
-        val dbActivities = getValue(activityDao.get("Motivation"))
+        val dbActivities = getValue(activityDao.activityGroup(setOf("Motivation")))
         assertEquals(1, dbActivities.size)
         assertMotivationSurveyReferenceActivity(dbActivities.first())
     }
 
     @Test
     fun query_testCompoundIdentifier() {
-        val dbActivities = getValue(activityDao.get("compound-from-def"))
+        val dbActivities = getValue(activityDao.activityGroup(setOf("compound-from-def")))
         assertEquals(1, dbActivities.size)
         assertCompoundActivity(dbActivities.first())
     }
@@ -193,7 +209,7 @@ class RoomScheduledActivityTests: RoomTestHelper() {
     @Test
     fun query_testMedicationDateFound() {
         val date = LocalDateTime.parse("2018-08-17T12:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
-        val dbActivities = getValue(activityDao.get("Medication", date))
+        val dbActivities = getValue(activityDao.activityGroupAvailableOn(setOf("Medication"), date))
         assertEquals(1, dbActivities.size)
         assertMedicationTaskReferenceActivity(dbActivities.first())
     }
@@ -201,14 +217,14 @@ class RoomScheduledActivityTests: RoomTestHelper() {
     @Test
     fun query_testMedicationDateNotFound() {
         val date = LocalDateTime.parse("2018-08-14T00:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
-        val dbActivities = getValue(activityDao.get("Medication", date))
+        val dbActivities = getValue(activityDao.activityGroupAvailableOn(setOf("Medication"), date))
         assertEquals(0, dbActivities.size)
     }
 
     @Test
     fun query_testMedicationDateStartEdgeCaseFound() {
         val date = LocalDateTime.parse("2018-08-17T00:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
-        val dbActivities = getValue(activityDao.get("Medication", date))
+        val dbActivities = getValue(activityDao.activityGroupAvailableOn(setOf("Medication"), date))
         assertEquals(1, dbActivities.size)
         assertMedicationTaskReferenceActivity(dbActivities.first())
     }
@@ -216,7 +232,7 @@ class RoomScheduledActivityTests: RoomTestHelper() {
     @Test
     fun query_testMedicationDateEndEdgeCaseFound() {
         val date = LocalDateTime.parse("2018-08-18T00:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
-        val dbActivities = getValue(activityDao.get("Medication", date))
+        val dbActivities = getValue(activityDao.activityGroupAvailableOn(setOf("Medication"), date))
         assertEquals(1, dbActivities.size)
         assertMedicationTaskReferenceActivity(dbActivities.first())
     }
@@ -224,13 +240,13 @@ class RoomScheduledActivityTests: RoomTestHelper() {
     @Test
     fun query_testMedicationDateEndEdgeCaseNotFound() {
         val date = LocalDateTime.parse("2018-08-18T00:00:00.001-04:00", DateTimeFormatter.ISO_DATE_TIME)
-        val dbActivities = getValue(activityDao.get("Medication", date))
+        val dbActivities = getValue(activityDao.activityGroupAvailableOn(setOf("Medication"), date))
         assertEquals(0, dbActivities.size)
     }
 
     @Test
     fun query_testTaskGroup() {
-        val dbActivities = getValue(activityDao.get(setOf("Medication", "Motivation")))
+        val dbActivities = getValue(activityDao.activityGroup(setOf("Medication", "Motivation")))
         assertEquals(2, dbActivities.size)
         assertMedicationTaskReferenceActivity(dbActivities.first())
         assertMotivationSurveyReferenceActivity(dbActivities.get(1))
@@ -239,7 +255,7 @@ class RoomScheduledActivityTests: RoomTestHelper() {
     @Test
     fun query_testTaskGroupAvailableOn() {
         val date = LocalDateTime.parse("2018-08-17T14:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
-        val dbActivities = getValue(activityDao.get(setOf("Medication", "Motivation"), date))
+        val dbActivities = getValue(activityDao.activityGroupAvailableOn(setOf("Medication", "Motivation"), date))
         assertEquals(2, dbActivities.size)
         assertMedicationTaskReferenceActivity(dbActivities.first())
         assertMotivationSurveyReferenceActivity(dbActivities.get(1))
@@ -248,7 +264,7 @@ class RoomScheduledActivityTests: RoomTestHelper() {
     @Test
     fun query_testDate() {
         val date = LocalDateTime.parse("2018-08-17T14:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
-        val dbActivities = getValue(activityDao.get(date))
+        val dbActivities = getValue(activityDao.availableOn(date))
         assertEquals(5, dbActivities.size)
         assertTaskContains(arrayOf("273c4518-7cb6-4496-b1dd-c0b5bf291b09:2018-08-17T00:00:00.000",
                 "fe79d987-28a2-4ccd-bcf3-b3d07b925a6b:2018-08-17T00:00:00.000",
@@ -260,7 +276,7 @@ class RoomScheduledActivityTests: RoomTestHelper() {
     @Test
     fun query_testAvailableOn() {
         val date = LocalDateTime.parse("2018-08-17T14:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
-        val dbActivities = getValue(activityDao.getAvailableOn(date))
+        val dbActivities = getValue(activityDao.unfinishedAvailableOn(date))
         assertEquals(4, dbActivities.size)
         assertTaskContains(arrayOf("273c4518-7cb6-4496-b1dd-c0b5bf291b09:2018-08-17T00:00:00.000",
                 "fe79d987-28a2-4ccd-bcf3-b3d07b925a6b:2018-08-17T00:00:00.000",
@@ -270,41 +286,73 @@ class RoomScheduledActivityTests: RoomTestHelper() {
 
     @Test fun query_testTimezoneChangePstToEst() {
         activityDao.clear()
-        activityDao.upsert(timeZonePstActivityList)
+        activityDao.upsert(testResourceMap[timeZonePstActivityList]!!)
 
         // Tests if user switched time zones from the db stored data which was inserted in PST
         val estDateInclude = LocalDateTime.parse("2018-08-17T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME)
 
         // We should still get the activity in the db because scheduledOn is considered a LocalTimeZone
-        val dbActivitiesInclude = getValue(activityDao.getAvailableOn(estDateInclude))
+        val dbActivitiesInclude = getValue(activityDao.unfinishedAvailableOn(estDateInclude))
         assertEquals(1, dbActivitiesInclude.size)
 
         val estDateExclude = LocalDateTime.parse("2018-08-18T00:00:01.000-05:00", DateTimeFormatter.ISO_DATE_TIME)
 
-        val dbActivitiesExclude = getValue(activityDao.getAvailableOn(estDateExclude))
+        val dbActivitiesExclude = getValue(activityDao.unfinishedAvailableOn(estDateExclude))
         assertEquals(0, dbActivitiesExclude.size)
     }
 
     @Test fun query_testTimezoneChangeEstToPst() {
         activityDao.clear()
-        activityDao.upsert(timeZoneEstActivityList)
+        activityDao.upsert(testResourceMap[timeZoneEstActivityList]!!)
 
         // Tests if user switched time zones from the db stored data which was inserted in PST
         val pstDateInclude = LocalDateTime.parse("2018-08-17T23:59:00.000-08:00", DateTimeFormatter.ISO_DATE_TIME)
 
         // We should still get the activity in the db because scheduledOn is considered a LocalTimeZone
-        val dbActivitiesInclude = getValue(activityDao.getAvailableOn(pstDateInclude))
+        val dbActivitiesInclude = getValue(activityDao.unfinishedAvailableOn(pstDateInclude))
         assertEquals(1, dbActivitiesInclude.size)
 
         val estDateExclude = LocalDateTime.parse("2018-08-16T23:59:00.000-08:00", DateTimeFormatter.ISO_DATE_TIME)
 
-        val dbActivitiesExclude = getValue(activityDao.getAvailableOn(estDateExclude))
+        val dbActivitiesExclude = getValue(activityDao.unfinishedAvailableOn(estDateExclude))
         assertEquals(0, dbActivitiesExclude.size)
     }
 
+    @Test fun query_taskGroupFinishedBetweenUnfinished() {
+        activityDao.clear()
+        activityDao.upsert(testResourceMap[finishedBetweenActivityList]!!)
+        val taskGroup = setOf("Medication", "Motivation")
+        val start = ZonedDateTime.parse("2018-08-18T00:00:00.000Z").toInstant()
+        val end = ZonedDateTime.parse("2018-08-19T00:00:00.000Z").toInstant()
+        val dbActivities = getValue(activityDao.activityGroupFinishedBetween(taskGroup, start, end))
+        assertEquals(0, dbActivities.size)
+    }
 
+    @Test fun query_taskGroupFinishedBetweenFinished() {
+        activityDao.clear()
+        activityDao.upsert(testResourceMap[finishedBetweenActivityList]!!)
+        val taskGroup = setOf("Medication", "Motivation")
+        val start = ZonedDateTime.parse("2018-08-17T00:00:00.000Z").toInstant()
+        val end = ZonedDateTime.parse("2018-08-18T00:00:00.000Z").toInstant()
+        val dbActivities = getValue(activityDao.activityGroupFinishedBetween(taskGroup, start, end))
+        assertTaskContains(arrayOf(
+                "273c4518-7cb6-4496-b1dd-c0b5bf291b09:2018-08-17T00:00:00.000",
+                "a341c893-615d-48e1-ab6a-d418af720269:2018-08-17T00:00:00.000-04:00"), dbActivities)
+    }
+
+    @Test fun query_excludeTaskGroupFinishedBetween() {
+        activityDao.clear()
+        activityDao.upsert(testResourceMap[finishedBetweenActivityList]!!)
+        val excludeTaskGroup = setOf("Medication")
+        val start = ZonedDateTime.parse("2018-08-17T00:00:00.000Z").toInstant()
+        val end = ZonedDateTime.parse("2018-08-18T00:00:00.000Z").toInstant()
+        val dbActivities = getValue(activityDao.excludeActivityGroupFinishedBetween(excludeTaskGroup, start, end))
+        // We excluded the "Medication" task, so we should just have "Motivation" task
+        assertTaskContains(arrayOf("a341c893-615d-48e1-ab6a-d418af720269:2018-08-17T00:00:00.000-04:00"), dbActivities)
+    }
 
     fun assertTaskContains(guids: Array<String>, activityList: List<ScheduledActivityEntity>) {
+        assertEquals(guids.size, activityList.size)
         assertEquals(0, activityList.filter { !guids.contains(it.guid) }.size)
     }
 }
