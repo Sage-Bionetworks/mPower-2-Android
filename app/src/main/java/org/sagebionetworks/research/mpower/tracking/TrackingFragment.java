@@ -25,6 +25,8 @@ import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.tracking.TrackingViewModel.ScheduledActivityView;
 import org.sagebionetworks.research.mpower.viewmodel.FinishedTodayScheduleViewModel;
+import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
 
 import java.util.List;
 
@@ -61,6 +63,7 @@ public class TrackingFragment extends Fragment {
 
     private TrackingViewModel trackingViewModel;
     private FinishedTodayScheduleViewModel todayScheduleViewModel;
+    private SurveyViewModel surveyViewModel;
 
     private Unbinder unbinder;
 
@@ -112,7 +115,11 @@ public class TrackingFragment extends Fragment {
         if (getActivity() != null) {
             todayScheduleViewModel = FinishedTodayScheduleViewModel.create(getActivity());
             todayScheduleViewModel.liveData().observe(this, todayHistoryItems -> {
-                // TODO: mdephillips 9/4/18 mimic with iOS does with the history items, see TodayViewController
+                // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
+            });
+            surveyViewModel = SurveyViewModel.create(getActivity());
+            surveyViewModel.liveData().observe(this, scheduledActivityEntities -> {
+                // TODO: mdephillips 9/4/18 mimic what iOS does with these
             });
         }
     }

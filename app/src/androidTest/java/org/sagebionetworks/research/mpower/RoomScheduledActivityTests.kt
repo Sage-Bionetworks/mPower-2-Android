@@ -351,6 +351,29 @@ class RoomScheduledActivityTests: RoomTestHelper() {
         assertTaskContains(arrayOf("a341c893-615d-48e1-ab6a-d418af720269:2018-08-17T00:00:00.000-04:00"), dbActivities)
     }
 
+    @Test fun query_excludeSurveyGroupAvailableOnExclude() {
+        val excludeGroup = setOf("Demographics")
+        val availableOn = LocalDateTime.parse("2018-08-17T14:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
+        val dbActivities = getValue(activityDao.excludeSurveyGroupUnfinishedAvailableOn(excludeGroup, availableOn))
+        // We excluded the "Demographics" survey, so we should just have "Engagement" survey
+        assertTaskContains(arrayOf("e6fe761f-6187-4e8f-b659-bce4edc98f06:2018-08-17T13:40:39.183"), dbActivities)
+    }
+
+    @Test fun query_excludeSurveyGroupAvailableOnExcludeAll() {
+        val excludeGroup = setOf("Demographics", "Engagement")
+        val availableOn = LocalDateTime.parse("2018-08-17T14:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
+        val dbActivities = getValue(activityDao.excludeSurveyGroupUnfinishedAvailableOn(excludeGroup, availableOn))
+        // We excluded both "Demographics" and "Engagement" surveys
+        assertEquals(0, dbActivities.size)
+    }
+
+    @Test fun query_excludeSurveyGroupAvailableOnNone() {
+        val availableOn = LocalDateTime.parse("2018-08-17T13:00:00.000-04:00", DateTimeFormatter.ISO_DATE_TIME)
+        val dbActivities = getValue(activityDao.excludeSurveyGroupUnfinishedAvailableOn(setOf(), availableOn))
+        // There are no surveys available during that time
+        assertEquals(0, dbActivities.size)
+    }
+
     fun assertTaskContains(guids: Array<String>, activityList: List<ScheduledActivityEntity>) {
         assertEquals(guids.size, activityList.size)
         assertEquals(0, activityList.filter { !guids.contains(it.guid) }.size)
