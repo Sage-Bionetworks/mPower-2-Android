@@ -17,7 +17,7 @@ import org.threeten.bp.Instant;
  * and the symptoms timing relative to when the user has taken their medication.
  */
 @AutoValue
-public abstract class SymptomLog implements NoteLog {
+public abstract class SymptomLog {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract SymptomLog build();
@@ -34,8 +34,6 @@ public abstract class SymptomLog implements NoteLog {
         @NonNull
         public abstract Builder setNote(@Nullable String note);
 
-        // TODO add time
-
         @NonNull
         public abstract Builder setDuration(@Nullable String duration);
 
@@ -50,13 +48,10 @@ public abstract class SymptomLog implements NoteLog {
     public abstract String getMedicationTiming();
 
     @Nullable
-    public abstract String getDuration();
+    public abstract String getNote();
 
-    @Override
-    @NonNull
-    public SymptomLog copyWithNote(@Nullable String note) {
-        return this.toBuilder().setNote(note).build();
-    }
+    @Nullable
+    public abstract String getDuration();
 
     public static Builder builder() {
         return new AutoValue_SymptomLog.Builder();
