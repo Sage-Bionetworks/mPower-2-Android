@@ -19,6 +19,10 @@ before_install:
 install:
   - gem install bundler
   - bundle install
+  - pip install -U crcmod
+  - ./install-gcloud.sh || travis_terminate 1
+  - ./setup_git_crypt.sh || travis_terminate 1
+  - ./git_crypt_unlock.sh || travis_terminate 1
 
 # Path is used for zipalign
 before_script:
@@ -49,3 +53,15 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
+
+deploy:
+  provider: firebase
+  token:
+    secure: "b3FBaoRewqnHEURK6Pb6UHRQmx69TWtqh8WC3MaRTQ9eJuXTEYqn048Ttu4svzyPpchu2fuvMdILzUM44/H9XfMIDbQFMGYElDBkrrYQ2BsraM15YmiRnkisul+kC0sLGcW3jbnyf4H6TWLkIQx6SLb0qyC98a3DTpZ9aWbpmnrFA6CrftE96mhc2cqwv0WCFhm7ccdwFFlZKLuytag8pCuYMzFe3PXVtsYqPz5P/Od1SiH7goHWnLJAX4+g8FIDN57kuRdyiMyIzKizrec5A+v5+1rC0yn+ipyR9sOiiXDSTIQqQSp2Do1dyb66fc3TL6wQZpEv0s/Mh3lLAZRETQDB8Xe9EFOWDft5ZPbJK0srSIFOdL5HCTnbMsHNsJLVxY9EcO54KrjCF2CaY3xB/lo4t55XoiV2wvg4J6FjakjfBevQIeos5BvMxR311pEwhkOyMgVfTvni0lAqIYYiG0X4mZK6BFT9Xey82QMPLAhXfoBzPZUlf0yRkzBWGLZB1U0FEITRI2xY6E0D2ioZ0hC5niFUlQN/Y/3Aqju7BUCuYsdNOSEX3SVgyfas1o9R2PVpEI0nOkdRZi5EKMdnNKR9H3c5bdRZcTe58ZFfp/Nd8FXinFuoPA72ol7Q+tX0Y82nDzbTwymhyRN3Iv6/wMOcFSPF4PbZwdQgu0kb3+M="
+  after_deploy:
+    - gcloud config set project mpower2-e03b9
+    - gcloud --quiet components update
+    - gcloud --quiet components install beta
+    - gcloud auth activate-service-account travis@mpower2-215017.iam.gserviceaccount.com --key-file ../android-certificates/gcloud_service_account_6f4ab81e.json
+    - echo "y" | gcloud firebase test android run --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk
+
