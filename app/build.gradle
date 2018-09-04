@@ -57,13 +57,11 @@ dependencies {
 
     // Local projects
     implementation project(':android-sdk')
-    implementation project(':backbone'), {
-        // TODO: remove when ResearchStack joda-time exclusion PR is merged @liujoshua 2018/08/06
-        exclude group: 'joda-time', module: 'joda-time'
-    }
+    implementation project(':backbone')
     implementation project(':data')
     implementation project(':sageresearch-mpower')
     implementation project(':researchstack-mpower')
+    implementation project(':motor-control-module')
 
     // ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
@@ -101,6 +99,12 @@ dependencies {
     implementation "com.android.support:support-vector-drawable:$support_library_version"
     implementation "com.android.support:support-v4:$support_library_version"
     implementation "com.android.support:appcompat-v7:$support_library_version"
+    implementation "com.android.support:support-v4:$support_library_version"
+
+    // room db functionality
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
+    kapt 'android.arch.persistence.room:compiler:1.1.1'
+    androidTestImplementation'android.arch.persistence.room:testing:1.1.1'
 
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
@@ -109,7 +113,10 @@ dependencies {
     androidTestImplementation 'com.google.code.findbugs:jsr305:2.0.1'
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+
+    androidTestImplementation  'org.mockito:mockito-android:2.21.0'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
 }

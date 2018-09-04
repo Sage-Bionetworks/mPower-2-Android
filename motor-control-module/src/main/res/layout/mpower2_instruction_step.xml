@@ -30,13 +30,13 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@id/rs2_root_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:layout_editor_absoluteY="81dp">
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@id/rs2_step_fragment_root_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar
         android:id="@id/rs2_step_navigation_action_bar"
@@ -48,14 +48,14 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fadeScrollbars="false"
-        app:layout_constraintBottom_toTopOf="@id/rs2_step_navigation_action_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fadeScrollbars="false"
+            app:layout_constraintBottom_toTopOf="@id/rs2_step_navigation_action_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/contentView"
@@ -74,22 +74,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/f_walking1"></ImageView>
-
-            <org.sagebionetworks.research.mobile_ui.widget.StepHeader
-                android:id="@+id/stepHeader"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:background="@color/transparent"
-                app:isCancelButtonHidden="false"
-                app:isInfoButtonHidden="true"
-                app:isProgressBarHidden="false"
-                app:isProgressLabelHidden="false"
-                app:layout_constraintBottom_toBottomOf="@id/rs2_image_view"
-                app:layout_constraintEnd_toEndOf="@id/rs2_image_view"
-                app:layout_constraintStart_toStartOf="@id/rs2_image_view"
-                app:layout_constraintTop_toTopOf="@id/rs2_image_view"
-                app:usesFloatingProgressBar="false" />
+                app:srcCompat="@drawable/f_walking1"/>
 
             <include
                 android:id="@+id/stepBody"
@@ -102,7 +87,38 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rs2_image_view" />
+
+            <ProgressBar
+                    android:id="@id/rs2_progress_bar"
+                    style="@style/Widget.ResearchStack.StepHeader.ProgressBar"
+                    android:layout_width="0dp"
+                    android:layout_height="10dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/rs2_image_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:max="3" android:progress="2"/>
+
+            <TextView
+                    android:text="Step 2 of 3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@id/rs2_progress_label"
+                    app:layout_constraintBottom_toTopOf="@id/rs2_progress_bar" app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:fontFamily="@font/lato" android:textSize="12sp" android:textColor="@color/appWhite"
+                    android:textStyle="bold" android:textAllCaps="true"/>
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+            android:layout_width="32dp"
+            android:layout_height="0dp"
+            android:id="@id/rs2_step_navigation_action_cancel"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="@dimen/app_margin_medium"
+            android:layout_marginStart="@dimen/app_margin_medium"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="@dimen/app_margin_medium"
+            app:layout_constraintDimensionRatio="H,1:1"
+            android:background="@drawable/rs2_cancel_icon"/>
 </android.support.constraint.ConstraintLayout>

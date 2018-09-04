@@ -93,7 +93,7 @@ public class ExternalIdSignInViewModel extends ViewModel {
 
         compositeSubscription.add(
                 authenticationManager.signUp(signUp)
-                        .andThen(authenticationManager.signInViaExternalId(externalId, externalId))
+                        .andThen(authenticationManager.signInWithExternalId(externalId, externalId))
                         .doOnSubscribe(() -> isLoadingMutableLiveData.postValue(true))
                         .doAfterTerminate(() -> isLoadingMutableLiveData.postValue(false))
                         .subscribe(s -> {

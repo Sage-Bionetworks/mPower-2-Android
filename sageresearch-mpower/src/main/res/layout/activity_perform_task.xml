@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PerformTaskActivity">
+    tools:context="org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskActivity">
 
     <FrameLayout
         android:id="@+id/fragment_container"

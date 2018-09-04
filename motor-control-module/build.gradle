@@ -1,9 +1,8 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jakewharton.butterknife'
 
 android {
     compileSdkVersion 27
-
-
 
     defaultConfig {
         minSdkVersion 16
@@ -87,4 +86,12 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation project(path: ':data')
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    testImplementation "org.mockito:mockito-core:2.+"
+
+    testImplementation 'com.google.dagger:dagger-android:2.15'
+    testImplementation 'com.google.dagger:dagger-android-support:2.15'
+    testAnnotationProcessor 'com.google.dagger:dagger-android-processor:2.15'
+    testAnnotationProcessor "com.google.dagger:dagger-compiler:2.15"
 }

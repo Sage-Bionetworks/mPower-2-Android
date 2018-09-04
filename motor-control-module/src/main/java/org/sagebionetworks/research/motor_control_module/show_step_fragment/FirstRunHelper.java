@@ -42,6 +42,9 @@ import org.threeten.bp.Instant;
 import org.threeten.bp.ZonedDateTime;
 
 public class FirstRunHelper {
+    // private constructor to prevent instantiation
+    private FirstRunHelper() {}
+
     public static ZonedDateTime getLastRunDate(@NonNull TaskResult taskResult) {
         for (Result result : taskResult.getAsyncResults()) {
             if (result.getIdentifier().equals(PerformTaskViewModel.LAST_RUN_RESULT_ID) &&

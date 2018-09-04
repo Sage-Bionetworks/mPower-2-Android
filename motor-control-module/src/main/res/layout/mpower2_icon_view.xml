@@ -36,16 +36,16 @@
     android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/left"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toStartOf="@+id/center"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="100dp">
+            android:id="@+id/left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/center"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="110dp">
 
         <ImageButton
             android:id="@+id/leftIconImageView"
@@ -75,15 +75,15 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toStartOf="@+id/right"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/left"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="100dp">
+            android:id="@+id/center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/right"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/left"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="110dp">
 
         <ImageButton
             android:id="@+id/centerIconImageView"
@@ -121,7 +121,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/center"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="100dp">
+        app:layout_constraintWidth_max="110dp">
 
         <ImageButton
             android:id="@+id/rightIconImageView"

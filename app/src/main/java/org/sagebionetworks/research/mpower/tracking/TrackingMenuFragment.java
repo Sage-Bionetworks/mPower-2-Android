@@ -18,16 +18,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.TaskLauncher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import dagger.android.support.AndroidSupportInjection;
 
 public class TrackingMenuFragment extends Fragment {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackingMenuFragment.class);
@@ -61,6 +65,8 @@ public class TrackingMenuFragment extends Fragment {
     }
 
 
+    @Inject
+    TaskLauncher launcher;
     private static final int ANIMATION_DURATION = 150;
     @ColorRes
     private static final int SELECTED_COLOR = R.color.royal500;
@@ -94,6 +100,12 @@ public class TrackingMenuFragment extends Fragment {
     private GestureDetectorCompat gestureDetector;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        AndroidSupportInjection.inject(this);
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup group, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.tracking_menu_fragment, group, false);
         this.unbinder = ButterKnife.bind(this, result);
@@ -122,6 +134,12 @@ public class TrackingMenuFragment extends Fragment {
                     selection = this.getResources().getString(TRACKING_LABELS.get(copy));
                 } else if (this.selectedId == R.id.measuring_tab) {
                     selection = this.getResources().getString(MEASURING_LABELS.get(copy));
+                    String taskIdentifier = this.getTaskIdentifierFromLabel(selection);
+                    if (taskIdentifier != null) {
+                        launcher.launchTask(this.getContext(), taskIdentifier, null);
+                    } else {
+                        LOGGER.warn("Selected Icon " + selection + " doesn't map to a task identifier");
+                    }
                 }
 
                 if (selection != null) {
@@ -130,6 +148,22 @@ public class TrackingMenuFragment extends Fragment {
                 }
             });
         }
+    }
+
+    @Nullable
+    private String getTaskIdentifierFromLabel(@NonNull String label) {
+        String walkAndBalanceIconLabel = this.getResources().getString(MEASURING_LABELS.get(0));
+        String tappingIconLabel = this.getResources().getString(MEASURING_LABELS.get(1));
+        String tremorIconLabel = this.getResources().getString(MEASURING_LABELS.get(2));
+        if (label.equals(walkAndBalanceIconLabel)) {
+            return "WalkAndBalance";
+        } else if (label.equals(tappingIconLabel)) {
+            return "Tapping";
+        } else if (label.equals(tremorIconLabel)) {
+            return "Tremor";
+        }
+
+        return null;
     }
 
     private void setIcons(List<Integer> icons, List<Integer> labels) {
