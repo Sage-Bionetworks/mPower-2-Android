@@ -53,12 +53,12 @@
     <string name="study_burst_message_days_missed">In %1$d days you’ve only missed %2$d Study Burst days!</string>
     <string name="study_burst_message_days_missed_one">In %1$d days you’ve only missed 1 Study Burst day!</string>
 
-    <string name="measuring_center_label">Walk And Balance</string>
-    <string name="measuring_left_label">Finger Tapping</string>
-    <string name="measuring_right_label">Tremor Test</string>
-    <string name="tracking_center_label">Medication</string>
-    <string name="tracking_left_label">Symptom</string>
-    <string name="tracking_right_label">Trigger</string>
+    <string name="measuring_walk_and_balance_label">Walk And Balance</string>
+    <string name="measuring_finger_tapping_label">Finger Tapping</string>
+    <string name="measuring_tremor_test_label">Tremor Test</string>
+    <string name="tracking_medication_label">Medication</string>
+    <string name="tracking_symptom_label">Symptom</string>
+    <string name="tracking_trigger_label">Trigger</string>
 
     <string name="symptoms_logging_time_button_default">Add time</string>
     <string name="symptoms_logging_duration_button_default">Add duration</string>

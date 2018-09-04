@@ -38,10 +38,11 @@ public class TrackingMenuFragment extends Fragment {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackingMenuFragment.class);
 
     private static final List<Integer> MEASURING_LABELS =
-            Arrays.asList(R.string.measuring_center_label, R.string.measuring_left_label, R.string.measuring_right_label);
+            Arrays.asList(R.string.measuring_walk_and_balance_label, R.string.measuring_finger_tapping_label,
+                    R.string.measuring_tremor_test_label);
 
     private static final List<Integer> TRACKING_LABELS =
-            Arrays.asList(R.string.tracking_center_label, R.string.tracking_left_label, R.string.tracking_right_label);
+            Arrays.asList(R.string.tracking_medication_label, R.string.tracking_symptom_label, R.string.tracking_trigger_label);
 
     // TODO for now icons have a white background, fix this when design gets the images without the background.
     private static final List<Integer> MEASURING_ICONS =
@@ -153,18 +154,18 @@ public class TrackingMenuFragment extends Fragment {
     }
 
     @Nullable
-    private String getTaskIdentifierFromLabel(@NonNull int label) {
-        if (label == MEASURING_LABELS.get(0)) {
+    private String getTaskIdentifierFromLabel(int label) {
+        if (label == R.string.measuring_walk_and_balance_label) {
             return Tasks.WALK_AND_BALANCE;
-        } else if (label == MEASURING_LABELS.get(1)) {
+        } else if (label == R.string.measuring_finger_tapping_label) {
             return Tasks.TAPPING;
-        } else if (label == MEASURING_LABELS.get(2)) {
+        } else if (label == R.string.measuring_tremor_test_label) {
             return Tasks.TREMOR;
-        } else if (label == TRACKING_LABELS.get(0)) {
+        } else if (label == R.string.tracking_medication_label) {
             return Tasks.MEDICATION;
-        } else if (label == TRACKING_LABELS.get(1)) {
+        } else if (label == R.string.tracking_symptom_label) {
             return Tasks.SYMPTOMS;
-        } else if (label == TRACKING_LABELS.get(2)) {
+        } else if (label == R.string.tracking_trigger_label) {
             return Tasks.TRIGGERS;
         }
 
