@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.common.base.Preconditions;
 
@@ -25,12 +26,20 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
     private SelectionUIFormItemWidget widget;
 
     private TrackingItem trackingItem;
+
     private LiveData<Boolean> selected;
+
+    private int marginTrackingItem;
+
+    private int marginTrackingSectionTop;
+
     private TrackingTaskViewModel<? extends TrackingItemConfig, ?> viewModel;
+
     private TrackingFragment<?, ?, ?> trackingFragment;
 
     public SelectionItemViewHolder(final SelectionUIFormItemWidget itemView,
-            TrackingTaskViewModel<? extends TrackingItemConfig, ?> viewModel, TrackingFragment<?, ?, ?> trackingFragment) {
+            TrackingTaskViewModel<? extends TrackingItemConfig, ?> viewModel,
+            TrackingFragment<?, ?, ?> trackingFragment) {
         super(itemView);
         this.trackingFragment = trackingFragment;
         this.viewModel = viewModel;
@@ -46,13 +55,17 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
+
+        this.marginTrackingItem = this.widget.getResources().getDimensionPixelSize(R.dimen.margin_tracking_item);
+        this.marginTrackingSectionTop = this.widget.getResources()
+                .getDimensionPixelSize(R.dimen.margin_tracking_section_top);
     }
 
     public void setContent(@NonNull TrackingItem trackingItem) {
         this.trackingItem = trackingItem;
-        // Set the top padding for an item to 16.
-        PaddingUtil.setTopPadding(this.widget.getText(), 16);
-        this.widget.getText().setTextSize(16f);
+        TextView text = this.widget.getText();
+        text.setPadding(0, this.marginTrackingItem, 0, 0);
+        text.setTextSize(16f);
         this.setLabels(trackingItem.getIdentifier(), trackingItem.getDetail());
         this.setupSelectedObserver();
     }
@@ -60,15 +73,16 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
     public void setContent(@NonNull TrackingSection trackingSection) {
         this.trackingItem = null;
         // Increase the top padding for a section to 28.
-        PaddingUtil.setTopPadding(this.widget.getText(), 28);
-        this.widget.getText().setTextSize(20f);
+        TextView text = this.widget.getText();
+        text.setPadding(0, this.marginTrackingSectionTop, 0, 0);
+        text.setTextSize(20f);
         this.setLabels(trackingSection.getIdentifier(), trackingSection.getDetail());
         this.setupSelectedObserver();
     }
 
     /**
      * Sets up the observer for whether or not this item is selected.
-     * */
+     */
     private void setupSelectedObserver() {
         this.selected = Transformations.map(this.viewModel.getActiveElement(this.trackingItem.getIdentifier()),
                 activeElement -> activeElement != null);
@@ -90,11 +104,11 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
         this.widget.getText().setText(text);
         if (detail != null) {
             this.widget.getDetail().setText(detail);
-            PaddingUtil.setBottomPadding(this.widget.getDetail(), 16);
+            PaddingUtil.setBottomPadding(this.widget.getDetail(), this.marginTrackingItem);
             PaddingUtil.setBottomPadding(this.widget.getText(), 0);
         } else {
             this.widget.getDetail().setVisibility(View.GONE);
-            PaddingUtil.setBottomPadding(this.widget.getText(), 16);
+            PaddingUtil.setBottomPadding(this.widget.getText(), this.marginTrackingItem);
         }
     }
 
