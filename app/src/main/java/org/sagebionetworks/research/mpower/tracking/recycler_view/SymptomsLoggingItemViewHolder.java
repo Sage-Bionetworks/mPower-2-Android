@@ -38,17 +38,22 @@ import java.util.List;
  */
 public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
     private static final Logger LOGGER = LoggerFactory.getLogger(SymptomsLoggingItemViewHolder.class);
+
     private static final float FULL_ALPHA = 1.0f;
+
     private static final float FADED_ALPHA = .35f;
 
     private TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel;
+
     private SymptomsLoggingUIFormItemWidget widget;
+
     private SymptomLoggingFragment symptomLoggingFragment;
 
     private RadioButton previousSelectedSeverityButton;
 
     public SymptomsLoggingItemViewHolder(final SymptomsLoggingUIFormItemWidget itemView, final
-    TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel, final SymptomLoggingFragment symptomLoggingFragment) {
+    TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel,
+            final SymptomLoggingFragment symptomLoggingFragment) {
         super(itemView);
         this.widget = itemView;
         this.viewModel = viewModel;
@@ -81,16 +86,44 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
     private void setLogObservers(@NonNull TrackingItem trackingItem) {
         final LiveData<SymptomLog> logLiveData = this.viewModel.getLoggedElement(trackingItem.getIdentifier());
         final LiveData<Integer> severityLiveData = Transformations
-                .map(logLiveData, log -> log != null ? log.getSeverity() : null);
+                .map(logLiveData, log -> {
+                    if (log != null) {
+                        return log.getSeverity();
+                    }
+
+                    return null;
+                });
+
         severityLiveData.observe(this.symptomLoggingFragment, this::updateSeverityUI);
         final LiveData<Instant> timestampLiveData = Transformations
-                .map(logLiveData, log -> log != null ? log.getTimestamp() : null);
+                .map(logLiveData, log -> {
+                    if (log != null) {
+                        return log.getTimestamp();
+                    }
+
+                    return null;
+                });
+
         timestampLiveData.observe(this.symptomLoggingFragment, this::updateTimestampUI);
         final LiveData<String> durationLiveData = Transformations
-                .map(logLiveData, log -> log != null ? log.getDuration() : null);
+                .map(logLiveData, log -> {
+                    if (log != null) {
+                        return log.getDuration();
+                    }
+
+                    return null;
+                });
+
         durationLiveData.observe(this.symptomLoggingFragment, this::updateDurationUI);
         final LiveData<String> medicationTimingLiveData = Transformations
-                .map(logLiveData, log -> log != null ? log.getMedicationTiming() : null);
+                .map(logLiveData, log -> {
+                    if (log != null) {
+                        return log.getMedicationTiming();
+                    }
+
+                    return null;
+                });
+
         medicationTimingLiveData.observe(this.symptomLoggingFragment, this::updateMedicationTimingUI);
     }
 
@@ -121,7 +154,8 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
                     zoneId = ZoneId.of("Z");
                 }
 
-                Instant startOfDay = ZonedDateTime.ofInstant(Instant.now(), zoneId).toLocalDate().atStartOfDay(zoneId).toInstant();
+                Instant startOfDay = ZonedDateTime.ofInstant(Instant.now(), zoneId).toLocalDate().atStartOfDay(zoneId)
+                        .toInstant();
                 Instant selectedInstant = startOfDay.plus(hour, ChronoUnit.HOURS).plus(minute, ChronoUnit.MINUTES);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("View holder received time selection of: " + selectedInstant);
@@ -148,7 +182,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
             String detail = this.widget.getResources().getString(R.string.duration_fragment_detail);
             final SymptomLog previousLog = this.viewModel.getLog(trackingItem);
             String previousSelection = previousLog != null ? previousLog.getDuration() : null;
-            DurationFragment durationFragment = DurationFragment.newInstance(title, detail ,previousSelection);
+            DurationFragment durationFragment = DurationFragment.newInstance(title, detail, previousSelection);
             durationFragment.setOnDurationChangeListener(duration -> {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Duration received by view holder: " + duration);
@@ -268,7 +302,8 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
             if (this.previousSelectedSeverityButton != null) {
                 this.previousSelectedSeverityButton.setChecked(false);
                 this.previousSelectedSeverityButton.setAlpha(FADED_ALPHA);
-            } if (this.previousSelectedSeverityButton == null) {
+            }
+            if (this.previousSelectedSeverityButton == null) {
                 // When the first selection is made the buttons all need to be faded.
                 for (RadioButton severityButton : severityButtons) {
                     severityButton.setAlpha(FADED_ALPHA);
