@@ -17,7 +17,7 @@ import org.threeten.bp.Instant;
  * and the symptoms timing relative to when the user has taken their medication.
  */
 @AutoValue
-public abstract class SymptomLog {
+public abstract class SymptomLog implements TrackingItemLog {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract SymptomLog build();
