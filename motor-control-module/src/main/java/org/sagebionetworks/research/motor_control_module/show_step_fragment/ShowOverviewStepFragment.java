@@ -43,7 +43,6 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import org.sagebionetworks.research.domain.result.implementations.ResultBase;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.motor_control_module.R;
@@ -51,9 +50,9 @@ import org.sagebionetworks.research.motor_control_module.step_binding.OverviewSt
 import org.sagebionetworks.research.motor_control_module.step_view.IconView;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
 import org.sagebionetworks.research.motor_control_module.widget.DisablableScrollView;
-import org.sagebionetworks.research.presentation.ActionType;
 import org.sagebionetworks.research.presentation.DisplayDrawable;
 import org.sagebionetworks.research.presentation.DisplayString;
+import org.sagebionetworks.research.presentation.model.action.ActionType;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowUIStepViewModel;
 import org.threeten.bp.Instant;
@@ -71,7 +70,7 @@ public class ShowOverviewStepFragment extends
     @NonNull
     public static ShowOverviewStepFragment newInstance(@NonNull StepView stepView) {
         ShowOverviewStepFragment fragment = new ShowOverviewStepFragment();
-        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
+        Bundle arguments = ShowOverviewStepFragment.createArguments(stepView);
         fragment.setArguments(arguments);
         return fragment;
     }
@@ -80,7 +79,7 @@ public class ShowOverviewStepFragment extends
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View returnValue = super.onCreateView(inflater, container, savedInstanceState);
-        this.isFirstRun = FirstRunHelper.isFirstRun(this.performTaskViewModel.getTaskResult().getValue());
+        this.isFirstRun = FirstRunHelper.isFirstRun(this.performTaskViewModel.getTaskResult());
         return returnValue;
     }
 
@@ -97,7 +96,7 @@ public class ShowOverviewStepFragment extends
             this.performTaskViewModel.addStepResult(new ResultBase(INFO_TAPPED_RESULT_ID, Instant.now(),
                     Instant.now()));
         } else {
-            this.showStepViewModel.handleAction(actionType);
+            super.handleActionButtonClick(actionButton);
         }
     }
 
@@ -115,9 +114,8 @@ public class ShowOverviewStepFragment extends
             scrollView.post(() -> scrollView.fullScroll(ScrollView.FOCUS_DOWN));
             this.stepViewBinding.getInfoButton().setVisibility(View.GONE);
         } else {
-            // Hide all the extra information when the view is created.
+            // Hide all the extra information.
             scrollView.setScrollingEnabled(false);
-            this.stepViewBinding.getTitle().setAlpha(0f);
             this.stepViewBinding.getText().setAlpha(0f);
             this.stepViewBinding.getOverallIconDescriptionLabel().setAlpha(0f);
             for (ImageView imageView : this.stepViewBinding.getIconImageViews()) {

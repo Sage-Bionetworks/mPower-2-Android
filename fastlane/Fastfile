@@ -19,7 +19,7 @@ skip_docs
 
 platform :android do
   before_all do
-    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
+    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
   end
 
   desc "Runs all the tests"
@@ -64,7 +64,7 @@ platform :android do
     ensure_git_status_clean
     version_name = get_version_name(gradle_file_path:"app/build.gradle")
     next_version_code = increment_version_code(gradle_file_path: "app/build.gradle")
-    gradle(task: "assembleRelease")
+    gradle(task: ":app:assembleRelease")
     sign_apk(
       alias: options[:alias],
       storepass: options[:storepass],

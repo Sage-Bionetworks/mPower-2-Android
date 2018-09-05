@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <fragment
-        android:id="@+id/fragment"
+        android:id="@+id/tracking_menu_fragment"
         android:name="org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -48,11 +48,12 @@
         android:layout_width="0dp"
         android:layout_height="5dp"
         android:src="@drawable/scroll_view_shadow"
-        app:layout_constraintBottom_toTopOf="@+id/fragment"
+        app:layout_constraintBottom_toTopOf="@+id/tracking_menu_fragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <org.sagebionetworks.research.mpower.tracking.TrackingStatusBar
+        android:id="@+id/tracking_status_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/app_margin_medium"

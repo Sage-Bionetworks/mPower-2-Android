@@ -4,6 +4,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import static org.sagebionetworks.research.mpower.Tasks.MEDICATION;
+import static org.sagebionetworks.research.mpower.Tasks.SYMPTOMS;
+import static org.sagebionetworks.research.mpower.Tasks.TAPPING;
+import static org.sagebionetworks.research.mpower.Tasks.TREMOR;
+import static org.sagebionetworks.research.mpower.Tasks.TRIGGERS;
+import static org.sagebionetworks.research.mpower.Tasks.WALK_AND_BALANCE;
+
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
@@ -59,7 +66,8 @@ public class TaskLauncher {
 
     private static final ImmutableSet<String> RS_TASKS = ImmutableSet.of();
 
-    private static final ImmutableSet<String> SR_TASKS = ImmutableSet.of("Tapping");
+    private static final ImmutableSet<String> SR_TASKS = ImmutableSet
+            .of(TAPPING, WALK_AND_BALANCE, TRIGGERS, TREMOR, SYMPTOMS, MEDICATION);
 
     private final ResearchStackTaskLauncher researchStackTaskLauncher;
 

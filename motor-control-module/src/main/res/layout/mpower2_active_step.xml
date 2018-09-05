@@ -30,9 +30,11 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/rs2_step_fragment_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerInParent="true"
@@ -82,7 +84,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textLabel"
+        android:id="@id/rs2_title"
         android:layout_width="295dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="60dp"
@@ -119,7 +121,7 @@
         app:layout_constraintHeight_min="150dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textLabel"
+        app:layout_constraintTop_toBottomOf="@id/rs2_title"
         app:layout_constraintWidth_max="250dp"
         app:layout_constraintWidth_min="150dp" />
 

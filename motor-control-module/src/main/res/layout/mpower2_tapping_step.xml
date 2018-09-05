@@ -32,6 +32,7 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@id/rs2_step_fragment_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/royal600">
@@ -49,15 +50,16 @@
         app:srcCompat="@drawable/f_walking1" />
 
     <org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar
-        android:id="@id/rs2_step_navigation_action_bar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        app:isShadowHidden="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
+            android:id="@id/rs2_step_navigation_action_bar"
+            style="@style/Widget.ResearchStack.NavigationActionBar.TappingActive"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:isShadowHidden="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent">
 
     </org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar>
 
@@ -74,50 +76,49 @@
         android:progressDrawable="@drawable/countdown_dial"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@+id/TappingStepButtonView"
+        app:layout_constraintBottom_toTopOf="@id/tappingButtonView"
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintHeight_max="250dp"
         app:layout_constraintHeight_min="150dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textLabel"
+        app:layout_constraintTop_toBottomOf="@id/rs2_title"
         app:layout_constraintWidth_max="250dp"
         app:layout_constraintWidth_min="150dp" />
 
     <TextView
-        android:id="@+id/textLabel"
-        android:layout_width="295dp"
+        android:id="@+id/rs2_title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="56dp"
         android:layout_marginRight="56dp"
         android:layout_marginStart="56dp"
+        android:layout_marginEnd="56dp"
         android:layout_marginTop="28dp"
         android:fontFamily="@font/lato"
         android:gravity="center"
-        android:text="Tap the buttons with your RIGHT hand"
+        android:text="Tap the buttons"
         android:textColor="@color/appWhite"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cancelButton" />
+        app:layout_constraintTop_toBottomOf="@+id/rs2_step_navigation_action_cancel" />
 
-    <ImageButton
-        android:id="@+id/cancelButton"
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/rs2_step_navigation_action_cancel"
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_marginLeft="@dimen/app_margin_medium"
         android:layout_marginStart="@dimen/app_margin_medium"
         android:layout_marginTop="@dimen/app_margin_medium"
-        android:background="@android:color/transparent"
-        android:scaleType="fitXY"
+        android:background="@drawable/rs2_cancel_icon"
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/rs2_cancel_icon" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tapCountLabel"
+        android:id="@+id/countLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/lato_light"
@@ -143,16 +144,15 @@
         app:layout_constraintEnd_toStartOf="@+id/countdownDial"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/countdownDial"
-        app:layout_constraintTop_toBottomOf="@+id/tapCountLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/countLabel" />
 
-    <org.sagebionetworks.research.mobile_ui.step_views.TappingStepButtonView
-        android:id="@+id/TappingStepButtonView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
+    <include
+        android:id="@+id/tappingButtonView"
+        layout="@layout/mpower2_tapping_step_button_view"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/countdownDial" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

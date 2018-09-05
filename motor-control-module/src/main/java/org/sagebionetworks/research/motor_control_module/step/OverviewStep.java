@@ -37,6 +37,7 @@ import android.support.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import org.sagebionetworks.research.domain.async.AsyncActionConfiguration;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.implementations.UIStepBase;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
@@ -53,17 +54,19 @@ public class OverviewStep extends UIStepBase {
     @NonNull
     private final ImmutableList<Icon> icons;
 
-    public OverviewStep(@NonNull final String identifier, @Nullable final Map<String, Action> actions,
-            @Nullable final Set<String> hiddenActions, @Nullable final String title, @Nullable final String text,
-            @Nullable final String detail, @Nullable final String footnote, @Nullable final ColorTheme colorTheme,
-            @Nullable final ImageTheme imageTheme, @NonNull final List<Icon> icons) {
-        super(identifier, actions, hiddenActions, title, text, detail, footnote, colorTheme, imageTheme);
+    public OverviewStep(@NonNull String identifier, @NonNull Set<AsyncActionConfiguration> asyncActions,
+            @Nullable Map<String, Action> actions, @Nullable Set<String> hiddenActions, @Nullable String title,
+            @Nullable String text, @Nullable String detail, @Nullable String footnote,
+            @Nullable ColorTheme colorTheme, @Nullable ImageTheme imageTheme, List<Icon> icons) {
+        super(identifier, asyncActions, actions, hiddenActions, title, text, detail, footnote, colorTheme,
+                imageTheme);
         this.icons = ImmutableList.copyOf(icons);
     }
 
     @Override
     public OverviewStep copyWithIdentifierOperation(@NonNull String identifier) {
-        return new OverviewStep(identifier, this.getActions(), this.getHiddenActions(), this.getTitle(),
+        return new OverviewStep(identifier, this.getAsyncActions(), this.getActions(), this.getHiddenActions(),
+                this.getTitle(),
                 this.getText(), this.getDetail(), this.getFootnote(), this.getColorTheme(), this.getImageTheme(),
                 this.icons);
     }
