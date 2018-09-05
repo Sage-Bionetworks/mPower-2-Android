@@ -8,15 +8,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.common.base.Preconditions;
-
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.widget.PaddingUtil;
 import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
 /**
@@ -64,7 +61,7 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
     public void setContent(@NonNull TrackingItem trackingItem) {
         this.trackingItem = trackingItem;
         TextView text = this.widget.getText();
-        text.setPadding(0, this.marginTrackingItem, 0, 0);
+        text.setPadding(text.getPaddingLeft(), this.marginTrackingItem, text.getPaddingRight(), text.getPaddingBottom());
         text.setTextSize(16f);
         this.setLabels(trackingItem.getIdentifier(), trackingItem.getDetail());
         this.setupSelectedObserver();
@@ -74,7 +71,7 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
         this.trackingItem = null;
         // Increase the top padding for a section to 28.
         TextView text = this.widget.getText();
-        text.setPadding(0, this.marginTrackingSectionTop, 0, 0);
+        text.setPadding(text.getPaddingLeft(), this.marginTrackingSectionTop, text.getPaddingRight(), text.getPaddingBottom());
         text.setTextSize(20f);
         this.setLabels(trackingSection.getIdentifier(), trackingSection.getDetail());
         this.setupSelectedObserver();
@@ -102,13 +99,15 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
 
     private void setLabels(@NonNull String text, @Nullable String detail) {
         this.widget.getText().setText(text);
+        TextView detailLabel = this.widget.getDetail();
+        TextView textLabel = this.widget.getText();
         if (detail != null) {
-            this.widget.getDetail().setText(detail);
-            PaddingUtil.setBottomPadding(this.widget.getDetail(), this.marginTrackingItem);
-            PaddingUtil.setBottomPadding(this.widget.getText(), 0);
+            detailLabel.setText(detail);
+            detailLabel.setPadding(detailLabel.getPaddingLeft(), detailLabel.getPaddingTop(), detailLabel.getPaddingRight(), this.marginTrackingItem);
+            textLabel.setPadding(textLabel.getPaddingLeft(), textLabel.getPaddingTop(), textLabel.getPaddingRight(), 0);
         } else {
-            this.widget.getDetail().setVisibility(View.GONE);
-            PaddingUtil.setBottomPadding(this.widget.getText(), this.marginTrackingItem);
+            detailLabel.setVisibility(View.GONE);
+            textLabel.setPadding(textLabel.getPaddingLeft(), textLabel.getPaddingTop(), textLabel.getPaddingRight(), this.marginTrackingItem);
         }
     }
 

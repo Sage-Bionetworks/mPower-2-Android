@@ -31,6 +31,7 @@ public class TriggersLoggingUIFormItemWidget extends ConstraintLayout {
     ActionButton undoButton;
 
     private boolean logged;
+    private int padding;
 
     public TriggersLoggingUIFormItemWidget(final Context context) {
         super(context);
@@ -50,9 +51,11 @@ public class TriggersLoggingUIFormItemWidget extends ConstraintLayout {
     public void commonInit() {
         inflate(this.getContext(), R.layout.mpower2_triggers_logging_item, this);
         ButterKnife.bind(this);
+        this.padding = this.getResources().getDimensionPixelSize(R.dimen.margin_medium);
         this.undoButton.setPaintFlags(this.undoButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        PaddingUtil.setTopPadding(this.title, 28);
-        PaddingUtil.setBottomPadding(this.undoButton, 28);
+        this.title.setPadding(this.title.getPaddingLeft(), this.padding, this.title.getPaddingRight(), this.title.getPaddingBottom());
+        this.undoButton.setPadding(this.undoButton.getPaddingLeft(), this.undoButton.getPaddingTop(), this.undoButton.getPaddingRight(),
+                this.padding);
         this.displayedUnloggedState();
     }
 
@@ -80,8 +83,7 @@ public class TriggersLoggingUIFormItemWidget extends ConstraintLayout {
     }
 
     private void displayLoggedState() {
-        PaddingUtil.setBottomPadding(this.title, 0);
-        PaddingUtil.setTopPadding(this.title, 28);
+        this.title.setPadding(this.title.getPaddingLeft(), this.padding, this.title.getPaddingRight(), 0);
         this.recordButton.setVisibility(View.GONE);
         this.checkmark.setVisibility(View.VISIBLE);
         this.recordedLabel.setVisibility(View.VISIBLE);
@@ -89,7 +91,7 @@ public class TriggersLoggingUIFormItemWidget extends ConstraintLayout {
     }
 
     private void displayedUnloggedState() {
-        PaddingUtil.setBottomPadding(this.title, 28);
+        this.title.setPadding(this.title.getPaddingLeft(), this.title.getPaddingTop(), this.title.getPaddingRight(), this.padding);
         this.recordButton.setVisibility(View.VISIBLE);
         this.checkmark.setVisibility(View.GONE);
         this.recordedLabel.setVisibility(View.GONE);
