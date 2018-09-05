@@ -4,6 +4,7 @@ import org.sagebionetworks.research.mpower.research.MpRsdIdentifier.*
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroupObject
 import org.sagebionetworks.research.sageresearch.manager.RsdIdentifier
+import java.util.Random
 
 class DataSourceManager {
 
@@ -33,15 +34,6 @@ class DataSourceManager {
                                 ))
                 )
             }
-    }
-}
-
-// TODO: mdephillips 9/4/18 load dynamically from bridge config and include in StudyBurstViewModel
-class StudyBurstConfiguration {
-    companion object {
-        val completionTaskIdentifiers: Set<RsdIdentifier> get() {
-            return setOf(DEMOGRAPHICS, BACKGROUND, ENGAGEMENT, MOTIVATION, STUDY_BURST_REMINDER)
-        }
     }
 }
 
@@ -82,5 +74,96 @@ enum class MpRsdIdentifier: RsdIdentifier {
     },
     STUDY_BURST_REMINDER {
         override val identifier = "StudyBurstReminder"
+    },
+    MEASURING {
+        override val identifier = "Measuring"
+    },
+    TRACKING {
+        override val identifier = "Tracking"
+    },
+    HEALTH_SURVEYS {
+        override val identifier = "Health Surveys"
+    }
+}
+
+data class CompletionTask(
+        val activityIdentifiers: Set<RsdIdentifier>,
+        val day: Int) {
+    fun preferredIdentifier(): RsdIdentifier? {
+        return activityIdentifiers.intersect(setOf(DEMOGRAPHICS, ENGAGEMENT))
+                .firstOrNull() ?: activityIdentifiers.firstOrNull()
+    }
+}
+
+/**
+ * The study burst configuration is a data class that can be added to the `AppConfig.clientData`.
+ */
+data class StudyBurstConfiguration(
+        /**
+         * @property identifier of the task.
+         */
+        val identifier: String = STUDY_BURST_REMINDER.identifier,
+        /**
+         * @property numberOfDays in the study burst.
+         */
+        val numberOfDays: Int = 14,
+        /**
+         * @property minimumRequiredDays in the study burst.
+         */
+        val minimumRequiredDays: Int = 10,
+        /**
+         * @property expiresLimit the time limit until the progress expires, defaults to 60 minutes in ms
+         */
+        val expiresLimit: Long = (60 * 60 * 1000),
+        /**
+         * @property taskGroupIdentifier used to mark the active tasks included in the study burst.
+         */
+        val taskGroupIdentifier: RsdIdentifier = MEASURING,
+        /**
+         * @property motivationIdentifier The identifier for the initial engagement survey.
+         */
+        val motivationIdentifier: RsdIdentifier = MOTIVATION,
+        /**
+         * @property completionTasks for each day of the study burst.
+         */
+        val completionTasks: Set<CompletionTask> = setOf(
+                CompletionTask(setOf(STUDY_BURST_REMINDER, DEMOGRAPHICS), 1),
+                CompletionTask(setOf(BACKGROUND), 9),
+                CompletionTask(setOf(ENGAGEMENT), 14)),
+        /**
+         * @property engagementGroups set of the possible engagement data groups.
+         */
+        val engagementGroups: Set<Set<String>>? = setOf(
+                setOf("gr_SC_DB", "gr_SC_CS"),
+                setOf("gr_BR_AD", "gr_BR_II"),
+                setOf("gr_ST_T", "gr_ST_F"),
+                setOf("gr_DT_F", "gr_DT_T"))
+) {
+
+    /**
+     * @return
+     */
+    fun completionTaskIdentifiers(): Set<RsdIdentifier> {
+        return completionTasks.flatMap { it.activityIdentifiers }.union(setOf(motivationIdentifier))
+    }
+
+    /**
+     * @return a randomized set of possible combinations of engagement groups.
+     */
+    fun randomEngagementGroups(): Set<String>? {
+        return engagementGroups?.mapNotNull { it.randomElement() }?.toSet()
+    }
+
+    /**
+     * @return a random element in the set if any exist
+     */
+    private fun <T> Set<T>?.randomElement(): T? {
+        if (this == null) {
+            return null
+        }
+        if (isEmpty()) {
+            return null
+        }
+        return elementAt(Random().nextInt(size))
     }
 }

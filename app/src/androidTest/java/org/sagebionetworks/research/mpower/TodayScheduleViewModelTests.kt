@@ -12,7 +12,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import org.sagebionetworks.research.mpower.viewmodel.FinishedTodayScheduleViewModel
+import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.ACTIVITIES
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.MEDICATION
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.SYMPTOMS
@@ -130,7 +130,7 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
             app: Application,
             val mockDb: ResearchDatabase,
             start: Instant,
-            end: Instant): FinishedTodayScheduleViewModel(app) {
+            end: Instant): TodayScheduleViewModel(app) {
 
         override fun scheduleDao(): ScheduledActivityEntityDao {
             return mockDb.scheduleDao()

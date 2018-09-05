@@ -54,16 +54,16 @@ import org.threeten.bp.ZonedDateTime
 //
 
 /**
- * FinishedTodayScheduleViewModel fetches the schedules for all activities finished today,
+ * TodayScheduleViewModel fetches the schedules for all activities finished today,
  * and then consolidates them into history items.  History item live data will be updated when observed,
  * and when new schedules come down from bridge.
  */
-open class FinishedTodayScheduleViewModel(app: Application): ScheduleViewModel(app) {
+open class TodayScheduleViewModel(app: Application): ScheduleViewModel(app) {
 
     companion object {
         @JvmStatic
-        fun create(activity: FragmentActivity): FinishedTodayScheduleViewModel {
-            return ViewModelProviders.of(activity).get(FinishedTodayScheduleViewModel::class.java)
+        fun create(activity: FragmentActivity): TodayScheduleViewModel {
+            return ViewModelProviders.of(activity).get(TodayScheduleViewModel::class.java)
         }
     }
 

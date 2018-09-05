@@ -1,6 +1,5 @@
 package org.sagebionetworks.research.mpower.tracking;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -24,9 +23,8 @@ import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.tracking.TrackingViewModel.ScheduledActivityView;
-import org.sagebionetworks.research.mpower.viewmodel.FinishedTodayScheduleViewModel;
+import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
-import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
 
 import java.util.List;
 
@@ -62,7 +60,7 @@ public class TrackingFragment extends Fragment {
     TrackingViewModelFactory trackingViewModelFactory;
 
     private TrackingViewModel trackingViewModel;
-    private FinishedTodayScheduleViewModel todayScheduleViewModel;
+    private TodayScheduleViewModel todayScheduleViewModel;
     private SurveyViewModel surveyViewModel;
 
     private Unbinder unbinder;
@@ -113,7 +111,7 @@ public class TrackingFragment extends Fragment {
                 .observe(this, this::updateScheduledActivitiesLoading);
 
         if (getActivity() != null) {
-            todayScheduleViewModel = FinishedTodayScheduleViewModel.create(getActivity());
+            todayScheduleViewModel = TodayScheduleViewModel.create(getActivity());
             todayScheduleViewModel.liveData().observe(this, todayHistoryItems -> {
                 // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
             });
