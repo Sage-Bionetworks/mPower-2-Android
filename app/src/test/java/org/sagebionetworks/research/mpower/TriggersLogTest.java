@@ -23,7 +23,7 @@ public class TriggersLogTest {
     private static final Instant RECORDED_TIMESTAMP = Instant.parse("2018-08-29T12:24:26.552-07:00");
 
     @Test
-    public void test_SerializationUnrecorded() {
+    public void test_serializeUnrecorded() {
         SimpleTrackingItemLog log = SimpleTrackingItemLog.builder()
                 .setIdentifier(UNRECORDED_ITEM)
                 .setText(UNRECORDED_ITEM)
@@ -37,7 +37,7 @@ public class TriggersLogTest {
     }
 
     @Test
-    public void test_SerializationRecorded() {
+    public void test_serializeRecorded() {
         SimpleTrackingItemLog log = SimpleTrackingItemLog.builder()
                 .setIdentifier(RECORDED_ITEM)
                 .setText(RECORDED_ITEM)
@@ -52,22 +52,22 @@ public class TriggersLogTest {
     }
 
     @Test
-    public void test_DeserializationUnrecorded() {
+    public void test_deserializeUnrecorded() {
         SimpleTrackingItemLog log =
                 JsonAssetUtil.readJsonFile(GSON, "triggers/TriggersLog_Unrecorded.json", SimpleTrackingItemLog.class);
         assertNotNull(log);
-        assertEquals(log.getIdentifier(), UNRECORDED_ITEM);
-        assertEquals(log.getText(), UNRECORDED_ITEM);
-        assertNull(log.getTimestamp());
+        assertEquals("Log had unexpected identifier", UNRECORDED_ITEM, log.getIdentifier());
+        assertEquals("Log had unexpected text", UNRECORDED_ITEM, log.getText());
+        assertNull("Log had non-null timestamp", log.getTimestamp());
     }
 
     @Test
-    public void test_DeserializationRecorded() {
+    public void test_deserializeRecorded() {
         SimpleTrackingItemLog log =
                 JsonAssetUtil.readJsonFile(GSON, "triggers/TriggersLog_Unrecorded.json", SimpleTrackingItemLog.class);
         assertNotNull(log);
-        assertEquals(log.getIdentifier(), RECORDED_ITEM);
-        assertEquals(log.getText(), RECORDED_ITEM);
-        assertEquals(log.getTimestamp(), RECORDED_TIMESTAMP);
+        assertEquals("Log had unexpected identifier", RECORDED_ITEM, log.getIdentifier());
+        assertEquals("Log had unexpected text", RECORDED_ITEM, log.getText());
+        assertEquals("Log had unexpected timestamp", RECORDED_TIMESTAMP, log.getTimestamp());
     }
 }

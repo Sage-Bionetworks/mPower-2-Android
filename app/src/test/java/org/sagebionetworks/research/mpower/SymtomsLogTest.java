@@ -23,7 +23,7 @@ public class SymtomsLogTest {
     private static final Integer RECORDED_SEVERITY = 0;
 
     @Test
-    public void testSerialize_Unrecorded() {
+    public void test_serializeUnrecorded() {
         SymptomLog log = SymptomLog.builder()
                 .setIdentifier(UNRECORDED_ITEM)
                 .setText(UNRECORDED_ITEM)
@@ -37,7 +37,7 @@ public class SymtomsLogTest {
     }
 
     @Test
-    public void testSerialize_Recorded() {
+    public void test_serializeRecorded() {
         SymptomLog log = SymptomLog.builder()
                 .setIdentifier(RECORDED_ITEM)
                 .setText(RECORDED_ITEM)
@@ -55,7 +55,7 @@ public class SymtomsLogTest {
     }
 
     @Test
-    public void testDeserialize_Unrecorded() {
+    public void test_deserializeUnrecorded() {
         SymptomLog log =
                 JsonAssetUtil.readJsonFile(GSON, "symptoms/SymptomLog_Unrecorded.json", SymptomLog.class);
         assertNotNull("Log failed to deserialize", log);
@@ -68,7 +68,7 @@ public class SymtomsLogTest {
     }
 
     @Test
-    public void testDeserialize_Recorded() {
+    public void test_deserializeRecorded() {
         SymptomLog log =
                 JsonAssetUtil.readJsonFile(GSON, "symptoms/SymptomLog_Recorded.json", SymptomLog.class);
         assertNotNull("Log failed to deserialize", log);
