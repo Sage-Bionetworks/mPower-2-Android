@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -10,9 +9,9 @@
         style="@style/Widget.ResearchStack.NavigationActionBar.PrimaryButton.Forward"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="28dp"
-        android:paddingEnd="28dp"
-        android:paddingStart="28dp"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:paddingEnd="@dimen/margin_large"
+        android:paddingStart="@dimen/margin_large"
         android:text="Record"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,8 +24,8 @@
         style="@style/Widget.ResearchStack.StepBody.TitleLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="28dp"
+        android:layout_marginEnd="@dimen/margin_xlarge"
+        android:layout_marginStart="@dimen/margin_large"
         android:text="Item Title"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -41,7 +40,7 @@
         android:id="@+id/checkmark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/margin_small"
         app:layout_constraintStart_toStartOf="@+id/item_title"
         app:layout_constraintTop_toBottomOf="@+id/item_title"
         app:srcCompat="@drawable/checkbox" />
@@ -51,7 +50,7 @@
         style="@style/Widget.ResearchStack.StepBody.TextLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="@dimen/margin_small"
         android:text="Recorded"
 
         android:textStyle="bold"
@@ -66,7 +65,7 @@
         style="@style/Widget.MPower.ActionButton.TriggersLogging.UnderlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="28dp"
+        android:layout_marginEnd="@dimen/margin_large"
         android:text="Undo"
         android:textSize="16sp"
         android:textStyle="bold"

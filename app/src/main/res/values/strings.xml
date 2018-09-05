@@ -77,6 +77,7 @@
     <string name="time_picker_cancel_button">Cancel</string>
 
     <string name="add_note_fragment_title">Add a note</string>
+    <string name="add_note_fragment_forward_button">Submit</string>
 
     <string name="duration_fragment_title">Duration</string>
     <string name="duration_fragment_detail">Select one</string>

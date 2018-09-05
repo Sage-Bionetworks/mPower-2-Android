@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <ScrollView
@@ -18,7 +17,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/contentView">
 
             <ImageView
@@ -35,9 +34,9 @@
                 android:id="@+id/rs2_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="52dp"
-                android:layout_marginStart="52dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginEnd="@dimen/margin_xlarge"
+                android:layout_marginStart="@dimen/margin_xlarge"
+                android:layout_marginTop="@dimen/margin_small"
                 android:fontFamily="@font/lato"
                 android:gravity="center"
                 android:text="@string/symptoms_duration_title"
@@ -51,10 +50,10 @@
             <TextView
                 android:id="@+id/rs2_detail"
                 android:layout_width="0dp"
-                android:layout_height="18dp"
-                android:layout_marginEnd="52dp"
-                android:layout_marginStart="52dp"
-                android:layout_marginTop="12dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_xlarge"
+                android:layout_marginStart="@dimen/margin_xlarge"
+                android:layout_marginTop="@dimen/margin_small"
                 android:fontFamily="@font/lato"
                 android:gravity="center"
                 android:text="@string/symptoms_duration_detail"
@@ -70,7 +69,7 @@
                 layout="@layout/mpower2_duration_selections"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/margin_medium"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -78,10 +77,10 @@
 
             <org.sagebionetworks.research.mobile_ui.widget.ActionButton
                 android:id="@+id/rs2_step_navigation_action_backward"
-                android:layout_width="32dp"
+                android:layout_width="@dimen/back_button_width"
                 android:layout_height="0dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_medium"
                 android:background="@drawable/mpower2_white_arrow"
                 app:layout_constraintDimensionRatio="H,1:1"
                 app:layout_constraintStart_toStartOf="parent"

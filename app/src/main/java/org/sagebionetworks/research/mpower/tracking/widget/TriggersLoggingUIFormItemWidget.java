@@ -51,7 +51,7 @@ public class TriggersLoggingUIFormItemWidget extends ConstraintLayout {
     public void commonInit() {
         inflate(this.getContext(), R.layout.mpower2_triggers_logging_item, this);
         ButterKnife.bind(this);
-        this.padding = this.getResources().getDimensionPixelSize(R.dimen.margin_medium);
+        this.padding = this.getResources().getDimensionPixelSize(R.dimen.margin_large);
         this.undoButton.setPaintFlags(this.undoButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         this.title.setPadding(this.title.getPaddingLeft(), this.padding, this.title.getPaddingRight(), this.title.getPaddingBottom());
         this.undoButton.setPadding(this.undoButton.getPaddingLeft(), this.undoButton.getPaddingTop(), this.undoButton.getPaddingRight(),
