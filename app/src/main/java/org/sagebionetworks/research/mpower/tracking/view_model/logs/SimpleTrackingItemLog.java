@@ -1,8 +1,11 @@
 package org.sagebionetworks.research.mpower.tracking.view_model.logs;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.threeten.bp.Instant;
@@ -17,14 +20,21 @@ public abstract class SimpleTrackingItemLog implements TrackingItemLog {
         public abstract SimpleTrackingItemLog build();
 
         @NonNull
-        public abstract Builder setTrackingItem(@NonNull TrackingItem trackingItem);
+        public abstract Builder setIdentifier(@NonNull String identifier);
 
         @NonNull
-        public abstract Builder setTimestamp(@NonNull Instant timestamp);
+        public abstract Builder setText(@NonNull String text);
+
+        @NonNull
+        public abstract Builder setTimestamp(@Nullable Instant timestamp);
     }
 
     public static Builder builder() {
         return new AutoValue_SimpleTrackingItemLog.Builder();
+    }
+
+    public static TypeAdapter<SimpleTrackingItemLog> typeAdapter(Gson gson) {
+        return new AutoValue_SimpleTrackingItemLog.GsonTypeAdapter(gson);
     }
 
     public abstract Builder toBuilder();
