@@ -10,7 +10,6 @@ android:
     - android-27
     - android-26
 
-
 before_install:
   - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
   - git config --global user.name "Travis CI"
@@ -25,7 +24,8 @@ before_script:
   - export PATH=$PATH:$ANDROID_HOME/build-tools/27.0.3
 
 stages:
-  - test
+  - name: test
+    if: branch !~ /^stable-.*$/
   - name: check
     if: branch !~ /^stable-.*$/
   - name: deploy
