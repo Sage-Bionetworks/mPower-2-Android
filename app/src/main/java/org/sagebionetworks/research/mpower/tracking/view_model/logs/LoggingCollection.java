@@ -52,6 +52,6 @@ public abstract class LoggingCollection<E extends TrackingItemLog> {
     public static <E extends TrackingItemLog> TypeAdapter<LoggingCollection<E>> typeAdapter(Gson gson,
             TypeToken<? extends LoggingCollection> token) {
         return new AutoValue_LoggingCollection.GsonTypeAdapter(gson, token)
-                .setDefaultItems(Collections.emptySet());
+                .setDefaultItems(ImmutableList.of());
     }
 }

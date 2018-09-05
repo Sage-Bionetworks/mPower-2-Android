@@ -6,6 +6,7 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
@@ -71,7 +72,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     }
 
     // region Selection
-
     /**
      * Returns a LiveData which is true whenever the user has selected at least on item, and false otherwise.
      *
@@ -127,12 +127,20 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      * Returns the set of active elements sorted in alphabetical order based on identifier.
      * @return the set of active elements sorted in alphabetical order based on identifier.
      */
-    public LiveData<Set<ConfigType>> getActiveElements() {
+    public LiveData<Set<ConfigType>> getActiveElementsSorted() {
         return Transformations.map(this.activeElementsById, elements -> {
             Set<ConfigType> result = new TreeSet<>((o1, o2) -> o1.getIdentifier().compareTo(o2.getIdentifier()));
             result.addAll(elements.values());
             return result;
         });
+    }
+
+    /**
+     * Returns a map from identifier to config for the active elements in this view model.
+     * @return a map from identifier to config for the active elements in this view model.
+     */
+    public LiveData<Map<String, ConfigType>> getActiveElementsById() {
+        return this.activeElementsById;
     }
 
     /**
@@ -146,29 +154,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      */
     public LiveData<ConfigType> getActiveElement(@NonNull String identifier) {
         return Transformations.map(this.activeElementsById, elements -> elements.get(identifier));
-    }
-
-    /**
-     * Returns the config for the given TrackingItem, or null if the user has not selected the given TrackingItem.
-     *
-     * @param identifier
-     *         the identifier of the tracking item to get the config for.
-     * @return the config for the given TrackingItem, or null if hte user has not selected the given TrackingItem.
-     */
-    public ConfigType getConfig(@NonNull String identifier) {
-        return this.activeElementsById.getValue().get(identifier);
-    }
-
-    /**
-     * Adds the given Configuration to the set of configurations.
-     *
-     * @param config
-     *         the Configuration to add to the set of configurations.
-     */
-    public void addActiveElement(@NonNull ConfigType config) {
-        Map<String, ConfigType> result = this.activeElementsById.getValue();
-        result.put(config.getIdentifier(), config);
-        this.activeElementsById.setValue(result);
     }
     // endregion
 
@@ -186,6 +171,14 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     public LiveData<LogType> getLoggedElement(@NonNull String identifier) {
         return Transformations
                 .map(this.loggedElementsById, elements -> this.loggedElementsById.getValue().get(identifier));
+    }
+
+    /**
+     * Returns a map from identifier to Logged element for the logged elements in this view model.
+     * @return a map from identifier to Logged element for the logged elements in this view model.
+     */
+    public LiveData<Map<String, LogType>> getLoggedElementsById() {
+        return this.loggedElementsById;
     }
 
     /**
