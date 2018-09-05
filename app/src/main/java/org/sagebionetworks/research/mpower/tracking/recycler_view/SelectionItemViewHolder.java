@@ -81,9 +81,11 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
      * Sets up the observer for whether or not this item is selected.
      */
     private void setupSelectedObserver() {
-        this.selected = Transformations.map(this.viewModel.getActiveElement(this.trackingItem.getIdentifier()),
-                activeElement -> activeElement != null);
-        this.selected.observe(this.trackingFragment, this::updateSelected);
+        if (this.trackingItem != null) {
+            this.selected = Transformations.map(this.viewModel.getActiveElement(this.trackingItem.getIdentifier()),
+                    activeElement -> activeElement != null);
+            this.selected.observe(this.trackingFragment, this::updateSelected);
+        }
     }
 
     private void updateSelected(@Nullable Boolean selected) {

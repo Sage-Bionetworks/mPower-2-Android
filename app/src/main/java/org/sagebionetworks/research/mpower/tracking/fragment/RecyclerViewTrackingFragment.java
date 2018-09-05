@@ -65,6 +65,8 @@ public abstract class RecyclerViewTrackingFragment
         this.layoutManager = this.initializeLayoutManager();
         this.recyclerView.setLayoutManager(this.layoutManager);
         this.recyclerView.setFocusable(false);
+        // Enables fling scrolling
+        ViewCompat.setNestedScrollingEnabled(this.recyclerView, false);
         return result;
     }
 
