@@ -7,14 +7,13 @@ import static junit.framework.Assert.assertNull;
 import com.google.gson.Gson;
 
 import org.junit.Test;
-import org.sagebionetworks.research.domain.JsonAssetUtil;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
 import org.threeten.bp.Instant;
 
 import java.net.URL;
 
 public class TriggersLogTest {
-    private static final Gson GSON = DaggerTrackingTestComponent.builder().build().gson();
+    private static final Gson GSON = new Gson();// DaggerTrackingTestComponent.builder().build().gson();
 
     private static final String UNRECORDED_ITEM = "hot";
 

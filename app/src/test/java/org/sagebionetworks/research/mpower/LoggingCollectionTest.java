@@ -8,7 +8,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 import org.junit.Test;
-import org.sagebionetworks.research.domain.JsonAssetUtil;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
@@ -18,7 +17,8 @@ import java.net.URL;
 
 
 public class LoggingCollectionTest {
-    private static final Gson GSON = DaggerTrackingTestComponent.builder().build().gson();
+    private static final Gson GSON = new Gson();
+    //DaggerTrackingTestComponent.builder().build().gson();
 
     private static final String IDENTIFIER = "trackedItems";
 

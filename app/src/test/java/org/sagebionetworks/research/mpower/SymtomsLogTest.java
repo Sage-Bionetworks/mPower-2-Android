@@ -7,14 +7,13 @@ import static junit.framework.Assert.assertNull;
 import com.google.gson.Gson;
 
 import org.junit.Test;
-import org.sagebionetworks.research.domain.JsonAssetUtil;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.threeten.bp.Instant;
 
 import java.net.URL;
 
 public class SymtomsLogTest {
-    private static final Gson GSON = DaggerTrackingTestComponent.builder().build().gson();
+    private static final Gson GSON = new Gson();//DaggerTrackingTestComponent.builder().build().gson();
     private static final String UNRECORDED_ITEM = "Drooling";
     private static final String RECORDED_ITEM = "Amnesia";
     private static final Instant RECORDED_TIMESTAMP = Instant.parse("2018-08-29T12:23:58.435-07:00");

@@ -91,6 +91,7 @@ dependencies {
     kapt 'com.google.auto.value:auto-value-annotations:1.6' // include again for auto-value-gson
 
     // Dagger
+    testImplementation 'com.google.dagger:dagger-compiler:2.16'
     implementation 'com.google.dagger:dagger-android:2.16'
     implementation 'com.google.dagger:dagger-android-support:2.16'
     kapt 'com.google.dagger:dagger-android-processor:2.16'
