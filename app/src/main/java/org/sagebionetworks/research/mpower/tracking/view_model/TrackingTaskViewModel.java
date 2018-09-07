@@ -33,16 +33,11 @@ import java.util.TreeSet;
  */
 public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog>
         extends ViewModel {
-    protected LiveData<Boolean> selectionMade;
-
     // invariant availableElements.getValue() != null
     protected MutableLiveData<Map<TrackingSection, Set<TrackingItem>>> availableElements;
 
     // invariant activeElementsById.getValue() != null
     protected MutableLiveData<Map<String, ConfigType>> activeElementsById;
-
-    // invariant unconfiguredElements.getValue() != null
-    protected LiveData<Map<String, ConfigType>> unconfiguredElementsById;
 
     // invariant loggedElementsById.getValue() != null
     protected MutableLiveData<Map<String, LogType>> loggedElementsById;
@@ -52,35 +47,14 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     protected TrackingTaskViewModel(@NonNull final TrackingStepView stepView) {
         this.stepView = stepView;
         this.availableElements = new MutableLiveData<>();
-        this.availableElements.setValue(stepView.getSelectionItems());
         this.activeElementsById = new MutableLiveData<>();
+        this.availableElements.setValue(stepView.getSelectionItems());
         this.activeElementsById.setValue(new HashMap<>());
-        this.selectionMade = Transformations.map(this.activeElementsById, (elements) -> !elements.isEmpty());
-        this.unconfiguredElementsById = Transformations.map(this.activeElementsById, (elements) -> {
-            Map<String, ConfigType> result = new HashMap<>();
-            for (Entry<String, ConfigType> entry : elements.entrySet()) {
-                if (!entry.getValue().isConfigured()) {
-                    result.put(entry.getKey(), entry.getValue());
-                }
-            }
-
-            return result;
-        });
-
         this.loggedElementsById = new MutableLiveData<>();
         this.loggedElementsById.setValue(new HashMap<>());
     }
 
-    // region Selection
-    /**
-     * Returns a LiveData which is true whenever the user has selected at least on item, and false otherwise.
-     *
-     * @return a LiveData which is true whenever the user has selected at least on item and false otherwise.
-     */
-    public LiveData<Boolean> getSelectionMade() {
-        return this.selectionMade;
-    }
-
+    // region Selection:
     /**
      * Returns a LiveData containing a of TrackingSections to the TrackingItems in those sections representing all of
      * the options that the user cna choose to select.

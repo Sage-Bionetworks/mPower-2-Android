@@ -6,10 +6,13 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 import android.support.annotation.NonNull;
+import android.support.test.annotation.UiThreadTest;
+import android.support.test.runner.AndroidJUnit4;
 
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStep;
@@ -25,6 +28,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+@RunWith(AndroidJUnit4.class)
 public class TrackingTaskViewModelTest {
     // Basic Implementation of a ViewModel.
     private class TestViewModel extends TrackingTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> {
@@ -72,6 +76,7 @@ public class TrackingTaskViewModelTest {
     private TestViewModel viewModel;
 
     @Before
+    @UiThreadTest
     public void initializeViewModel() {
         this.viewModel = new TestViewModel(TRACKING_STEP_VIEW);
     }
@@ -134,17 +139,16 @@ public class TrackingTaskViewModelTest {
     }
 
     @Test
+    @UiThreadTest
     public void test_initialState() {
         this.allAvailableElementsPresent();
         this.activeElementsIsEmpty();
         this.loggedElementsIsEmpty();
-        Boolean selectionMade = this.viewModel.getSelectionMade().getValue();
-        assertNotNull("Selection made was unexpectedly null", selectionMade);
-        assertFalse("Selection made was unexepectedly true", selectionMade);
     }
 
     // region Selection
     @Test
+    @UiThreadTest
     public void test_itemSelected() {
         TrackingItem item = TRACKING_ITEMS.iterator().next();
         this.viewModel.itemSelected(item);
@@ -155,13 +159,11 @@ public class TrackingTaskViewModelTest {
         assertNotNull("Active elements was unexpectedly null", activeElements);
         assertTrue("Active elements didn't contain selected item", activeElements.containsKey(item.getIdentifier()));
         assertTrue("Active elements contained extra items", activeElements.size() == 1);
-        Boolean selectionMade = this.viewModel.getSelectionMade().getValue();
-        assertNotNull("Selection made was unexpectedly null", selectionMade);
-        assertTrue("Selection made was unexpectedly false", selectionMade);
         this.loggedElementsIsEmpty();
     }
 
     @Test
+    @UiThreadTest
     public void test_2ItemsSelected() {
         Iterator<TrackingItem> iterator = TRACKING_ITEMS.iterator();
         TrackingItem item1 = iterator.next();
@@ -175,13 +177,11 @@ public class TrackingTaskViewModelTest {
         assertTrue("Active elements didn't contain second selected item",
                 activeElements.containsKey(item2.getIdentifier()));
         assertTrue("Active elements contained extra items", activeElements.size() == 2);
-        Boolean selectionMade = this.viewModel.getSelectionMade().getValue();
-        assertNotNull("Selection made was unexpectedly null", selectionMade);
-        assertTrue("Selection made was unexpectedly false", selectionMade);
         this.loggedElementsIsEmpty();
     }
 
     @Test
+    @UiThreadTest
     public void test_itemSelectedThenDeselected() {
         TrackingItem item = TRACKING_ITEMS.iterator().next();
         this.viewModel.itemSelected(item);
@@ -191,6 +191,7 @@ public class TrackingTaskViewModelTest {
     }
 
     @Test
+    @UiThreadTest
     public void test_2ItemsSelectedFirstDeselected() {
         Iterator<TrackingItem> iterator = TRACKING_ITEMS.iterator();
         TrackingItem item1 = iterator.next();
@@ -202,13 +203,11 @@ public class TrackingTaskViewModelTest {
         assertNotNull("Active elements was unexpectedly null", activeElements);
         assertTrue("Active elements didn't contain selected item", activeElements.containsKey(item2.getIdentifier()));
         assertTrue("Active elements contained extra items", activeElements.size() == 1);
-        Boolean selectionMade = this.viewModel.getSelectionMade().getValue();
-        assertNotNull("Selection made was unexpectedly null", selectionMade);
-        assertTrue("Selection made was unexpectedly false", selectionMade);
         this.loggedElementsIsEmpty();
     }
 
     @Test
+    @UiThreadTest
     public void test_2ItemsSelectedSecondDeselected() {
         Iterator<TrackingItem> iterator = TRACKING_ITEMS.iterator();
         TrackingItem item1 = iterator.next();
@@ -220,15 +219,13 @@ public class TrackingTaskViewModelTest {
         assertNotNull("Active elements was unexpectedly null", activeElements);
         assertTrue("Active elements didn't contain selected item", activeElements.containsKey(item1.getIdentifier()));
         assertTrue("Active elements contained extra items", activeElements.size() == 1);
-        Boolean selectionMade = this.viewModel.getSelectionMade().getValue();
-        assertNotNull("Selection made was unexpectedly null", selectionMade);
-        assertTrue("Selection made was unexpectedly false", selectionMade);
         this.loggedElementsIsEmpty();
     }
     // endregion
 
     // region Logging
     @Test
+    @UiThreadTest
     public void test_itemLogged() {
         this.setupSelections();
         TrackingItem item = TRACKING_ITEMS.iterator().next();
@@ -246,6 +243,7 @@ public class TrackingTaskViewModelTest {
     }
 
     @Test
+    @UiThreadTest
     public void test_2ItemsLogged() {
         this.setupSelections();
         Iterator<TrackingItem> iterator = TRACKING_ITEMS.iterator();
@@ -273,6 +271,7 @@ public class TrackingTaskViewModelTest {
     }
 
     @Test
+    @UiThreadTest
     public void test_removeLoggedItem() {
         this.setupSelections();
         TrackingItem item = TRACKING_ITEMS.iterator().next();
@@ -287,6 +286,7 @@ public class TrackingTaskViewModelTest {
     }
 
     @Test
+    @UiThreadTest
     public void test_2ItemsLoggedFirstRemoved() {
         this.setupSelections();
         Iterator<TrackingItem> iterator = TRACKING_ITEMS.iterator();
@@ -314,6 +314,7 @@ public class TrackingTaskViewModelTest {
     }
 
     @Test
+    @UiThreadTest
     public void test_2ItemsLoggedSecondRemoved() {
         this.setupSelections();
         Iterator<TrackingItem> iterator = TRACKING_ITEMS.iterator();
