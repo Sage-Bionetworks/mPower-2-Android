@@ -6,6 +6,7 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.test.annotation.UiThreadTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -20,9 +21,11 @@ import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSubstepInfo;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
 import org.threeten.bp.Instant;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,9 +35,24 @@ import java.util.Set;
 public class TrackingTaskViewModelTest {
     // Basic Implementation of a ViewModel.
     private class TestViewModel extends TrackingTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> {
-        protected TestViewModel(
-                @NonNull final TrackingStepView stepView) {
-            super(stepView);
+        private TestViewModel(
+                @NonNull final TrackingStepView stepView, @Nullable final LoggingCollection<SimpleTrackingItemLog> previousLoggingCollection) {
+            super(stepView, previousLoggingCollection);
+        }
+
+        @Override
+        public LoggingCollection<SimpleTrackingItemLog> instantiateLoggingCollection() {
+            return LoggingCollection.<SimpleTrackingItemLog>builder()
+                    .setIdentifier(TrackingTaskViewModel.LOGGING_COLLECTION_IDENTIFIER)
+                    .build();
+        }
+
+        @Override
+        protected SimpleTrackingItemLog instantiateLogForUnloggedItem(@NonNull final SimpleTrackingItemConfig config) {
+            return SimpleTrackingItemLog.builder()
+                    .setIdentifier(config.getIdentifier())
+                    .setText(config.getIdentifier())
+                    .build();
         }
 
         @Override
@@ -47,6 +65,8 @@ public class TrackingTaskViewModelTest {
     }
 
     private static Set<TrackingItem> TRACKING_ITEMS;
+    private static Instant START_DATE = Instant.ofEpochMilli(1000);
+    private static Instant END_DATE = Instant.ofEpochMilli(20000);
 
     static {
         TRACKING_ITEMS = new HashSet<>();
@@ -78,7 +98,9 @@ public class TrackingTaskViewModelTest {
     @Before
     @UiThreadTest
     public void initializeViewModel() {
-        this.viewModel = new TestViewModel(TRACKING_STEP_VIEW);
+        this.viewModel = new TestViewModel(TRACKING_STEP_VIEW, null);
+        this.viewModel.setTaskStartDate(START_DATE);
+        this.viewModel.setTaskEndDate(END_DATE);
     }
 
     private void setupSelections() {
@@ -138,13 +160,50 @@ public class TrackingTaskViewModelTest {
         assertTrue("Logged elements was unexpectedly not empty", loggedElements.isEmpty());
     }
 
+    // region Initialization
     @Test
     @UiThreadTest
-    public void test_initialState() {
+    public void test_initialState_NoPreviousLoggingCollection() {
         this.allAvailableElementsPresent();
         this.activeElementsIsEmpty();
         this.loggedElementsIsEmpty();
     }
+
+    @Test
+    @UiThreadTest
+    public void test_initialState_PreviousLoggingCollection() {
+        Iterator<TrackingItem> iterator = TRACKING_ITEMS.iterator();
+        TrackingItem item1 = iterator.next();
+        TrackingItem item2 = iterator.next();
+        // log1 has previously been logged by the user.
+        SimpleTrackingItemLog log1 = SimpleTrackingItemLog.builder()
+                .setIdentifier(item1.getIdentifier())
+                .setText(item1.getIdentifier())
+                .setTimestamp(Instant.now())
+                .build();
+        // log2 has previously not been logged by the user.
+        SimpleTrackingItemLog log2 = SimpleTrackingItemLog.builder()
+                .setIdentifier(item2.getIdentifier())
+                .setText(item2.getIdentifier())
+                .build();
+        LoggingCollection<SimpleTrackingItemLog> previousCollection = LoggingCollection.<SimpleTrackingItemLog>builder()
+                .setIdentifier("trackedItems")
+                .setItems(Arrays.asList(log1, log2))
+                .setStartDate(START_DATE)
+                .setEndDate(END_DATE)
+                .build();
+
+        // re-create the view model with the previous collection.
+        viewModel = new TestViewModel(TRACKING_STEP_VIEW, previousCollection);
+        allAvailableElementsPresent();
+        Map<String, SimpleTrackingItemConfig> activeElements = viewModel.getActiveElementsById().getValue();
+        assertNotNull("Active elements was unexpectedly null", activeElements);
+        assertTrue("First log was unexpectedly not in the active elements", activeElements.containsKey(log1.getIdentifier()));
+        assertTrue("Second log was unexpectedly not in the active elements", activeElements.containsKey(log2.getIdentifier()));
+        assertTrue("Active elements contained extra items", activeElements.size() == 2);
+        loggedElementsIsEmpty();
+    }
+    // endregion
 
     // region Selection
     @Test
@@ -187,7 +246,7 @@ public class TrackingTaskViewModelTest {
         this.viewModel.itemSelected(item);
         this.viewModel.itemDeselected(item);
         // After a selection then deselection the state should be back to it's initial.
-        this.test_initialState();
+        this.test_initialState_NoPreviousLoggingCollection();
     }
 
     @Test
@@ -339,6 +398,69 @@ public class TrackingTaskViewModelTest {
         assertTrue("Logged elements didn't contain item", this.viewModel.isLogged(item1.getIdentifier()));
         assertEquals("Unexpected log found for item", log1, this.viewModel.getLog(item1.getIdentifier()));
         assertTrue("Logged elements contained extra items", loggedElements.size() == 1);
+    }
+    // endregion
+
+    // region LoggingCollection
+    @Test
+    @UiThreadTest
+    public void test_getLoggingCollection_AllLogged() {
+        Iterator<TrackingItem> iterator = TRACKING_ITEMS.iterator();
+        TrackingItem item1 = iterator.next();
+        TrackingItem item2 = iterator.next();
+        SimpleTrackingItemLog log1 = SimpleTrackingItemLog.builder()
+                .setIdentifier(item1.getIdentifier())
+                .setText(item1.getIdentifier())
+                .setTimestamp(Instant.now())
+                .build();
+        SimpleTrackingItemLog log2 = SimpleTrackingItemLog.builder()
+                .setIdentifier(item2.getIdentifier())
+                .setText(item2.getIdentifier())
+                .setTimestamp(Instant.now())
+                .build();
+        this.viewModel.itemSelected(item1);
+        this.viewModel.itemSelected(item2);
+        this.viewModel.addLoggedElement(log1);
+        this.viewModel.addLoggedElement(log2);
+        LoggingCollection<SimpleTrackingItemLog> loggingCollection = this.viewModel.getLoggingCollection();
+        assertNotNull("Failed to get logging collection", loggingCollection);
+        assertEquals("Logging collection had unexpected identifier", TrackingTaskViewModel.LOGGING_COLLECTION_IDENTIFIER,
+                loggingCollection.getIdentifier());
+        assertEquals("Logging collection had unexpected startDate", START_DATE, loggingCollection.getStartDate());
+        assertEquals("Logging collection had unexpected type", LoggingCollection.DEFAULT_TYPE, loggingCollection.getType());
+        assertTrue("Logging collection was missing first log", loggingCollection.getItems().contains(log1));
+        assertTrue("Logging collection was missing second log", loggingCollection.getItems().contains(log2));
+        assertTrue("Logging collection contained extra items", loggingCollection.getItems().size() == 2);
+    }
+
+    @Test
+    @UiThreadTest
+    public void test_getLoggingCollection_UnloggedElements() {
+        Iterator<TrackingItem> iterator = TRACKING_ITEMS.iterator();
+        TrackingItem item1 = iterator.next();
+        TrackingItem item2 = iterator.next();
+        SimpleTrackingItemLog log1 = SimpleTrackingItemLog.builder()
+                .setIdentifier(item1.getIdentifier())
+                .setText(item1.getIdentifier())
+                .setTimestamp(Instant.now())
+                .build();
+        this.viewModel.itemSelected(item1);
+        this.viewModel.itemSelected(item2);
+        this.viewModel.addLoggedElement(log1);
+        LoggingCollection<SimpleTrackingItemLog> loggingCollection = this.viewModel.getLoggingCollection();
+        assertNotNull("Failed to get logging collection", loggingCollection);
+        assertEquals("Logging collection had unexpected identifier", TrackingTaskViewModel.LOGGING_COLLECTION_IDENTIFIER,
+                loggingCollection.getIdentifier());
+        assertEquals("Logging collection had unexpected startDate", START_DATE, loggingCollection.getStartDate());
+        assertEquals("Logging collection had unexpected type", LoggingCollection.DEFAULT_TYPE, loggingCollection.getType());
+        assertTrue("Logging collection was missing first log", loggingCollection.getItems().contains(log1));
+        // log2 should be generated by the call to getLoggingCollection();
+        SimpleTrackingItemLog log2 = SimpleTrackingItemLog.builder()
+                .setIdentifier(item2.getIdentifier())
+                .setText(item2.getIdentifier())
+                .build();
+        assertTrue("Logging collection was missing second log", loggingCollection.getItems().contains(log2));
+        assertTrue("Logging collection contained extra items", loggingCollection.getItems().size() == 2);
     }
     // endregion
 }

@@ -6,18 +6,21 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
+
+import com.google.common.collect.ImmutableList;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.threeten.bp.Instant;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -33,28 +36,144 @@ import java.util.TreeSet;
  */
 public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog>
         extends ViewModel {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrackingTaskViewModel.class);
+
+    public static final String LOGGING_COLLECTION_IDENTIFIER = "trackedItems";
+
     // invariant availableElements.getValue() != null
+    @NonNull
     protected MutableLiveData<Map<TrackingSection, Set<TrackingItem>>> availableElements;
 
+    @NonNull
+    protected Map<String, TrackingItem> trackingItemsById;
+
+    @NonNull
     // invariant activeElementsById.getValue() != null
     protected MutableLiveData<Map<String, ConfigType>> activeElementsById;
 
+    @NonNull
     // invariant loggedElementsById.getValue() != null
     protected MutableLiveData<Map<String, LogType>> loggedElementsById;
 
+    protected Instant startDate;
+
+    protected Instant endDate;
+
+    @NonNull
     protected TrackingStepView stepView;
 
-    protected TrackingTaskViewModel(@NonNull final TrackingStepView stepView) {
+    protected TrackingTaskViewModel(@NonNull final TrackingStepView stepView,
+            @Nullable final LoggingCollection<LogType> previousLoggingCollection) {
         this.stepView = stepView;
-        this.availableElements = new MutableLiveData<>();
-        this.activeElementsById = new MutableLiveData<>();
-        this.availableElements.setValue(stepView.getSelectionItems());
-        this.activeElementsById.setValue(new HashMap<>());
-        this.loggedElementsById = new MutableLiveData<>();
-        this.loggedElementsById.setValue(new HashMap<>());
+        availableElements = new MutableLiveData<>();
+        activeElementsById = new MutableLiveData<>();
+        loggedElementsById = new MutableLiveData<>();
+        availableElements.setValue(stepView.getSelectionItems());
+        trackingItemsById = getTrackingItemsById(availableElements.getValue());
+        loggedElementsById.setValue(new HashMap<>());
+        // initialize the active elements to contain either the user's previous selection or nothing depending on if
+        // we have a previous logging collection.
+        if (previousLoggingCollection == null) {
+            activeElementsById.setValue(new HashMap<>());
+        } else {
+            Map<String, ConfigType> activeElements = new HashMap<>();
+            for (LogType log : previousLoggingCollection.getItems()) {
+                String identifier = log.getIdentifier();
+                activeElements.put(identifier, instantiateConfigFromSelection(trackingItemsById.get(identifier)));
+            }
+
+            activeElementsById.setValue(activeElements);
+        }
     }
 
+    protected static Map<String, TrackingItem> getTrackingItemsById(
+            Map<TrackingSection, Set<TrackingItem>> availableElements) {
+        Map<String, TrackingItem> result = new HashMap<>();
+        for (Set<TrackingItem> itemSet : availableElements.values()) {
+            for (TrackingItem item : itemSet) {
+                result.put(item.getIdentifier(), item);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Sets the timestamp the task started at to the given instant.
+     *
+     * @param startDate
+     *         The instant to use as the start date for task.
+     */
+    public void setTaskStartDate(@Nullable Instant startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * Sets the timestamp the task ended at to the given instant.
+     *
+     * @param endDate
+     *         The instant to use as the end date for task.
+     */
+    public void setTaskEndDate(@Nullable Instant endDate) {
+        this.endDate = endDate;
+    }
+
+    /**
+     * Returns the final LoggingCollection for the task. The LoggingCollection will contain: - the user entered logs
+     * for every item the user has created a log for - a basic log indicating the user selected an item but didn't log
+     * it for every item the user indicated is active but didn't create a log for.
+     *
+     * @return The LoggingCollection for task.
+     */
+    public LoggingCollection<LogType> getLoggingCollection() {
+        Instant now = Instant.now();
+        if (startDate == null) {
+            startDate = now;
+            LOGGER.warn("getLoggingCollection() called with null startDate using {} instead", now);
+        }
+
+        if (endDate == null) {
+            endDate = now;
+            LOGGER.warn("getLoggingCollection() called with null endDate using {} instead", now);
+        }
+
+        // Add logs for the items the user didn't log on task run.
+        ImmutableList.Builder<LogType> itemsBuilder = ImmutableList.builder();
+        for (String identifier : activeElementsById.getValue().keySet()) {
+            if (loggedElementsById.getValue().containsKey(identifier)) {
+                itemsBuilder.add(loggedElementsById.getValue().get(identifier));
+            } else {
+                itemsBuilder.add(instantiateLogForUnloggedItem(activeElementsById.getValue().get(identifier)));
+            }
+        }
+
+        return instantiateLoggingCollection().toBuilder()
+                .setIdentifier(LOGGING_COLLECTION_IDENTIFIER)
+                .setStartDate(startDate)
+                .setEndDate(endDate)
+                .setItems(itemsBuilder.build())
+                .build();
+    }
+
+    /**
+     * Instantiates a new LoggingCollection with the correct log type for view model.
+     *
+     * @return a new LoggingCollection with the correct log type for view model.
+     */
+    protected abstract LoggingCollection<LogType> instantiateLoggingCollection();
+
+    /**
+     * Instantiates a new log which represents that the user selected a tracking item, but chose not to log it.
+     *
+     * @param config
+     *         the config to log instantiate the log from. (this should be the config corresponding to the
+     *         TrackingItem the user selected)
+     * @return a new log which represents that the user selected a tracking item, but chose not to log it.
+     */
+    protected abstract LogType instantiateLogForUnloggedItem(@NonNull ConfigType config);
+
     // region Selection:
+
     /**
      * Returns a LiveData containing a of TrackingSections to the TrackingItems in those sections representing all of
      * the options that the user cna choose to select.
@@ -62,8 +181,9 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      * @return a LiveData containing a of TrackingSections to the TrackingItems in those sections representing all of
      *         the options that the user cna choose to select.
      */
+    @NonNull
     public LiveData<Map<TrackingSection, Set<TrackingItem>>> getAvailableElements() {
-        return this.availableElements;
+        return availableElements;
     }
 
     /**
@@ -73,13 +193,19 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      *         The item the user has indicated they would like to track.
      */
     public void itemSelected(@NonNull TrackingItem item) {
-        Map<String, ConfigType> activeElements = this.activeElementsById.getValue();
-        if (!activeElements.containsKey(item.getIdentifier())) {
-            ConfigType config = this.instantiateConfigFromSelection(item);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("itemSelected() called with: {}", item);
+        }
+
+        Map<String, ConfigType> activeElements = activeElementsById.getValue();
+        if (activeElements.containsKey(item.getIdentifier())) {
+            LOGGER.warn("itemSelected() called on item that is already active, item was: {}", item);
+        } else {
+            ConfigType config = instantiateConfigFromSelection(item);
             activeElements.put(config.getIdentifier(), config);
         }
 
-        this.activeElementsById.setValue(activeElements);
+        activeElementsById.setValue(activeElements);
     }
 
     /**
@@ -89,9 +215,17 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      *         The item the user no longer wishes to track.
      */
     public void itemDeselected(@NonNull TrackingItem item) {
-        Map<String, ConfigType> activeElements = this.activeElementsById.getValue();
-        activeElements.remove(item.getIdentifier());
-        this.activeElementsById.setValue(activeElements);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("itemDeselected() called with: {}", item);
+        }
+
+        Map<String, ConfigType> activeElements = activeElementsById.getValue();
+        if (!activeElements.containsKey(item.getIdentifier())) {
+            LOGGER.warn("itemDeselected() called on item that is not active, item was: {}", item);
+        } else {
+            activeElements.remove(item.getIdentifier());
+            activeElementsById.setValue(activeElements);
+        }
     }
     // endregion
 
@@ -99,10 +233,11 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
 
     /**
      * Returns the set of active elements sorted in alphabetical order based on identifier.
+     *
      * @return the set of active elements sorted in alphabetical order based on identifier.
      */
     public LiveData<Set<ConfigType>> getActiveElementsSorted() {
-        return Transformations.map(this.activeElementsById, elements -> {
+        return Transformations.map(activeElementsById, elements -> {
             Set<ConfigType> result = new TreeSet<>((o1, o2) -> o1.getIdentifier().compareTo(o2.getIdentifier()));
             result.addAll(elements.values());
             return result;
@@ -110,11 +245,13 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     }
 
     /**
-     * Returns a map from identifier to config for the active elements in this view model.
-     * @return a map from identifier to config for the active elements in this view model.
+     * Returns a map from identifier to config for the active elements in view model.
+     *
+     * @return a map from identifier to config for the active elements in view model.
      */
+    @NonNull
     public LiveData<Map<String, ConfigType>> getActiveElementsById() {
-        return this.activeElementsById;
+        return activeElementsById;
     }
 
     /**
@@ -127,7 +264,7 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      *         identifier.
      */
     public LiveData<ConfigType> getActiveElement(@NonNull String identifier) {
-        return Transformations.map(this.activeElementsById, elements -> elements.get(identifier));
+        return Transformations.map(activeElementsById, elements -> elements.get(identifier));
     }
     // endregion
 
@@ -144,15 +281,17 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      */
     public LiveData<LogType> getLoggedElement(@NonNull String identifier) {
         return Transformations
-                .map(this.loggedElementsById, elements -> this.loggedElementsById.getValue().get(identifier));
+                .map(loggedElementsById, elements -> loggedElementsById.getValue().get(identifier));
     }
 
     /**
-     * Returns a map from identifier to Logged element for the logged elements in this view model.
-     * @return a map from identifier to Logged element for the logged elements in this view model.
+     * Returns a map from identifier to Logged element for the logged elements in view model.
+     *
+     * @return a map from identifier to Logged element for the logged elements in view model.
      */
+    @NonNull
     public LiveData<Map<String, LogType>> getLoggedElementsById() {
-        return this.loggedElementsById;
+        return loggedElementsById;
     }
 
     /**
@@ -163,7 +302,7 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      * @return true if the time with the given identifier has been logged by the user, false otherwise.
      */
     public boolean isLogged(@NonNull String identifier) {
-        return this.loggedElementsById.getValue().containsKey(identifier);
+        return loggedElementsById.getValue().containsKey(identifier);
     }
 
     /**
@@ -173,7 +312,7 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      */
     @Nullable
     public LogType getLog(@NonNull String identifier) {
-        return this.loggedElementsById.getValue().get(identifier);
+        return loggedElementsById.getValue().get(identifier);
     }
 
     /**
@@ -183,9 +322,18 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      *         the log to add to the set of logged elements.
      */
     public void addLoggedElement(@NonNull LogType log) {
-        Map<String, LogType> result = this.loggedElementsById.getValue();
-        result.put(log.getIdentifier(), log);
-        this.loggedElementsById.setValue(result);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("addLoggedElement() called with: {}", log);
+        }
+
+        if (!activeElementsById.getValue().containsKey(log.getIdentifier())) {
+            LOGGER.warn("Attempt to add log for an item which is not currently active, identifier: {}",
+                    log.getIdentifier());
+        } else {
+            Map<String, LogType> result = loggedElementsById.getValue();
+            result.put(log.getIdentifier(), log);
+            loggedElementsById.setValue(result);
+        }
     }
 
     /**
@@ -195,25 +343,33 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      *         the identifier of the log to remove from the set of logged elements.
      */
     public void removeLoggedElement(@NonNull String identifier) {
-        Map<String, LogType> result = this.loggedElementsById.getValue();
-        result.remove(identifier);
-        this.loggedElementsById.setValue(result);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("removeLoggedElement() called with: {}", identifier);
+        }
+
+        Map<String, LogType> result = loggedElementsById.getValue();
+        if (!result.containsKey(identifier)) {
+            LOGGER.warn("removeLoggedElement() called with identifier that is not logged, identifier was: {}", identifier);
+        } else {
+            result.remove(identifier);
+            loggedElementsById.setValue(result);
+        }
     }
     // endregion
 
     /**
-     * Returns the TrackingStepView which this view model uses the items from.
+     * Returns the TrackingStepView which view model uses the items from.
      *
-     * @return the TrackingStepView which this view model uses the items from.
+     * @return the TrackingStepView which view model uses the items from.
      */
+    @NonNull
     public TrackingStepView getStepView() {
-        return this.stepView;
+        return stepView;
     }
 
     /**
-     * Called to instantiate an unconfigured config when the user selects a new element, this is used when the user
-     * picks a new element from the selections, but hasn't necessarily added the full details for the configuration
-     * yet.
+     * Called to instantiate an unconfigured config when the user selects a new element, is used when the user picks a
+     * new element from the selections, but hasn't necessarily added the full details for the configuration yet.
      *
      * @param item
      *         the Item to create a configuration for.
