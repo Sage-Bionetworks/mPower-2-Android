@@ -32,12 +32,18 @@
 
 package org.sagebionetworks.research.mpower.sageresearch.inject;
 
-import org.sagebionetworks.research.data.inject.DataModule;
 import org.sagebionetworks.research.domain.inject.ActionModule;
 import org.sagebionetworks.research.domain.inject.AsyncActionModule;
 import org.sagebionetworks.research.domain.inject.InputFieldsModule;
 import org.sagebionetworks.research.domain.inject.StepModule;
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
+import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.HandSelectionStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.InstructionStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.MPowerActiveStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.OverviewStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.TappingCompletionStepModule;
+import org.sagebionetworks.research.motor_control_module.inject.TappingStepModule;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskActivity;
 import org.sagebionetworks.research.sageresearch_app_sdk.inject.SageResearchAppSDKModule;
 
@@ -45,10 +51,10 @@ import dagger.Module;
 import dagger.android.AndroidInjectionModule;
 import dagger.android.ContributesAndroidInjector;
 
-@Module(includes = {AndroidInjectionModule.class, InputFieldsModule.class, ActionModule.class,
-        DataModule.class, StepModule.class, AsyncActionModule.class,
-        PerformTaskModule.class,
-        SageResearchAppSDKModule.class})
+@Module(includes = {AndroidInjectionModule.class, ShowStepModule.class, InputFieldsModule.class, ActionModule.class,
+        StepModule.class, AsyncActionModule.class, PerformTaskModule.class, InstructionStepModule.class,
+        OverviewStepModule.class, MPowerActiveStepModule.class,
+        TappingCompletionStepModule.class, TappingStepModule.class, HandSelectionStepModule.class})
 public abstract class MPowerSageResearchModule {
     @ContributesAndroidInjector
     abstract PerformTaskActivity contributePerformTaskActivityInjector();

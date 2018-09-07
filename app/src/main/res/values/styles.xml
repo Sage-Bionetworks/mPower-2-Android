@@ -52,6 +52,41 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="Widget.MPower.TextView.UnderlinedButton" parent="">
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textColor">@color/royal500</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.MPower.TextView.SelectionSectionTitle" parent="">
+        <item name="android:gravity">left</item>
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textColor">@color/appTextDark</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Widget.MPower.TextView.SelectionItemTitle" parent="">
+        <item name="android:gravity">left</item>
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textColor">@color/appTextDark</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Widget.MPower.TextView.SelectionDetail" parent="">
+        <item name="android:gravity">left</item>
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textColor">@color/appLightGray</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Widget.MPower.ActionButton.TriggersLogging.UnderlinedButton" parent="">
+        <item name="android:gravity">left</item>
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textColor">@color/royal500</item>
+    </style>
+
     <style name="MPower.RoundedCornerMaterialButton" parent="Widget.AppCompat.Button.Colored">
         <item name="android:background">@drawable/mpower2_rounded_button_butterscotch</item>
         <item name="android:textColor">@color/black</item>

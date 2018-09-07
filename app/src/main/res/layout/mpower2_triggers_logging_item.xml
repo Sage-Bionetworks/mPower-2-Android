@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/record_button"
+        style="@style/Widget.ResearchStack.NavigationActionBar.PrimaryButton.Forward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:paddingEnd="@dimen/margin_large"
+        android:paddingStart="@dimen/margin_large"
+        android:text="Record"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/item_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <TextView
+        android:id="@+id/item_title"
+        style="@style/Widget.ResearchStack.StepBody.TitleLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_xlarge"
+        android:layout_marginStart="@dimen/margin_large"
+        android:text="Item Title"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/record_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1" />
+
+    <ImageView
+        android:id="@+id/checkmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        app:layout_constraintStart_toStartOf="@+id/item_title"
+        app:layout_constraintTop_toBottomOf="@+id/item_title"
+        app:srcCompat="@drawable/checkbox" />
+
+    <TextView
+        android:id="@+id/recorded_label"
+        style="@style/Widget.ResearchStack.StepBody.TextLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:text="Recorded"
+
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/checkmark"
+        app:layout_constraintStart_toEndOf="@+id/checkmark"
+        app:layout_constraintTop_toTopOf="@+id/checkmark"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/undo_button"
+        style="@style/Widget.MPower.ActionButton.TriggersLogging.UnderlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:text="Undo"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recorded_label" />
+</android.support.constraint.ConstraintLayout>
