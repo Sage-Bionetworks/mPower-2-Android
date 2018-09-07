@@ -12,13 +12,13 @@
       "severity" : 0,
       "duration" : "DURATION_CHOICE_AFTERNOON",
       "medicationTiming" : "post-medication",
-      "loggedDate" : "2018-08-29T12:23:58.435-07:00",
+      "loggedDate" : "2018-08-29T12:23:58.435Z",
       "identifier" : "Amnesia",
       "text" : "Amnesia"
     }
   ],
-  "startDate" : "2018-08-29T12:23:49.514-07:00",
+  "startDate" : "2018-08-29T12:23:49.514Z",
   "type" : "loggingCollection",
   "identifier" : "trackedItems",
-  "endDate" : "2018-08-29T12:23:49.514-07:00"
+  "endDate" : "2018-08-29T12:23:49.514Z"
 }
