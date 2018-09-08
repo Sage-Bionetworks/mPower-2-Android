@@ -1,5 +1,8 @@
 package org.sagebionetworks.research.mpower.studyburst
 
+import android.app.Activity
+import android.app.FragmentManager
+import android.app.TimePickerDialog
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
@@ -7,15 +10,16 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import kotlinx.android.synthetic.main.medication_add.view.*
 import kotlinx.android.synthetic.main.medication_dosage.view.*
-import kotlinx.android.synthetic.main.medication_schedule.view.schedule_anytime
-import kotlinx.android.synthetic.main.medication_schedule.view.schedule_everyday
-import kotlinx.android.synthetic.main.medication_schedule.view.schedule_time
+import kotlinx.android.synthetic.main.medication_schedule.view.*
 import org.sagebionetworks.research.mpower.R
 import org.slf4j.LoggerFactory
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
-class MedicationAdapter(var items : List<MedicationItem>, val context: Context, val listener: Listener)
+class MedicationAdapter(var name: String, var items : List<MedicationItem>, val context: Context, val listener: Listener)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val LOGGER = LoggerFactory.getLogger(MedicationAdapter::class.java)
@@ -59,15 +63,40 @@ class MedicationAdapter(var items : List<MedicationItem>, val context: Context, 
             }
             Type.SCHEDULE -> {
                 var sh = holder as ScheduleViewHolder
-                sh.bindView(item as Schedule)
+                var schedule = item as Schedule
+                sh.bindView(schedule)
+                sh.checkbox.isChecked = schedule.anytime
                 sh.checkbox.setOnCheckedChangeListener{ buttonView, isChecked ->
                     if(isChecked) {
-                        sh.everyday.visibility = View.GONE
-                        sh.time.visibility = View.GONE
+                        schedule.anytime = true
+                        listener.showAddSchedule(false)
                     } else {
-                        sh.everyday.visibility = View.VISIBLE
-                        sh.time.visibility = View.VISIBLE
+                        schedule.anytime = false
+                        listener.showAddSchedule(true)
                     }
+                }
+                if(schedule.anytime) {
+                    sh.dayContainer.visibility = View.GONE
+                    sh.timeContainer.visibility = View.GONE
+                } else {
+                    sh.dayContainer.visibility = View.VISIBLE
+                    sh.timeContainer.visibility = View.VISIBLE
+                }
+                sh.timeText.text = schedule.time
+                sh.timeContainer.setOnClickListener {
+                    view ->
+                        LOGGER.debug("Time clicked")
+                        getDate(context, sh.timeText, schedule)
+                }
+                sh.dayContainer.setOnClickListener {
+                    view ->
+                        LOGGER.debug("Day container clicked")
+                        listener.showDaySelection(name, schedule)
+                }
+                if(schedule.everday) {
+                    sh.dayText.text = "Everyday"
+                } else {
+                    sh.dayText.text = schedule.days.joinToString("," )
                 }
             }
 
@@ -95,6 +124,30 @@ class MedicationAdapter(var items : List<MedicationItem>, val context: Context, 
         return type
     }
 
+    fun getDate(context: Context, textView: TextView, schedule: Schedule) {
+
+        var sdf = SimpleDateFormat("hh:mm aa")
+        val cal = Calendar.getInstance()
+        cal.setTime(sdf.parse(schedule.time))
+        //cal.set(Calendar.HOUR_OF_DAY, 7)
+        //cal.set(Calendar.MINUTE, 0)
+
+
+        val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hours, minutes ->
+            cal.set(Calendar.HOUR, hours)
+            cal.set(Calendar.MINUTE, minutes)
+
+            var format = sdf.format(cal.time)
+            textView.text = format
+            schedule.time = format
+
+        }
+
+        TimePickerDialog(context, timeSetListener,
+                cal.get(Calendar.HOUR_OF_DAY),
+                cal.get(Calendar.MINUTE), false).show()
+    }
+
 }
 
 class DosageViewHolder (view: View) : RecyclerView.ViewHolder(view) {
@@ -108,8 +161,10 @@ class DosageViewHolder (view: View) : RecyclerView.ViewHolder(view) {
 
 class ScheduleViewHolder (view: View) : RecyclerView.ViewHolder(view) {
     val checkbox = view.schedule_anytime
-    val time = view.schedule_time
-    val everyday = view.schedule_everyday
+    val timeText = view.time_text
+    val timeContainer = view.time_container
+    val dayContainer = view.day_container
+    val dayText = view.day_text
     fun bindView(schedule: Schedule) {
 
     }
@@ -127,4 +182,6 @@ class AddViewHolder (view: View) : RecyclerView.ViewHolder(view) {
 interface Listener {
     fun addSchedule()
     fun enableNext(enable: Boolean)
+    fun showAddSchedule(show: Boolean)
+    fun showDaySelection(name: String, schedule: Schedule)
 }

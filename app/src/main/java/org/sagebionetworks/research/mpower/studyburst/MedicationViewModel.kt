@@ -13,17 +13,22 @@ class MedicationViewModel : ViewModel() {
     private val title = MutableLiveData<String>()
     private var items = MutableLiveData<List<MedicationItem>>()
 
+    private var addButton = Add("add")
+
     fun init() {
         title.value = "Sinamet"
 
         // TODO: remove when we have real data
         val list = arrayListOf<MedicationItem>()
-        var sb1 = Dosage("Finger Tapping")
-        list.add(sb1)
-        var sb2 = Schedule(1)
-        list.add(sb2)
-        var sb3 = Add("Walk and Stand")
-        list.add(sb3)
+        var dosage = Dosage("dosage")
+        list.add(dosage)
+        var schedule = Schedule("1")
+        schedule.time = "06:30 AM"
+        schedule.everday = false
+        schedule.days = arrayListOf("Monday", "Wednesday")
+        list.add(schedule)
+
+        list.add(addButton)
 
         items.value = list
     }
@@ -41,7 +46,41 @@ class MedicationViewModel : ViewModel() {
         var len = list.size - 1
         LOGGER.debug("Adding schedule with id: $len")
         //list.add(Schedule(len ))
-        list.add(len-1, Schedule(len))
+        list.add(len, Schedule(len.toString()))
+        items.value = list
+    }
+
+    fun showAddSchedule(show: Boolean) {
+        LOGGER.debug("showAddSchedule(): $show")
+        var list: MutableList<MedicationItem> = items.value!!.toMutableList()
+        if(show) {
+            list.add(addButton)
+        } else {
+            list.remove(addButton)
+        }
+        items.value = list
+    }
+
+    fun setScheduleDays(id: String, days: List<String>) {
+        LOGGER.debug("setScheduleDays(): $days, $id")
+        var list: List<MedicationItem> = items.value ?: listOf()
+        for(item in list) {
+            when(item.type) {
+                Type.SCHEDULE -> {
+                    var sched: Schedule = item as Schedule
+                    if(sched.id == id) {
+                        LOGGER.debug("Found schedule: $id")
+                        if(days.size < 7) {
+                            sched.everday = false
+                            sched.days = days
+                        } else {
+                            sched.everday = true
+                            sched.days = arrayListOf()
+                        }
+                    }
+                }
+            }
+        }
         items.value = list
     }
 

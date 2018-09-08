@@ -66,4 +66,6 @@
     <string name="schedule_add_label">Add another schedule</string>
     <string name="dosage_title">Dosage</string>
     <string name="dosage_hint">e.g.: 10/100 mg</string>
+    <string name="medication_day_selection_title">On which days do you want to take %1$s at %2$s</string>
+    <string name="medication_day_selection_message">Select all that apply</string>
 </resources>

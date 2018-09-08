@@ -1,6 +1,7 @@
 package org.sagebionetworks.research.mpower.studyburst
 
 
+import android.app.FragmentManager
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
+import android.view.View
 import kotlinx.android.synthetic.main.activity_medication.*
 import org.slf4j.LoggerFactory
 
@@ -17,7 +19,7 @@ import org.sagebionetworks.research.mpower.TaskLauncher
 import javax.inject.Inject
 
 
-class MedicationActivity : AppCompatActivity(), Listener {
+class MedicationActivity : AppCompatActivity(), Listener, DaySelectedListener {
 
     private val LOGGER = LoggerFactory.getLogger(MedicationActivity::class.java)
 
@@ -50,8 +52,9 @@ class MedicationActivity : AppCompatActivity(), Listener {
         medicationViewModel.getItems().observe(this, Observer {
             items ->
                 LOGGER.debug("How many items: " + items?.size)
+                var name: String = medicationViewModel.getTitle().value ?: ""
                 medication_recycler.adapter =
-                        MedicationAdapter(items ?: ArrayList<MedicationItem>(), this, this)
+                        MedicationAdapter(name, items ?: ArrayList<MedicationItem>(), this, this)
         })
         medicationViewModel.init()
 
@@ -72,5 +75,26 @@ class MedicationActivity : AppCompatActivity(), Listener {
     override fun enableNext(enable: Boolean) {
         LOGGER.debug("enabledNext(): $enable")
         medication_next.setEnabled(enable)
+    }
+
+    override fun showAddSchedule(show: Boolean) {
+        LOGGER.debug("showNext(): $show")
+        medicationViewModel.showAddSchedule(show)
+    }
+
+    override fun showDaySelection(name: String, schedule: Schedule) {
+        LOGGER.debug("showDaySelection()")
+        var days = schedule.days.joinToString(",")
+        var dialog = MedicationDayFragment.newInstance(schedule.id, name, schedule.time, days)
+        dialog.show(supportFragmentManager, "Day select")
+    }
+
+    override fun onDaySelected(id: String, days: String) {
+        var list = days.split(",")
+        var size = list.size
+        LOGGER.debug("onDaySelected() $size - $days")
+        //medicationViewModel.setSchedule()
+        medicationViewModel.setScheduleDays(id, list)
+        //medication_recycler.adapter.notifyDataSetChanged()
     }
 }

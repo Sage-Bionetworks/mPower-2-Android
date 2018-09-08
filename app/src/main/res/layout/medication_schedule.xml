@@ -37,14 +37,26 @@
         android:layout_height="1dp"
         android:background="@color/appVeryLightGray"/>
 
-    <TextView
-        android:id="@+id/schedule_time"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/time_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/appTextDark"
+            android:text="N/A"
+            android:textSize="16dp"
+            android:layout_margin="20dp"/>
+    </LinearLayout>
+    <TimePicker
+        android:id="@+id/schedule_time_picker"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/appTextDark"
-        android:text="7:00 AM"
-        android:textSize="16dp"
-        android:layout_margin="20dp"/>
+        android:layout_centerHorizontal="true"
+        android:timePickerMode="spinner"
+        android:visibility="gone"/>
 
     <View
         android:layout_width="match_parent"
@@ -52,12 +64,26 @@
         android:background="@color/appVeryLightGray"/>
 
 
-    <TextView
-        android:id="@+id/schedule_everyday"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/appTextDark"
-        android:text="Everyday"
-        android:textSize="16dp"
-        android:layout_margin="20dp"/>
+        android:id="@+id/day_container">
+        <TextView
+            android:id="@+id/day_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/appTextDark"
+            android:text="Everyday"
+            android:textSize="16dp"
+            android:layout_margin="20dp"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:tint="@color/appTextDark"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_chevron_right_black_24dp"/>
+    </RelativeLayout>
 </LinearLayout>
