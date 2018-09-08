@@ -23,6 +23,7 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import dagger.android.HasServiceInjector;
 import dagger.android.support.HasSupportFragmentInjector;
+import dagger.multibindings.IntoSet;
 
 public class MPowerApplication extends BridgeSageResearchApp implements HasSupportFragmentInjector,
         HasActivityInjector, HasServiceInjector {

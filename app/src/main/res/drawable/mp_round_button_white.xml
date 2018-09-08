@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- TODO theme the enabled/disabled colors @liujoshua 2018/08/10 -->
+    <item android:id="@android:id/background" android:state_enabled="true">
+        <shape>
+            <solid android:color="@color/appWhite" />
+            <corners android:radius="@dimen/rs2_completely_rounded_corner_radius" />
+        </shape>
+    </item>
+    <item android:id="@android:id/background" android:state_enabled="false">
+        <shape>
+            <solid android:color="@color/appLightGray" />
+            <corners android:radius="@dimen/rs2_completely_rounded_corner_radius" />
+        </shape>
+    </item>
+</selector>

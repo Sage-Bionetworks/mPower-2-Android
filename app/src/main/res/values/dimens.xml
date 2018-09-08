@@ -7,4 +7,9 @@
     <dimen name="study_burst_status_wheel_margin">12dp</dimen>
     <dimen name="study_burst_progress_radius">8dp</dimen>
     <dimen name="study_burst_cell_height">100dp</dimen>
+
+    <dimen name="margin_tracking_section_top">28dp</dimen>
+    <dimen name="margin_tracking_item">16dp</dimen>
+
+    <dimen name="severity_button_height">60dp</dimen>
 </resources>
