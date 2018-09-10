@@ -3,6 +3,7 @@ package org.sagebionetworks.research.mpower.research
 import org.sagebionetworks.research.mpower.research.MpIdentifier.*
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroupObject
+import org.threeten.bp.LocalDateTime
 import java.util.Random
 
 class DataSourceManager {
@@ -28,6 +29,10 @@ class DataSourceManager {
                         MEDICATION to "273c4518-7cb6-4496-b1dd-c0b5bf291b09",
                         TRIGGERS to "b0f07b7e-408e-4d50-9368-8220971e570c"
                 ))
+
+        val surveyGroup = ActivityGroupObject(
+                "Surveys", "Surveys",
+                activityIdentifiers = setOf(DEMOGRAPHICS, ENGAGEMENT, MOTIVATION, BACKGROUND))
 
         val installedGroups: Array<ActivityGroup>
             get() {
@@ -70,9 +75,9 @@ data class StudyBurstConfiguration(
          */
         val maxDayCount: Int = 19,
         /**
-         * @property expiresLimit the time limit until the progress expires, defaults to 60 minutes in ms
+         * @property expiresLimit the time limit (in seconds) until the progress expires, defaults to 60 minutes
          */
-        val expiresLimit: Long = (60 * 60 * 1000),
+        val expiresLimit: Long = 60 * 60L,
         /**
          * @property taskGroupIdentifier used to mark the active tasks included in the study burst.
          */
@@ -109,6 +114,13 @@ data class StudyBurstConfiguration(
      */
     fun randomEngagementGroups(): Set<String>? {
         return engagementGroups?.mapNotNull { it.randomElement() }?.toSet()
+    }
+
+    /**
+     * @return the start of the expiration time window
+     */
+    fun startTimeWindow(now: LocalDateTime): LocalDateTime {
+        return now.minusSeconds(expiresLimit)
     }
 
     /**

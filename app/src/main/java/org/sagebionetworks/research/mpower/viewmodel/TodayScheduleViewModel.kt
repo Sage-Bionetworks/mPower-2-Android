@@ -74,10 +74,10 @@ open class TodayScheduleViewModel(app: Application): ScheduleViewModel(app) {
     // TODO: mdephillips 9/4/18 what happens if clock ticks past midnight during this ViewModel's lifetime?
     // TODO: mdephillips 9/4/18 possible solution: have an observer wait x seconds that triggers a re-query
     @VisibleForTesting
-    open val queryDateStart: Instant = ZonedDateTime.now().startOfDay().toInstant()
+    protected open val queryDateStart: Instant = ZonedDateTime.now().startOfDay().toInstant()
 
     @VisibleForTesting
-    open val queryDateEnd: Instant = ZonedDateTime.now().startOfNextDay().toInstant()
+    protected open val queryDateEnd: Instant = ZonedDateTime.now().startOfNextDay().toInstant()
 
     private var finishedTodayLiveData: LiveData<List<TodayHistoryItem>>? = null
     /**

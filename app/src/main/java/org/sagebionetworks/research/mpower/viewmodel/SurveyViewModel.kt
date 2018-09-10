@@ -56,14 +56,14 @@ open class SurveyViewModel(app: Application): ScheduleViewModel(app) {
     }
 
     @VisibleForTesting
-    open val excludeGroup: Set<String> = DataSourceManager.installedGroups
+    protected open val excludeGroup: Set<String> = DataSourceManager.installedGroups
             .map { it.activityIdentifiers }.flatMap { it }.toSet()
             .union(StudyBurstConfiguration().completionTaskIdentifiers())
 
     // TODO: mdephillips 9/4/18 what happens if clock ticks past midnight during this ViewModel's lifetime?
     // TODO: mdephillips 9/4/18 possible solution: have an observer wait x seconds that triggers a re-query
     @VisibleForTesting
-    open val queryDate: LocalDateTime = LocalDateTime.now()
+    protected open val queryDate: LocalDateTime = LocalDateTime.now()
 
     private var surveyLiveDateTime: LiveData<List<ScheduledActivityEntity>>? = null
     /**

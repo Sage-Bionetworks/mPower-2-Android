@@ -76,7 +76,7 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
 
     @Test
     fun consolidate_noneFinished() {
-        val viewModel = MockFinishedTodayScheduleViewModel(application, database,
+        val viewModel = MockTodayScheduleViewModel(application, database,
                 ZonedDateTime.parse("2018-08-18T00:00:00.000Z").toInstant(),
                 ZonedDateTime.parse("2018-08-19T00:00:00.000Z").toInstant())
         val historyItems = getValue(viewModel.liveData())
@@ -85,7 +85,7 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
 
     @Test
     fun consolidate_allFinished() {
-        val viewModel = MockFinishedTodayScheduleViewModel(application, database,
+        val viewModel = MockTodayScheduleViewModel(application, database,
                 ZonedDateTime.parse("2018-08-17T00:00:00.000Z").toInstant(),
                 ZonedDateTime.parse("2018-08-20T00:00:00.000Z").toInstant())
         val historyItems = getValue(viewModel.liveData())
@@ -126,7 +126,7 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
                 activities?.schedules?.get(1)?.guid)
     }
 
-    class MockFinishedTodayScheduleViewModel(
+    class MockTodayScheduleViewModel(
             app: Application,
             val mockDb: ResearchDatabase,
             start: Instant,

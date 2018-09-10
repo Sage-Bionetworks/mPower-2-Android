@@ -16,9 +16,9 @@ import org.sagebionetworks.research.mpower.research.DataSourceManager
 import org.sagebionetworks.research.mpower.research.MpIdentifier.*
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
+import org.sagebionetworks.research.sageresearch.dao.room.ResearchDatabase
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
-import org.sagebionetworks.research.sageresearch.extensions.endOfDay
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.extensions.startOfNextDay
@@ -26,7 +26,6 @@ import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
-import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 
 //
@@ -150,8 +149,10 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurst_Day1_StartState() {
-
-
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day1_startupState)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+    }
 
 //        let scheduleManager = TestStudyBurstScheduleManager(.day1_startupState)
 //        guard loadSchedules(scheduleManager) else {
@@ -193,7 +194,6 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 //
 //        let unfinishedSchedule = scheduleManager.getUnfinishedSchedule()
 //        XCTAssertNil(unfinishedSchedule, "scheduleManager.getUnfinishedSchedule(from: pastTasks)")
-    }
 }
 
 data class StudySetup(
@@ -486,7 +486,8 @@ data class StudySetup(
 
     fun populateDatabase(dao: ScheduledActivityEntityDao) {
         dao.clear()
-
+        dao.upsert(buildMeasuringTasks())
+        dao.upsert(buildStuyBurstTasks())
     }
 
     private fun buildMeasuringTasks(): List<ScheduledActivityEntity> {
@@ -555,41 +556,47 @@ data class StudySetup(
         }
 
         val surveyMap = mapStudyBurstSurveyFinishedOn()
+        val surveyGroup = DataSourceManager.installedGroup(config.taskGroupIdentifier) ?: return schedules
+        surveyGroup.activityIdentifiers.forEach { id ->
+            templateSchedules.filterByActivityId(id).firstOrNull()?.let {
+                it.scheduledOn = createdOn
+                it.expiresOn = null
+                it.finishedOn = surveyMap[id]
+                it.clientData = null
+                it.schedulePlanGuid = null
+                schedules.add(it)
+            }
+        }
 
         return schedules
     }
-
-
-//        let surveyMap = studySetup.mapStudyBurstSurveyFinishedOn()
-//
-//        // Add all the surveys that are suppose to be from the server.
-//        SurveyReference.all.forEach {
-//            let survey = createSchedule(with: $0.identifier,
-//            scheduledOn: studySetup.createdOn,
-//            expiresOn: nil,
-//            finishedOn: surveyMap[$0.identifier],
-//            clientData: nil,
-//            schedulePlanGuid: nil,
-//            survey: $0)
-//            self.schedules.append(survey)
-//        }
-//    }
 }
 
-class MockStudyBurstViewModel(app: Application, val studySetup: StudySetup): StudyBurstViewModel(app) {
+class MockStudyBurstViewModel(
+        app: Application,
+        val mockDb: ResearchDatabase,
+        val studySetup: StudySetup): StudyBurstViewModel(app) {
 
-    override val studyBurstConfiguration = studySetup.config
+    override val config = studySetup.config
 
     override fun activityGroup(): ActivityGroup? {
-        return DataSourceManager.installedGroup(studyBurstConfiguration.taskGroupIdentifier)
+        return DataSourceManager.installedGroup(config.taskGroupIdentifier)
     }
 
-    override fun todayQuery(): Pair<LocalDateTime, LocalDateTime> {
-        return Pair(studySetup.now.startOfDay(), studySetup.now.endOfDay())
+    override fun now(): LocalDateTime {
+        return studySetup.now
     }
 
-    override fun studyBurstQuery(): Pair<LocalDateTime, LocalDateTime> {
-        return Pair(studySetup.now.startOfDay(), studySetup.now.endOfDay())
+    override val timezone: ZoneId get() {
+        return studySetup.timezone
+    }
+
+    override fun scheduleDao(): ScheduledActivityEntityDao {
+        return mockDb.scheduleDao()
+    }
+
+    init {
+        studySetup.populateDatabase(scheduleDao())
     }
 
     private var sortOrder: List<String>? = null
