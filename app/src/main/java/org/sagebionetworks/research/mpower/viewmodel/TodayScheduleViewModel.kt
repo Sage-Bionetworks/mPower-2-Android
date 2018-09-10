@@ -5,13 +5,14 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v4.app.FragmentActivity
 
-import org.sagebionetworks.research.mpower.research.MpRsdIdentifier
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 
 import android.arch.lifecycle.Transformations.map
 import android.content.Context
 import android.support.annotation.VisibleForTesting
 import org.researchstack.backbone.utils.ResUtils
+import org.sagebionetworks.research.mpower.research.MpIdentifier
+import org.sagebionetworks.research.mpower.research.MpIdentifier.*
 
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.*
 
@@ -67,8 +68,8 @@ open class TodayScheduleViewModel(app: Application): ScheduleViewModel(app) {
         }
     }
 
-    private val excludeIds = setOf(MpRsdIdentifier.STUDY_BURST_COMPLETED)
-    private val excludeTaskGroup = excludeIds.map { it.identifier }.toHashSet()
+    private val excludeIds = setOf(STUDY_BURST_COMPLETED)
+    private val excludeTaskGroup = excludeIds.toSet()
 
     // TODO: mdephillips 9/4/18 what happens if clock ticks past midnight during this ViewModel's lifetime?
     // TODO: mdephillips 9/4/18 possible solution: have an observer wait x seconds that triggers a re-query
@@ -101,14 +102,14 @@ open class TodayScheduleViewModel(app: Application): ScheduleViewModel(app) {
             val filteredSchedules = { when (it) {
                 ACTIVITIES -> schedules
                 else -> {
-                    val itemActivities = schedules.filterByActivityId(it.rawValue)
+                    val itemActivities = schedules.filterByActivityId(it.identifier)
                     schedules.removeAll(itemActivities)
                     itemActivities
                 }
             }}.invoke()
 
             val count = { when (it) {
-                SYMPTOMS, TRIGGERS, MEDICATION -> {
+                ItemType.SYMPTOMS, ItemType.TRIGGERS, ItemType.MEDICATION -> {
                     // TODO: mdephillips 9/3/18 implement counting the study report items on this day
                     // TODO: mdephillips 9/3/18 instead of simply returning the schedules count
                     filteredSchedules.count()
@@ -125,19 +126,11 @@ interface StringEnum {
     val rawValue: String
 }
 
-enum class ItemType: StringEnum {
-    TRIGGERS {
-        override val rawValue = MpRsdIdentifier.TRIGGERS.identifier
-    },
-    SYMPTOMS {
-        override val rawValue = MpRsdIdentifier.SYMPTOMS.identifier
-    },
-    MEDICATION {
-        override val rawValue = MpRsdIdentifier.MEDICATION.identifier
-    },
-    ACTIVITIES {
-        override val rawValue = "activities"
-    }
+enum class ItemType(val identifier: String) {
+    TRIGGERS(MpIdentifier.TRIGGERS),
+    SYMPTOMS(MpIdentifier.SYMPTOMS),
+    MEDICATION(MpIdentifier.MEDICATION),
+    ACTIVITIES("activities")
 }
 
 /**
@@ -152,12 +145,12 @@ data class TodayHistoryItem(
         val count: Int) {
 
     fun imageRes(context: Context) = {
-        ResUtils.getDrawableResourceId(context, type.rawValue + "_task_icon")
+        ResUtils.getDrawableResourceId(context, type.identifier + "_task_icon")
     }
 
     fun title(context: Context) {
         val keyCountStr = if (count == 1) "singular" else "plural"
-        val key = "task_" + keyCountStr + "_term_for_" + type.rawValue
+        val key = "task_" + keyCountStr + "_term_for_" + type.identifier
         context.getString(ResUtils.getStringResourceId(context, key)).format(count)
     }
 }

@@ -14,6 +14,7 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import java.io.IOException
 import java.nio.charset.Charset
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.Observer
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
