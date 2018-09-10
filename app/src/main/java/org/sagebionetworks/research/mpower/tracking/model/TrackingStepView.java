@@ -39,7 +39,10 @@ public abstract class TrackingStepView implements StepView {
         public abstract Builder setSelectionInfo(@NonNull TrackingSubstepInfo selectionInfo);
 
         @NonNull
-        public abstract Builder setLoggingInfo(@NonNull TrackingSubstepInfo loggingInfo);
+        public abstract Builder setLoggingInfo(@Nullable TrackingSubstepInfo loggingInfo);
+
+        @NonNull
+        public abstract Builder setRemindersInfo(@Nullable TrackingSubstepInfo remindersInfo);
 
         @NonNull
         public abstract Builder setItems(@NonNull Set<TrackingItem> items);
@@ -62,8 +65,11 @@ public abstract class TrackingStepView implements StepView {
     @NonNull
     public abstract TrackingSubstepInfo getSelectionInfo();
 
-    @NonNull
+    @Nullable
     public abstract TrackingSubstepInfo getLoggingInfo();
+
+    @Nullable
+    public abstract TrackingSubstepInfo getRemindersInfo();
 
     /**
      * Returns a Map that maps from TrackingSection to a set of TrackingItems in that section. The map orders both
@@ -115,6 +121,7 @@ public abstract class TrackingStepView implements StepView {
                 .setIdentifier(trackingStep.getIdentifier())
                 .setItems(trackingStep.getItems())
                 .setLoggingInfo(trackingStep.getLoggingInfo())
+                .setRemindersInfo(trackingStep.getRemindersInfo())
                 .setSections(sections)
                 .setSelectionInfo(trackingStep.getSelectionInfo())
                 .build();

@@ -5,79 +5,66 @@
     {
       "sectionIdentifier": "Amantadine",
       "identifier": "Immediate release amantadine",
-      "title": "Immediate release amantadine",
       "detail": "(Symmetrel)"
     },
     {
       "sectionIdentifier": "Amantadine",
       "identifier": "Extended release amantadine",
-      "title": "Extended release amantadine",
       "detail": "(Gocovri)"
     },
     {
       "sectionIdentifier": "Anticholinergic Medications",
       "identifier": "Artane",
-      "title": "Artane",
       "detail": "(Trihexyphenidyl)"
     },
     {
       "sectionIdentifier": "Anticholinergic Medications",
       "identifier": "Cogentin",
-      "title": "Cogentin",
       "detail": "(Benztropine)"
     },
     {
       "sectionIdentifier": "Catechol-O-methyltransferase inhibitors",
       "identifier": "Comtan",
-      "title": "Comtan",
       "detail": "(Entacapone)"
     },
     {
       "sectionIdentifier": "Catechol-O-methyltransferase inhibitors",
       "identifier": "Stalevo",
-      "title": "Stalevo",
       "detail": "(Levodopa \/ Carbidopa and Entacapone)"
     },
     {
       "sectionIdentifier": "Catechol-O-methyltransferase inhibitors",
       "identifier": "Tasmar",
-      "title": "Tasmar",
       "detail": "(Tolcapone)"
     },
     {
       "sectionIdentifier": "Dopamine promotor",
       "identifier": "Apokyn",
-      "title": "Apokyn",
       "detail": "(Apomorphine)"
     },
     {
       "sectionIdentifier": "Dopamine promotor",
       "identifier": "Mirapex ER",
-      "title": "Mirapex ER",
       "detail": "(Pramipexole)"
     },
     {
       "sectionIdentifier": "Dopamine promotor",
       "identifier": "Neupro",
-      "title": "Neupro",
       "detail": "(Rotigotine)"
     },
     {
       "sectionIdentifier": "Dopamine promotor",
       "identifier": "Requip",
-      "title": "Requip",
       "detail": "(Ropinrole)"
     },
     {
       "sectionIdentifier": "Dopamine promotor",
       "identifier": "Requip XL",
-      "title": "Requip XL",
       "detail": "(Ropinrole)"
     },
     {
       "sectionIdentifier": "Dopamine replacement therapy",
       "identifier": "Duopa",
-      "title": "Duopa",
       "detail": "(Carbidopa \/ Levodopa)"
     },
     {
@@ -89,49 +76,41 @@
     {
       "sectionIdentifier": "Dopamine replacement therapy",
       "identifier": "Sinemet",
-      "title": "Sinemet",
       "detail": "(Carbidopa \/ Levodopa)"
     },
     {
       "sectionIdentifier": "Dopamine replacement therapy",
       "identifier": "Sinemet CR",
-      "title": "Sinemet CR",
       "detail": "(Carbidopa \/ Levodopa)"
     },
     {
       "sectionIdentifier": "Dopamine replacement therapy",
       "identifier": "Stalevo",
-      "title": "Stalevo",
       "detail": "(Carbidopa \/ Levodopa)"
     },
     {
       "sectionIdentifier": "Dopamine replacement therapy",
       "identifier": "Rytary",
-      "title": "Rytary",
       "detail": "(Carbidopa \/ Levodopa)"
     },
     {
       "sectionIdentifier": "Monoamine Oxidase B inhibitors",
       "identifier": "Azilect",
-      "title": "Azilect",
       "detail": "(Rasagiline)"
     },
     {
       "sectionIdentifier": "Monoamine Oxidase B inhibitors",
       "identifier": "Elderpryl",
-      "title": "Elderpryl",
       "detail": "(Selegiline)"
     },
     {
       "sectionIdentifier": "Monoamine Oxidase B inhibitors",
       "identifier": "Xadago",
-      "title": "Xadago",
       "detail": "(Safinamide)"
     },
     {
       "sectionIdentifier": "Monoamine Oxidase B inhibitors",
       "identifier": "Zelapar",
-      "title": "Zelapar",
       "detail": "(Selegiline)"
     }
   ],
