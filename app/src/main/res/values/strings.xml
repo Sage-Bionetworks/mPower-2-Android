@@ -61,6 +61,15 @@
     <string name="dosage_hint">e.g.: 10/100 mg</string>
     <string name="medication_day_selection_title">On which days do you want to take %1$s at %2$s</string>
     <string name="medication_day_selection_message">Select all that apply</string>
+    <string-array name="days_of_the_week">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
 
     <string name="measuring_walk_and_balance_label">Walk And Balance</string>
     <string name="measuring_finger_tapping_label">Finger Tapping</string>

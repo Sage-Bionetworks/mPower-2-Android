@@ -23,8 +23,13 @@ import java.util.Calendar
 class MedicationAdapter(var name: String, var items : List<MedicationItem>, val context: Context, val listener: Listener)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val LOGGER = LoggerFactory.getLogger(
-            MedicationAdapter::class.java)
+    private val LOGGER = LoggerFactory.getLogger(MedicationAdapter::class.java)
+
+    companion object {
+        var DOSAGE_VIEW_TYPE = 0
+        var SCHEDULE_VIEW_TYPE = 1
+        var ADD_VIEW_TYPE = 2
+    }
 
     override fun getItemCount(): Int {
         return items.size
@@ -33,13 +38,13 @@ class MedicationAdapter(var name: String, var items : List<MedicationItem>, val 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         lateinit var holder: RecyclerView.ViewHolder
         when(viewType) {
-            0 ->
+            DOSAGE_VIEW_TYPE ->
                 holder = DosageViewHolder(
                         LayoutInflater.from(context).inflate(layout.medication_dosage, parent, false))
-            1 ->
+            SCHEDULE_VIEW_TYPE ->
                 holder = ScheduleViewHolder(
                         LayoutInflater.from(context).inflate(layout.medication_schedule, parent, false))
-            2 ->
+            ADD_VIEW_TYPE ->
                 holder = AddViewHolder(
                         LayoutInflater.from(context).inflate(layout.medication_add, parent, false))
         }
@@ -51,7 +56,6 @@ class MedicationAdapter(var name: String, var items : List<MedicationItem>, val 
         when(item.type) {
             DOSAGE -> {
                 var dh = holder as DosageViewHolder
-                dh.bindView(item as Dosage)
                 dh.input.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
@@ -69,26 +73,17 @@ class MedicationAdapter(var name: String, var items : List<MedicationItem>, val 
             SCHEDULE -> {
                 var sh = holder as ScheduleViewHolder
                 var schedule = item as Schedule
-                sh.bindView(schedule)
                 sh.checkbox.isChecked = schedule.anytime
                 sh.checkbox.setOnCheckedChangeListener{ buttonView, isChecked ->
-                    if(isChecked) {
-                        schedule.anytime = true
-                        listener.showAddSchedule(false)
-                        listener.setAnytime(schedule,true)
-                    } else {
-                        schedule.anytime = false
-                        listener.showAddSchedule(true)
-                        listener.setAnytime(schedule,false)
-                    }
+                    schedule.anytime = isChecked
+                    listener.showAddSchedule(!isChecked)
+                    listener.setAnytime(schedule,isChecked)
                 }
-                if(schedule.anytime) {
-                    sh.dayContainer.visibility = View.GONE
-                    sh.timeContainer.visibility = View.GONE
-                } else {
-                    sh.dayContainer.visibility = View.VISIBLE
-                    sh.timeContainer.visibility = View.VISIBLE
-                }
+
+                val visibility =  if (schedule.anytime) View.GONE else View.VISIBLE
+                sh.dayContainer.visibility = visibility
+                sh.timeContainer.visibility = visibility
+
                 sh.timeText.text = schedule.time
                 sh.timeContainer.setOnClickListener {
                     view ->
@@ -109,7 +104,6 @@ class MedicationAdapter(var name: String, var items : List<MedicationItem>, val 
 
             ADD -> {
                 var ah = holder as AddViewHolder
-                ah.bindView(item as Add)
                 ah.button.setOnClickListener {
                     view ->
                         LOGGER.debug("Add button clicked.")
@@ -124,9 +118,9 @@ class MedicationAdapter(var name: String, var items : List<MedicationItem>, val 
     override fun getItemViewType(position: Int): Int {
 
         val type = when (items[position].type) {
-            DOSAGE -> 0
-            SCHEDULE -> 1
-            ADD -> 2
+            DOSAGE -> DOSAGE_VIEW_TYPE
+            SCHEDULE -> SCHEDULE_VIEW_TYPE
+            ADD -> ADD_VIEW_TYPE
         }
         return type
     }
@@ -136,7 +130,6 @@ class MedicationAdapter(var name: String, var items : List<MedicationItem>, val 
         var sdf = SimpleDateFormat("hh:mm aa")
         val cal = Calendar.getInstance()
         cal.setTime(sdf.parse(schedule.time))
-
 
         val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hours, minutes ->
             cal.set(Calendar.HOUR, hours)
@@ -157,11 +150,6 @@ class MedicationAdapter(var name: String, var items : List<MedicationItem>, val 
 
 class DosageViewHolder (view: View) : RecyclerView.ViewHolder(view) {
     val input = view.dosage_input
-
-    fun bindView(dosage: Dosage) {
-
-    }
-
 }
 
 class ScheduleViewHolder (view: View) : RecyclerView.ViewHolder(view) {
@@ -170,18 +158,10 @@ class ScheduleViewHolder (view: View) : RecyclerView.ViewHolder(view) {
     val timeContainer = view.time_container
     val dayContainer = view.day_container
     val dayText = view.day_text
-    fun bindView(schedule: Schedule) {
-
-    }
 }
 
 class AddViewHolder (view: View) : RecyclerView.ViewHolder(view) {
     val button = view.schedule_add
-
-
-    fun bindView(add: Add) {
-
-    }
 }
 
 interface Listener {

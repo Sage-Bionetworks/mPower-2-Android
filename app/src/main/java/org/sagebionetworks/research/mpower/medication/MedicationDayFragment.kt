@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.list_item_day.view.day_text
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.R.layout
 import org.slf4j.LoggerFactory
+import java.util.Arrays
 
 class MedicationDayFragment: AppCompatDialogFragment() {
 
@@ -68,7 +69,7 @@ class MedicationDayFragment: AppCompatDialogFragment() {
             val size = selectedDays.size
             LOGGER.debug("Selected days on init: $size")
         } else {
-            LOGGER.debug("No arguments found")
+            LOGGER.warn("No arguments found")
             name = "Default"
             time = "9:15 PM"
         }
@@ -89,7 +90,6 @@ class MedicationDayFragment: AppCompatDialogFragment() {
         customView = inflater.inflate(R.layout.dialog_medication_day, null)
 
         return AlertDialog.Builder(context!!)
-
                 .setView(customView)
                 .create()
     }
@@ -97,7 +97,7 @@ class MedicationDayFragment: AppCompatDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         LOGGER.debug("onViewCreated()")
-        
+
         day_selection_title.text = getString(R.string.medication_day_selection_title, name, time)
         var recycler = medication_day_recycler
         recycler.layoutManager = LinearLayoutManager(context)
@@ -127,7 +127,7 @@ class MedicationDayFragment: AppCompatDialogFragment() {
     }
 
     fun getDays(): ArrayList<String> {
-        return arrayListOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+        return ArrayList<String>(Arrays.asList(*resources.getStringArray(R.array.days_of_the_week)))
     }
 
     inner class DayAdapter(val items : ArrayList<String>, val context: Context) : RecyclerView.Adapter<DayViewHolder>() {
