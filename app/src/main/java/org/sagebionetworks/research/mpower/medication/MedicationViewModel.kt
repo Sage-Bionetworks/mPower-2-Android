@@ -102,19 +102,6 @@ class MedicationViewModel : ViewModel() {
                 }
             }
         }
-//        for(item in list) {
-//            when(item.type) {
-//                Type.SCHEDULE -> {
-//                    var sched: Schedule = item as Schedule
-//                    if(schedule.id == sched.id) {
-//                        LOGGER.debug("Found schedule: $schedule.id")
-//                    } else {
-//                        LOGGER.debug("Removing item...")
-//                        list.remove(item)
-//                    }
-//                }
-//            }
-//        }
 
         items.value = list
     }

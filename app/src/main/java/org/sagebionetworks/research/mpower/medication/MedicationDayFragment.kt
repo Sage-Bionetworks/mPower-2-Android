@@ -87,8 +87,6 @@ class MedicationDayFragment: AppCompatDialogFragment() {
             savedInstanceState: Bundle?): View?
     {
         LOGGER.debug("onCreateView()")
-        // Simply return the already inflated custom view
-        //customView = inflater.inflate(R.layout.dialog_medication_day, container)
         return customView
     }
 
@@ -97,11 +95,10 @@ class MedicationDayFragment: AppCompatDialogFragment() {
         // Inflate your view here
         var inflater: LayoutInflater = activity!!.layoutInflater
         customView = inflater.inflate(R.layout.dialog_medication_day, null)
-        // Create Alert Dialog with your custom view
+
         return AlertDialog.Builder(context!!)
-                //.setTitle(R.string.server_picker_dialog_title)
+
                 .setView(customView)
-                //.setNegativeButton(android.R.string.cancel, null)
                 .create()
     }
 
@@ -144,12 +141,10 @@ class MedicationDayFragment: AppCompatDialogFragment() {
 
     inner class DayAdapter(val items : ArrayList<String>, val context: Context) : RecyclerView.Adapter<DayViewHolder>() {
 
-        // Gets the number of animals in the list
         override fun getItemCount(): Int {
             return items.size
         }
 
-        // Inflates the item views
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DayViewHolder {
             return DayViewHolder(
                     LayoutInflater.from(context).inflate(layout.list_item_day, parent, false))
@@ -166,7 +161,6 @@ class MedicationDayFragment: AppCompatDialogFragment() {
 
             holder.root.setOnClickListener {
                 view ->
-                    //var text = items.get(position)
                     if(selectedDays.contains(text)) {
                         selectedDays.remove(text)
                         view.setBackgroundResource(R.color.appWhite)

@@ -136,8 +136,6 @@ class MedicationAdapter(var name: String, var items : List<MedicationItem>, val 
         var sdf = SimpleDateFormat("hh:mm aa")
         val cal = Calendar.getInstance()
         cal.setTime(sdf.parse(schedule.time))
-        //cal.set(Calendar.HOUR_OF_DAY, 7)
-        //cal.set(Calendar.MINUTE, 0)
 
 
         val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hours, minutes ->
