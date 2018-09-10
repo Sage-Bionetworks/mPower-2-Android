@@ -36,14 +36,10 @@ class MedicationDayFragment: AppCompatDialogFragment() {
         fun newInstance(id: String, name: String, time: String, days: String): MedicationDayFragment {
             val fragment = MedicationDayFragment()
             val args = Bundle()
-            args.putString(
-                    ARG_SCHED_ID, id)
-            args.putString(
-                    ARG_NAME, name)
-            args.putString(
-                    ARG_TIME, time)
-            args.putString(
-                    ARG_DAYS, days)
+            args.putString(ARG_SCHED_ID, id)
+            args.putString(ARG_NAME, name)
+            args.putString(ARG_TIME, time)
+            args.putString(ARG_DAYS, days)
             fragment.arguments = args
             return fragment
         }
@@ -63,21 +59,17 @@ class MedicationDayFragment: AppCompatDialogFragment() {
         super.onCreate(savedInstanceState)
 
         if(getArguments() != null) {
-            schedId = arguments!!.getString(
-                    ARG_SCHED_ID)
-            name = arguments!!.getString(
-                    ARG_NAME)
-            time = arguments!!.getString(
-                    ARG_TIME)
-            days = arguments!!.getString(
-                    ARG_DAYS)
+            schedId = arguments!!.getString(ARG_SCHED_ID)
+            name = arguments!!.getString(ARG_NAME)
+            time = arguments!!.getString(ARG_TIME)
+            days = arguments!!.getString(ARG_DAYS)
 
             selectedDays = days.split(",").toMutableList()
             val size = selectedDays.size
             LOGGER.debug("Selected days on init: $size")
         } else {
             LOGGER.debug("No arguments found")
-            name = "Boogie"
+            name = "Default"
             time = "9:15 PM"
         }
 
@@ -92,7 +84,7 @@ class MedicationDayFragment: AppCompatDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         LOGGER.debug("onCreateDialog()")
-        // Inflate your view here
+
         var inflater: LayoutInflater = activity!!.layoutInflater
         customView = inflater.inflate(R.layout.dialog_medication_day, null)
 
@@ -105,8 +97,7 @@ class MedicationDayFragment: AppCompatDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         LOGGER.debug("onViewCreated()")
-
-        // Perform remaining operations here. No null issues.
+        
         day_selection_title.text = getString(R.string.medication_day_selection_title, name, time)
         var recycler = medication_day_recycler
         recycler.layoutManager = LinearLayoutManager(context)

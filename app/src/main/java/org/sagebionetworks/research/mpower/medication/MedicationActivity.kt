@@ -99,9 +99,7 @@ class MedicationActivity : AppCompatActivity(),
         var list = days.split(",")
         var size = list.size
         LOGGER.debug("onDaySelected() $size - $days")
-        //medicationViewModel.setSchedule()
         medicationViewModel.setScheduleDays(id, list)
-        //medication_recycler.adapter.notifyDataSetChanged()
     }
 
     override fun setAnytime(schedule: Schedule, anytime: Boolean) {
