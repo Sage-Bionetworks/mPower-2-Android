@@ -199,23 +199,6 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
         return true
     }
 
-//    fun getPastSurveys(for thisDay: Int) -> [RSDIdentifier] {
-//        let pastTasks = self.getPastTasks(for: thisDay)
-//        return pastTasks.flatMap { (task) -> [RSDIdentifier] in
-//                // Look to see if there is a report and include if *not* finished.
-//                let identifiers: [RSDIdentifier] = task.activityIdentifiers.filter { (identifier) in
-//                let finished = self.reports.contains(where: { $0.identifier == identifier})
-//            return !finished
-//        }
-//            let sortedIdentifiers = identifiers.sorted(by: { (lhs, rhs) in
-//                let lIdx = task.activityIdentifiers.index(where: { lhs == $0 }) ?? Int.max
-//                let rIdx = task.activityIdentifiers.index(where: { rhs == $0 }) ?? Int.max
-//                return lIdx < rIdx
-//            })
-//            return sortedIdentifiers
-//        }
-//    }
-
     val orderKey = "StudyBurstTaskOrder"
     val timestampKey = "StudyBurstTimestamp"
     /**
