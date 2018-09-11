@@ -30,8 +30,9 @@ class DataSourceManager {
                         TRIGGERS to "b0f07b7e-408e-4d50-9368-8220971e570c"
                 ))
 
+        val surveyActivityGroupIdentifier = "Surveys"
         val surveyGroup = ActivityGroupObject(
-                "Surveys", "Surveys",
+                surveyActivityGroupIdentifier, surveyActivityGroupIdentifier,
                 activityIdentifiers = setOf(DEMOGRAPHICS, ENGAGEMENT, MOTIVATION, BACKGROUND))
 
         val installedGroups: Array<ActivityGroup>
@@ -46,10 +47,10 @@ class DataSourceManager {
 }
 
 data class CompletionTask(
-        val activityIdentifiers: Set<String>,
+        val activityIdentifiers: LinkedHashSet<String>,
         val day: Int) {
     fun preferredIdentifier(): String? {
-        return activityIdentifiers.intersect(setOf(DEMOGRAPHICS, ENGAGEMENT))
+        return activityIdentifiers.intersect(linkedSetOf(DEMOGRAPHICS, ENGAGEMENT))
                 .firstOrNull() ?: activityIdentifiers.firstOrNull()
     }
 }
@@ -73,7 +74,7 @@ data class StudyBurstConfiguration(
         /**
          * @property maxDayCount The maximum number of days in a study burst.
          */
-        val maxDayCount: Int = 19,
+        var maxDayCount: Int = 19,
         /**
          * @property expiresLimit the time limit (in seconds) until the progress expires, defaults to 60 minutes
          */
@@ -90,9 +91,9 @@ data class StudyBurstConfiguration(
          * @property completionTasks for each day of the study burst.
          */
         val completionTasks: Set<CompletionTask> = setOf(
-                CompletionTask(setOf(STUDY_BURST_REMINDER, DEMOGRAPHICS), 1),
-                CompletionTask(setOf(BACKGROUND), 9),
-                CompletionTask(setOf(ENGAGEMENT), 14)),
+                CompletionTask(linkedSetOf(STUDY_BURST_REMINDER, DEMOGRAPHICS), 1),
+                CompletionTask(linkedSetOf(BACKGROUND), 9),
+                CompletionTask(linkedSetOf(ENGAGEMENT), 14)),
         /**
          * @property engagementGroups set of the possible engagement data groups.
          */

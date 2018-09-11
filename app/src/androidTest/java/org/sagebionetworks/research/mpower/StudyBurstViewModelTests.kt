@@ -16,12 +16,12 @@ import org.sagebionetworks.research.mpower.research.DataSourceManager
 import org.sagebionetworks.research.mpower.research.MpIdentifier.*
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
+import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters
 import org.sagebionetworks.research.sageresearch.dao.room.ResearchDatabase
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.extensions.startOfDay
-import org.sagebionetworks.research.sageresearch.extensions.startOfNextDay
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
@@ -66,8 +66,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         val testResourceMap = TestResourceHelper.testResourceMap(setOf(studyBurstList))
         val gson = Gson()
 
-        @BeforeClass
-        @JvmStatic
+        @BeforeClass @JvmStatic
         fun setup() {
             RoomTestHelper.setup()
             application = InstrumentationRegistry.getTargetContext().applicationContext as Application
@@ -90,9 +89,9 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                 (60 * 75 * 1000),
                 MEASURING,
                 MOTIVATION,
-                setOf(CompletionTask(setOf(STUDY_BURST_REMINDER, DEMOGRAPHICS), 2),
-                        CompletionTask(setOf(BACKGROUND), 10),
-                        CompletionTask(setOf(ENGAGEMENT), 13)),
+                setOf(CompletionTask(linkedSetOf(STUDY_BURST_REMINDER, DEMOGRAPHICS), 2),
+                        CompletionTask(linkedSetOf(BACKGROUND), 10),
+                        CompletionTask(linkedSetOf(ENGAGEMENT), 13)),
                 setOf(
                         setOf("gr_SC_DB", "gr_SC_CS"),
                         setOf("gr_BR_AD", "gr_BR_II")))
@@ -152,466 +151,742 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day1_startupState)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertEquals(1, item.dayCount)
+        assertTrue(item.hasStudyBurst)
+        assertEquals(0, item.finishedSchedules.size)
+        assertFalse(item.isCompletedForToday)
+        assertFalse(item.isLastDay)
+        assertEquals(1, item.calculateThisDay())
+        assertEquals(0, item.pastCompletionTasks.size)
+        assertEquals(0, item.pastCompletionSurveys.size)
+        assertNotNull(item.todayCompletionTask)
+
+        val demographics = item.schedules.filterByActivityId(DEMOGRAPHICS)
+        assertEquals(1, demographics.size)
+        val studyBurstReminder = item.schedules.filterByActivityId(STUDY_BURST_REMINDER)
+        assertEquals(1, studyBurstReminder.size)
+
+        assertFalse(item.hasCompletedMotivationSurvey())
+        val completionTask = item.nextCompletionActivityToShow
+        assertNotNull(completionTask)
+        assertEquals(STUDY_BURST_REMINDER, completionTask?.activityIdentifier())
+
+        assertNull(item.actionBarItem)
+        assertNull(item.getUnfinishedSchedule())
     }
 
-//        let scheduleManager = TestStudyBurstScheduleManager(.day1_startupState)
-//        guard loadSchedules(scheduleManager) else {
-//            XCTFail("Failed to load the schedules and reports.")
-//            return
-//        }
-//
-//        XCTAssertNil(scheduleManager.updateFailed_error)
-//        XCTAssertNotNil(scheduleManager.update_fetchedActivities)
-//        XCTAssertNotNil(scheduleManager.activityGroup)
-//        XCTAssertEqual(scheduleManager.dayCount, 1)
-//        XCTAssertTrue(scheduleManager.hasStudyBurst)
-//        XCTAssertEqual(scheduleManager.finishedSchedules.count, 0)
-//        XCTAssertFalse(scheduleManager.isCompletedForToday)
-//        XCTAssertFalse(scheduleManager.isLastDay)
-//        XCTAssertEqual(scheduleManager.calculateThisDay(), 1)
-//        XCTAssertEqual(scheduleManager.pastSurveys.count, 0)
-//        XCTAssertNotNil(scheduleManager.todayCompletionTask)
-//
-//        let demographics = scheduleManager.scheduledActivities.filter {
-//            $0.activityIdentifier == RSDIdentifier.demographics.stringValue
-//        }
-//        XCTAssertEqual(demographics.count, 1)
-//
-//        let completionTask = scheduleManager.engagementTaskPath()
-//        XCTAssertNotNil(completionTask, "scheduleManager.engagementTaskPath()")
-//
-//        XCTAssertNil(scheduleManager.actionBarItem, "scheduleManager.actionBarItem")
-//
-//        let thisDay = scheduleManager.calculateThisDay()
-//        XCTAssertEqual(thisDay, 1)
-//
-//        let pastTasks = scheduleManager.getPastTasks(for: thisDay)
-//        XCTAssertEqual(pastTasks.count, 0)
-//
-//        XCTAssertNotNil(scheduleManager.todayCompletionTask, "scheduleManager.todayCompletionTask")
-//        let todayCompletionTask = scheduleManager.getTodayCompletionTask(for: thisDay)
-//        XCTAssertNotNil(todayCompletionTask, "scheduleManager.getTodayCompletionTask(for: thisDay)")
-//
-//        let unfinishedSchedule = scheduleManager.getUnfinishedSchedule()
-//        XCTAssertNil(unfinishedSchedule, "scheduleManager.getUnfinishedSchedule(from: pastTasks)")
-}
+    @Test
+    fun testStudyBurstComplete_Day1() {
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day1_tasksFinished_surveysNotFinished)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertEquals(1, item.dayCount)
+        assertTrue(item.hasStudyBurst)
+        assertEquals(3, item.finishedSchedules.size)
+        assertTrue(item.isCompletedForToday)
+        assertFalse(item.isLastDay)
+        assertEquals(1, item.calculateThisDay())
+        assertEquals(0, item.pastCompletionTasks.size)
+        assertEquals(0, item.pastCompletionSurveys.size)
+        assertNotNull(item.todayCompletionTask)
 
-data class StudySetup(
-        /// The schedules that will be used as schedules to create the study burst schedule data
-        val templateSchedules: List<ScheduledActivityEntity> = listOf(),
-        /// First name of the participant.
-        val firstName: String = "Rumplestiltskin",
-        /// Study Burst "day" where Day 0 is the day the participant was "created".
-        val studyBurstDay: Int = 3,
-        /// The days in the past when the particpant finished all the tasks.
-        val studyBurstFinishedOnDays: Set<Int> = setOf(0, 2),
-        /// The days when the study burst was finished.
-        val studyBurstSurveyFinishedOnDays: Map<String, Int> = mapOf(),
-        /// A list of the tasks to mark as finished today for a study burst. If included, this will be used to
-        /// define the order of the tasks for display in the study burst view.
-        var finishedTodayTasks: LinkedHashSet<String> = linkedSetOf(TAPPING, WALK_AND_BALANCE),
-        /// The time to use as the time until today's finished tasks will expire. Default = 15 min.
-        val timeUntilExpires: Long = 15 * 60 * 1000L,
-        /// The data groups to set for this participant.
-        var dataGroups: Set<String> = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_T"),
-        /// The time to set as "now".
-        val now: LocalDateTime = LocalDateTime.now(),
-        /// The sudy burst reminders
-        var reminderTime: String? = null,
-        /// Study burst configuration
-        val config: StudyBurstConfiguration = StudyBurstConfiguration(),
-        /// The study burst view model
-        val viewModel: MockStudyBurstViewModel? = null,
-        /// The Timezone to use
-        val timezone: ZoneId = ZoneId.systemDefault()) {
+        val demographics = item.schedules.filterByActivityId(DEMOGRAPHICS)
+        assertEquals(1, demographics.size)
 
-    companion object {
+        assertTrue(item.hasCompletedMotivationSurvey())
+        val completionTask = item.nextCompletionActivityToShow
+        assertNotNull(completionTask)
+        assertEquals(STUDY_BURST_REMINDER, completionTask?.activityIdentifier())
 
-        fun finishedOnDays(studyBurstDay: Int, missingCount: Int): Set<Int> {
-            if (studyBurstDay == missingCount) {
-                return setOf()
-            }
-            var finishedDays = (0 until studyBurstDay).toMutableSet()
-            if (missingCount > 0) {
-                val offset = finishedDays.size / (missingCount + 1)
-                for (ii in 0 until missingCount) {
-                    finishedDays.remove(finishedDays.elementAt(offset * (ii + 1)))
+        assertNotNull(item.actionBarItem)
+        assertNotNull(item.getUnfinishedSchedule())
+    }
+
+    @Test
+    fun testStudyBurstComplete_Day1_SurveysFinished() {
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day1_tasksFinished_surveysFinished)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertEquals(1, item.dayCount)
+        assertTrue(item.hasStudyBurst)
+        assertEquals(3, item.finishedSchedules.size)
+        assertTrue(item.isCompletedForToday)
+        assertFalse(item.isLastDay)
+        assertEquals(1, item.calculateThisDay())
+        assertEquals(0, item.pastCompletionTasks.size)
+        assertEquals(0, item.pastCompletionSurveys.size)
+        assertNotNull(item.todayCompletionTask)
+
+        val demographics = item.schedules.filterByActivityId(DEMOGRAPHICS)
+        assertEquals(1, demographics.size)
+
+        assertTrue(item.hasCompletedMotivationSurvey())
+        val completionTask = item.nextCompletionActivityToShow
+        assertNull(completionTask)
+
+        assertNull(item.actionBarItem)
+        assertNull(item.getUnfinishedSchedule())
+    }
+
+    @Test
+    fun testStudyBurstComplete_Day2_Day1SurveysNotFinished() {
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day2_surveysNotFinished)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertEquals(2, item.dayCount)
+        assertTrue(item.hasStudyBurst)
+        assertEquals(0, item.finishedSchedules.size)
+        assertFalse(item.isCompletedForToday)
+        assertFalse(item.isLastDay)
+        assertEquals(2, item.calculateThisDay())
+        assertEquals(1, item.pastCompletionTasks.size)
+        assertEquals(2, item.pastCompletionSurveys.size)
+        assertNull(item.todayCompletionTask)
+
+        val demographics = item.schedules.filterByActivityId(DEMOGRAPHICS)
+        assertEquals(1, demographics.size)
+
+        assertFalse(item.hasCompletedMotivationSurvey())
+        val completionTask = item.nextCompletionActivityToShow
+        assertNotNull(completionTask)
+        assertEquals(STUDY_BURST_REMINDER, completionTask?.activityIdentifier())
+
+        assertNotNull(item.actionBarItem)
+        assertNotNull(item.getUnfinishedSchedule())
+    }
+
+    @Test
+    fun testStudyBurstComplete_Day15_Missing1() {
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day15_missing1_engagementNotFinished)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertNull(item.dayCount)
+        assertFalse(item.hasStudyBurst)
+        assertTrue(item.isCompletedForToday)
+
+        val completionTask = item.nextCompletionActivityToShow
+        assertNotNull(completionTask)
+        assertEquals(ENGAGEMENT, completionTask?.activityIdentifier())
+
+        assertNotNull(item.actionBarItem)
+        assertEquals("Engagement Survey", item.actionBarItem?.title)
+        assertEquals("6 Minutes", item.actionBarItem?.detail)
+        assertNotNull(item.getUnfinishedSchedule())
+    }
+
+    @Test
+    fun testStudyBurstComplete_Day14_Missing1() {
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day14_missing1_tasksFinished_engagementNotFinished)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertEquals(14, item.dayCount)
+        assertTrue(item.hasStudyBurst)
+        assertEquals(3, item.finishedSchedules.size)
+        assertTrue(item.isCompletedForToday)
+        assertTrue(item.isLastDay)
+
+        val completionTask = item.nextCompletionActivityToShow
+        assertNotNull(completionTask)
+        assertEquals(ENGAGEMENT, completionTask?.activityIdentifier())
+
+        assertNotNull(item.actionBarItem)
+        assertEquals("Engagement Survey", item.actionBarItem?.title)
+        assertEquals("6 Minutes", item.actionBarItem?.detail)
+        assertNotNull(item.getUnfinishedSchedule())
+    }
+
+    @Test
+    fun testStudyBurstComplete_Day14_Missing6() {
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day14_missing6_tasksFinished_engagementNotFinished)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertEquals(14, item.dayCount)
+        assertTrue(item.hasStudyBurst)
+        assertEquals(3, item.finishedSchedules.size)
+        assertTrue(item.isCompletedForToday)
+        assertFalse(item.isLastDay)
+
+        val completionTask = item.nextCompletionActivityToShow
+        assertNull(completionTask)
+    }
+
+    @Test
+    fun testStudyBurstComplete_Day9_TasksFinished() {
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day9_tasksFinished)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertEquals(9, item.dayCount)
+        assertTrue(item.hasStudyBurst)
+        assertEquals(3, item.finishedSchedules.size)
+        assertTrue(item.isCompletedForToday)
+        assertFalse(item.isLastDay)
+        assertNotNull(item.todayCompletionTask)
+
+        val completionTask = item.nextCompletionActivityToShow
+        assertNotNull(completionTask)
+        assertEquals(BACKGROUND, completionTask?.activityIdentifier())
+
+        assertNotNull(item.actionBarItem)
+        assertEquals("Background", item.actionBarItem?.title)
+        assertEquals("4 Minutes", item.actionBarItem?.detail)
+        assertNotNull(item.getUnfinishedSchedule())
+    }
+
+    @Test
+    fun testStudyBurstComplete_Day21_Missing6() {
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day21_missing6_engagementNotFinished)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertNull(item.dayCount)
+        assertFalse(item.hasStudyBurst)
+        assertTrue(item.isCompletedForToday)
+
+        val completionTask = item.nextCompletionActivityToShow
+        assertNotNull(completionTask)
+        assertEquals(ENGAGEMENT, completionTask?.activityIdentifier())
+
+        assertNotNull(item.actionBarItem)
+        assertEquals("Engagement Survey", item.actionBarItem?.title)
+        assertEquals("6 Minutes", item.actionBarItem?.detail)
+        assertNotNull(item.getUnfinishedSchedule())
+    }
+
+    @Test
+    fun testStudyBurstComplete_Day15_BurstComplete_EngagementNotComplete() {
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day15_burstCompleted_engagementNotFinished)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertNull(item.dayCount)
+        assertFalse(item.hasStudyBurst)
+        assertTrue(item.isCompletedForToday)
+        assertFalse(item.isLastDay)
+
+        val completionTask = item.nextCompletionActivityToShow
+        assertNotNull(completionTask)
+        assertEquals(ENGAGEMENT, completionTask?.activityIdentifier())
+
+        assertNotNull(item.actionBarItem)
+        assertEquals("Engagement Survey", item.actionBarItem?.title)
+        assertEquals("6 Minutes", item.actionBarItem?.detail)
+        assertNotNull(item.getUnfinishedSchedule())
+    }
+
+    @Test
+    fun testStudyBurstComplete_Day15_BurstComplete_EngagementComplete() {
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day15_burstCompleted_engagementFinished)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertNull(item.dayCount)
+        assertFalse(item.hasStudyBurst)
+        assertTrue(item.isCompletedForToday)
+        assertFalse(item.isLastDay)
+
+        assertNull(item.nextCompletionActivityToShow)
+        assertNull(item.actionBarItem)
+        assertNull(item.getUnfinishedSchedule())
+    }
+
+    @Test
+    fun testStudyBurstComplete_Day1_AllFinished_2HoursAgo() {
+        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day1_allFinished_2HoursAgo)
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertEquals(1, item.dayCount)
+        assertTrue(item.hasStudyBurst)
+        assertEquals(3, item.finishedSchedules.size)
+        assertTrue(item.isCompletedForToday)
+        assertFalse(item.isLastDay)
+        assertEquals(1, item.calculateThisDay())
+        assertEquals(0, item.pastCompletionTasks.size)
+        assertEquals(0, item.pastCompletionSurveys.size)
+        assertNotNull(item.todayCompletionTask)
+
+        assertTrue(item.hasCompletedMotivationSurvey())
+        assertNull(item.nextCompletionActivityToShow)
+
+        assertNull(item.actionBarItem)
+        assertNull(item.getUnfinishedSchedule())
+    }
+
+    // TODO: mdephillips 9/11/18 add reminder tests
+
+    data class StudySetup(
+            /// The schedules that will be used as schedules to create the study burst schedule data
+            val templateSchedules: List<ScheduledActivityEntity> = listOf(),
+            /// First name of the participant.
+            val firstName: String = "Rumplestiltskin",
+            /// Study Burst "day" where Day 0 is the day the participant was "created".
+            val studyBurstDay: Int = 3,
+            /// The days in the past when the particpant finished all the tasks.
+            val studyBurstFinishedOnDays: Set<Int> = setOf(0, 2),
+            /// The days when the study burst was finished.
+            val studyBurstSurveyFinishedOnDays: Map<String, Int> = mapOf(),
+            /// A list of the tasks to mark as finished today for a study burst. If included, this will be used to
+            /// define the order of the tasks for display in the study burst view.
+            var finishedTodayTasks: LinkedHashSet<String> = linkedSetOf(TAPPING, WALK_AND_BALANCE),
+            /// The time in seconds to use as the time until today's finished tasks will expire. Default = 15 min.
+            val timeUntilExpires: Long = 15 * 60,
+            /// The data groups to set for this participant.
+            var dataGroups: Set<String> = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_T"),
+            /// The time to set as "now".
+            val now: LocalDateTime = LocalDateTime.parse("2018-09-11T12:00:00"),
+            /// The sudy burst reminders
+            var reminderTime: String? = null,
+            /// Study burst configuration
+            val config: StudyBurstConfiguration = StudyBurstConfiguration(),
+            /// The study burst view model
+            val viewModel: MockStudyBurstViewModel? = null,
+            /// The Timezone to use
+            val timezone: ZoneId = ZoneId.systemDefault()) {
+
+        companion object {
+
+            fun finishedOnDays(studyBurstDay: Int, missingCount: Int): Set<Int> {
+                if (studyBurstDay == missingCount) {
+                    return setOf()
                 }
-            }
-            return finishedDays
-        }
-
-        fun previousFinishedSurveys(studyBurstDay: Int): Map<String, Int> {
-            var surveyMap: MutableMap<String, Int> = mutableMapOf()
-            val config = StudyBurstConfiguration()
-            config.completionTasks.forEach {
-                val day = it.day
-                if (studyBurstDay >= day) {
-                    it.activityIdentifiers.forEach {
-                        surveyMap[it] = maxOf(0, day - 1)
+                var finishedDays = (0 until studyBurstDay).toMutableSet()
+                if (missingCount > 0) {
+                    val offset = finishedDays.size / (missingCount + 1)
+                    for (ii in 0 until missingCount) {
+                        finishedDays.remove(finishedDays.elementAt(offset * (ii + 1)))
                     }
                 }
+                return finishedDays
             }
-            return surveyMap
+
+            fun previousFinishedSurveys(studyBurstDay: Int): Map<String, Int> {
+                var surveyMap: MutableMap<String, Int> = mutableMapOf()
+                val config = StudyBurstConfiguration()
+                config.completionTasks.forEach {
+                    val day = it.day
+                    if (studyBurstDay >= day) {
+                        it.activityIdentifiers.forEach {
+                            surveyMap[it] = maxOf(0, day - 1)
+                        }
+                    }
+                }
+                return surveyMap
+            }
+
+            val gson = EntityTypeConverters().bridgeGson
+            val studyBurstList = "test_study_burst_schedules.json"
+            val templateSchedules = TestResourceHelper.testResource(studyBurstList) 
+
+            val day1_startupState =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = mapOf(),
+                            finishedTodayTasks = linkedSetOf())
+
+            val day1_startupState_BRII_DTT =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = mapOf(),
+                            finishedTodayTasks = linkedSetOf(),
+                            timeUntilExpires = 0,
+                            dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_T"))
+
+            val day1_startupState_BRII_DTF =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = mapOf(),
+                            finishedTodayTasks = linkedSetOf(),
+                            timeUntilExpires = 0,
+                            dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_F"))
+
+            val day1_startupState_BRAD_DTT =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = mapOf(),
+                            finishedTodayTasks = linkedSetOf(),
+                            timeUntilExpires = 0,
+                            dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_T"))
+
+            val day1_startupState_BRAD_DTF =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = mapOf(),
+                            finishedTodayTasks = linkedSetOf(),
+                            timeUntilExpires = 0,
+                            dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_F"))
+
+            val day1_noTasksFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
+                            finishedTodayTasks = linkedSetOf())
+
+            val day1_twoTasksFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
+                            finishedTodayTasks = linkedSetOf(TAPPING, WALK_AND_BALANCE))
+
+            val day1_tasksFinished_surveysNotFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
+                            finishedTodayTasks = linkedSetOf(TAPPING, TREMOR, WALK_AND_BALANCE))
+
+            val day1_tasksFinished_surveysNotFinished_BRII_DTT =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
+                            finishedTodayTasks = linkedSetOf(),
+                            timeUntilExpires = 15,
+                            dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_T"))
+
+            val day1_tasksFinished_surveysNotFinished_BRII_DTF =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
+                            finishedTodayTasks = linkedSetOf(),
+                            timeUntilExpires = 15,
+                            dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_F"))
+
+            val day1_tasksFinished_surveysNotFinished_BRAD_DTT =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
+                            finishedTodayTasks = linkedSetOf(),
+                            timeUntilExpires = 15,
+                            dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_T"))
+
+            val day1_tasksFinished_surveysNotFinished_BRAD_DTF =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
+                            finishedTodayTasks = linkedSetOf(),
+                            timeUntilExpires = 15,
+                            dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_F"))
+
+            val day1_tasksFinished_surveysFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(1),
+                            finishedTodayTasks = linkedSetOf(TAPPING, TREMOR, WALK_AND_BALANCE))
+
+            val day1_allFinished_2HoursAgo =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(1),
+                            finishedTodayTasks = linkedSetOf(TAPPING, TREMOR, WALK_AND_BALANCE),
+                            timeUntilExpires = (-2 * 60 * 60))
+
+            val day2_surveysNotFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 1,
+                            studyBurstFinishedOnDays = setOf(0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
+                            finishedTodayTasks = linkedSetOf())
+
+            val day2_tasksNotFinished_surveysFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 1,
+                            studyBurstFinishedOnDays = setOf(0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(1),
+                            finishedTodayTasks = linkedSetOf())
+
+            val day9_twoTasksFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 8,
+                            studyBurstFinishedOnDays = finishedOnDays(7, 0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(7),
+                            finishedTodayTasks = linkedSetOf(TAPPING, WALK_AND_BALANCE))
+
+            val day9_tasksFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 8,
+                            studyBurstFinishedOnDays = finishedOnDays(7, 0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(7),
+                            finishedTodayTasks = linkedSetOf(TAPPING, TREMOR, WALK_AND_BALANCE))
+
+            val day11_tasksFinished_noMissingDays =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 10,
+                            studyBurstFinishedOnDays = finishedOnDays(10, 0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(10),
+                            finishedTodayTasks = linkedSetOf(TAPPING, TREMOR, WALK_AND_BALANCE))
+
+
+            val day14_missing1_tasksFinished_engagementNotFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 13,
+                            studyBurstFinishedOnDays = finishedOnDays(13, 1),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
+                            finishedTodayTasks = linkedSetOf(TAPPING, TREMOR, WALK_AND_BALANCE))
+
+            val day14_missing6_tasksFinished_engagementNotFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 13,
+                            studyBurstFinishedOnDays = finishedOnDays(13, 6),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
+                            finishedTodayTasks = linkedSetOf(TAPPING, TREMOR, WALK_AND_BALANCE))
+
+            val day14_tasksFinished_engagementNotFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 13,
+                            studyBurstFinishedOnDays = finishedOnDays(13, 0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
+                            finishedTodayTasks = linkedSetOf(TAPPING, TREMOR, WALK_AND_BALANCE))
+
+            val day15_missing1_engagementNotFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 14,
+                            studyBurstFinishedOnDays = finishedOnDays(14, 1),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
+                            finishedTodayTasks = linkedSetOf())
+
+            val day15_burstCompleted_engagementNotFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 14,
+                            studyBurstFinishedOnDays = finishedOnDays(14, 0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
+                            finishedTodayTasks = linkedSetOf())
+
+            val day15_burstCompleted_engagementFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 14,
+                            studyBurstFinishedOnDays = finishedOnDays(14, 0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(14),
+                            finishedTodayTasks = linkedSetOf())
+
+            val day21_missing6_engagementNotFinished =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 20,
+                            studyBurstFinishedOnDays = finishedOnDays(18, 6),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
+                            finishedTodayTasks = linkedSetOf())
+
+            val day21_tasksFinished_noMissingDays =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 20,
+                            studyBurstFinishedOnDays = finishedOnDays(14, 0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(14),
+                            finishedTodayTasks = linkedSetOf())
+
+            val day89_tasksFinished_noMissingDays =
+                    StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 88,
+                            studyBurstFinishedOnDays = finishedOnDays(14, 0),
+                            studyBurstSurveyFinishedOnDays = previousFinishedSurveys(14),
+                            finishedTodayTasks = linkedSetOf())
         }
 
-        val day1_startupState =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = mapOf(),
-                        finishedTodayTasks = linkedSetOf())
-
-        val day1_startupState_BRII_DTT =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = mapOf(),
-                        finishedTodayTasks = linkedSetOf(),
-                        timeUntilExpires = 0,
-                        dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_T"))
-
-        val day1_startupState_BRII_DTF =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = mapOf(),
-                        finishedTodayTasks = linkedSetOf(),
-                        timeUntilExpires = 0,
-                        dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_F"))
-
-        val day1_startupState_BRAD_DTT =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = mapOf(),
-                        finishedTodayTasks = linkedSetOf(),
-                        timeUntilExpires = 0,
-                        dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_T"))
-
-        val day1_startupState_BRAD_DTF =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = mapOf(),
-                        finishedTodayTasks = linkedSetOf(),
-                        timeUntilExpires = 0,
-                        dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_F"))
-
-        val day1_noTasksFinished =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
-                        finishedTodayTasks = linkedSetOf())
-
-        val day1_twoTasksFinished =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
-                        finishedTodayTasks = linkedSetOf(TAPPING, WALK_AND_BALANCE))
-
-        val day1_tasksFinished_surveysNotFinished =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
-                        finishedTodayTasks = linkedSetOf(MEASURING))
-
-        val day1_tasksFinished_surveysNotFinished_BRII_DTT =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
-                        finishedTodayTasks = linkedSetOf(),
-                        timeUntilExpires = 15,
-                        dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_T"))
-
-        val day1_tasksFinished_surveysNotFinished_BRII_DTF =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
-                        finishedTodayTasks = linkedSetOf(),
-                        timeUntilExpires = 15,
-                        dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_F"))
-
-        val day1_tasksFinished_surveysNotFinished_BRAD_DTT =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
-                        finishedTodayTasks = linkedSetOf(),
-                        timeUntilExpires = 15,
-                        dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_T"))
-
-        val day1_tasksFinished_surveysNotFinished_BRAD_DTF =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
-                        finishedTodayTasks = linkedSetOf(),
-                        timeUntilExpires = 15,
-                        dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_F"))
-
-        val day1_tasksFinished_surveysFinished =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(1),
-                        finishedTodayTasks = linkedSetOf(MEASURING))
-
-        val day1_allFinished_2HoursAgo =
-                StudySetup(studyBurstDay = 0,
-                        studyBurstFinishedOnDays = setOf(0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(1),
-                        finishedTodayTasks = linkedSetOf(MEASURING),
-                        timeUntilExpires = -2 * 60 * 60)
-
-        val day2_surveysNotFinished =
-                StudySetup(studyBurstDay = 1,
-                        studyBurstFinishedOnDays = setOf(0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
-                        finishedTodayTasks = linkedSetOf())
-
-        val day2_tasksNotFinished_surveysFinished =
-                StudySetup(studyBurstDay = 1,
-                        studyBurstFinishedOnDays = setOf(0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(1),
-                        finishedTodayTasks = linkedSetOf())
-
-        val day9_twoTasksFinished =
-                StudySetup(studyBurstDay = 8,
-                        studyBurstFinishedOnDays = finishedOnDays(7, 0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(7),
-                        finishedTodayTasks = linkedSetOf(TAPPING, WALK_AND_BALANCE))
-
-        val day9_tasksFinished =
-                StudySetup(studyBurstDay = 8,
-                        studyBurstFinishedOnDays = finishedOnDays(7, 0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(7),
-                        finishedTodayTasks = linkedSetOf(MEASURING))
-
-        val day11_tasksFinished_noMissingDays =
-                StudySetup(studyBurstDay = 10,
-                        studyBurstFinishedOnDays = finishedOnDays(10, 0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(10),
-                        finishedTodayTasks = linkedSetOf(MEASURING))
-
-
-        val day14_missing1_tasksFinished_engagementNotFinished =
-                StudySetup(studyBurstDay = 13,
-                        studyBurstFinishedOnDays = finishedOnDays(13, 1),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
-                        finishedTodayTasks = linkedSetOf(MEASURING))
-
-        val day14_missing6_tasksFinished_engagementNotFinished =
-                StudySetup(studyBurstDay = 13,
-                        studyBurstFinishedOnDays = finishedOnDays(13, 6),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
-                        finishedTodayTasks = linkedSetOf(MEASURING))
-
-        val day14_tasksFinished_engagementNotFinished =
-                StudySetup(studyBurstDay = 13,
-                        studyBurstFinishedOnDays = finishedOnDays(13, 0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
-                        finishedTodayTasks = linkedSetOf(MEASURING))
-
-        val day15_missing1_engagementNotFinished =
-                StudySetup(studyBurstDay = 14,
-                        studyBurstFinishedOnDays = finishedOnDays(14, 1),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
-                        finishedTodayTasks = linkedSetOf())
-
-        val day15_burstCompleted_engagementNotFinished =
-                StudySetup(studyBurstDay = 14,
-                        studyBurstFinishedOnDays = finishedOnDays(14, 0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
-                        finishedTodayTasks = linkedSetOf())
-
-        val day15_burstCompleted_engagementFinished =
-                StudySetup(studyBurstDay = 14,
-                        studyBurstFinishedOnDays = finishedOnDays(14, 0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(14),
-                        finishedTodayTasks = linkedSetOf())
-
-        val day21_missing6_engagementNotFinished =
-                StudySetup(studyBurstDay = 20,
-                        studyBurstFinishedOnDays = finishedOnDays(18, 6),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(12),
-                        finishedTodayTasks = linkedSetOf())
-
-        val day21_tasksFinished_noMissingDays =
-                StudySetup(studyBurstDay = 20,
-                        studyBurstFinishedOnDays = finishedOnDays(14, 0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(14),
-                        finishedTodayTasks = linkedSetOf())
-
-        val day89_tasksFinished_noMissingDays =
-                StudySetup(studyBurstDay = 88,
-                        studyBurstFinishedOnDays = finishedOnDays(14, 0),
-                        studyBurstSurveyFinishedOnDays = previousFinishedSurveys(14),
-                        finishedTodayTasks = linkedSetOf())
-    }
-
-    /// The date when the participant started the study. Hardcoded to 6:15AM local time.
-    fun createdOn(): LocalDateTime {
-        return now.startOfDay().startOfNextDay().minusDays(studyBurstDay.toLong()).plusSeconds((8.5 * 60 * 60).toLong())
-    }
-
-    fun finishedMotivation(): Boolean {
-        return finishedTodayTasks.size > 0 || studyBurstFinishedOnDays.size > 0
-    }
-
-    // Generated days of the study burst to mark as finished. This only applies to days that are past.
-    fun mapStudyBurstFinishedOn(): Map<Int, Instant> {
-        val firstDay = createdOn().startOfDay().plusSeconds(8 * 60 * 60)
-        return studyBurstFinishedOnDays.filter { it <= studyBurstDay }.associateBy( { it }, {
-            // iOS does random # of minutes, but let's hardcode to 30 for test reliability
-            firstDay.plusDays(it.toLong()).plusMinutes(30).atZone(timezone).toInstant()
-        })
-    }
-
-    // Generated days of the study burst to mark as finished. This only applies to days that are past.
-    fun mapStudyBurstSurveyFinishedOn(): Map<String, Instant> {
-        val firstDay = createdOn().startOfDay().plusSeconds((8.5 * 60 * 60).toLong())
-        val map = studyBurstSurveyFinishedOnDays.filterValues { it <= studyBurstDay }.mapValues {
-            // iOS does random # of minutes, but let's hardcode to 30 for test reliability
-            firstDay.plusDays(it.value.toLong()).plusMinutes(30).atZone(timezone).toInstant()
-        }.toMutableMap()
-        if (finishedMotivation()) {
-            map[MOTIVATION] = firstDay.plusMinutes(2).atZone(timezone).toInstant()
+        /// The date when the participant started the study. Hardcoded to 6:00AM local time.
+        fun createdOn(): LocalDateTime {
+            return now.startOfDay().minusDays(studyBurstDay.toLong()).plusHours(6L)
         }
-        return map
-    }
 
-    fun createParticipant(): StudyParticipant {
-        val participantJson =
-                "{\n" +
-                "  \"firstName\": \"" + firstName + "\",\n" +
-                "  \"dataGroups\": " + dataGroups.toString() + ",\n" +
-                "  \"phoneVerified\": true,\n" +
-                "  \"createdO\": \"" + createdOn().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) + "\"\n" +
-                "}"
-        return RestUtils.GSON.fromJson(participantJson, StudyParticipant::class.java)
-    }
+        fun finishedMotivation(): Boolean {
+            return finishedTodayTasks.size > 0 || studyBurstFinishedOnDays.size > 0
+        }
 
-    fun populateDatabase(dao: ScheduledActivityEntityDao) {
-        dao.clear()
-        dao.upsert(buildMeasuringTasks())
-        dao.upsert(buildStuyBurstTasks())
-    }
+        // Generated days of the study burst to mark as finished. This only applies to days that are past.
+        fun mapStudyBurstFinishedOn(): Map<Int, Instant> {
+            val firstDay = createdOn().startOfDay().plusSeconds(8 * 60 * 60)
+            return studyBurstFinishedOnDays.filter { it <= studyBurstDay }.associateBy( { it }, {
+                // iOS does random # of minutes, but let's hardcode to 30 for test reliability
+                firstDay.plusDays(it.toLong()).plusMinutes(30).atZone(timezone).toInstant()
+            })
+        }
 
-    private fun buildMeasuringTasks(): List<ScheduledActivityEntity> {
-        var schedules: MutableList<ScheduledActivityEntity> = mutableListOf()
-        val activityGroup = DataSourceManager.installedGroup(config.taskGroupIdentifier) ?: return listOf()
-
-        // set default for the sort order
-        var sortOrder = activityGroup
-                .activityIdentifiers.filter { !finishedTodayTasks.contains(it) }
-        sortOrder = sortOrder.shuffled()
-        viewModel?.setOrderedTasks(sortOrder, now)
-
-        val studyBurstFinishedOn = mapStudyBurstFinishedOn()
-        val studyBurstDates = studyBurstFinishedOn.values.sorted().toMutableList()
-        sortOrder.forEachIndexed { idx, id ->
-            val finishedTime = timeUntilExpires - (3600 * 1000L) + (idx * 4 * 60 * 1000L)
-            if (finishedTodayTasks.contains(id)) {
-                studyBurstDates.add(now.plusSeconds(finishedTime).atZone(timezone).toInstant())
+        // Generated days of the study burst to mark as finished. This only applies to days that are past.
+        fun mapStudyBurstSurveyFinishedOn(): Map<String, Instant> {
+            val firstDay = createdOn().startOfDay().plusSeconds((8.5 * 60 * 60).toLong())
+            val map = studyBurstSurveyFinishedOnDays.filterValues { it <= studyBurstDay }.mapValues {
+                // iOS does random # of minutes, but let's hardcode to 30 for test reliability
+                firstDay.plusDays(it.value.toLong()).plusMinutes(30).atZone(timezone).toInstant()
+            }.toMutableMap()
+            if (finishedMotivation()) {
+                map[MOTIVATION] = firstDay.plusMinutes(2).atZone(timezone).toInstant()
             }
-            var scheduledOn = createdOn()
-            studyBurstDates.forEach {
-                val finishedOn = it.minusSeconds(idx * 4 * 60L)
-                templateSchedules.filterByActivityId(id).firstOrNull()?.let {
+            return map
+        }
+
+        fun createParticipant(): StudyParticipant {
+            val participantJson =
+                    "{\n" +
+                            "  \"firstName\": \"" + firstName + "\",\n" +
+                            "  \"dataGroups\": " + dataGroups.toString() + ",\n" +
+                            "  \"phoneVerified\": true,\n" +
+                            "  \"createdO\": \"" + createdOn().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) + "\"\n" +
+                            "}"
+            return RestUtils.GSON.fromJson(participantJson, StudyParticipant::class.java)
+        }
+
+        fun populateDatabase(dao: ScheduledActivityEntityDao) {
+            val schedules = listOf(buildMeasuringTasks(), buildStudyBurstTasks()).flatten()
+            dao.clear()
+            dao.upsert(schedules)
+        }
+
+        private fun buildMeasuringTasks(): List<ScheduledActivityEntity> {
+            var schedules: MutableList<ScheduledActivityEntity> = mutableListOf()
+            val activityGroup = DataSourceManager.installedGroup(config.taskGroupIdentifier) ?: return listOf()
+
+            // set default for the sort order
+            var sortOrder = finishedTodayTasks.toMutableList()
+            var unfinished = activityGroup.activityIdentifiers.filter { !finishedTodayTasks.contains(it) }
+            unfinished = unfinished.shuffled()
+            sortOrder.addAll(unfinished)
+            viewModel?.setOrderedTasks(sortOrder.toList(), now)
+
+            val studyBurstFinishedOn = mapStudyBurstFinishedOn()
+            val studyBurstDates = studyBurstFinishedOn.values.sorted().toMutableList()
+            sortOrder.forEachIndexed { idx, id ->
+                var datesToAdd = studyBurstDates.toMutableList()
+                val finishedTime = timeUntilExpires - (3600) + (idx * 4 * 60)
+                if (finishedTodayTasks.contains(id)) {
+                    datesToAdd.add(now.plusSeconds(finishedTime).atZone(timezone).toInstant())
+                }
+                var scheduledOn = createdOn()
+                datesToAdd.forEach {
+                    val finishedOn = it.minusSeconds(idx * 4 * 60L)
+                    scheduleFromTemplate(id)?.let {
+                        it.guid = (it.activityIdentifier() ?: "") + scheduledOn.toString()
+                        it.scheduledOn = scheduledOn
+                        it.finishedOn = finishedOn
+                        it.startedOn = finishedOn?.minusSeconds(3*60L)
+                        it.expiresOn = null
+                        it.clientData = null
+                        it.schedulePlanGuid = activityGroup.schedulePlanGuid
+                        schedules.add(it)
+                        // Set the scheduled on to the finished on, because the measuring activity group
+                        // has a persistent schedule on Bridge
+                        scheduledOn = finishedOn.atZone(timezone).toLocalDateTime()
+                    }
+                }
+
+                scheduleFromTemplate(id)?.let {
+                    it.guid = (it.activityIdentifier() ?: "") + scheduledOn.toString()
                     it.scheduledOn = scheduledOn
-                    it.finishedOn = finishedOn
                     it.expiresOn = null
+                    it.finishedOn = null
+                    it.startedOn = null
                     it.clientData = null
                     it.schedulePlanGuid = activityGroup.schedulePlanGuid
                     schedules.add(it)
-                    // Set the scheduled on to the finished on, because the measuring activity group
-                    // has a persistent schedule on Bridge
-                    scheduledOn = finishedOn.atZone(timezone).toLocalDateTime()
+                }
+            }
+            return schedules
+        }
+
+        private fun buildStudyBurstTasks(): List<ScheduledActivityEntity> {
+            var schedules: MutableList<ScheduledActivityEntity> = mutableListOf()
+            // only add the study burst marker for this group, but add one for each day.
+            val createdOn = createdOn()
+            val studyBurstFinishedOn = mapStudyBurstFinishedOn()
+            for (day in 0 until 19) {
+                for (burst in 0 until 3) {
+                    val scheduledOn = createdOn.startOfDay().plusDays(day + (burst * 90L))
+                    val finishedOn = if (burst == 0) studyBurstFinishedOn[day] else null
+                    scheduleFromTemplate(STUDY_BURST_COMPLETED)?.let {
+                        it.guid = (it.activityIdentifier() ?: "") + scheduledOn.toString()
+                        it.scheduledOn = scheduledOn
+                        it.expiresOn = scheduledOn.plusDays(1)
+                        it.finishedOn = finishedOn
+                        it.startedOn = finishedOn?.minusSeconds(3*60L)
+                        it.clientData = null
+                        it.schedulePlanGuid = null
+                        schedules.add(it)
+                    }
                 }
             }
 
-            templateSchedules.filterByActivityId(id).firstOrNull()?.let {
-                it.scheduledOn = scheduledOn
-                it.expiresOn = null
-                it.finishedOn = null
-                it.clientData = null
-                it.schedulePlanGuid = activityGroup.schedulePlanGuid
-                schedules.add(it)
-            }
-        }
-        return schedules
-    }
-
-    private fun buildStuyBurstTasks(): List<ScheduledActivityEntity> {
-        var schedules: MutableList<ScheduledActivityEntity> = mutableListOf()
-        // only add the study burst marker for this group, but add one for each day.
-        val createdOn = createdOn()
-        val studyBurstFinishedOn = mapStudyBurstFinishedOn()
-        for (day in 0 until 19) {
-            for (burst in 0 until 3) {
-                val scheduledOn = createdOn.startOfDay().plusDays(day + (burst * 90L))
-                val finishedOn = if (burst == 0) studyBurstFinishedOn[day] else null
-                templateSchedules.filterByActivityId(STUDY_BURST_COMPLETED).firstOrNull()?.let {
-                    it.scheduledOn = scheduledOn
-                    it.expiresOn = scheduledOn.plusDays(1)
-                    it.finishedOn = finishedOn
+            val surveyMap = mapStudyBurstSurveyFinishedOn()
+            DataSourceManager.surveyGroup.activityIdentifiers.union(setOf(STUDY_BURST_REMINDER)).forEach { id ->
+                scheduleFromTemplate(id)?.let {
+                    it.guid = (it.activityIdentifier() ?: "") + createdOn.toString()
+                    it.scheduledOn = createdOn
+                    it.expiresOn = null
+                    it.finishedOn = surveyMap[id]
+                    it.startedOn = surveyMap[id]?.minusSeconds(3*60L)
                     it.clientData = null
                     it.schedulePlanGuid = null
                     schedules.add(it)
                 }
-             }
-        }
-
-        val surveyMap = mapStudyBurstSurveyFinishedOn()
-        val surveyGroup = DataSourceManager.installedGroup(config.taskGroupIdentifier) ?: return schedules
-        surveyGroup.activityIdentifiers.forEach { id ->
-            templateSchedules.filterByActivityId(id).firstOrNull()?.let {
-                it.scheduledOn = createdOn
-                it.expiresOn = null
-                it.finishedOn = surveyMap[id]
-                it.clientData = null
-                it.schedulePlanGuid = null
-                schedules.add(it)
             }
+
+            return schedules
         }
 
-        return schedules
-    }
-}
-
-class MockStudyBurstViewModel(
-        app: Application,
-        val mockDb: ResearchDatabase,
-        val studySetup: StudySetup): StudyBurstViewModel(app) {
-
-    override val config = studySetup.config
-
-    override fun activityGroup(): ActivityGroup? {
-        return DataSourceManager.installedGroup(config.taskGroupIdentifier)
+        private fun scheduleFromTemplate(activityId: String): ScheduledActivityEntity? {
+            templateSchedules.filterByActivityId(activityId).firstOrNull()?.let {
+                return gson.fromJson(gson.toJson(it), ScheduledActivityEntity::class.java)
+            }
+            return null
+        }
     }
 
-    override fun now(): LocalDateTime {
-        return studySetup.now
-    }
+    class MockStudyBurstViewModel(
+            app: Application,
+            val mockDb: ResearchDatabase,
+            val studySetup: StudySetup): StudyBurstViewModel(app) {
 
-    override val timezone: ZoneId get() {
-        return studySetup.timezone
-    }
+        override val config = studySetup.config
 
-    override fun scheduleDao(): ScheduledActivityEntityDao {
-        return mockDb.scheduleDao()
-    }
+        override fun activityGroup(): ActivityGroup? {
+            return DataSourceManager.installedGroup(config.taskGroupIdentifier)
+        }
 
-    init {
-        studySetup.populateDatabase(scheduleDao())
-    }
+        override fun now(): LocalDateTime {
+            return studySetup.now
+        }
 
-    private var sortOrder: List<String>? = null
-    private var timestamp: LocalDateTime? = null
+        override val timezone: ZoneId get() {
+            return studySetup.timezone
+        }
 
-    public override fun setOrderedTasks(sortOrder: List<String>, timestamp: LocalDateTime) {
-        this.sortOrder = sortOrder
-        this.timestamp = timestamp
-    }
+        override fun scheduleDao(): ScheduledActivityEntityDao {
+            return mockDb.scheduleDao()
+        }
 
-    override fun getTaskSortOrder(): List<String>? {
-        return sortOrder
-    }
+        init {
+            studySetup.populateDatabase(scheduleDao())
+        }
 
-    override fun getTaskSortOrderTimestamp(): LocalDateTime? {
-        return timestamp
+        private var sortOrder: List<String>? = null
+        private var timestamp: LocalDateTime? = null
+
+        public override fun setOrderedTasks(sortOrder: List<String>, timestamp: LocalDateTime) {
+            this.sortOrder = sortOrder
+            this.timestamp = timestamp
+        }
+
+        override fun getTaskSortOrder(): List<String>? {
+            return sortOrder
+        }
+
+        override fun getTaskSortOrderTimestamp(): LocalDateTime? {
+            return timestamp
+        }
     }
 }

@@ -58,7 +58,7 @@
       "type": "ScheduledActivity"
     },
     {
-      "guid": "a341c893-615d-48e1-ab6a-d418af720269:2018-08-17T00:00:00.000-04:00",
+      "guid": "a341c893-615d-48e1-ab6a-d428af720269:2018-08-17T00:00:00.000-04:00",
       "schedulePlanGuid": "e4c528e6-82f3-4726-9a46-c6dc1f89c366",
       "activity": {
         "label": "Motivation",
@@ -79,11 +79,33 @@
       "type": "ScheduledActivity"
     },
     {
+      "guid": "a341c893-615d-48e1-ac3a-d428af720269:2018-08-17T00:00:00.000-04:00",
+      "schedulePlanGuid": "e4c528e6-82f3-4726-9a46-c6dc1f89c366",
+      "activity": {
+        "label": "Background",
+        "labelDetail": "4 Minutes",
+        "guid": "a341c893-615d-48e1-ab6a-d418af720269",
+        "survey": {
+          "identifier": "Background",
+          "guid": "7beb8a71-65d0-4217-a4fb-3bb029b55258",
+          "createdOn": "2018-08-07T22:41:52.186Z",
+          "href": "https://ws.sagebridge.org/v3/surveys/7beb8a71-65d0-4217-a4fb-3bb029b55258/revisions/2018-08-07T22:41:52.186Z",
+          "type": "SurveyReference"
+        },
+        "activityType": "survey",
+        "type": "Activity"
+      },
+      "persistent": false,
+      "scheduledOn": "2018-08-17T00:00:00.000-04:00",
+      "status": "finished",
+      "type": "ScheduledActivity"
+    },
+    {
       "guid": "e6fe761f-6187-4e8f-b659-bce4edc98f06:2018-08-17T13:40:39.183",
       "schedulePlanGuid": "c4ec16b4-2985-4ae3-a17a-936ec52a4218",
       "activity": {
         "label": "Engagement Survey",
-        "labelDetail": "8 minutes",
+        "labelDetail": "6 Minutes",
         "guid": "e6fe761f-6187-4e8f-b659-bce4edc98f06",
         "survey": {
           "identifier": "Engagement",
@@ -120,6 +142,25 @@
       "persistent": false,
       "scheduledOn": "2018-08-17T13:40:39.183-04:00",
       "status": "available",
+      "type": "ScheduledActivity"
+    },
+    {
+      "guid": "273c4518-7cb6-4496-b1dd-c0b5bf221b32:2018-08-17T00:00:00.000",
+      "schedulePlanGuid": "e24e6601-1822-48b0-8770-00870d870708",
+      "activity": {
+        "label": "Study Burst Reminder",
+        "guid": "273c4518-7cb6-4496-b1dd-c0b5bf291b09",
+        "task": {
+          "identifier": "StudyBurstReminder",
+          "type": "TaskReference"
+        },
+        "activityType": "task",
+        "type": "Activity"
+      },
+      "persistent": false,
+      "scheduledOn": "2018-08-17T00:00:00.000-04:00",
+      "expiresOn": "2018-08-18T00:00:00.000-04:00",
+      "status": "expired",
       "type": "ScheduledActivity"
     },
     {

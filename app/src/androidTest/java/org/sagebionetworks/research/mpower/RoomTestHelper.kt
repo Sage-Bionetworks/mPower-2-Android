@@ -16,9 +16,12 @@ import java.nio.charset.Charset
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.Observer
+import android.support.test.runner.AndroidJUnit4
+import org.junit.runner.RunWith
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+@RunWith(AndroidJUnit4::class)
 abstract class RoomTestHelper {
 
     companion object {
@@ -64,7 +67,7 @@ object TestResourceHelper {
         return resourceSet.associateBy( {it}, {testResource(it)} )
     }
 
-    private fun testResource(filename: String): List<ScheduledActivityEntity> {
+    internal fun testResource(filename: String): List<ScheduledActivityEntity> {
         var json: String? = null
         try {
             val inputStream = RoomScheduledActivityTests::class.java
