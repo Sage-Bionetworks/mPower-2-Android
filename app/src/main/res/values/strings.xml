@@ -72,4 +72,33 @@
     <string name="task_singular_term_for_symptoms">"%1$d Symptom"</string>
     <string name="task_singular_term_for_activities">"%1$d Activity"</string>
 
+    <string name="measuring_walk_and_balance_label">Walk And Balance</string>
+    <string name="measuring_finger_tapping_label">Finger Tapping</string>
+    <string name="measuring_tremor_test_label">Tremor Test</string>
+    <string name="tracking_medication_label">Medication</string>
+    <string name="tracking_symptom_label">Symptom</string>
+    <string name="tracking_trigger_label">Trigger</string>
+
+    <string name="symptoms_logging_time_button_default">Add time</string>
+    <string name="symptoms_logging_duration_button_default">Add duration</string>
+    <string name="symptoms_logging_duration_button_logged">Edit duration</string>
+
+    <string name="symptoms_duration_title">Duration</string>
+    <string name="symptoms_duration_detail">Select one</string>
+    <string name="symptoms_duration_0">Currently occurring</string>
+    <string name="symptoms_duration_1">A short period of time</string>
+    <string name="symptoms_duration_2">A little while</string>
+    <string name="symptoms_duration_3">All [morning / afternoon / evening]</string>
+    <string name="symptoms_duration_4">Half the day</string>
+    <string name="symptoms_duration_5">All day long</string>
+
+    <string name="time_picker_ok_button">Ok</string>
+    <string name="time_picker_cancel_button">Cancel</string>
+
+    <string name="add_note_fragment_title">Add a note</string>
+    <string name="add_note_fragment_forward_button">Submit</string>
+
+    <string name="duration_fragment_title">Duration</string>
+    <string name="duration_fragment_detail">Select one</string>
+    <string name="duration_fragment_forward_button">Save</string>
 </resources>

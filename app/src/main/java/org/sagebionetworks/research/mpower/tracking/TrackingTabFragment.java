@@ -23,8 +23,6 @@ import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.tracking.TrackingViewModel.ScheduledActivityView;
-import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
-import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
 
 import java.util.List;
 
@@ -43,7 +41,7 @@ import dagger.android.support.AndroidSupportInjection;
  * <p>
  * https://medium.com/@rohitsingh14101992/lets-keep-activity-dumb-using-livedata-53468ed0dc1f
  */
-public class TrackingFragment extends Fragment {
+public class TrackingTabFragment extends Fragment {
     @BindView(R.id.textview_error_message)
     TextView errorMessageTextView;
 
@@ -62,11 +60,12 @@ public class TrackingFragment extends Fragment {
     private TrackingViewModel trackingViewModel;
     private TodayScheduleViewModel todayScheduleViewModel;
     private SurveyViewModel surveyViewModel;
+    private StudyBurstViewModel studyBurstViewModel;
 
     private Unbinder unbinder;
 
-    public static TrackingFragment newInstance() {
-        return new TrackingFragment();
+    public static TrackingTabFragment newInstance() {
+        return new TrackingTabFragment();
     }
 
     @Override

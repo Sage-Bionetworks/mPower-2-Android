@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/tools">
+    <style name="Dialog.MPower.TimePicker" parent="@android:style/Widget.Material.Light.TimePicker">
+        <item name="android:timePickerMode">spinner</item>
+        <item name="showTitle">false</item>
+        <item name="android:numbersTextColor">@color/appTextDark</item>
+        <item name="android:colorControlNormal">@color/appVeryLightGray</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/royal500</item>
+        <item name="colorPrimaryDark">@color/royal600</item>
+        <item name="colorAccent">@color/butterscotch500</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:timePickerStyle">@style/Dialog.MPower.TimePicker</item>
+    </style>
+</resources>
