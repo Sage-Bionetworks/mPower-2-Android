@@ -53,6 +53,25 @@
     <string name="study_burst_message_days_missed">In %1$d days you’ve only missed %2$d Study Burst days!</string>
     <string name="study_burst_message_days_missed_one">In %1$d days you’ve only missed 1 Study Burst day!</string>
 
+    <string name="measuring_center_label">Walk And Balance</string>
+    <string name="measuring_left_label">Finger Tapping</string>
+    <string name="measuring_right_label">Tremor Test</string>
+    <string name="tracking_center_label">Medication</string>
+    <string name="tracking_left_label">Symptom</string>
+    <string name="tracking_right_label">Trigger</string>
+
+    <!-- Today Fragment -->
+    <!-- The term to use when referring to multiple instances of a task, such as when describing-->
+    <!-- how may times the user has logged taking medication.-->
+    <string name="task_plural_term_for_medication">"%1$d Doses"</string>
+    <string name="task_plural_term_for_triggers">"%1$d Triggers"</string>
+    <string name="task_plural_term_for_symptoms">"%1$d Symptoms"</string>
+    <string name="task_plural_term_for_activities">"%1$d Activities"</string>
+    <string name="task_singular_term_for_medication">"%1$d Dose"</string>
+    <string name="task_singular_term_for_triggers">"%1$d Trigger"</string>
+    <string name="task_singular_term_for_symptoms">"%1$d Symptom"</string>
+    <string name="task_singular_term_for_activities">"%1$d Activity"</string>
+
     <string name="measuring_walk_and_balance_label">Walk And Balance</string>
     <string name="measuring_finger_tapping_label">Finger Tapping</string>
     <string name="measuring_tremor_test_label">Tremor Test</string>

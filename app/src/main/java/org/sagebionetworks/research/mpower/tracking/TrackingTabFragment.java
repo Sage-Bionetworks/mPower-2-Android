@@ -23,6 +23,9 @@ import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.tracking.TrackingViewModel.ScheduledActivityView;
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
+import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
+import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
 
 import java.util.List;
 
@@ -58,6 +61,9 @@ public class TrackingTabFragment extends Fragment {
     TrackingViewModelFactory trackingViewModelFactory;
 
     private TrackingViewModel trackingViewModel;
+    private TodayScheduleViewModel todayScheduleViewModel;
+    private SurveyViewModel surveyViewModel;
+    private StudyBurstViewModel studyBurstViewModel;
 
     private Unbinder unbinder;
 
@@ -105,6 +111,21 @@ public class TrackingTabFragment extends Fragment {
                 .observe(this, this::updateScheduledActivitiesErrorMessage);
         trackingViewModel.getScheduledActivitiesLoadingLiveData()
                 .observe(this, this::updateScheduledActivitiesLoading);
+
+        if (getActivity() != null) {
+            todayScheduleViewModel = TodayScheduleViewModel.create(getActivity());
+            todayScheduleViewModel.liveData().observe(this, todayHistoryItems -> {
+                // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
+            });
+            surveyViewModel = SurveyViewModel.create(getActivity());
+            surveyViewModel.liveData().observe(this, scheduledActivityEntities -> {
+                // TODO: mdephillips 9/4/18 mimic what iOS does with these
+            });
+            studyBurstViewModel = StudyBurstViewModel.create(getActivity());
+            studyBurstViewModel.liveData().observe(this, studyBurstItem -> {
+                // TODO: mdephillips 9/11/18 mimic what iOS does with these
+            });
+        }
     }
 
     @Override
