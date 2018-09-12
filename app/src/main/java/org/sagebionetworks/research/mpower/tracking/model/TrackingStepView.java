@@ -103,7 +103,7 @@ public abstract class TrackingStepView implements StepView {
     public abstract Builder toBuilder();
 
     @NonNull
-    public static TrackingStepView fromTrackingStep(@NonNull Step step, @NonNull DrawableMapper drawableMapper) {
+    public static TrackingStepView fromTrackingStep(@NonNull Step step, @Nullable DrawableMapper drawableMapper) {
         if (!(step instanceof TrackingStep)) {
             throw new IllegalArgumentException("Provided step " + step + " is not a TrackingStep.");
         }
