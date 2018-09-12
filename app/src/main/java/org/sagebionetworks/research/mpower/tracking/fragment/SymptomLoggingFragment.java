@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView.Adapter;
 
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.SymptomsLoggingItemAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.SymptomsLoggingItemViewHolder;
@@ -23,6 +24,9 @@ import org.threeten.bp.zone.ZoneRulesException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A subclass of LoggingFragment specific to the Symptoms task.
@@ -51,31 +55,38 @@ public class SymptomLoggingFragment extends
         SymptomsLoggingItemViewHolder.SymptomsLoggingListener symptomsLoggingListener
                 = new SymptomsLoggingItemViewHolder.SymptomsLoggingListener() {
             @Override
-            public void onSeverityChanged(@NonNull final TrackingItem trackingItem, final int severity) {
-                SymptomLog previousLog = getPreviousLogOrInstantiate(trackingItem);
-                viewModel.addLoggedElement(previousLog.toBuilder()
+            public void onSeverityChanged(@NonNull final TrackingItem trackingItem, final int position,
+                    final int severity) {
+                SymptomLog log = getPreviousLogOrInstantiate(trackingItem);
+                log = log.toBuilder()
                         .setSeverity(severity)
-                        .build());
+                        .build();
+                adapter.updateLog(position, log);
+                adapter.notifyItemChanged(position);
+                viewModel.addLoggedElement(log);
             }
 
             @Override
-            public void onDurationButtonPressed(@NonNull final TrackingItem trackingItem) {
+            public void onDurationButtonPressed(@NonNull final TrackingItem trackingItem, final int position) {
                 String title = getResources().getString(R.string.duration_fragment_title);
                 String detail = getResources().getString(R.string.duration_fragment_detail);
                 final SymptomLog previousLog = getPreviousLogOrInstantiate(trackingItem);
                 String previousSelection = previousLog != null ? previousLog.getDuration() : null;
                 DurationFragment durationFragment = DurationFragment.newInstance(title, detail, previousSelection);
                 durationFragment.setOnDurationChangeListener(duration -> {
-                    viewModel.addLoggedElement(previousLog.toBuilder()
+                    SymptomLog log = previousLog.toBuilder()
                             .setDuration(duration)
-                            .build());
+                            .build();
+                    adapter.updateLog(position, log);
+                    adapter.notifyItemChanged(position);
+                    viewModel.addLoggedElement(log);
                 });
 
                 addChildFragmentOnTop(durationFragment, SymptomLoggingFragment.SYMPTOM_LOGGING_FRAGMENT_TAG);
             }
 
             @Override
-            public void onTimeButtonPressed(@NonNull final TrackingItem trackingItem) {
+            public void onTimeButtonPressed(@NonNull final TrackingItem trackingItem, final int position) {
                 final Calendar calendar = Calendar.getInstance();
                 OnTimeSetListener onTimeSetListener = (timePicker, hour, minute) -> {
                     ZoneId zoneId;
@@ -92,10 +103,13 @@ public class SymptomLoggingFragment extends
                     Instant selectedInstant = startOfDay.plus(hour, ChronoUnit.HOURS)
                             .plus(minute, ChronoUnit.MINUTES);
 
-                    SymptomLog previousLog = getPreviousLogOrInstantiate(trackingItem);
-                    viewModel.addLoggedElement(previousLog.toBuilder()
+                    SymptomLog log = getPreviousLogOrInstantiate(trackingItem);
+                    log = log.toBuilder()
                             .setTimestamp(selectedInstant)
-                            .build());
+                            .build();
+                    adapter.updateLog(position, log);
+                    adapter.notifyItemChanged(position);
+                    viewModel.addLoggedElement(log);
                 };
 
                 new TimePickerDialog(getContext(), onTimeSetListener,
@@ -104,36 +118,40 @@ public class SymptomLoggingFragment extends
             }
 
             @Override
-            public void onMedicationTimingChanged(@NonNull final TrackingItem trackingItem,
+            public void onMedicationTimingChanged(@NonNull final TrackingItem trackingItem, final int position,
                     @NonNull final String medicationTiming) {
-                SymptomLog previousLog = getPreviousLogOrInstantiate(trackingItem);
-                viewModel.addLoggedElement(previousLog.toBuilder()
+                SymptomLog log = getPreviousLogOrInstantiate(trackingItem);
+                log = log.toBuilder()
                         .setMedicationTiming(medicationTiming)
-                        .build());
+                        .build();
+                adapter.updateLog(position, log);
+                adapter.notifyItemChanged(position);
+                viewModel.addLoggedElement(log);
             }
 
             @Override
-            public void onNoteButtonPressed(@NonNull final TrackingItem trackingItem) {
+            public void onNoteButtonPressed(@NonNull final TrackingItem trackingItem, final int position) {
                 String title = getResources().getString(R.string.add_note_fragment_title);
                 String text = "";
-                final SymptomLog previousLog = getSymptomLogData(trackingItem).getValue();
+                final SymptomLog previousLog = getPreviousLogOrInstantiate(trackingItem);
                 String previousNote = previousLog != null ? previousLog.getNote() : null;
                 AddNoteFragment addNoteFragment = AddNoteFragment.newInstance(title, text, previousNote);
-                addNoteFragment.setOnNoteChangeListener(note -> previousLog.toBuilder()
-                        .setNote(note)
-                        .build());
+                addNoteFragment.setOnNoteChangeListener(note -> {
+                    SymptomLog log = previousLog.toBuilder()
+                            .setNote(note)
+                            .build();
+                    adapter.updateLog(position, log);
+                    adapter.notifyItemChanged(position);
+                    viewModel.addLoggedElement(log);
+                });
 
                 addChildFragmentOnTop(addNoteFragment,
                         SymptomLoggingFragment.SYMPTOM_LOGGING_FRAGMENT_TAG);
             }
 
-            @Override
-            public LiveData<SymptomLog> getSymptomLogData(@NonNull final TrackingItem trackingItem) {
-                return viewModel.getLoggedElement(trackingItem.getIdentifier());
-            }
-
             private SymptomLog getPreviousLogOrInstantiate(@NonNull TrackingItem trackingItem) {
-                SymptomLog previousLog = viewModel.getLoggedElementsById().getValue().get(trackingItem.getIdentifier());
+                SymptomLog previousLog = viewModel.getLoggedElementsById().getValue()
+                        .get(trackingItem.getIdentifier());
                 if (previousLog != null) {
                     return previousLog;
                 }
@@ -147,7 +165,22 @@ public class SymptomLoggingFragment extends
             }
         };
 
-        return new SymptomsLoggingItemAdapter(symptomsLoggingListener, getLifecycle(),
-                new ArrayList<>(viewModel.getActiveElementsById().getValue().values()));
+        List<SimpleTrackingItemConfig> activeElements = SortUtil.getActiveElementsSorted(
+                viewModel.getActiveElementsById().getValue());
+        Map<Integer, SymptomLog> logsByPosition = getLogsByPosition(activeElements);
+        return new SymptomsLoggingItemAdapter(activeElements, symptomsLoggingListener, logsByPosition);
+    }
+
+    private Map<Integer, SymptomLog> getLogsByPosition(List<SimpleTrackingItemConfig> activeElements) {
+        Map<Integer, SymptomLog> result = new HashMap<>();
+        for (int i = 0; i < activeElements.size(); i++) {
+            SimpleTrackingItemConfig config = activeElements.get(i);
+            if (viewModel.getLoggedElementsById().getValue().containsKey(config.getIdentifier())) {
+                SymptomLog log = viewModel.getLoggedElementsById().getValue().get(config.getIdentifier());
+                result.put(i, log);
+            }
+        }
+
+        return result;
     }
 }

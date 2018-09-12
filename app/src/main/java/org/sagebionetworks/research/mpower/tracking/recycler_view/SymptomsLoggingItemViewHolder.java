@@ -12,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RadioButton;
 
+import com.google.common.base.Objects;
+
 import org.sagebionetworks.research.mpower.MPowerRadioButton;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
@@ -31,22 +33,18 @@ import java.util.List;
 /**
  * View Holder for the Logging Items in the Symptoms task.
  */
-public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder implements LifecycleOwner {
+public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
     public interface SymptomsLoggingListener {
-        void onSeverityChanged(@NonNull TrackingItem trackingItem, int severity);
+        void onSeverityChanged(@NonNull TrackingItem trackingItem, int position, int severity);
 
-        void onDurationButtonPressed(@NonNull TrackingItem trackingItem);
+        void onDurationButtonPressed(@NonNull TrackingItem trackingItem, int position);
 
-        void onTimeButtonPressed(@NonNull TrackingItem trackingItem);
+        void onTimeButtonPressed(@NonNull TrackingItem trackingItem, int position);
 
-        void onMedicationTimingChanged(@NonNull TrackingItem trackingItem, @NonNull String medicationTiming);
+        void onMedicationTimingChanged(@NonNull TrackingItem trackingItem, int position, @NonNull String medicationTiming);
 
-        void onNoteButtonPressed(@NonNull TrackingItem trackingItem);
-
-        LiveData<SymptomLog> getSymptomLogData(@NonNull TrackingItem trackingItem);
+        void onNoteButtonPressed(@NonNull TrackingItem trackingItem, int position);
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SymptomsLoggingItemViewHolder.class);
 
     private static final float FULL_ALPHA = 1.0f;
 
@@ -56,131 +54,118 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder imple
 
     private RadioButton previousSelectedSeverityButton;
 
-    private Lifecycle lifecycle;
+    private SymptomLog log;
 
     private SymptomsLoggingListener symptomLoggingListener;
 
     public SymptomsLoggingItemViewHolder(final SymptomsLoggingUIFormItemWidget itemView,
-            final Lifecycle lifecycle, final SymptomsLoggingListener symptomLoggingListener) {
+            final SymptomsLoggingListener symptomLoggingListener) {
         super(itemView);
-        this.widget = itemView;
-        this.lifecycle = lifecycle;
+        widget = itemView;
         this.symptomLoggingListener = symptomLoggingListener;
     }
 
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return lifecycle;
-    }
-
-    public void setContent(@NonNull SimpleTrackingItemConfig config) {
+    public void setContent(@NonNull SimpleTrackingItemConfig config, @Nullable SymptomLog log, int position) {
         TrackingItem trackingItem = config.getTrackingItem();
-        this.setLogObservers(trackingItem);
-
+        updateLog(log);
         // Setup the title and detail labels
-        this.widget.getTitle().setText(trackingItem.getIdentifier());
+        widget.getTitle().setText(trackingItem.getIdentifier());
         String detail = trackingItem.getDetail();
         if (detail != null) {
-            this.widget.getDetail().setVisibility(View.VISIBLE);
-            this.widget.getDetail().setText(detail);
+            widget.getDetail().setVisibility(View.VISIBLE);
+            widget.getDetail().setText(detail);
         } else {
-            this.widget.getDetail().setVisibility(View.GONE);
+            widget.getDetail().setVisibility(View.GONE);
         }
 
         // Setup the button listeners.
-        this.setSeverityButtonListeners(trackingItem);
-        this.setTimeButtonListener(trackingItem);
-        this.setDurationButtonListener(trackingItem);
-        this.setPreMedsButtonListener(trackingItem);
-        this.setPostMedsButtonListener(trackingItem);
-        this.setAddNoteButtonListener(trackingItem);
+        setSeverityButtonListeners(trackingItem, position);
+        setTimeButtonListener(trackingItem, position);
+        setDurationButtonListener(trackingItem, position);
+        setPreMedsButtonListener(trackingItem, position);
+        setPostMedsButtonListener(trackingItem, position);
+        setAddNoteButtonListener(trackingItem, position);
     }
 
-    private void setLogObservers(@NonNull TrackingItem trackingItem) {
-        final LiveData<SymptomLog> logLiveData = symptomLoggingListener.getSymptomLogData(trackingItem);
-        final LiveData<Integer> severityLiveData = Transformations
-                .map(logLiveData, log -> {
-                    if (log != null) {
-                        return log.getSeverity();
-                    }
+    public void updateLog(@Nullable SymptomLog newLog) {
+        Integer severity;
+        String medicationTiming;
+        String duration;
+        Instant time;
+        if (newLog == null) {
+            severity = null;
+            medicationTiming = null;
+            duration = null;
+            time = null;
+        } else {
+            severity = newLog.getSeverity();
+            medicationTiming = newLog.getMedicationTiming();
+            duration = newLog.getDuration();
+            time = newLog.getTimestamp();
+        }
 
-                    return null;
-                });
+        // update the UI if the values have changed.
+        if (log == null || !Objects.equal(log.getSeverity(), severity)) {
+            updateSeverityUI(severity);
+        }
 
-        severityLiveData.observe(this, this::updateSeverityUI);
-        final LiveData<Instant> timestampLiveData = Transformations
-                .map(logLiveData, log -> {
-                    if (log != null) {
-                        return log.getTimestamp();
-                    }
+        if (log == null || !Objects.equal(log.getMedicationTiming(), medicationTiming)) {
+            updateMedicationTimingUI(medicationTiming);
+        }
 
-                    return null;
-                });
+        if (log == null || !Objects.equal(log.getDuration(), duration)) {
+            updateDurationUI(duration);
+        }
 
-        timestampLiveData.observe(this, this::updateTimestampUI);
-        final LiveData<String> durationLiveData = Transformations
-                .map(logLiveData, log -> {
-                    if (log != null) {
-                        return log.getDuration();
-                    }
+        if (log == null || !Objects.equal(log.getTimestamp(), time)) {
+            updateTimestampUI(time);
+        }
 
-                    return null;
-                });
+        log = newLog;
 
-        durationLiveData.observe(this, this::updateDurationUI);
-        final LiveData<String> medicationTimingLiveData = Transformations
-                .map(logLiveData, log -> {
-                    if (log != null) {
-                        return log.getMedicationTiming();
-                    }
 
-                    return null;
-                });
-
-        medicationTimingLiveData.observe(this, this::updateMedicationTimingUI);
     }
 
-    private void setSeverityButtonListeners(@NonNull TrackingItem trackingItem) {
+    private void setSeverityButtonListeners(@NonNull TrackingItem trackingItem, int position) {
         List<RadioButton> severityButtons = widget.getSeverityButtons();
         for (int i = 0; i < severityButtons.size(); i++) {
             RadioButton severityButton = severityButtons.get(i);
             final int copy = i;
-            severityButton.setOnClickListener(view -> symptomLoggingListener.onSeverityChanged(trackingItem, copy));
+            severityButton.setOnClickListener(view -> symptomLoggingListener.onSeverityChanged(trackingItem, position, copy));
         }
     }
 
-    private void setTimeButtonListener(@NonNull TrackingItem trackingItem) {
-        widget.getTimeButton().setOnClickListener(view -> symptomLoggingListener.onTimeButtonPressed(trackingItem));
+    private void setTimeButtonListener(@NonNull TrackingItem trackingItem, int position) {
+        widget.getTimeButton().setOnClickListener(view -> symptomLoggingListener.onTimeButtonPressed(trackingItem, position));
     }
 
-    private void setDurationButtonListener(@NonNull TrackingItem trackingItem) {
-        widget.getDurationButton().setOnClickListener(view -> symptomLoggingListener.onDurationButtonPressed(trackingItem));
+    private void setDurationButtonListener(@NonNull TrackingItem trackingItem, int position) {
+        widget.getDurationButton().setOnClickListener(view -> symptomLoggingListener.onDurationButtonPressed(trackingItem, position));
     }
 
-    private void setPreMedsButtonListener(@NonNull TrackingItem trackingItem) {
-        MPowerRadioButton preMedsButton = this.widget.getPreMedsButton();
+    private void setPreMedsButtonListener(@NonNull TrackingItem trackingItem, int position) {
+        MPowerRadioButton preMedsButton = widget.getPreMedsButton();
         preMedsButton.setOnClickListener(view -> {
             String medicationTiming = preMedsButton.getTitle();
-            symptomLoggingListener.onMedicationTimingChanged(trackingItem, medicationTiming);
+            symptomLoggingListener.onMedicationTimingChanged(trackingItem, position, medicationTiming);
         });
     }
 
-    private void setPostMedsButtonListener(@NonNull TrackingItem trackingItem) {
-        MPowerRadioButton postMedsButton = this.widget.getPostMedsButton();
+    private void setPostMedsButtonListener(@NonNull TrackingItem trackingItem, int position) {
+        MPowerRadioButton postMedsButton = widget.getPostMedsButton();
         postMedsButton.setOnClickListener(view -> {
             String medicationTiming = postMedsButton.getTitle();
-            symptomLoggingListener.onMedicationTimingChanged(trackingItem, medicationTiming);
+            symptomLoggingListener.onMedicationTimingChanged(trackingItem, position, medicationTiming);
         });
     }
 
-    private void setAddNoteButtonListener(@NonNull TrackingItem trackingItem) {
-        this.widget.getAddNoteButton().setOnClickListener(view -> symptomLoggingListener.onNoteButtonPressed(trackingItem));
+    private void setAddNoteButtonListener(@NonNull TrackingItem trackingItem, int position) {
+        this.widget.getAddNoteButton().setOnClickListener(view -> symptomLoggingListener.onNoteButtonPressed(trackingItem, position));
     }
 
     private void updateMedicationTimingUI(String medicationTiming) {
-        MPowerRadioButton preMedsButton = this.widget.getPreMedsButton();
-        MPowerRadioButton postMedsButton = this.widget.getPostMedsButton();
+        MPowerRadioButton preMedsButton = widget.getPreMedsButton();
+        MPowerRadioButton postMedsButton = widget.getPostMedsButton();
         if (medicationTiming == null) {
             preMedsButton.setSelected(false);
             postMedsButton.setSelected(false);
@@ -195,12 +180,12 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder imple
         // TODO display user selected duration instead of boolean selected or not
         @StringRes int durationStringRes = duration != null ? R.string.symptoms_logging_duration_button_logged :
                 R.string.symptoms_logging_duration_button_default;
-        this.widget.getDurationButton().setText(durationStringRes);
+        widget.getDurationButton().setText(durationStringRes);
     }
 
     private void updateTimestampUI(Instant newTimestamp) {
         if (newTimestamp == null) {
-            this.widget.getTimeButton().setText(R.string.symptoms_logging_time_button_default);
+            widget.getTimeButton().setText(R.string.symptoms_logging_time_button_default);
         } else {
             ZoneId zoneId;
             try {
@@ -212,25 +197,25 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder imple
 
             ZonedDateTime newTimestampDateTime = ZonedDateTime.ofInstant(newTimestamp, zoneId);
             String formattedTimestamp = DateTimeFormatter.ofPattern("h:mm a").format(newTimestampDateTime);
-            this.widget.getTimeButton().setText(formattedTimestamp);
+            widget.getTimeButton().setText(formattedTimestamp);
         }
     }
 
     private void updateSeverityUI(Integer severity) {
-        List<RadioButton> severityButtons = this.widget.getSeverityButtons();
+        List<RadioButton> severityButtons = widget.getSeverityButtons();
         if (severity == null) {
             for (RadioButton severityButton : severityButtons) {
                 severityButton.setChecked(false);
                 severityButton.setAlpha(FULL_ALPHA);
             }
 
-            this.previousSelectedSeverityButton = null;
+            previousSelectedSeverityButton = null;
         } else {
-            if (this.previousSelectedSeverityButton != null) {
-                this.previousSelectedSeverityButton.setChecked(false);
-                this.previousSelectedSeverityButton.setAlpha(FADED_ALPHA);
+            if (previousSelectedSeverityButton != null) {
+                previousSelectedSeverityButton.setChecked(false);
+                previousSelectedSeverityButton.setAlpha(FADED_ALPHA);
             }
-            if (this.previousSelectedSeverityButton == null) {
+            if (previousSelectedSeverityButton == null) {
                 // When the first selection is made the buttons all need to be faded.
                 for (RadioButton severityButton : severityButtons) {
                     severityButton.setAlpha(FADED_ALPHA);
@@ -240,7 +225,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder imple
             RadioButton newlySelectedSeverityButton = severityButtons.get(severity);
             newlySelectedSeverityButton.setAlpha(FULL_ALPHA);
             newlySelectedSeverityButton.setChecked(true);
-            this.previousSelectedSeverityButton = newlySelectedSeverityButton;
+            previousSelectedSeverityButton = newlySelectedSeverityButton;
         }
     }
 }

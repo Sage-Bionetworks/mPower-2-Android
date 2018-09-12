@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
 import android.arch.lifecycle.Lifecycle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import org.sagebionetworks.research.mpower.tracking.widget.SymptomsLoggingUIForm
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Adapter which produces Logging Items for the Symptoms Task.
@@ -22,14 +24,23 @@ import java.util.List;
 public class SymptomsLoggingItemAdapter extends Adapter<SymptomsLoggingItemViewHolder> {
     private List<SimpleTrackingItemConfig> configs;
     private SymptomsLoggingItemViewHolder.SymptomsLoggingListener symptomsLoggingListener;
-    private Lifecycle lifecycle;
+    private Map<Integer, SymptomLog> logsByPosition;
 
     public SymptomsLoggingItemAdapter(
+            List<SimpleTrackingItemConfig> configs,
             SymptomsLoggingItemViewHolder.SymptomsLoggingListener symptomsLoggingListener,
-            Lifecycle lifecycle, List<SimpleTrackingItemConfig> configs) {
-        this.lifecycle = lifecycle;
+            Map<Integer, SymptomLog> logsByPosition) {
         this.symptomsLoggingListener = symptomsLoggingListener;
         this.configs = configs;
+        this.logsByPosition = logsByPosition;
+    }
+
+    public void updateLog(int position, @Nullable SymptomLog log) {
+        if (log == null) {
+            this.logsByPosition.remove(position);
+        } else {
+            this.logsByPosition.put(position, log);
+        }
     }
 
     @NonNull
@@ -37,17 +48,18 @@ public class SymptomsLoggingItemAdapter extends Adapter<SymptomsLoggingItemViewH
     public SymptomsLoggingItemViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
         SymptomsLoggingUIFormItemWidget widget = (SymptomsLoggingUIFormItemWidget)
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.mpower2_symptoms_logging_view_holder, parent,false);
-        return new SymptomsLoggingItemViewHolder(widget, lifecycle, symptomsLoggingListener);
+        return new SymptomsLoggingItemViewHolder(widget, symptomsLoggingListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final SymptomsLoggingItemViewHolder holder, final int position) {
-        SimpleTrackingItemConfig config = this.configs.get(position);
-        holder.setContent(config);
+        SimpleTrackingItemConfig config = configs.get(position);
+        SymptomLog log = logsByPosition.get(position);
+        holder.setContent(config, log, position);
     }
 
     @Override
     public int getItemCount() {
-        return this.configs.size();
+        return configs.size();
     }
 }
