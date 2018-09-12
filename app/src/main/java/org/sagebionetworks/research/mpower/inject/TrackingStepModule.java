@@ -13,7 +13,6 @@ import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFra
 import org.sagebionetworks.research.mpower.tracking.fragment.TriggersSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStep;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
-import org.sagebionetworks.research.mpower.tracking.util.WhichTaskUtil;
 import org.sagebionetworks.research.presentation.inject.StepViewModule.InternalStepViewFactory;
 import org.sagebionetworks.research.presentation.inject.StepViewModule.StepTypeKey;
 
@@ -54,7 +53,7 @@ public abstract class TrackingStepModule {
             }
 
             TrackingStepView trackingStepView = (TrackingStepView) stepView;
-            String whichTask = WhichTaskUtil.whichTask(trackingStepView);
+            String whichTask = trackingStepView.whichTask();
             if (whichTask != null) {
                 switch (whichTask) {
                     case Tasks.TRIGGERS:

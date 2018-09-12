@@ -1,18 +1,15 @@
 package org.sagebionetworks.research.mpower.tracking.model;
 
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
 
-import org.sagebionetworks.research.domain.async.AsyncActionConfiguration;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
+import org.sagebionetworks.research.mpower.Tasks;
 import org.sagebionetworks.research.presentation.mapper.DrawableMapper;
-import org.sagebionetworks.research.presentation.model.action.ActionView;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
 import java.util.HashSet;
@@ -27,6 +24,8 @@ import java.util.TreeSet;
 @AutoValue
 public abstract class TrackingStepView implements StepView {
     public static final String TYPE = "tracking";
+    public static final String SYMPTOM_LOGGING_TYPE_KEY = "symptomLogging";
+    public static final String MEDICATION_REMINDERS_TYPE_KEY = "medicationReminders";
 
     @AutoValue.Builder
     public abstract static class Builder {
@@ -107,6 +106,35 @@ public abstract class TrackingStepView implements StepView {
 
     @NonNull
     public abstract Builder toBuilder();
+
+    /**
+     * Returns the type of task that the given TrackingStepView represents.
+     * @return the type of task that the given TrackingStepView represents.
+     */
+    public String whichTask() {
+        String selectionType = getSelectionInfo().getType();
+        TrackingSubstepInfo loggingInfo = getLoggingInfo();
+        String loggingType = null;
+        if (loggingInfo != null) {
+            loggingType = loggingInfo.getType();
+        }
+
+        String reminderType = null;
+        TrackingSubstepInfo reminderInfo = getRemindersInfo();
+        if (reminderInfo != null) {
+            reminderType = reminderInfo.getType();
+        }
+
+        if (selectionType == null && loggingType == null && reminderType == null) {
+            return Tasks.TRIGGERS;
+        } else if (selectionType == null && loggingType == null && reminderType.equals(MEDICATION_REMINDERS_TYPE_KEY)) {
+            return Tasks.MEDICATION;
+        } else if (selectionType == null && loggingType.equals(SYMPTOM_LOGGING_TYPE_KEY) && reminderType == null) {
+            return Tasks.SYMPTOMS;
+        }
+
+        return null;
+    }
 
     @NonNull
     public static TrackingStepView fromTrackingStep(@NonNull Step step, @Nullable DrawableMapper drawableMapper) {
