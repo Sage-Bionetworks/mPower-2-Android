@@ -71,9 +71,11 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
         availableElements.setValue(stepView.getSelectionItems());
         trackingItemsById = getTrackingItemsById(availableElements.getValue());
         loggedElementsById.setValue(new HashMap<>());
+        startDate = Instant.now();
         // initialize the active elements to contain either the user's previous selection or nothing depending on if
         // we have a previous logging collection.
         if (previousLoggingCollection == null) {
+            // TODO rkolmos 09/11/2018 get previous logging collection from records either in view model or before view model is created
             activeElementsById.setValue(new HashMap<>());
         } else {
             Map<String, ConfigType> activeElements = new HashMap<>();
@@ -99,26 +101,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     }
 
     /**
-     * Sets the timestamp the task started at to the given instant.
-     *
-     * @param startDate
-     *         The instant to use as the start date for task.
-     */
-    public void setTaskStartDate(@Nullable Instant startDate) {
-        this.startDate = startDate;
-    }
-
-    /**
-     * Sets the timestamp the task ended at to the given instant.
-     *
-     * @param endDate
-     *         The instant to use as the end date for task.
-     */
-    public void setTaskEndDate(@Nullable Instant endDate) {
-        this.endDate = endDate;
-    }
-
-    /**
      * Returns the final LoggingCollection for the task. The LoggingCollection will contain: - the user entered logs
      * for every item the user has created a log for - a basic log indicating the user selected an item but didn't log
      * it for every item the user indicated is active but didn't create a log for.
@@ -126,17 +108,7 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      * @return The LoggingCollection for task.
      */
     public LoggingCollection<LogType> getLoggingCollection() {
-        Instant now = Instant.now();
-        if (startDate == null) {
-            startDate = now;
-            LOGGER.warn("getLoggingCollection() called with null startDate using {} instead", now);
-        }
-
-        if (endDate == null) {
-            endDate = now;
-            LOGGER.warn("getLoggingCollection() called with null endDate using {} instead", now);
-        }
-
+        endDate = Instant.now();
         // Add logs for the items the user didn't log on task run.
         ImmutableList.Builder<LogType> itemsBuilder = ImmutableList.builder();
         for (String identifier : activeElementsById.getValue().keySet()) {
