@@ -17,6 +17,9 @@ public abstract class SimpleTrackingItemConfig implements TrackingItemConfig {
         public abstract SimpleTrackingItemConfig build();
 
         @NonNull
+        public abstract Builder setIdentifier(@NonNull String identifier);
+
+        @NonNull
         public abstract Builder setTrackingItem(@NonNull TrackingItem trackingItem);
     }
 
