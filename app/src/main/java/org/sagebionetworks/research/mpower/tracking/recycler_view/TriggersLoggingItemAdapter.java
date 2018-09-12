@@ -21,11 +21,12 @@ import java.util.Set;
  */
 public class TriggersLoggingItemAdapter extends Adapter<TriggersLoggingItemViewHolder> {
     private List<SimpleTrackingItemConfig> items;
+    @NonNull
     private TriggersLoggingItemViewHolder.TriggersLoggingListener triggersLoggingListener;
     private Set<Integer> selectedIndices;
 
     public TriggersLoggingItemAdapter(List<SimpleTrackingItemConfig> items,
-            TriggersLoggingItemViewHolder.TriggersLoggingListener triggersLoggingListener, Set<Integer> selectedIndices) {
+            @NonNull TriggersLoggingItemViewHolder.TriggersLoggingListener triggersLoggingListener, Set<Integer> selectedIndices) {
         this.items = items;
         this.triggersLoggingListener = triggersLoggingListener;
         this.selectedIndices = selectedIndices;

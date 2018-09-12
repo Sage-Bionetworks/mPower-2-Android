@@ -30,10 +30,11 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
 
     private int marginTrackingSectionTop;
 
+    @NonNull
     private SelectionListener selectionListener;
 
     public SelectionItemViewHolder(final SelectionUIFormItemWidget itemView,
-            final SelectionListener selectionListener) {
+            @NonNull final SelectionListener selectionListener) {
         super(itemView);
         this.selectionListener = selectionListener;
         widget = itemView;

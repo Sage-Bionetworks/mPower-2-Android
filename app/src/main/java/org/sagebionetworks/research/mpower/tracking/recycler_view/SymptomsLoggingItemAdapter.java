@@ -23,12 +23,13 @@ import java.util.Map;
  */
 public class SymptomsLoggingItemAdapter extends Adapter<SymptomsLoggingItemViewHolder> {
     private List<SimpleTrackingItemConfig> configs;
+    @NonNull
     private SymptomsLoggingItemViewHolder.SymptomsLoggingListener symptomsLoggingListener;
     private Map<Integer, SymptomLog> logsByPosition;
 
     public SymptomsLoggingItemAdapter(
             List<SimpleTrackingItemConfig> configs,
-            SymptomsLoggingItemViewHolder.SymptomsLoggingListener symptomsLoggingListener,
+            @NonNull SymptomsLoggingItemViewHolder.SymptomsLoggingListener symptomsLoggingListener,
             Map<Integer, SymptomLog> logsByPosition) {
         this.symptomsLoggingListener = symptomsLoggingListener;
         this.configs = configs;

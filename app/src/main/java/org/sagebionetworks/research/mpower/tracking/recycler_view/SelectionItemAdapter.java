@@ -22,6 +22,7 @@ import java.util.Set;
  */
 public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemViewHolder> {
     private final ImmutableList<SelectionUIFormItem> selectionItems;
+    @NonNull
     private final SelectionItemViewHolder.SelectionListener selectionListener;
     private final Set<Integer> selectedIndices;
 

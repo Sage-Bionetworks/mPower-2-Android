@@ -56,10 +56,11 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     private SymptomLog log;
 
+    @NonNull
     private SymptomsLoggingListener symptomLoggingListener;
 
     public SymptomsLoggingItemViewHolder(final SymptomsLoggingUIFormItemWidget itemView,
-            final SymptomsLoggingListener symptomLoggingListener) {
+            @NonNull final SymptomsLoggingListener symptomLoggingListener) {
         super(itemView);
         widget = itemView;
         this.symptomLoggingListener = symptomLoggingListener;

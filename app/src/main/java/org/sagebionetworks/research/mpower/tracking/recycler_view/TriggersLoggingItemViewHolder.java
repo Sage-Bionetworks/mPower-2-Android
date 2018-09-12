@@ -26,11 +26,12 @@ public class TriggersLoggingItemViewHolder extends ViewHolder {
 
     private TriggersLoggingUIFormItemWidget widget;
     private SimpleTrackingItemConfig config;
+    @NonNull
     private TriggersLoggingListener triggersLoggingListener;
     private int position;
 
     public TriggersLoggingItemViewHolder(final TriggersLoggingUIFormItemWidget itemView,
-            final TriggersLoggingListener triggersLoggingListener) {
+            @NonNull final TriggersLoggingListener triggersLoggingListener) {
         super(itemView);
         widget = itemView;
         this.triggersLoggingListener = triggersLoggingListener;
