@@ -36,6 +36,6 @@ public class SymptomTrackingTaskViewModel extends TrackingTaskViewModel<SimpleTr
 
     @Override
     protected SimpleTrackingItemConfig instantiateConfigFromSelection(@NonNull final TrackingItem item) {
-        return SimpleTrackingItemConfig.builder().setTrackingItem(item).build();
+        return SimpleTrackingItemConfig.builder().setIdentifier(item.getIdentifier()).setTrackingItem(item).build();
     }
 }

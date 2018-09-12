@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 
 import org.sagebionetworks.research.mpower.Tasks;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
-import org.sagebionetworks.research.mpower.tracking.util.WhichTaskUtil;
 
 import javax.inject.Inject;
 
@@ -30,7 +29,7 @@ public class TrackingTaskViewModelFactory {
             @SuppressWarnings("unchecked")
             public <T extends ViewModel> T create(@NonNull final Class<T> modelClass) {
                 // TODO rkolmos 09/07/2018 get the previous logging collection and pass it to the view model constructor.
-                String whichTask = WhichTaskUtil.whichTask(trackingStepView);
+                String whichTask = trackingStepView.whichTask();
                 if (whichTask != null) {
                     switch (whichTask) {
                         case Tasks.TRIGGERS:

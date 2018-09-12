@@ -71,9 +71,11 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
         availableElements.setValue(stepView.getSelectionItems());
         trackingItemsById = getTrackingItemsById(availableElements.getValue());
         loggedElementsById.setValue(new HashMap<>());
+        startDate = Instant.now();
         // initialize the active elements to contain either the user's previous selection or nothing depending on if
         // we have a previous logging collection.
         if (previousLoggingCollection == null) {
+            // TODO rkolmos 09/11/2018 get previous logging collection from records either in view model or before view model is created
             activeElementsById.setValue(new HashMap<>());
         } else {
             Map<String, ConfigType> activeElements = new HashMap<>();
@@ -99,26 +101,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     }
 
     /**
-     * Sets the timestamp the task started at to the given instant.
-     *
-     * @param startDate
-     *         The instant to use as the start date for task.
-     */
-    public void setTaskStartDate(@Nullable Instant startDate) {
-        this.startDate = startDate;
-    }
-
-    /**
-     * Sets the timestamp the task ended at to the given instant.
-     *
-     * @param endDate
-     *         The instant to use as the end date for task.
-     */
-    public void setTaskEndDate(@Nullable Instant endDate) {
-        this.endDate = endDate;
-    }
-
-    /**
      * Returns the final LoggingCollection for the task. The LoggingCollection will contain: - the user entered logs
      * for every item the user has created a log for - a basic log indicating the user selected an item but didn't log
      * it for every item the user indicated is active but didn't create a log for.
@@ -126,17 +108,7 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      * @return The LoggingCollection for task.
      */
     public LoggingCollection<LogType> getLoggingCollection() {
-        Instant now = Instant.now();
-        if (startDate == null) {
-            startDate = now;
-            LOGGER.warn("getLoggingCollection() called with null startDate using {} instead", now);
-        }
-
-        if (endDate == null) {
-            endDate = now;
-            LOGGER.warn("getLoggingCollection() called with null endDate using {} instead", now);
-        }
-
+        endDate = Instant.now();
         // Add logs for the items the user didn't log on task run.
         ImmutableList.Builder<LogType> itemsBuilder = ImmutableList.builder();
         for (String identifier : activeElementsById.getValue().keySet()) {
@@ -230,20 +202,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     // endregion
 
     // region Configuration
-
-    /**
-     * Returns the set of active elements sorted in alphabetical order based on identifier.
-     *
-     * @return the set of active elements sorted in alphabetical order based on identifier.
-     */
-    public LiveData<Set<ConfigType>> getActiveElementsSorted() {
-        return Transformations.map(activeElementsById, elements -> {
-            Set<ConfigType> result = new TreeSet<>((o1, o2) -> o1.getIdentifier().compareTo(o2.getIdentifier()));
-            result.addAll(elements.values());
-            return result;
-        });
-    }
-
     /**
      * Returns a map from identifier to config for the active elements in view model.
      *
@@ -252,19 +210,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     @NonNull
     public LiveData<Map<String, ConfigType>> getActiveElementsById() {
         return activeElementsById;
-    }
-
-    /**
-     * Returns a LiveData containing the Config with the given identifier or null if there is no Config with the given
-     * identifier.
-     *
-     * @param identifier
-     *         the identifier of the Config to get.
-     * @return a LiveData containing the Config with the given identifier or null if there is no Config with the given
-     *         identifier.
-     */
-    public LiveData<ConfigType> getActiveElement(@NonNull String identifier) {
-        return Transformations.map(activeElementsById, elements -> elements.get(identifier));
     }
     // endregion
 
@@ -303,16 +248,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      */
     public boolean isLogged(@NonNull String identifier) {
         return loggedElementsById.getValue().containsKey(identifier);
-    }
-
-    /**
-     * Returns the log for the given identifier, or null if no such log exists.
-     *
-     * @return the log for the given identifier, or null if no such log exists.
-     */
-    @Nullable
-    public LogType getLog(@NonNull String identifier) {
-        return loggedElementsById.getValue().get(identifier);
     }
 
     /**
