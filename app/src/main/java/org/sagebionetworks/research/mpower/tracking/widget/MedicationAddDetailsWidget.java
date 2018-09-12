@@ -37,6 +37,7 @@ public class MedicationAddDetailsWidget extends ConstraintLayout {
     }
 
     private void commonInit() {
+        inflate(getContext(), R.layout.mpower2_medication_add_details, this);
         ButterKnife.bind(this);
     }
 
