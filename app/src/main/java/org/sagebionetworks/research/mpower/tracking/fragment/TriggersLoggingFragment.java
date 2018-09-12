@@ -20,7 +20,7 @@ import java.util.List;
  * A subclass of LoggingFragment specific to the Triggers Task.
  */
 public class TriggersLoggingFragment extends LoggingFragment<SimpleTrackingItemConfig, SimpleTrackingItemLog,
-        SimpleTrackingTaskViewModel> {
+        SimpleTrackingTaskViewModel, TriggersLoggingItemAdapter> {
     @NonNull
     public static TriggersLoggingFragment newInstance(@NonNull StepView step) {
         TriggersLoggingFragment fragment = new TriggersLoggingFragment();
@@ -37,7 +37,7 @@ public class TriggersLoggingFragment extends LoggingFragment<SimpleTrackingItemC
 
     @NonNull
     @Override
-    public Adapter<?> initializeAdapter() {
+    public TriggersLoggingItemAdapter initializeAdapter() {
         List<SimpleTrackingItemConfig> activeElements = new ArrayList<>(
                 viewModel.getActiveElementsSorted().getValue());
         return new TriggersLoggingItemAdapter(activeElements, getLifecycle(), new TriggersLoggingListener() {

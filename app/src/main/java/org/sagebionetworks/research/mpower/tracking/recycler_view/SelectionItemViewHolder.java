@@ -21,9 +21,7 @@ import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWi
  */
 public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
     public interface SelectionListener {
-        void itemTapped(@NonNull TrackingItem item);
-
-        boolean isSelected(@NonNull TrackingItem item);
+        void itemTapped(@NonNull TrackingItem item, int position);
     }
 
     private SelectionUIFormItemWidget widget;
@@ -44,16 +42,13 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
                 .getDimensionPixelSize(R.dimen.margin_tracking_section_top);
     }
 
-    public void setContent(@NonNull TrackingItem trackingItem) {
+    public void setContent(@NonNull TrackingItem trackingItem, boolean selected, int position) {
         TextView text = widget.getText();
         text.setPadding(text.getPaddingLeft(), marginTrackingItem, text.getPaddingRight(), text.getPaddingBottom());
         text.setTextSize(16f);
         setLabels(trackingItem.getIdentifier(), trackingItem.getDetail());
-        updateSelected(selectionListener.isSelected(trackingItem));
-        widget.setOnClickListener(view -> {
-            selectionListener.itemTapped(trackingItem);
-            updateSelected(selectionListener.isSelected(trackingItem));
-        });
+        updateSelected(selected);
+        widget.setOnClickListener(view -> selectionListener.itemTapped(trackingItem, position));
     }
 
     public void setContent(@NonNull TrackingSection trackingSection) {
@@ -66,7 +61,7 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
         widget.setOnClickListener(null);
     }
 
-    private void updateSelected(boolean selected) {
+    public void updateSelected(boolean selected) {
         if (selected) {
             widget.getBackgroundView()
                     .setBackgroundColor(widget.getResources().getColor(R.color.royal200));

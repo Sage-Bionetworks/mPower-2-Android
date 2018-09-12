@@ -2,21 +2,27 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.common.collect.ImmutableList;
+
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.model.SelectionUIFormItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
+import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.SelectionItemAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.SelectionItemViewHolder;
-import org.sagebionetworks.research.mpower.tracking.recycler_view.SelectionItemViewHolder.SelectionListener;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
+
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * A SelectionFragment represents the screen where the user selects which Symptoms, Triggers, or Medications, apply to
@@ -28,7 +34,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewM
  */
 public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog,
                 ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
-        extends RecyclerViewTrackingFragment<ConfigType, LogType, ViewModelType> {
+        extends RecyclerViewTrackingFragment<ConfigType, LogType, ViewModelType, SelectionItemAdapter> {
     @Override
     @NonNull
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,23 +55,43 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
 
     @Override
     @NonNull
-    public Adapter<?> initializeAdapter() {
-        return new SelectionItemAdapter(viewModel.getAvailableElements().getValue(),
-                new SelectionItemViewHolder.SelectionListener() {
-            @Override
-            public void itemTapped(@NonNull final TrackingItem item) {
-                if (isSelected(item)) {
-                    viewModel.itemDeselected(item);
-                } else {
-                    viewModel.itemSelected(item);
-                }
+    public SelectionItemAdapter initializeAdapter() {
+        SelectionItemViewHolder.SelectionListener selectionListener = (item, position) -> {
+            if (viewModel.getActiveElementsById().getValue().containsKey(item.getIdentifier())) {
+                viewModel.itemDeselected(item);
+            } else {
+                viewModel.itemSelected(item);
             }
 
-            @Override
-            public boolean isSelected(@NonNull final TrackingItem item) {
-                return viewModel.getActiveElementsById().getValue().get(item.getIdentifier()) != null;
+            adapter.toggleSelected(position);
+            adapter.notifyItemChanged(position);
+        };
+
+        ImmutableList<SelectionUIFormItem> availableItems = getAvailableItemsInOrder();
+        Set<Integer> selectedIndices = getSelectedIndices(availableItems);
+        return new SelectionItemAdapter(availableItems, selectionListener, selectedIndices);
+    }
+
+    private ImmutableList<SelectionUIFormItem> getAvailableItemsInOrder() {
+        ImmutableList.Builder<SelectionUIFormItem> selectionItemsBuilder = new ImmutableList.Builder<>();
+        for (Entry<TrackingSection, Set<TrackingItem>> entry : viewModel.getAvailableElements().getValue().entrySet()) {
+            selectionItemsBuilder.add(entry.getKey());
+            selectionItemsBuilder.addAll(entry.getValue());
+        }
+
+        return selectionItemsBuilder.build();
+    }
+
+    private Set<Integer> getSelectedIndices(@NonNull ImmutableList<SelectionUIFormItem> availableItems) {
+        Set<String> selectedIdentifiers = viewModel.getActiveElementsById().getValue().keySet();
+        Set<Integer> selectedIndices = new HashSet<>();
+        for (int i = 0; i < availableItems.size(); i++) {
+            if (selectedIdentifiers.contains(availableItems.get(i).getIdentifier())) {
+                selectedIndices.add(i);
             }
-        });
+        }
+
+        return selectedIndices;
     }
 
     @Override

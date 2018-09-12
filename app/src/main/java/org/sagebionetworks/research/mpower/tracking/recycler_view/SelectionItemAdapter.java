@@ -8,12 +8,9 @@ import android.view.ViewGroup;
 import com.google.common.collect.ImmutableList;
 
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.SelectionUIFormItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
-import org.sagebionetworks.research.mpower.tracking.recycler_view.SelectionItemViewHolder.SelectionListener;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
 import java.util.Map;
@@ -26,17 +23,22 @@ import java.util.Set;
 public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemViewHolder> {
     private final ImmutableList<SelectionUIFormItem> selectionItems;
     private final SelectionItemViewHolder.SelectionListener selectionListener;
+    private final Set<Integer> selectedIndices;
 
-    public SelectionItemAdapter(@NonNull Map<TrackingSection, Set<TrackingItem>> selectionItems,
-            @NonNull SelectionItemViewHolder.SelectionListener selectionListener) {
+    public SelectionItemAdapter(@NonNull ImmutableList<SelectionUIFormItem> selectionItems,
+            @NonNull SelectionItemViewHolder.SelectionListener selectionListener,
+            @NonNull Set<Integer> selectedIndices) {
         this.selectionListener = selectionListener;
-        ImmutableList.Builder<SelectionUIFormItem> selectionItemsBuilder = new ImmutableList.Builder<>();
-        for (Entry<TrackingSection, Set<TrackingItem>> entry : selectionItems.entrySet()) {
-            selectionItemsBuilder.add(entry.getKey());
-            selectionItemsBuilder.addAll(entry.getValue());
-        }
+        this.selectedIndices = selectedIndices;
+        this.selectionItems = selectionItems;
+    }
 
-        this.selectionItems = selectionItemsBuilder.build();
+    public void toggleSelected(int position) {
+        if (!selectedIndices.contains(position)) {
+            selectedIndices.add(position);
+        } else {
+            selectedIndices.remove(position);
+        }
     }
 
     @NonNull
@@ -55,7 +57,8 @@ public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemView
             holder.setContent(trackingSection);
         } else if (selectionUIFormItem instanceof TrackingItem) {
             TrackingItem trackingItem = (TrackingItem)selectionUIFormItem;
-            holder.setContent(trackingItem);
+            boolean selected = selectedIndices.contains(position);
+            holder.setContent(trackingItem, selected, position);
         }
     }
 

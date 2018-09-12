@@ -28,7 +28,7 @@ import java.util.Calendar;
  * A subclass of LoggingFragment specific to the Symptoms task.
  */
 public class SymptomLoggingFragment extends
-        LoggingFragment<SimpleTrackingItemConfig, SymptomLog, SymptomTrackingTaskViewModel> {
+        LoggingFragment<SimpleTrackingItemConfig, SymptomLog, SymptomTrackingTaskViewModel, SymptomsLoggingItemAdapter> {
     public static final String SYMPTOM_LOGGING_FRAGMENT_TAG = "symptomLoggingFragment";
 
     @NonNull
@@ -47,7 +47,7 @@ public class SymptomLoggingFragment extends
 
     @NonNull
     @Override
-    public Adapter<?> initializeAdapter() {
+    public SymptomsLoggingItemAdapter initializeAdapter() {
         SymptomsLoggingItemViewHolder.SymptomsLoggingListener symptomsLoggingListener
                 = new SymptomsLoggingItemViewHolder.SymptomsLoggingListener() {
             @Override
