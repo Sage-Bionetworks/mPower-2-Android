@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView.Adapter;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import com.google.common.collect.ImmutableList;
 
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.model.SelectionUIFormItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
@@ -67,19 +69,9 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
             adapter.notifyItemChanged(position);
         };
 
-        ImmutableList<SelectionUIFormItem> availableItems = getAvailableItemsInOrder();
+        ImmutableList<SelectionUIFormItem> availableItems = ImmutableList.copyOf(SortUtil.getAvailableElementsSorted(viewModel.getAvailableElements().getValue()));
         Set<Integer> selectedIndices = getSelectedIndices(availableItems);
         return new SelectionItemAdapter(availableItems, selectionListener, selectedIndices);
-    }
-
-    private ImmutableList<SelectionUIFormItem> getAvailableItemsInOrder() {
-        ImmutableList.Builder<SelectionUIFormItem> selectionItemsBuilder = new ImmutableList.Builder<>();
-        for (Entry<TrackingSection, Set<TrackingItem>> entry : viewModel.getAvailableElements().getValue().entrySet()) {
-            selectionItemsBuilder.add(entry.getKey());
-            selectionItemsBuilder.addAll(entry.getValue());
-        }
-
-        return selectionItemsBuilder.build();
     }
 
     private Set<Integer> getSelectedIndices(@NonNull ImmutableList<SelectionUIFormItem> availableItems) {

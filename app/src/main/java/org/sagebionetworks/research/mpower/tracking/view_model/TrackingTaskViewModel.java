@@ -202,20 +202,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     // endregion
 
     // region Configuration
-
-    /**
-     * Returns the set of active elements sorted in alphabetical order based on identifier.
-     *
-     * @return the set of active elements sorted in alphabetical order based on identifier.
-     */
-    public LiveData<Set<ConfigType>> getActiveElementsSorted() {
-        return Transformations.map(activeElementsById, elements -> {
-            Set<ConfigType> result = new TreeSet<>((o1, o2) -> o1.getIdentifier().compareTo(o2.getIdentifier()));
-            result.addAll(activeElementsById.getValue().values());
-            return result;
-        });
-    }
-
     /**
      * Returns a map from identifier to config for the active elements in view model.
      *

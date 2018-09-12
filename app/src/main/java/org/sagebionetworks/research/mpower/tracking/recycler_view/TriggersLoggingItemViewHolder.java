@@ -17,54 +17,43 @@ import org.threeten.bp.Instant;
 /**
  * View Holder for the Logging Items from the Triggers Task.
  */
-public class TriggersLoggingItemViewHolder extends ViewHolder implements LifecycleOwner{
+public class TriggersLoggingItemViewHolder extends ViewHolder {
     public interface TriggersLoggingListener {
-        void recordButtonPressed(@NonNull SimpleTrackingItemConfig config);
+        void recordButtonPressed(@NonNull SimpleTrackingItemConfig config, int position);
 
-        void undoButtonPressed(@NonNull SimpleTrackingItemConfig config);
-
-        LiveData<SimpleTrackingItemLog> getLog(@NonNull SimpleTrackingItemConfig config);
+        void undoButtonPressed(@NonNull SimpleTrackingItemConfig config, int position);
     }
 
     private TriggersLoggingUIFormItemWidget widget;
     private SimpleTrackingItemConfig config;
     private TriggersLoggingListener triggersLoggingListener;
-    private Lifecycle lifecycle;
+    private int position;
 
     public TriggersLoggingItemViewHolder(final TriggersLoggingUIFormItemWidget itemView,
-            final TriggersLoggingListener triggersLoggingListener, final Lifecycle lifecycle) {
+            final TriggersLoggingListener triggersLoggingListener) {
         super(itemView);
         widget = itemView;
-        this.lifecycle = lifecycle;
         this.triggersLoggingListener = triggersLoggingListener;
     }
 
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return lifecycle;
-    }
-
-    public void setContent(@NonNull SimpleTrackingItemConfig config) {
+    public void setContent(@NonNull SimpleTrackingItemConfig config, boolean recorded, int position) {
         this.config = config;
-        boolean logged = triggersLoggingListener.getLog(config).getValue() != null;
-        widget.setLogged(logged);
+        this.position = position;
+        updateRecorded(recorded);
         widget.getTitle().setText(config.getTrackingItem().getIdentifier());
         setRecordButtonListener();
         setUndoButtonListener();
-        setLogObservers(config.getTrackingItem());
     }
 
-    private void setLogObservers(@NonNull TrackingItem trackingItem) {
-        final LiveData<SimpleTrackingItemLog> logLiveData = triggersLoggingListener.getLog(config);
-        logLiveData.observe(this,  log -> widget.setLogged(log != null));
+    private void updateRecorded(boolean recorded) {
+        widget.setLogged(recorded);
     }
 
     private void setRecordButtonListener() {
-        widget.getRecordButton().setOnClickListener(view -> triggersLoggingListener.recordButtonPressed(config));
+        widget.getRecordButton().setOnClickListener(view -> triggersLoggingListener.recordButtonPressed(config, position));
     }
 
     private void setUndoButtonListener() {
-        this.widget.getUndoButton().setOnClickListener(view -> triggersLoggingListener.undoButtonPressed(config));
+        this.widget.getUndoButton().setOnClickListener(view -> triggersLoggingListener.undoButtonPressed(config, position));
     }
 }
