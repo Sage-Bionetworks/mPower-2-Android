@@ -239,7 +239,7 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     public LiveData<Set<ConfigType>> getActiveElementsSorted() {
         return Transformations.map(activeElementsById, elements -> {
             Set<ConfigType> result = new TreeSet<>((o1, o2) -> o1.getIdentifier().compareTo(o2.getIdentifier()));
-            result.addAll(elements.values());
+            result.addAll(activeElementsById.getValue().values());
             return result;
         });
     }
@@ -252,19 +252,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     @NonNull
     public LiveData<Map<String, ConfigType>> getActiveElementsById() {
         return activeElementsById;
-    }
-
-    /**
-     * Returns a LiveData containing the Config with the given identifier or null if there is no Config with the given
-     * identifier.
-     *
-     * @param identifier
-     *         the identifier of the Config to get.
-     * @return a LiveData containing the Config with the given identifier or null if there is no Config with the given
-     *         identifier.
-     */
-    public LiveData<ConfigType> getActiveElement(@NonNull String identifier) {
-        return Transformations.map(activeElementsById, elements -> elements.get(identifier));
     }
     // endregion
 
@@ -303,16 +290,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      */
     public boolean isLogged(@NonNull String identifier) {
         return loggedElementsById.getValue().containsKey(identifier);
-    }
-
-    /**
-     * Returns the log for the given identifier, or null if no such log exists.
-     *
-     * @return the log for the given identifier, or null if no such log exists.
-     */
-    @Nullable
-    public LogType getLog(@NonNull String identifier) {
-        return loggedElementsById.getValue().get(identifier);
     }
 
     /**

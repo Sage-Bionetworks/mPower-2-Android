@@ -12,6 +12,7 @@ import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.SelectionUIFormItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
+import org.sagebionetworks.research.mpower.tracking.recycler_view.SelectionItemViewHolder.SelectionListener;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
@@ -24,13 +25,11 @@ import java.util.Set;
  */
 public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemViewHolder> {
     private final ImmutableList<SelectionUIFormItem> selectionItems;
-    private final TrackingTaskViewModel<?, ?> viewModel;
-    private final TrackingFragment<?, ?, ?> trackingFragment;
+    private final SelectionItemViewHolder.SelectionListener selectionListener;
 
     public SelectionItemAdapter(@NonNull Map<TrackingSection, Set<TrackingItem>> selectionItems,
-            @NonNull TrackingTaskViewModel<?, ?> viewModel, TrackingFragment<?, ?, ?> trackingFragment) {
-        this.viewModel = viewModel;
-        this.trackingFragment = trackingFragment;
+            @NonNull SelectionItemViewHolder.SelectionListener selectionListener) {
+        this.selectionListener = selectionListener;
         ImmutableList.Builder<SelectionUIFormItem> selectionItemsBuilder = new ImmutableList.Builder<>();
         for (Entry<TrackingSection, Set<TrackingItem>> entry : selectionItems.entrySet()) {
             selectionItemsBuilder.add(entry.getKey());
@@ -45,12 +44,12 @@ public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemView
     public SelectionItemViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
         SelectionUIFormItemWidget widget = (SelectionUIFormItemWidget) LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.mpower2_selection_view_holder, parent, false);
-        return new SelectionItemViewHolder(widget, this.viewModel, this.trackingFragment);
+        return new SelectionItemViewHolder(widget, selectionListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final SelectionItemViewHolder holder, final int position) {
-        SelectionUIFormItem selectionUIFormItem = this.selectionItems.get(position);
+        SelectionUIFormItem selectionUIFormItem = selectionItems.get(position);
         if (selectionUIFormItem instanceof TrackingSection) {
             TrackingSection trackingSection = (TrackingSection)selectionUIFormItem;
             holder.setContent(trackingSection);
@@ -62,6 +61,6 @@ public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemView
 
     @Override
     public int getItemCount() {
-        return this.selectionItems.size();
+        return selectionItems.size();
     }
 }

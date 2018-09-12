@@ -1,26 +1,22 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RadioButton;
 
 import org.sagebionetworks.research.mpower.MPowerRadioButton;
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.tracking.fragment.AddNoteFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.TimePickerFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.SymptomsLoggingUIFormItemWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +24,6 @@ import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.temporal.ChronoUnit;
 import org.threeten.bp.zone.ZoneRulesException;
 
 import java.util.List;
@@ -36,28 +31,47 @@ import java.util.List;
 /**
  * View Holder for the Logging Items in the Symptoms task.
  */
-public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
+public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder implements LifecycleOwner {
+    public interface SymptomsLoggingListener {
+        void onSeverityChanged(@NonNull TrackingItem trackingItem, int severity);
+
+        void onDurationButtonPressed(@NonNull TrackingItem trackingItem);
+
+        void onTimeButtonPressed(@NonNull TrackingItem trackingItem);
+
+        void onMedicationTimingChanged(@NonNull TrackingItem trackingItem, @NonNull String medicationTiming);
+
+        void onNoteButtonPressed(@NonNull TrackingItem trackingItem);
+
+        LiveData<SymptomLog> getSymptomLogData(@NonNull TrackingItem trackingItem);
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SymptomsLoggingItemViewHolder.class);
 
     private static final float FULL_ALPHA = 1.0f;
 
     private static final float FADED_ALPHA = .35f;
 
-    private TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel;
-
     private SymptomsLoggingUIFormItemWidget widget;
-
-    private SymptomLoggingFragment symptomLoggingFragment;
 
     private RadioButton previousSelectedSeverityButton;
 
-    public SymptomsLoggingItemViewHolder(final SymptomsLoggingUIFormItemWidget itemView, final
-    TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel,
-            final SymptomLoggingFragment symptomLoggingFragment) {
+    private Lifecycle lifecycle;
+
+    private SymptomsLoggingListener symptomLoggingListener;
+
+    public SymptomsLoggingItemViewHolder(final SymptomsLoggingUIFormItemWidget itemView,
+            final Lifecycle lifecycle, final SymptomsLoggingListener symptomLoggingListener) {
         super(itemView);
         this.widget = itemView;
-        this.viewModel = viewModel;
-        this.symptomLoggingFragment = symptomLoggingFragment;
+        this.lifecycle = lifecycle;
+        this.symptomLoggingListener = symptomLoggingListener;
+    }
+
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle() {
+        return lifecycle;
     }
 
     public void setContent(@NonNull SimpleTrackingItemConfig config) {
@@ -84,7 +98,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setLogObservers(@NonNull TrackingItem trackingItem) {
-        final LiveData<SymptomLog> logLiveData = this.viewModel.getLoggedElement(trackingItem.getIdentifier());
+        final LiveData<SymptomLog> logLiveData = symptomLoggingListener.getSymptomLogData(trackingItem);
         final LiveData<Integer> severityLiveData = Transformations
                 .map(logLiveData, log -> {
                     if (log != null) {
@@ -94,7 +108,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
                     return null;
                 });
 
-        severityLiveData.observe(this.symptomLoggingFragment, this::updateSeverityUI);
+        severityLiveData.observe(this, this::updateSeverityUI);
         final LiveData<Instant> timestampLiveData = Transformations
                 .map(logLiveData, log -> {
                     if (log != null) {
@@ -104,7 +118,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
                     return null;
                 });
 
-        timestampLiveData.observe(this.symptomLoggingFragment, this::updateTimestampUI);
+        timestampLiveData.observe(this, this::updateTimestampUI);
         final LiveData<String> durationLiveData = Transformations
                 .map(logLiveData, log -> {
                     if (log != null) {
@@ -114,7 +128,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
                     return null;
                 });
 
-        durationLiveData.observe(this.symptomLoggingFragment, this::updateDurationUI);
+        durationLiveData.observe(this, this::updateDurationUI);
         final LiveData<String> medicationTimingLiveData = Transformations
                 .map(logLiveData, log -> {
                     if (log != null) {
@@ -124,89 +138,31 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
                     return null;
                 });
 
-        medicationTimingLiveData.observe(this.symptomLoggingFragment, this::updateMedicationTimingUI);
+        medicationTimingLiveData.observe(this, this::updateMedicationTimingUI);
     }
 
     private void setSeverityButtonListeners(@NonNull TrackingItem trackingItem) {
-        List<RadioButton> severityButtons = this.widget.getSeverityButtons();
+        List<RadioButton> severityButtons = widget.getSeverityButtons();
         for (int i = 0; i < severityButtons.size(); i++) {
             RadioButton severityButton = severityButtons.get(i);
             final int copy = i;
-            severityButton.setOnClickListener(view -> {
-                SymptomLog log = this.getPreviousLogOrInstantiate(trackingItem).toBuilder()
-                        .setSeverity(copy)
-                        .build();
-                this.viewModel.addLoggedElement(log);
-            });
+            severityButton.setOnClickListener(view -> symptomLoggingListener.onSeverityChanged(trackingItem, copy));
         }
     }
 
     private void setTimeButtonListener(@NonNull TrackingItem trackingItem) {
-        this.widget.getTimeButton().setOnClickListener(view -> {
-            SymptomLog previousLog = this.viewModel.getLog(trackingItem.getIdentifier());
-            TimePickerFragment timePickerFragment = new TimePickerFragment();
-            timePickerFragment.setOnTimeSetListener((timePickerView, hour, minute) -> {
-                ZoneId zoneId;
-                try {
-                    zoneId = ZoneId.systemDefault();
-                } catch (ZoneRulesException e) {
-                    // UTC time.
-                    zoneId = ZoneId.of("Z");
-                }
-
-                Instant startOfDay = ZonedDateTime.ofInstant(Instant.now(), zoneId).toLocalDate().atStartOfDay(zoneId)
-                        .toInstant();
-                Instant selectedInstant = startOfDay.plus(hour, ChronoUnit.HOURS).plus(minute, ChronoUnit.MINUTES);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("View holder received time selection of: " + selectedInstant);
-                }
-
-                SymptomLog log = createLogIfNull(previousLog, trackingItem).toBuilder()
-                        .setTimestamp(selectedInstant)
-                        .build();
-                this.viewModel.addLoggedElement(log);
-            });
-
-            FragmentManager fragmentManager = this.symptomLoggingFragment.getFragmentManager();
-            if (fragmentManager != null) {
-                timePickerFragment.show(fragmentManager, null);
-            } else {
-                LOGGER.warn("TimePickerFragment should have been launched but FragmentManager was null.");
-            }
-        });
+        widget.getTimeButton().setOnClickListener(view -> symptomLoggingListener.onTimeButtonPressed(trackingItem));
     }
 
     private void setDurationButtonListener(@NonNull TrackingItem trackingItem) {
-        this.widget.getDurationButton().setOnClickListener(view -> {
-            String title = this.widget.getResources().getString(R.string.duration_fragment_title);
-            String detail = this.widget.getResources().getString(R.string.duration_fragment_detail);
-            final SymptomLog previousLog = this.viewModel.getLog(trackingItem.getIdentifier());
-            String previousSelection = previousLog != null ? previousLog.getDuration() : null;
-            DurationFragment durationFragment = DurationFragment.newInstance(title, detail, previousSelection);
-            durationFragment.setOnDurationChangeListener(duration -> {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Duration received by view holder: " + duration);
-                }
-
-                SymptomLog log = createLogIfNull(this.viewModel.getLog(trackingItem.getIdentifier()), trackingItem).toBuilder()
-                        .setDuration(duration)
-                        .build();
-                this.viewModel.addLoggedElement(log);
-            });
-
-            this.symptomLoggingFragment.addChildFragmentOnTop(durationFragment,
-                    SymptomLoggingFragment.SYMPTOM_LOGGING_FRAGMENT_TAG);
-        });
+        widget.getDurationButton().setOnClickListener(view -> symptomLoggingListener.onDurationButtonPressed(trackingItem));
     }
 
     private void setPreMedsButtonListener(@NonNull TrackingItem trackingItem) {
         MPowerRadioButton preMedsButton = this.widget.getPreMedsButton();
         preMedsButton.setOnClickListener(view -> {
             String medicationTiming = preMedsButton.getTitle();
-            SymptomLog log = this.getPreviousLogOrInstantiate(trackingItem).toBuilder()
-                    .setMedicationTiming(medicationTiming)
-                    .build();
-            this.viewModel.addLoggedElement(log);
+            symptomLoggingListener.onMedicationTimingChanged(trackingItem, medicationTiming);
         });
     }
 
@@ -214,41 +170,12 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
         MPowerRadioButton postMedsButton = this.widget.getPostMedsButton();
         postMedsButton.setOnClickListener(view -> {
             String medicationTiming = postMedsButton.getTitle();
-            SymptomLog log = this.getPreviousLogOrInstantiate(trackingItem).toBuilder()
-                    .setMedicationTiming(medicationTiming)
-                    .build();
-            this.viewModel.addLoggedElement(log);
+            symptomLoggingListener.onMedicationTimingChanged(trackingItem, medicationTiming);
         });
     }
 
     private void setAddNoteButtonListener(@NonNull TrackingItem trackingItem) {
-        this.widget.getAddNoteButton().setOnClickListener(view -> {
-            String title = this.widget.getResources().getString(R.string.add_note_fragment_title);
-            String text = "";
-            final SymptomLog previousLog = this.viewModel.getLog(trackingItem.getIdentifier());
-            String previousNote = previousLog != null ? previousLog.getNote() : null;
-            AddNoteFragment addNoteFragment = AddNoteFragment.newInstance(title, text, previousNote);
-            addNoteFragment.setOnNoteChangeListener(note -> {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Note received by view holder: " + note);
-                }
-
-                SymptomLog log = createLogIfNull(previousLog, trackingItem).toBuilder()
-                        .setNote(note)
-                        .build();
-                this.viewModel.addLoggedElement(log);
-            });
-
-            this.symptomLoggingFragment.addChildFragmentOnTop(addNoteFragment,
-                    SymptomLoggingFragment.SYMPTOM_LOGGING_FRAGMENT_TAG);
-        });
-    }
-
-    @NonNull
-    private SymptomLog getPreviousLogOrInstantiate(@NonNull TrackingItem trackingItem) {
-        SymptomLog result = this.viewModel.getLog(trackingItem.getIdentifier());
-        result = createLogIfNull(result, trackingItem);
-        return result;
+        this.widget.getAddNoteButton().setOnClickListener(view -> symptomLoggingListener.onNoteButtonPressed(trackingItem));
     }
 
     private void updateMedicationTimingUI(String medicationTiming) {
@@ -315,19 +242,5 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
             newlySelectedSeverityButton.setChecked(true);
             this.previousSelectedSeverityButton = newlySelectedSeverityButton;
         }
-    }
-
-
-    @NonNull
-    private static SymptomLog createLogIfNull(@Nullable SymptomLog symptomLog, @NonNull TrackingItem trackingItem) {
-        if (symptomLog != null) {
-            return symptomLog;
-        }
-
-        return SymptomLog.builder()
-                .setIdentifier(trackingItem.getIdentifier())
-                .setText(trackingItem.getIdentifier())
-                .setTimestamp(Instant.now())
-                .build();
     }
 }

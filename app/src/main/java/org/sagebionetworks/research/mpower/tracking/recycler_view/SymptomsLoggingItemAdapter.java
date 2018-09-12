@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
+import android.arch.lifecycle.Lifecycle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
@@ -19,15 +20,16 @@ import java.util.List;
  * Adapter which produces Logging Items for the Symptoms Task.
  */
 public class SymptomsLoggingItemAdapter extends Adapter<SymptomsLoggingItemViewHolder> {
-    private TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel;
     private List<SimpleTrackingItemConfig> configs;
-    private SymptomLoggingFragment symptomLoggingFragment;
+    private SymptomsLoggingItemViewHolder.SymptomsLoggingListener symptomsLoggingListener;
+    private Lifecycle lifecycle;
 
-    public SymptomsLoggingItemAdapter(TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel,
-            SymptomLoggingFragment symptomLoggingFragment) {
-        this.viewModel = viewModel;
-        this.configs = new ArrayList<>(viewModel.getActiveElementsSorted().getValue());
-        this.symptomLoggingFragment = symptomLoggingFragment;
+    public SymptomsLoggingItemAdapter(
+            SymptomsLoggingItemViewHolder.SymptomsLoggingListener symptomsLoggingListener,
+            Lifecycle lifecycle, List<SimpleTrackingItemConfig> configs) {
+        this.lifecycle = lifecycle;
+        this.symptomsLoggingListener = symptomsLoggingListener;
+        this.configs = configs;
     }
 
     @NonNull
@@ -35,7 +37,7 @@ public class SymptomsLoggingItemAdapter extends Adapter<SymptomsLoggingItemViewH
     public SymptomsLoggingItemViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
         SymptomsLoggingUIFormItemWidget widget = (SymptomsLoggingUIFormItemWidget)
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.mpower2_symptoms_logging_view_holder, parent,false);
-        return new SymptomsLoggingItemViewHolder(widget, this.viewModel, this.symptomLoggingFragment);
+        return new SymptomsLoggingItemViewHolder(widget, lifecycle, symptomsLoggingListener);
     }
 
     @Override
