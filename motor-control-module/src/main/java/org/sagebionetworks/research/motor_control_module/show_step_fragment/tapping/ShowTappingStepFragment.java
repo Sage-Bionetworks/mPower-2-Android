@@ -112,8 +112,8 @@ public class ShowTappingStepFragment extends
         this.stepViewBinding.getRootView().getViewTreeObserver()
                 .addOnGlobalLayoutListener(this::updateButtonBounds);
         this.nextButtonTitle = this.getResources().getString(this.showStepViewModel.getNextButtonLabel());
-        this.nextButtonTitle.replaceAll(HandStepHelper.JSON_PLACEHOLDER,
-                HandStepHelper.whichHand(this.stepView.getIdentifier()).toString());
+        this.nextButtonTitle = this.nextButtonTitle.replaceAll(HandStepHelper.JSON_PLACEHOLDER,
+                HandStepHelper.whichHand(this.stepView.getIdentifier()).getOtherHand().toString());
         this.showStepViewModel.isExpired().observe(this, expired -> {
             if (expired != null && expired) {
                 this.tappingFinished();

@@ -1,6 +1,5 @@
 package org.sagebionetworks.research.mpower.inject;
 
-import static org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModelFactory.SYMPTOM_LOGGING_TYPE_KEY;
 
 import com.google.gson.TypeAdapterFactory;
 
@@ -8,6 +7,8 @@ import org.sagebionetworks.research.domain.inject.GsonModule;
 import org.sagebionetworks.research.domain.inject.StepModule.StepClassKey;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule.ShowStepFragmentFactory;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule.StepViewKey;
+import org.sagebionetworks.research.mpower.Tasks;
+import org.sagebionetworks.research.mpower.tracking.fragment.MedicationSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TriggersSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStep;
@@ -51,18 +52,21 @@ public abstract class TrackingStepModule {
                 throw new IllegalArgumentException("Provided StepView " + stepView + " is not a TrackingStepView");
             }
 
-            TrackingStepView trackingStepView = (TrackingStepView)stepView;
-            String selectionType = trackingStepView.getSelectionInfo().getType();
-            String loggingType = trackingStepView.getLoggingInfo().getType();
-            if (selectionType == null && loggingType == null) {
-                return TriggersSelectionFragment.newInstance(trackingStepView);
-            } else if (selectionType == null && loggingType.equals(SYMPTOM_LOGGING_TYPE_KEY)) {
-                return SymptomSelectionFragment.newInstance(trackingStepView);
+            TrackingStepView trackingStepView = (TrackingStepView) stepView;
+            String whichTask = trackingStepView.whichTask();
+            if (whichTask != null) {
+                switch (whichTask) {
+                    case Tasks.TRIGGERS:
+                        return TriggersSelectionFragment.newInstance(trackingStepView);
+                    case Tasks.MEDICATION:
+                        return MedicationSelectionFragment.newInstance(trackingStepView);
+                    case Tasks.SYMPTOMS:
+                        return SymptomSelectionFragment.newInstance(trackingStepView);
+                }
             }
 
             throw new IllegalArgumentException(
-                    "Cannot instantiate fragment from TrackingStepView with selectionType: " + selectionType + " and loggingType: "
-                            + loggingType);
+                    "Cannot create fragment for TrackingStepView since TrackingStepView doesn't correspond to one of the known task formats");
         });
     }
 }

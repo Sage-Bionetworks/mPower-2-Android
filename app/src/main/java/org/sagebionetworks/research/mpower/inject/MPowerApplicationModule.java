@@ -31,20 +31,9 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
 
-@Module(includes = {PerformTaskModule.class, MotorControlStepModule.class, TrackingStepModule.class, AppDataModule.class})
+@Module(includes = {PerformTaskModule.class, MotorControlStepModule.class, TrackingStepModule.class,
+        AppDataModule.class, TrackingFragmentsModule.class})
 public abstract class MPowerApplicationModule {
-    @ContributesAndroidInjector
-    abstract TriggersSelectionFragment contributeTriggersSelectionFragmentInjector();
-
-    @ContributesAndroidInjector
-    abstract TriggersLoggingFragment contributeTriggersLoggingFragmentInjector();
-
-    @ContributesAndroidInjector
-    abstract SymptomSelectionFragment contributeSymptomSelectionFragmentInjector();
-
-    @ContributesAndroidInjector
-    abstract SymptomLoggingFragment contributeSymptomLogginFragmentInjector();
-
     @ContributesAndroidInjector
     abstract ExternalIdSignInActivity contributeExternalIdSignInActivityInjector();
 
@@ -63,9 +52,6 @@ public abstract class MPowerApplicationModule {
 
     @ContributesAndroidInjector
     abstract DurationFragment contributeDurationFragmentInjector();
-
-    @ContributesAndroidInjector
-    abstract TimePickerFragment contributeTimePickerFragmentInjector();
 
     @ContributesAndroidInjector
     abstract StudyBurstActivity contributeStudyBurstActivityInjector();
