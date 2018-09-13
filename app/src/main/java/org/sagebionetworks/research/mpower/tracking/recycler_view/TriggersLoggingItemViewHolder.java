@@ -1,7 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
@@ -33,7 +32,7 @@ public class TriggersLoggingItemViewHolder extends ViewHolder {
 
     public void setContent(@NonNull SimpleTrackingItemConfig config) {
         this.config = config;
-        boolean logged = this.viewModel.isLogged(config);
+        boolean logged = this.viewModel.isLogged(config.getIdentifier());
         this.widget.setLogged(logged);
         this.widget.getTitle().setText(config.getTrackingItem().getIdentifier());
         this.setRecordButtonListener();
@@ -48,8 +47,11 @@ public class TriggersLoggingItemViewHolder extends ViewHolder {
 
     private void setRecordButtonListener() {
         this.widget.getRecordButton().setOnClickListener((view) -> {
-            SimpleTrackingItemLog log = SimpleTrackingItemLog.builder().setTrackingItem(this.config.getTrackingItem())
-                    .setTimestamp(Instant.now()).build();
+            SimpleTrackingItemLog log = SimpleTrackingItemLog.builder()
+                    .setIdentifier(this.config.getIdentifier())
+                    .setText(this.config.getIdentifier())
+                    .setTimestamp(Instant.now())
+                    .build();
             this.viewModel.addLoggedElement(log);
         });
     }

@@ -143,7 +143,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     private void setTimeButtonListener(@NonNull TrackingItem trackingItem) {
         this.widget.getTimeButton().setOnClickListener(view -> {
-            SymptomLog previousLog = this.viewModel.getLog(trackingItem);
+            SymptomLog previousLog = this.viewModel.getLog(trackingItem.getIdentifier());
             TimePickerFragment timePickerFragment = new TimePickerFragment();
             timePickerFragment.setOnTimeSetListener((timePickerView, hour, minute) -> {
                 ZoneId zoneId;
@@ -180,7 +180,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
         this.widget.getDurationButton().setOnClickListener(view -> {
             String title = this.widget.getResources().getString(R.string.duration_fragment_title);
             String detail = this.widget.getResources().getString(R.string.duration_fragment_detail);
-            final SymptomLog previousLog = this.viewModel.getLog(trackingItem);
+            final SymptomLog previousLog = this.viewModel.getLog(trackingItem.getIdentifier());
             String previousSelection = previousLog != null ? previousLog.getDuration() : null;
             DurationFragment durationFragment = DurationFragment.newInstance(title, detail, previousSelection);
             durationFragment.setOnDurationChangeListener(duration -> {
@@ -188,7 +188,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
                     LOGGER.debug("Duration received by view holder: " + duration);
                 }
 
-                SymptomLog log = createLogIfNull(this.viewModel.getLog(trackingItem), trackingItem).toBuilder()
+                SymptomLog log = createLogIfNull(this.viewModel.getLog(trackingItem.getIdentifier()), trackingItem).toBuilder()
                         .setDuration(duration)
                         .build();
                 this.viewModel.addLoggedElement(log);
@@ -225,7 +225,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
         this.widget.getAddNoteButton().setOnClickListener(view -> {
             String title = this.widget.getResources().getString(R.string.add_note_fragment_title);
             String text = "";
-            final SymptomLog previousLog = this.viewModel.getLog(trackingItem);
+            final SymptomLog previousLog = this.viewModel.getLog(trackingItem.getIdentifier());
             String previousNote = previousLog != null ? previousLog.getNote() : null;
             AddNoteFragment addNoteFragment = AddNoteFragment.newInstance(title, text, previousNote);
             addNoteFragment.setOnNoteChangeListener(note -> {
@@ -246,7 +246,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     @NonNull
     private SymptomLog getPreviousLogOrInstantiate(@NonNull TrackingItem trackingItem) {
-        SymptomLog result = this.viewModel.getLog(trackingItem);
+        SymptomLog result = this.viewModel.getLog(trackingItem.getIdentifier());
         result = createLogIfNull(result, trackingItem);
         return result;
     }
@@ -324,6 +324,10 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
             return symptomLog;
         }
 
-        return SymptomLog.builder().setTrackingItem(trackingItem).setTimestamp(Instant.now()).build();
+        return SymptomLog.builder()
+                .setIdentifier(trackingItem.getIdentifier())
+                .setText(trackingItem.getIdentifier())
+                .setTimestamp(Instant.now())
+                .build();
     }
 }
