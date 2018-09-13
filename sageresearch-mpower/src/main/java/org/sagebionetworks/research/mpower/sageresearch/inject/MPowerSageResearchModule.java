@@ -45,7 +45,6 @@ import org.sagebionetworks.research.motor_control_module.inject.OverviewStepModu
 import org.sagebionetworks.research.motor_control_module.inject.TappingCompletionStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.TappingStepModule;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskActivity;
-import org.sagebionetworks.research.sageresearch_app_sdk.inject.SageResearchAppSDKModule;
 
 import dagger.Module;
 import dagger.android.AndroidInjectionModule;
