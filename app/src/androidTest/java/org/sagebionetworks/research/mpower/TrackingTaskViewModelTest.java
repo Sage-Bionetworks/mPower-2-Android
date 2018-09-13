@@ -297,7 +297,7 @@ public class TrackingTaskViewModelTest {
         Map<String, SimpleTrackingItemLog> loggedElements = this.viewModel.getLoggedElementsById().getValue();
         assertNotNull("Logged elements was unexpectedly null", loggedElements);
         assertTrue("Logged elements didn't contain item", this.viewModel.isLogged(item.getIdentifier()));
-        assertEquals("Unexpected log found for item", log, this.viewModel.getLog(item.getIdentifier()));
+        assertEquals("Unexpected log found for item", log, this.viewModel.getLoggedElement(item.getIdentifier()).getValue());
         assertTrue("Logged elements contained extra items", loggedElements.size() == 1);
     }
 
@@ -323,9 +323,9 @@ public class TrackingTaskViewModelTest {
         Map<String, SimpleTrackingItemLog> loggedElements = this.viewModel.getLoggedElementsById().getValue();
         assertNotNull("Logged elements was unexpectedly null", loggedElements);
         assertTrue("Logged elements didn't contain item", this.viewModel.isLogged(item1.getIdentifier()));
-        assertEquals("Unexpected log found for item", log1, this.viewModel.getLog(item1.getIdentifier()));
+        assertEquals("Unexpected log found for item", log1, this.viewModel.getLoggedElement(item1.getIdentifier()).getValue());
         assertTrue("Logged elements didn't contain item", this.viewModel.isLogged(item2.getIdentifier()));
-        assertEquals("Unexpected log found for item", log2, this.viewModel.getLog(item2.getIdentifier()));
+        assertEquals("Unexpected log found for item", log2, this.viewModel.getLoggedElement(item2.getIdentifier()).getValue());
         assertTrue("Logged elements contained extra items", loggedElements.size() == 2);
     }
 
@@ -368,7 +368,7 @@ public class TrackingTaskViewModelTest {
         assertNotNull("Logged elements was unexpectedly null", loggedElements);
         assertFalse("Logged elements still contained removed item", this.viewModel.isLogged(item1.getIdentifier()));
         assertTrue("Logged elements didn't contain item", this.viewModel.isLogged(item2.getIdentifier()));
-        assertEquals("Unexpected log found for item", log2, this.viewModel.getLog(item2.getIdentifier()));
+        assertEquals("Unexpected log found for item", log2, this.viewModel.getLoggedElement(item2.getIdentifier()).getValue());
         assertTrue("Logged elements contained extra items", loggedElements.size() == 1);
     }
 
@@ -396,7 +396,7 @@ public class TrackingTaskViewModelTest {
         assertNotNull("Logged elements was unexpectedly null", loggedElements);
         assertFalse("Logged elements still contained removed item", this.viewModel.isLogged(item2.getIdentifier()));
         assertTrue("Logged elements didn't contain item", this.viewModel.isLogged(item1.getIdentifier()));
-        assertEquals("Unexpected log found for item", log1, this.viewModel.getLog(item1.getIdentifier()));
+        assertEquals("Unexpected log found for item", log1, this.viewModel.getLoggedElement(item1.getIdentifier()).getValue());
         assertTrue("Logged elements contained extra items", loggedElements.size() == 1);
     }
     // endregion
