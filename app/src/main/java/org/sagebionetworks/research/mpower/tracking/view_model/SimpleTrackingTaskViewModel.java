@@ -37,6 +37,6 @@ public class SimpleTrackingTaskViewModel extends
 
     @Override
     protected SimpleTrackingItemConfig instantiateConfigFromSelection(@NonNull final TrackingItem item) {
-        return SimpleTrackingItemConfig.builder().setTrackingItem(item).build();
+        return SimpleTrackingItemConfig.builder().setIdentifier(item.getIdentifier()).setTrackingItem(item).build();
     }
 }
