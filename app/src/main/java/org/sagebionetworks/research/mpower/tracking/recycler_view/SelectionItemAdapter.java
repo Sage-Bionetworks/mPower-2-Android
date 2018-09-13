@@ -13,6 +13,7 @@ import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class SelectionItemAdapter extends RecyclerView.Adapter<SelectionItemView
             @NonNull SelectionItemViewHolder.SelectionListener selectionListener,
             @NonNull Set<Integer> selectedIndices) {
         this.selectionListener = selectionListener;
-        this.selectedIndices = selectedIndices;
+        this.selectedIndices = new HashSet<>(selectedIndices);
         this.selectionItems = selectionItems;
     }
 
