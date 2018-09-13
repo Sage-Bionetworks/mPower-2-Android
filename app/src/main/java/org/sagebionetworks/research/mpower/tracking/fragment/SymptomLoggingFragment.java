@@ -16,6 +16,8 @@ import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTra
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.SymptomTrackingTaskViewModel;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
@@ -34,6 +36,7 @@ import java.util.Map;
 public class SymptomLoggingFragment extends
         LoggingFragment<SimpleTrackingItemConfig, SymptomLog, SymptomTrackingTaskViewModel, SymptomsLoggingItemAdapter> {
     public static final String SYMPTOM_LOGGING_FRAGMENT_TAG = "symptomLoggingFragment";
+    private static final Logger LOGGER = LoggerFactory.getLogger(SymptomLoggingFragment.class);
 
     @NonNull
     public static SymptomLoggingFragment newInstance(@NonNull StepView stepView) {
@@ -94,6 +97,7 @@ public class SymptomLoggingFragment extends
                         zoneId = ZoneId.systemDefault();
                     } catch (ZoneRulesException e) {
                         // UTC time.
+                        LOGGER.warn("No system default timezone set, using UTC time.");
                         zoneId = ZoneId.of("Z");
                     }
 
