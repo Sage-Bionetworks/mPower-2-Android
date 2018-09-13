@@ -18,6 +18,7 @@ public class MedicationReviewViewHolder extends ViewHolder{
             @NonNull final MedicationReviewListener medicationReviewListener) {
         super(itemView);
         widget = itemView;
+        this.medicationReviewListener = medicationReviewListener;
     }
 
     public void setContent(@NonNull final MedicationConfig config, int position) {

@@ -1,10 +1,13 @@
 package org.sagebionetworks.research.mpower.tracking.view_model.configs;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
+
+import java.util.List;
 
 /**
  * Config specific to the medication task.

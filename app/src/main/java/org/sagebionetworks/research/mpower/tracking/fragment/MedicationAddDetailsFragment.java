@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.NumberPicker.OnValueChangeListener;
 
+import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
+import org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar.ActionButtonClickListener;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsViewHolder.MedicationAddDetailsListener;
@@ -42,8 +44,16 @@ public class MedicationAddDetailsFragment extends
        addMore.setText(R.string.medication_add_more);
        addMore.setOnClickListener(view -> {
            getFragmentManager().beginTransaction()
-                   .replace(((ViewGroup)this.getView().getParent()).getId(), MedicationSelectionFragment.newInstance(stepView))
+                   .replace(((ViewGroup)getView().getParent()).getId(), MedicationSelectionFragment.newInstance(stepView))
                    .commit();
+       });
+
+       navigationActionBar.setActionButtonClickListener(actionButton -> {
+           if (actionButton.getId() == R.id.rs2_step_navigation_action_forward) {
+               getFragmentManager().beginTransaction()
+                       .replace(((ViewGroup)getView().getParent()).getId(), MedicationReviewFragment.newInstance(stepView))
+                       .commit();
+           }
        });
 
        return result;
