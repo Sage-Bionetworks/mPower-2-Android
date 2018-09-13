@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.Size;
 import android.support.annotation.StringRes;
 
@@ -16,6 +17,7 @@ import org.sagebionetworks.research.motor_control_module.result.TappingResult;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.TappingButtonIdentifier;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.TappingSample;
 import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
+import org.sagebionetworks.research.motor_control_module.step.HandStepHelper.Hand;
 import org.sagebionetworks.research.motor_control_module.step_view.TappingStepView;
 import org.sagebionetworks.research.presentation.perform_task.PerformTaskViewModel;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowActiveUIStepViewModel;
@@ -146,10 +148,20 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
         }
 
         this.createSample(buttonIdentifier, eventTimeInUptimeMillis, xCoord, yCoord);
-        // update the tap count
-        Boolean expired = this.isExpired().getValue();
-        if (!buttonIdentifier.equals(TappingButtonIdentifier.NONE) && (expired == null || !expired)) {
-            this.hitButtonCount.setValue(this.hitButtonCount.getValue() + 1);
+        @TappingButtonIdentifier String nextButton = getNextButton(lastTappedButtonIdentifier.getValue(), buttonIdentifier);
+        if (nextButton != null && nextButton.equals(buttonIdentifier)) {
+            hitButtonCount.setValue(hitButtonCount.getValue() + 1);
+            lastTappedButtonIdentifier.setValue(nextButton);
+        }
+    }
+
+    @TappingButtonIdentifier
+    @Nullable
+    private String getNextButton(@TappingButtonIdentifier String previousButton, @NonNull @TappingButtonIdentifier String buttonIdentifier) {
+        if (previousButton != null) {
+            return previousButton.equals(TappingButtonIdentifier.LEFT) ? TappingButtonIdentifier.RIGHT : TappingButtonIdentifier.LEFT;
+        } else {
+            return !buttonIdentifier.equals(TappingButtonIdentifier.NONE) ? buttonIdentifier : null;
         }
     }
 
@@ -199,7 +211,8 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
         tappingResultBuilder
                 .setZonedEndTime(end)
                 .setEndTime(end.toInstant())
-                .setStepViewSize(this.viewSize)
+                .setStepViewSize(viewSize)
+                .setHitButtonCount(hitButtonCount.getValue())
                 .build();
 
         Result previousResult = this.findStepResult();

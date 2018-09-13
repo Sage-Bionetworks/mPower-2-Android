@@ -7,6 +7,7 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.SerializedName;
 
 import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.TappingSample;
@@ -15,7 +16,6 @@ import org.threeten.bp.ZonedDateTime;
 
 @AutoValue
 public abstract class TappingResult implements Result {
-    // TODO: switch to ImmutableIntArray @liujoshua a2018/08/30
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract TappingResult build();
@@ -27,6 +27,8 @@ public abstract class TappingResult implements Result {
         public abstract Builder setButtonBoundRight(@NonNull @Size(4) int[] buttonBounds);
 
         public abstract Builder setEndTime(@NonNull Instant endTime);
+
+        public abstract Builder setHitButtonCount(int hitButtonCount);
 
         public abstract Builder setIdentifier(@NonNull String identifier);
 
@@ -76,6 +78,14 @@ public abstract class TappingResult implements Result {
     public String getType() {
         return TYPE_KEY;
     }
+
+    /**
+     * Returns the number of buttons the user hit for this result.
+     *
+     * @return the number of buttons the user hit for this result.
+     */
+    @SerializedName("tapCount")
+    public abstract int getHitButtonCount();
 
     /**
      * Returns the list of tapping samples for this result.
