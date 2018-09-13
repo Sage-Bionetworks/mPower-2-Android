@@ -26,7 +26,7 @@ public class SymptomsLoggingItemAdapter extends Adapter<SymptomsLoggingItemViewH
     public SymptomsLoggingItemAdapter(TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> viewModel,
             SymptomLoggingFragment symptomLoggingFragment) {
         this.viewModel = viewModel;
-        this.configs = new ArrayList<>(viewModel.getActiveElements().getValue());
+        this.configs = new ArrayList<>(viewModel.getActiveElementsSorted().getValue());
         this.symptomLoggingFragment = symptomLoggingFragment;
     }
 

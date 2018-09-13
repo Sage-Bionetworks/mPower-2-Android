@@ -30,12 +30,13 @@ public class TrackingTaskViewModelFactory {
             @Override
             @SuppressWarnings("unchecked")
             public <T extends ViewModel> T create(@NonNull final Class<T> modelClass) {
+                // TODO rkolmos 09/07/2018 get the previous logging collection and pass it to the view model constructor.
                 String selectionType = trackingStepView.getSelectionInfo().getType();
                 String loggingType = trackingStepView.getLoggingInfo().getType();
                 if (selectionType == null && loggingType == null) {
-                    return (T) new SimpleTrackingTaskViewModel(trackingStepView);
+                    return (T) new SimpleTrackingTaskViewModel(trackingStepView, null);
                 } else if (selectionType == null && loggingType.equals(SYMPTOM_LOGGING_TYPE_KEY)) {
-                    return (T) new SymptomTrackingTaskViewModel(trackingStepView);
+                    return (T) new SymptomTrackingTaskViewModel(trackingStepView, null);
                 }
 
                 throw new IllegalArgumentException(
