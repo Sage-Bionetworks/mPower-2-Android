@@ -172,7 +172,9 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertNotNull(completionTask)
         assertEquals(STUDY_BURST_REMINDER, completionTask?.activityIdentifier())
 
-        assertNull(item.getActionBarItem(application))
+        assertNotNull(item.getActionBarItem(application))
+        assertNotNull("Study Burst", item.getActionBarItem(application)?.title)
+        assertNotNull("3 activities to do", item.getActionBarItem(application)?.detail)
         assertNull(item.getUnfinishedSchedule())
     }
 
