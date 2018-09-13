@@ -1,8 +1,14 @@
 package org.sagebionetworks.research.mpower.research
 
+import org.sagebionetworks.research.domain.task.TaskInfoBase
 import org.sagebionetworks.research.mpower.research.MpIdentifier.*
+import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
+import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
+import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroupObject
+import org.sagebionetworks.research.sageresearch.manager.TaskInfo
+import org.sagebionetworks.research.sageresearch.manager.TaskInfoObject
 import org.threeten.bp.LocalDateTime
 import java.util.Random
 
@@ -18,6 +24,7 @@ class DataSourceManager {
 
         val measuringGroup = ActivityGroupObject(
                 "Measuring", "Measuring",
+                tasks = setOf(Tapping, WalkAndBalance, Tremor),
                 activityIdentifiers = setOf(TAPPING, TREMOR, WALK_AND_BALANCE),
                 schedulePlanGuid = "3d898a6f-1ef2-4ece-9e9f-025d94bcd130")
 
@@ -44,6 +51,17 @@ class DataSourceManager {
             return installedGroups.firstOrNull { it.identifier == forIdentifier }
         }
     }
+}
+
+object MpTaskInfo {
+    val Tapping = TaskInfoObject(TAPPING, TAPPING,
+            imageName = "ic_finger_tapping", estimatedMinutes = 1)
+
+    val WalkAndBalance = TaskInfoObject(WALK_AND_BALANCE, WALK_AND_BALANCE,
+            imageName = "ic_walk_and_stand", estimatedMinutes = 6)
+
+    val Tremor = TaskInfoObject(TREMOR, TREMOR,
+            imageName = "ic_tremor", estimatedMinutes = 4)
 }
 
 data class CompletionTask(

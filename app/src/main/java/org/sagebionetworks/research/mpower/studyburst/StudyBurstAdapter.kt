@@ -1,50 +1,91 @@
 package org.sagebionetworks.research.mpower.studyburst
 
 import android.content.Context
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import kotlinx.android.synthetic.main.study_burst_cell.view.*
+import org.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.R
+import org.sagebionetworks.research.sageresearch.manager.TaskInfo
 
-class StudyBurstAdapter(val items : List<StudyBurstItem>?, val context: Context) : RecyclerView.Adapter<ViewHolder>() {
+class StudyBurstAdapter(context: Context, val items : List<StudyBurstTaskInfo>?) : RecyclerView.Adapter<ViewHolder>() {
+
+    var listener: StudyBurstAdapterListener? = null
+
+    private val layoutInflater = LayoutInflater.from(context)
+    private val estimatedTimeFormat = context.getString(R.string.task_info_estimated_time_label)
+    private val blackAndWhiteFilter: ColorMatrixColorFilter by lazy {
+        val matrix = ColorMatrix()
+        matrix.setSaturation(0f)
+        ColorMatrixColorFilter(matrix)
+    }
+    private val imageResMap: Map<String?, Int>? = items?.associateBy( { it.task.imageName }, {
+        ResUtils.getDrawableResourceId(context, it.task.imageName)
+    })
+    private val blackColor = ResourcesCompat.getColor(context.resources, R.color.black, null)
+    private val lightGrayColor = ResourcesCompat.getColor(context.resources, R.color.appLightGray, null)
 
     override fun getItemCount(): Int {
         return items?.size ?: 0
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(context).inflate(R.layout.study_burst_cell, parent, false))
+        return ViewHolder(layoutInflater.inflate(R.layout.study_burst_cell, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val sbi = items?.get(position)
-        if(sbi != null) {
-            holder.tvMessage.text = sbi.title
-            holder.tvDetails.text = sbi.detail
-            holder.tvNumber.text = context.getString(R.string.study_burst_cell_number_label, position)
-            if (sbi.active) {
-                if (sbi.completed) {
-                    holder.ivImage.setImageResource(sbi.completedImageResId)
-                } else {
-                    holder.ivImage.setImageResource(sbi.activeImageResId)
-                }
-                holder.tvMessage.setTextColor(context.getResources().getColor(R.color.black))
-                holder.tvDetails.setTextColor(context.getResources().getColor(R.color.black))
+        items?.get(position)?.let { item ->
+            holder.tvTitle.text = item.task.title
+            holder.tvDetails.text = estimatedTimeFormat.format(item.task.estimatedMinutes ?: 1)
+
+            val imageRes = imageResMap?.get(item.task.imageName) ?: 0
+            if (imageRes > 0) {
+                holder.ivImage.visibility = View.VISIBLE
+                holder.ivImage.setImageResource(imageRes)
             } else {
-                holder.ivImage.setImageResource(sbi.inactiveImageResId)
-                holder.tvMessage.setTextColor(context.getResources().getColor(R.color.appLightGray))
-                holder.tvDetails.setTextColor(context.getResources().getColor(R.color.appLightGray))
+                holder.ivImage.visibility = View.INVISIBLE
             }
+
+            if (item.isActive) {
+                holder.ivImage.colorFilter = null
+                holder.ivImage.alpha = 1.0f
+                holder.tvTitle.setTextColor(blackColor)
+                holder.tvDetails.setTextColor(blackColor)
+                holder.root.isEnabled = true
+                holder.root.setOnClickListener { listener?.itemSelected(item) }
+            } else {
+                holder.root.isEnabled = false
+                holder.ivImage.colorFilter = blackAndWhiteFilter
+                holder.ivImage.alpha = 0.33f
+                holder.tvTitle.setTextColor(lightGrayColor)
+                holder.tvDetails.setTextColor(lightGrayColor)
+            }
+
+            holder.ivComplete.visibility = if (item.isComplete) View.VISIBLE else View.GONE
         }
     }
 }
 
 class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
-    val tvNumber = view.cell_number
-    val tvMessage = view.cell_message
-    val tvDetails = view.cell_details
-    val ivImage = view.cell_image
+    val root: View = view.view_holder_root
+    val tvTitle: TextView = view.cell_title
+    val tvDetails: TextView = view.cell_details
+    val ivImage: ImageView = view.cell_image
+    val ivComplete: ImageView = view.checkmark
+}
 
+data class StudyBurstTaskInfo(
+        val task: TaskInfo,
+        val isActive: Boolean,
+        val isComplete: Boolean)
+
+interface StudyBurstAdapterListener {
+    fun itemSelected(item: StudyBurstTaskInfo)
 }

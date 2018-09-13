@@ -172,7 +172,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertNotNull(completionTask)
         assertEquals(STUDY_BURST_REMINDER, completionTask?.activityIdentifier())
 
-        assertNull(item.actionBarItem)
+        assertNull(item.getActionBarItem(application))
         assertNull(item.getUnfinishedSchedule())
     }
 
@@ -200,7 +200,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertNotNull(completionTask)
         assertEquals(STUDY_BURST_REMINDER, completionTask?.activityIdentifier())
 
-        assertNotNull(item.actionBarItem)
+        assertNotNull(item.getActionBarItem(application))
         assertNotNull(item.getUnfinishedSchedule())
     }
 
@@ -227,7 +227,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         val completionTask = item.nextCompletionActivityToShow
         assertNull(completionTask)
 
-        assertNull(item.actionBarItem)
+        assertNull(item.getActionBarItem(application))
         assertNull(item.getUnfinishedSchedule())
     }
 
@@ -255,7 +255,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertNotNull(completionTask)
         assertEquals(STUDY_BURST_REMINDER, completionTask?.activityIdentifier())
 
-        assertNotNull(item.actionBarItem)
+        assertNotNull(item.getActionBarItem(application))
         assertNotNull(item.getUnfinishedSchedule())
     }
 
@@ -273,9 +273,9 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertNotNull(completionTask)
         assertEquals(ENGAGEMENT, completionTask?.activityIdentifier())
 
-        assertNotNull(item.actionBarItem)
-        assertEquals("Engagement Survey", item.actionBarItem?.title)
-        assertEquals("6 Minutes", item.actionBarItem?.detail)
+        assertNotNull(item.getActionBarItem(application))
+        assertEquals("Engagement Survey", item.getActionBarItem(application)?.title)
+        assertEquals("6 Minutes", item.getActionBarItem(application)?.detail)
         assertNotNull(item.getUnfinishedSchedule())
     }
 
@@ -295,9 +295,9 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertNotNull(completionTask)
         assertEquals(ENGAGEMENT, completionTask?.activityIdentifier())
 
-        assertNotNull(item.actionBarItem)
-        assertEquals("Engagement Survey", item.actionBarItem?.title)
-        assertEquals("6 Minutes", item.actionBarItem?.detail)
+        assertNotNull(item.getActionBarItem(application))
+        assertEquals("Engagement Survey", item.getActionBarItem(application)?.title)
+        assertEquals("6 Minutes", item.getActionBarItem(application)?.detail)
         assertNotNull(item.getUnfinishedSchedule())
     }
 
@@ -334,9 +334,9 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertNotNull(completionTask)
         assertEquals(BACKGROUND, completionTask?.activityIdentifier())
 
-        assertNotNull(item.actionBarItem)
-        assertEquals("Background", item.actionBarItem?.title)
-        assertEquals("4 Minutes", item.actionBarItem?.detail)
+        assertNotNull(item.getActionBarItem(application))
+        assertEquals("Background", item.getActionBarItem(application)?.title)
+        assertEquals("4 Minutes", item.getActionBarItem(application)?.detail)
         assertNotNull(item.getUnfinishedSchedule())
     }
 
@@ -354,9 +354,9 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertNotNull(completionTask)
         assertEquals(ENGAGEMENT, completionTask?.activityIdentifier())
 
-        assertNotNull(item.actionBarItem)
-        assertEquals("Engagement Survey", item.actionBarItem?.title)
-        assertEquals("6 Minutes", item.actionBarItem?.detail)
+        assertNotNull(item.getActionBarItem(application))
+        assertEquals("Engagement Survey", item.getActionBarItem(application)?.title)
+        assertEquals("6 Minutes", item.getActionBarItem(application)?.detail)
         assertNotNull(item.getUnfinishedSchedule())
     }
 
@@ -375,9 +375,9 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertNotNull(completionTask)
         assertEquals(ENGAGEMENT, completionTask?.activityIdentifier())
 
-        assertNotNull(item.actionBarItem)
-        assertEquals("Engagement Survey", item.actionBarItem?.title)
-        assertEquals("6 Minutes", item.actionBarItem?.detail)
+        assertNotNull(item.getActionBarItem(application))
+        assertEquals("Engagement Survey", item.getActionBarItem(application)?.title)
+        assertEquals("6 Minutes", item.getActionBarItem(application)?.detail)
         assertNotNull(item.getUnfinishedSchedule())
     }
 
@@ -393,7 +393,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertFalse(item.isLastDay)
 
         assertNull(item.nextCompletionActivityToShow)
-        assertNull(item.actionBarItem)
+        assertNull(item.getActionBarItem(application))
         assertNull(item.getUnfinishedSchedule())
     }
 
@@ -416,7 +416,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertTrue(item.hasCompletedMotivationSurvey())
         assertNull(item.nextCompletionActivityToShow)
 
-        assertNull(item.actionBarItem)
+        assertNull(item.getActionBarItem(application))
         assertNull(item.getUnfinishedSchedule())
     }
 
@@ -881,8 +881,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
             this.timestamp = timestamp
         }
 
-        override fun getTaskSortOrder(): List<String>? {
-            return sortOrder
+        override fun getTaskSortOrder(): List<String> {
+            return sortOrder ?: StudyBurstViewModel.defaultTaskSortOrder
         }
 
         override fun getTaskSortOrderTimestamp(): LocalDateTime? {

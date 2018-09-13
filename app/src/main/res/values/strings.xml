@@ -90,8 +90,9 @@
 
     <string name="study_burst_progress_bar_day">Day</string>
     <string name="study_burst_progress_bar_title">Study Burst</string>
-    <string name="study_burst_progress_message">Progress expires in <b>%1$s</b></string>
-    <string name="study_burst_cell_number_label">#%1$d</string>
+    <string name="study_burst_progress_message">Progress expires in</string>
+    <string name="task_info_estimated_time_label">%1$d minutes</string>
+    <string name="study_burst_activities_to_do">%1$d activities to do</string>
 
     <string name="study_burst_message_days_missed">In %1$d days you\'ve only missed %2$d Study Burst days!</string>
     <string name="study_burst_message_days_missed_one">In %1$d days you\'ve only missed 1 Study Burst day!</string>

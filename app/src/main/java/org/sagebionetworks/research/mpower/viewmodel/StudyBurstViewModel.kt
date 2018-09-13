@@ -4,15 +4,23 @@ import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.content.res.Resources
 import android.support.annotation.DrawableRes
 import android.support.annotation.VisibleForTesting
 import android.support.v4.app.FragmentActivity
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.activity_study_burst.expiresText
 import org.sagebionetworks.bridge.rest.RestUtils
+import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.research.CompletionTask
 import org.sagebionetworks.research.mpower.research.DataSourceManager
 import org.sagebionetworks.research.mpower.research.MpIdentifier.*
+import org.sagebionetworks.research.mpower.research.MpTaskInfo
+import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
+import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
+import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.extensions.endOfDay
@@ -21,11 +29,15 @@ import org.sagebionetworks.research.sageresearch.extensions.inSameDayAs
 import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
+import org.sagebionetworks.research.sageresearch.manager.TaskInfo
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import java.lang.Integer.MAX_VALUE
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
 
@@ -41,6 +53,14 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
                 it.activityIdentifier() == config.identifier &&
                         (it.scheduledOn?.inSameDayAs(today) ?: false)
             }
+        }
+
+        internal val defaultTaskSortOrder: List<String> get() {
+            return DataSourceManager.measuringGroup.activityIdentifiers.toList()
+        }
+
+        internal val defaultTaskInfoSortOrder: List<TaskInfo> get() {
+            return listOf(Tapping, WalkAndBalance, Tremor)
         }
     }
 
@@ -142,7 +162,9 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
 
     @VisibleForTesting
     protected open fun createStudyBurstItem(schedules: List<ScheduledActivityEntity>): StudyBurstItem {
-        return StudyBurstItem(config, activityGroup(), schedules, now(), timezone, shouldContinueStudyBurst())
+        return StudyBurstItem(
+                config, activityGroup(), schedules, now(), timezone,
+                shouldContinueStudyBurst(), getTaskSortOrder())
     }
 
     //studyMarker: SBBScheduledActivity, startedOn: Date?, finishedOn: Date, finishedSchedules: [SBBScheduledActivity]) {
@@ -213,11 +235,26 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
         editPrefs.apply()
     }
 
+    /**
+     * @return true if sort order hasn't been set yet or it is from yesterday, false otherwise
+     */
+    protected fun isTaskSortOrderStale(): Boolean {
+        val sortOrderDate = getTaskSortOrderTimestamp() ?: return true
+        return sortOrderDate.inSameDayAs(now())
+    }
+
     @VisibleForTesting
-    protected open fun getTaskSortOrder(): List<String>? {
+    protected open fun getTaskSortOrder(): List<String> {
+        // Check for stale sort order and update if appropriate
+        if (isTaskSortOrderStale()) {
+            activityGroup()?.activityIdentifiers?.toList()?.shuffled()?.let {
+                setOrderedTasks(it, now())
+                return it
+            } ?: return defaultTaskSortOrder
+        }
         prefs.getString(orderKey, null)?.let {
             return RestUtils.GSON.fromJson(it, object : TypeToken<List<String>>() {}.type)
-        } ?: return null
+        } ?: return defaultTaskSortOrder
     }
 
     @VisibleForTesting
@@ -252,8 +289,16 @@ data class StudyBurstItem(
         /**
          * @property shouldContinueStudyBurst if the user be shown more days of the study burst beyond the initial 14 days.
          */
-        private val shouldContinueStudyBurst: Boolean) {
+        private val shouldContinueStudyBurst: Boolean,
+        /**
+         * @property studyBurstTasksSortOrder order of the study burst tasks
+         */
+        val studyBurstTasksSortOrder: List<String>) {
 
+    /**
+     * @property orderedTasks the sorted task info objects that need done for a study burst's day to be completed.
+     */
+    val orderedTasks: List<TaskInfo>
     /**
      * @property finishedSchedules subset of the finished schedules.
      */
@@ -282,10 +327,6 @@ data class StudyBurstItem(
      * @property shouldMarkStudyBurstAsCompleted true if the view model should mark the study burst as completed
      */
     internal val shouldMarkStudyBurstAsCompleted: Boolean
-    /**
-     * @property actionBarItem information for showing the study burst action bar.
-     */
-    val actionBarItem: TodayActionBarItem?
 
     init {
         val filteredFinishedOn = filterFinishedSchedules(schedules)
@@ -293,7 +334,6 @@ data class StudyBurstItem(
         finishedSchedules = filteredFinishedOn.first ?: listOf()
         // Find the study burst tasks and calculate the state
         val todayStart = date.startOfDay()
-        val studyBurstMarkerId = config.identifier
         val studyMarker = StudyBurstViewModel.getStudyBurst(config, date, schedules)
         val markerSchedules = schedules.filter {
             studyMarker?.activityIdentifier() == it.activityIdentifier()
@@ -332,16 +372,17 @@ data class StudyBurstItem(
 
         this.hasStudyBurst = hasStudyBurst
 
-        actionBarItem = getUnfinishedSchedule()?.let {
-            TodayActionBarItem(it.first, it.second, null)
-        }
+        orderedTasks = activityGroup?.tasks?.sortedWith(Comparator { o1, o2 ->
+            studyBurstTasksSortOrder.indexOf(o1.identifier).compareTo(
+                    studyBurstTasksSortOrder.indexOf(o2.identifier))
+        }) ?: StudyBurstViewModel.defaultTaskInfoSortOrder
     }
 
     /**
      * @return progress What is the current progress on required activities?
      */
     val progress: Float get() {
-        return 1.0f
+        return finishedSchedules.size.toFloat() / totalActivitiesCount.toFloat()
     }
 
     /**
@@ -549,6 +590,48 @@ data class StudyBurstItem(
             return Pair(it.activity?.label ?: "", it.activity?.labelDetail)
         }
         return null
+    }
+
+    /**
+     * @return action bar item with information for showing the study burst action bar.
+     */
+    fun getActionBarItem(context: Context): TodayActionBarItem? {
+        if (!isCompletedForToday) {
+            val title = context.getString(R.string.study_burst_action_bar_title)
+            var details: String? = null
+            expiresOn?.let {
+                details = studyBurstExpirationTime
+            } ?: run {
+                val activitiesTodoCount = totalActivitiesCount - finishedSchedules.size
+                details = context.getString(R.string.study_burst_activities_to_do).format(activitiesTodoCount)
+            }
+            return TodayActionBarItem(title, details, null)
+        }
+        getUnfinishedSchedule()?.let {
+            return TodayActionBarItem(it.first, it.second, null)
+        }
+        return null
+    }
+
+    val millisToExpiration: Long? get() {
+        expiresOn?.let {
+            return it.toEpochMilli() - System.currentTimeMillis()
+        } ?: return null
+    }
+
+    val studyBurstExpirationTime: String? get() {
+        expiresOn?.let {
+            val formatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+            val newMillisToExpiration = expiresOn.toEpochMilli() - System.currentTimeMillis()
+            return formatter.format(Date(newMillisToExpiration))
+        } ?: return null
+    }
+
+    /**
+     * @return true if the task is finished and is included in the finishedSchedules, false otherwise
+     */
+    fun isStudyBurstTaskFinished(taskIdentifier: String): Boolean {
+        return null != finishedSchedules.firstOrNull { it.activityIdentifier() == taskIdentifier }
     }
 }
 

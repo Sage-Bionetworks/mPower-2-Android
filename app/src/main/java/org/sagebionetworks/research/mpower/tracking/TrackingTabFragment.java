@@ -23,8 +23,10 @@ import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.tracking.TrackingViewModel.ScheduledActivityView;
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
+import org.sagebionetworks.research.mpower.viewmodel.TodayActionBarItem;
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
 
 import java.util.List;
@@ -122,9 +124,7 @@ public class TrackingTabFragment extends Fragment {
                 // TODO: mdephillips 9/4/18 mimic what iOS does with these
             });
             studyBurstViewModel = StudyBurstViewModel.create(getActivity());
-            studyBurstViewModel.liveData().observe(this, studyBurstItem -> {
-                // TODO: mdephillips 9/11/18 mimic what iOS does with these
-            });
+            studyBurstViewModel.liveData().observe(this, this::setupActionBar);
         }
     }
 
@@ -162,5 +162,33 @@ public class TrackingTabFragment extends Fragment {
     @VisibleForTesting
     void updateScheduledActivitiesLoading(Boolean isLoading) {
         scheduledActivitiesLoadingToggleButton.setChecked(isLoading);
+    }
+
+    /**
+     * Sets up the action bar according to the current state of the study burst
+     * @param item most recent item from the StudyBurstViewModel
+     */
+    private void setupActionBar(@Nullable StudyBurstItem item) {
+        if (item == null) {
+            return;
+        }
+        if (!item.getHasStudyBurst() || item.getDayCount() == null) {
+            trackingStatusBar.setVisibility(View.GONE);
+            return;
+        }
+        trackingStatusBar.setVisibility(View.VISIBLE);
+        trackingStatusBar.setDayCount(item.getDayCount());
+        trackingStatusBar.setMax(100);
+        trackingStatusBar.setProgress(Math.round(100 * item.getProgress()));
+
+        if (getContext() == null) return;
+        TodayActionBarItem actionBarItem = item.getActionBarItem(getContext());
+        if (actionBarItem != null) {
+            trackingStatusBar.setTitle(actionBarItem.getTitle());
+            trackingStatusBar.setText(actionBarItem.getDetail());
+        } else {
+            trackingStatusBar.setTitle(null);
+            trackingStatusBar.setText(null);
+        }
     }
 }
