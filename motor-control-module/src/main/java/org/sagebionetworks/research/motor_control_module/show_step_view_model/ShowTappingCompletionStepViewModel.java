@@ -31,12 +31,23 @@ public class ShowTappingCompletionStepViewModel extends ShowUIStepViewModel<Tapp
         super(performTaskViewModel, stepView);
     }
 
+    /**
+     * Returns the number of taps the user completed with the given hand.
+     * @param hand the hand to get the number of taps for.
+     * @return the number of taps the user completed with the given hand.
+     */
     @Nullable
     public Integer getTappingCount(@NonNull HandStepHelper.Hand hand) {
         TappingResult tappingResult = this.getTappingResult(hand);
-        return tappingResult != null ? getHitButtonCount(tappingResult) : null;
+        return tappingResult != null ? tappingResult.getHitButtonCount() : null;
     }
 
+    /**
+     * Returns the resource for the string to display on the description label for the given hand. For example
+     * getDescriptionText(<RIGHT>) returns a StringRes that is by default "RIGHT COUNT".
+     * @param hand The hand to get the description label for.
+     * @return the resource for the string to display on the description label for the given hand.
+     */
     @StringRes
     public int getDescriptionText(@NonNull HandStepHelper.Hand hand) {
         return hand == Hand.LEFT ? R.string.tapping_completion_left_description : R.string.tapping_completion_right_description;
@@ -79,6 +90,12 @@ public class ShowTappingCompletionStepViewModel extends ShowUIStepViewModel<Tapp
         return getTappingStepHelper(steps, hand);
     }
 
+    /**
+     * Returns the tapping step for the given hand from the list of tapping steps.
+     * @param steps The list of steps to get the tapping step for the given hand from.
+     * @param hand The hand to get the tapping step for.
+     * @return the tapping step for the given hand from the list of tapping steps.
+     */
     private static TappingStep getTappingStepHelper(@NonNull List<Step> steps, @NonNull HandStepHelper.Hand hand) {
         for (Step step : steps) {
             if (step instanceof TappingStep && HandStepHelper.whichHand(step.getIdentifier()) == hand) {
@@ -92,24 +109,5 @@ public class ShowTappingCompletionStepViewModel extends ShowUIStepViewModel<Tapp
         }
 
         return null;
-    }
-
-    /**
-     * Returns the number of hit buttons, in the given TappingResult. A hit button corresponds to any sample that has
-     * an identifier that isn't NONE.
-     *
-     * @param tappingResult
-     *         The TappingResult to get the HitButton count from.
-     * @return the number of hit buttons, in the given TappingResult.
-     */
-    private static int getHitButtonCount(@NonNull TappingResult tappingResult) {
-        int count = 0;
-        for (TappingSample sample : tappingResult.getSamples()) {
-            if (!sample.getButtonIdentifier().equals(TappingButtonIdentifier.NONE)) {
-                count++;
-            }
-        }
-
-        return count;
     }
 }

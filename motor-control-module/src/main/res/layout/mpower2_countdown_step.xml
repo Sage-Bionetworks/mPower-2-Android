@@ -51,7 +51,7 @@
 
     <org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar
         android:id="@id/rs2_step_navigation_action_bar"
-        style="@style/Widget.ResearchStack.NavigationActionBar.Active"
+        style="@style/Widget.ResearchStack.NavigationActionBar.Countdown"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
