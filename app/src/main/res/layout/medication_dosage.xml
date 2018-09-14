@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/appWhite"
+    android:layout_marginBottom="10dp">
+    <TextView
+        android:id="@+id/dosage_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/appTextDark"
+        android:textSize="16dp"
+        android:text="@string/dosage_title"
+        android:fontFamily="@font/lato_bold"
+        android:textStyle="bold"
+        android:layout_margin="20dp"/>
+    <EditText
+        android:id="@+id/dosage_input"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/dosage_name"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/lato_bold"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center_vertical"
+        android:hint="@string/dosage_hint"
+        android:padding="10dp"
+        android:background="@drawable/mpower2_edittext_background"/>
+
+</RelativeLayout>
