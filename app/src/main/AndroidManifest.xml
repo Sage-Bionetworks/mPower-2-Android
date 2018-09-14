@@ -35,6 +35,11 @@
                   android:screenOrientation="portrait">
 
         </activity>
+        <activity android:name=".medication.MedicationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
+
+        </activity>
     </application>
 
 </manifest>
