@@ -23,9 +23,6 @@ public abstract class TrackingSection implements SelectionUIFormItem {
         public abstract Builder setDetail(@Nullable String detail);
     }
 
-    @NonNull
-    public abstract String getIdentifier();
-
     @Nullable
     public abstract String getDetail();
 

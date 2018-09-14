@@ -10,14 +10,12 @@ import org.sagebionetworks.research.mpower.Tasks;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * Factory which produces TrackingTaskViewModels for TrackingStepViews. The decision for which type of
  * TrackingTaskViewModel to create is made based on what type of selection and logging info types the stepView has.
  */
 public class TrackingTaskViewModelFactory {
-    public static final String SYMPTOM_LOGGING_TYPE_KEY = "symptomLogging";
 
     @Inject
     public TrackingTaskViewModelFactory() {
@@ -31,17 +29,21 @@ public class TrackingTaskViewModelFactory {
             @SuppressWarnings("unchecked")
             public <T extends ViewModel> T create(@NonNull final Class<T> modelClass) {
                 // TODO rkolmos 09/07/2018 get the previous logging collection and pass it to the view model constructor.
-                String selectionType = trackingStepView.getSelectionInfo().getType();
-                String loggingType = trackingStepView.getLoggingInfo().getType();
-                if (selectionType == null && loggingType == null) {
-                    return (T) new SimpleTrackingTaskViewModel(trackingStepView, null);
-                } else if (selectionType == null && loggingType.equals(SYMPTOM_LOGGING_TYPE_KEY)) {
-                    return (T) new SymptomTrackingTaskViewModel(trackingStepView, null);
+                String whichTask = trackingStepView.whichTask();
+                if (whichTask != null) {
+                    switch (whichTask) {
+                        case Tasks.TRIGGERS:
+                            return (T) new SimpleTrackingTaskViewModel(trackingStepView, null);
+                        case Tasks.MEDICATION:
+                            // TODO use the medication specific view model here.
+                            return (T) new SimpleTrackingTaskViewModel(trackingStepView, null);
+                        case Tasks.SYMPTOMS:
+                            return (T) new SymptomTrackingTaskViewModel(trackingStepView, null);
+                    }
                 }
 
                 throw new IllegalArgumentException(
-                        "Cannot instantiate view model with selectionType: " + selectionType + " and loggingType: "
-                                + loggingType);
+                        "Cannot instantiate view model because TrackingStepView doesn't correspond to a format of known tasks.");
             }
         };
     }
