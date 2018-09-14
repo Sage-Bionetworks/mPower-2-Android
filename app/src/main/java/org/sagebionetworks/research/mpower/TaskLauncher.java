@@ -11,6 +11,7 @@ import static org.sagebionetworks.research.mpower.Tasks.TREMOR;
 import static org.sagebionetworks.research.mpower.Tasks.TRIGGERS;
 import static org.sagebionetworks.research.mpower.Tasks.WALK_AND_BALANCE;
 
+import android.app.Activity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
@@ -39,6 +40,9 @@ import javax.inject.Inject;
  * this later.
  */
 public class TaskLauncher {
+
+    public static final int TASK_REQUEST_CODE = 1492;
+
     public static class TaskLaunchState {
         @Retention(RetentionPolicy.SOURCE)
         @StringDef({Type.RUNNING, Type.LAUNCH_ERROR, Type.CANCELED, Type.COMPLETED})
@@ -80,12 +84,27 @@ public class TaskLauncher {
         this.researchStackTaskLauncher = checkNotNull(researchStackTaskLauncher);
     }
 
+    @VisibleForTesting
+    MutableLiveData<TaskLaunchState> launchResearchStackTask(@NonNull Activity activity, @NonNull String taskIdentifier,
+            @Nullable UUID taskRunUUID) {
+
+        MutableLiveData<TaskLaunchState> tls = new MutableLiveData<>();
+        try {
+            researchStackTaskLauncher.launchTask(activity, taskIdentifier, taskRunUUID, TASK_REQUEST_CODE);
+        } catch (Throwable t) {
+            LOGGER.warn("Exception launching ResearchStack task: ()", taskIdentifier, t);
+            tls.postValue(new TaskLaunchState(Type.LAUNCH_ERROR));
+        }
+
+        return tls;
+    }
+
     /**
-     * @param taskIdentifier
-     *         identifer of task to launch
-     * @param taskRunUUID
-     *         optional uuid of previous task run to continue from
-     * @return state of the task launch
+     * @param context used to launch the task, if this function ends up launching a ResearchTask task,
+     *                context must be an instance of Activity
+     * @param taskIdentifier identifier of task to launch
+     * @param taskRunUUID optional uuid of previous task run to continue from
+     * @return state of the task launch, some tasks, like surveys, may require an additional network call
      */
     @NonNull
     public LiveData<TaskLaunchState> launchTask(@NonNull Context context, @NonNull String taskIdentifier,
@@ -106,28 +125,19 @@ public class TaskLauncher {
         } else if (RS_TASKS.contains(taskIdentifier)) {
             LOGGER.debug("Launching ResearchStack task: {}", taskIdentifier);
 
-            tls = launchResearchStackTask(context, taskIdentifier, taskRunUUID);
+            if (!(context instanceof Activity)) {
+                throw new IllegalArgumentException(
+                        "To launch research tasks, context param must be an Activity,"
+                                + " so that the task result can be returned in onActivityResult");
+            }
+
+            tls = launchResearchStackTask((Activity)context, taskIdentifier, taskRunUUID);
         } else {
             LOGGER.warn("Unknown type of task: {}", taskIdentifier);
 
             tls = new MutableLiveData<>();
             tls.postValue(new TaskLaunchState(Type.LAUNCH_ERROR));
         }
-        return tls;
-    }
-
-    @VisibleForTesting
-    MutableLiveData<TaskLaunchState> launchResearchStackTask(@NonNull Context context, @NonNull String taskIdentifier,
-            @Nullable UUID taskRunUUID) {
-
-        MutableLiveData<TaskLaunchState> tls = new MutableLiveData<>();
-        try {
-            researchStackTaskLauncher.launchTask(context, taskIdentifier, taskRunUUID);
-        } catch (Throwable t) {
-            LOGGER.warn("Exception launching ResearchStack task: ()", taskIdentifier, t);
-            tls.postValue(new TaskLaunchState(Type.LAUNCH_ERROR));
-        }
-
         return tls;
     }
 }

@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.researchstack;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,10 +23,17 @@ public class ResearchStackTaskLauncher {
         this.mpTaskFactory = checkNotNull(mpTaskFactory);
     }
 
-    public void launchTask(@NonNull Context context, @NonNull String taskIdentifier,
-            @Nullable UUID taskRunUUID) {
-        Task task = mpTaskFactory.createTask(context, taskIdentifier);
+    /**
+     * @param activity
+     * @param taskIdentifier
+     * @param taskRunUUID
+     * @param requestCode If >= 0, this code will be returned in
+     *                    onActivityResult() when the activity exits.
+     */
+    public void launchTask(@NonNull Activity activity, @NonNull String taskIdentifier,
+            @Nullable UUID taskRunUUID, int requestCode) {
+        Task task = mpTaskFactory.createTask(activity, taskIdentifier);
 
-        context.startActivity(ActiveTaskActivity.newIntent(context, task));
+        activity.startActivityForResult(ActiveTaskActivity.newIntent(activity, task), requestCode);
     }
 }
