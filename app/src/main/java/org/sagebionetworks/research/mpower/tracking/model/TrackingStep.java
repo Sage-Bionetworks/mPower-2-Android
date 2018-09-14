@@ -43,10 +43,13 @@ public abstract class TrackingStep implements Step, Serializable {
         public abstract Builder setAsyncActions(@NonNull Set<AsyncActionConfiguration> asyncActions);
 
         @NonNull
-        public abstract Builder setSelectionInfo(@NonNull TrackingSubstepInfo selectionInfo);
+        public abstract Builder setSelectionInfo(@Nullable TrackingSubstepInfo selectionInfo);
 
         @NonNull
         public abstract Builder setLoggingInfo(@NonNull TrackingSubstepInfo loggingInfo);
+
+        @NonNull
+        public abstract Builder setRemindersInfo(@Nullable TrackingSubstepInfo reminderInfo);
 
         @NonNull
         public abstract Builder setItems(@NonNull Set<TrackingItem> items);
@@ -65,9 +68,13 @@ public abstract class TrackingStep implements Step, Serializable {
     @SerializedName("selection")
     public abstract TrackingSubstepInfo getSelectionInfo();
 
-    @NonNull
+    @Nullable
     @SerializedName("logging")
     public abstract TrackingSubstepInfo getLoggingInfo();
+
+    @Nullable
+    @SerializedName("reminder")
+    public abstract TrackingSubstepInfo getRemindersInfo();
 
     @Override
     @NonNull

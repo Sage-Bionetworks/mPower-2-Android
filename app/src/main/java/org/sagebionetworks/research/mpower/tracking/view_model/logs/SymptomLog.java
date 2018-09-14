@@ -23,10 +23,13 @@ public abstract class SymptomLog implements TrackingItemLog {
         public abstract SymptomLog build();
 
         @NonNull
-        public abstract Builder setTrackingItem(@NonNull TrackingItem trackingItem);
+        public abstract Builder setIdentifier(@NonNull String identifier);
 
         @NonNull
-        public abstract Builder setTimestamp(@NonNull Instant timestamp);
+        public abstract Builder setText(@NonNull String text);
+
+        @NonNull
+        public abstract Builder setTimestamp(@Nullable Instant timestamp);
 
         @NonNull
         public abstract Builder setSeverity(@Nullable Integer severity);

@@ -30,9 +30,6 @@ public abstract class TrackingItem implements SelectionUIFormItem, Parcelable {
         public abstract Builder setSectionIdentifier(@NonNull String sectionIdentifier);
     }
 
-    @NonNull
-    public abstract String getIdentifier();
-
     @Nullable
     public abstract String getDetail();
 
