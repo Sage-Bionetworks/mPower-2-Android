@@ -1,35 +1,49 @@
 package org.sagebionetworks.research.mpower.tracking.fragment
 
-
+import android.app.TimePickerDialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.RecyclerView.ItemDecoration
+import android.text.Editable
 import android.text.SpannableString
+import android.text.TextWatcher
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
-import org.slf4j.LoggerFactory
-
+import kotlinx.android.synthetic.main.medication_dosage.dosage_input
+import kotlinx.android.synthetic.main.mpower2_logging_step.rs2_step_navigation_action_add_more
 import org.sagebionetworks.research.mpower.R
-import org.sagebionetworks.research.mpower.tracking.recycler_view.Dosage
 import org.sagebionetworks.research.mpower.tracking.recycler_view.Listener
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAdapter
-import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationItem
 import org.sagebionetworks.research.mpower.tracking.recycler_view.Schedule
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
+import org.slf4j.LoggerFactory
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 class MedicationSchedulingFragment :
         RecyclerViewTrackingFragment<MedicationConfig, SimpleTrackingItemLog,
                 MedicationTrackingTaskViewModel, MedicationAdapter>() {
+
     private val LOGGER = LoggerFactory.getLogger(MedicationSchedulingFragment::class.java)
-    private lateinit var identifier : String
+    private val config: MedicationConfig?
+        get() {
+            return viewModel.activeElementsById.value!![identifier]
+        }
+
+    private lateinit var identifier: String
 
     companion object {
         private val ARG_IDENTIFIER = "identifier"
 
-        fun newInstance(step: StepView, identifier: String) : MedicationSchedulingFragment {
+        fun newInstance(step: StepView, identifier: String): MedicationSchedulingFragment {
             val fragment = MedicationSchedulingFragment()
             val args = TrackingFragment.createArguments(step)
             args.putString(ARG_IDENTIFIER, identifier)
@@ -52,46 +66,90 @@ class MedicationSchedulingFragment :
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val View = super.onCreateView(inflater, container, savedInstanceState)
+        val view = super.onCreateView(inflater, container, savedInstanceState)
         title.text = identifier
         val str = getString(R.string.remove_medication)
         val content = SpannableString(getString(R.string.remove_medication))
         content.setSpan(UnderlineSpan(), 0, str.length, 0)
         detail.text = content
-        return View
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        dosage_input.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                val updatedConfig = config!!.toBuilder().setDosage(p0 as? String).build()
+                viewModel.addConfig(updatedConfig)
+                rs2_step_navigation_action_add_more.visibility
+            }
+
+            override fun afterTextChanged(p0: Editable?) {}
+        })
+
+        rs2_step_navigation_action_add_more.setOnClickListener { addSchedule() }
+    }
+
+    override fun initializeItemDecoration(): ItemDecoration? {
+        val itemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        val drawable = resources.getDrawable(R.drawable.mpower2_logging_item_decoration)
+        itemDecoration.setDrawable(drawable)
+        return itemDecoration
     }
 
     override fun initializeAdapter(): MedicationAdapter {
-        val listener : Listener = object : Listener {
+        val listener: Listener = object : Listener {
             override fun onAddSchedulePressed() {
-                viewModel.addSchedule(identifier)
-                val schedules = viewModel.activeElementsById.value!![identifier]?.schedules
-                val newSchedule : Schedule? = schedules?.get(schedules.size - 1)
-                if (newSchedule != null) {
-                    adapter.addSchedule(newSchedule)
-                }
-            }
-
-            override fun onDosageChanged(dosage: String?, position: Int) {
-                var config = viewModel.activeElementsById.value!![identifier]!!
-                config = config.toBuilder().setDosage(dosage).build()
-                viewModel.addConfig(config)
-                adapter.setDosage(config.dosage)
             }
 
             override fun onTimeSelectionPressed(schedule: Schedule, position: Int) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                val sdf = SimpleDateFormat("h:mm aa")
+                val cal = Calendar.getInstance()
+                cal.time = sdf.parse(schedule.time)
+                val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hours, minutes ->
+                    cal.set(Calendar.HOUR, hours)
+                    cal.set(Calendar.MINUTE, minutes)
+                    val format = sdf.format(cal.time)
+                    schedule.time = format
+                    val schedules = config!!.schedules.toMutableList()
+                    schedules[position] = schedule
+                    adapter.updateSchedule(position, schedule)
+                    val updatedConfig = config!!.toBuilder().setSchedules(schedules).build()
+                    viewModel.addConfig(updatedConfig)
+                }
+
+                TimePickerDialog(context, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE),
+                        false)
+                        .show()
             }
 
             override fun onDaySelectionPressed(schedule: Schedule, position: Int) {
                 LOGGER.debug("showDaySelection()")
-                val days = schedule.days.joinToString(",")
+                var days: String? = schedule.days.joinToString(",")
+                if (days == "") {
+                    days = null
+                }
+
                 val dialog = MedicationDayFragment.newInstance(schedule.id, identifier, schedule.time, days)
                 dialog.listener = object : DaySelectedListener {
                     override fun onDaySelected(scheduleIdentifier: String, days: String) {
                         val daysList = days.split(",")
-                        viewModel.setScheduleDays(identifier, scheduleIdentifier, daysList)
+                        if (daysList.size < 7 && !daysList.isEmpty()) {
+                            schedule.everday = false
+                            schedule.days = daysList
+                        } else {
+                            schedule.everday = true
+                            schedule.days = arrayListOf()
+                        }
+
                         schedule.days = daysList
+                        val index: Int = config!!.schedules.indexOf(schedule)
+                        val schedules = config!!.schedules.toMutableList()
+                        schedules[index] = schedule
+                        val updatedConfig = config!!.toBuilder().setSchedules(schedules).build()
+                        viewModel.addConfig(updatedConfig)
                         adapter.updateSchedule(position, schedule)
                     }
                 }
@@ -100,33 +158,42 @@ class MedicationSchedulingFragment :
             }
 
             override fun onAnytimeSet(schedule: Schedule, anytime: Boolean, position: Int) {
-                viewModel.deleteOtherSchedules(identifier, schedule)
-                var config = viewModel.activeElementsById.value!![identifier]!!
+                val schedules = config!!.schedules.toMutableList()
+                val iterator = schedules.iterator()
+                while (iterator.hasNext()) {
+                    val schedule = iterator.next()
+                    if (schedule.id != schedule.id) {
+                        iterator.remove()
+                    }
+                }
+
                 schedule.anytime = anytime
-                config = config.toBuilder().setSchedules(mutableListOf(schedule)).build()
-                viewModel.addConfig(config)
+                val updatedConfig = config!!.toBuilder().setSchedules(mutableListOf(schedule)).build()
+                viewModel.addConfig(updatedConfig)
                 // All of the schedules may have change so we refresh the adapter.
-                adapter.items = getItems()
-                adapter.notifyDataSetChanged()
+                Handler(Looper.getMainLooper()).post {
+                    adapter.items = config!!.schedules
+                    adapter.notifyDataSetChanged()
+                }
+
+                rs2_step_navigation_action_add_more.visibility = if (anytime) View.GONE else View.VISIBLE
             }
         }
 
 
-        return MedicationAdapter(getItems(), listener)
-    }
-
-    private fun getItems() : MutableList<MedicationItem> {
-        val items : MutableList<MedicationItem> = mutableListOf()
-        val config = viewModel.activeElementsById.value!![identifier]
-        if (config != null) {
-            items.add(Dosage(config.dosage))
-            items.addAll(config.schedules)
-        }
-
-        return items
+        return MedicationAdapter(config!!.schedules.toMutableList(), listener)
     }
 
     override fun getLayoutId(): Int {
         return R.layout.mpower2_medication_scheduling
+    }
+
+    private fun addSchedule() {
+        val schedules = config!!.schedules.toMutableList()
+        val newSchedule = Schedule(schedules.size.toString())
+        schedules.add(newSchedule)
+        adapter.addSchedule(newSchedule)
+        val updatedConfig = config!!.toBuilder().setSchedules(schedules).build()
+        viewModel.addConfig(updatedConfig)
     }
 }

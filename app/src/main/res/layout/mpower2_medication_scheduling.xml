@@ -5,64 +5,105 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/royal600"
+    android:background="@color/royal500"
     tools:context=".studyburst.StudyBurstActivity">
 
-    <LinearLayout
-        android:id="@+id/top_container"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/royal600"
-        android:orientation="vertical"
-        android:paddingBottom="20dp"
-        android:paddingTop="30dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/rs2_step_navigation_action_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/contentView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <org.sagebionetworks.research.mobile_ui.widget.ActionButton
                 android:id="@+id/rs2_step_navigation_action_backward"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="8dp"
-                android:background="@drawable/rs2_back_icon" />
-        </LinearLayout>
+                android:layout_width="@dimen/back_button_width"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="@drawable/rs2_back_icon"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/rs2_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:fontFamily="@font/lato_bold"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="24sp" />
+            <TextView
+                android:id="@+id/rs2_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_xlarge"
+                android:layout_marginStart="@dimen/margin_xlarge"
+                android:layout_marginTop="@dimen/margin_small"
+                android:fontFamily="@font/lato_bold"
+                android:gravity="center"
+                android:text="Title"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rs2_step_navigation_action_backward" />
 
-        <TextView
-            android:id="@+id/rs2_detail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:fontFamily="@font/lato"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/rs2_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_xlarge"
+                android:layout_marginStart="@dimen/margin_xlarge"
+                android:layout_marginTop="@dimen/margin_xsmall"
+                android:fontFamily="@font/lato"
+                android:gravity="center"
+                android:text="Text"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rs2_title" />
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rs2_recycler_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/nav_container"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_container" />
+            <include
+                android:id="@+id/dosage_container"
+                layout="@layout/medication_dosage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_large"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rs2_detail" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rs2_recycler_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_xsmall"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dosage_container" />
+
+            <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+                android:id="@+id/rs2_step_navigation_action_add_more"
+                style="@style/MPower.RoundedCornerMaterialButton.Gray"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/mp_rounded_button_height"
+                android:layout_marginBottom="@dimen/margin_medium"
+                android:layout_marginEnd="@dimen/margin_large"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_small"
+                android:drawableLeft="@drawable/ic_add_black_24dp"
+                android:drawableTint="@color/appTextDark"
+                android:paddingStart="@dimen/margin_medium"
+                android:text="@string/medication_schedule_add_more"
+                app:layout_constraintBottom_toBottomOf="@id/contentView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rs2_recycler_view" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
 
     <org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar
         android:id="@+id/rs2_step_navigation_action_bar"
@@ -73,6 +114,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
 </android.support.constraint.ConstraintLayout>
