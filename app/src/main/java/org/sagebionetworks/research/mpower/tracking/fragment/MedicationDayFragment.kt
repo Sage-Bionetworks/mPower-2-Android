@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower.medication
+package org.sagebionetworks.research.mpower.tracking.fragment
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -35,10 +35,14 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         fun newInstance(id: String, name: String, time: String, days: String): MedicationDayFragment {
             val fragment = MedicationDayFragment()
             val args = Bundle()
-            args.putString(ARG_SCHED_ID, id)
-            args.putString(ARG_NAME, name)
-            args.putString(ARG_TIME, time)
-            args.putString(ARG_DAYS, days)
+            args.putString(
+                    ARG_SCHED_ID, id)
+            args.putString(
+                    ARG_NAME, name)
+            args.putString(
+                    ARG_TIME, time)
+            args.putString(
+                    ARG_DAYS, days)
             fragment.arguments = args
             return fragment
         }
@@ -58,10 +62,14 @@ class MedicationDayFragment : AppCompatDialogFragment() {
 
         if (savedInstanceState == null) {
             if (arguments != null) {
-                schedId = arguments!!.getString(ARG_SCHED_ID)
-                name = arguments!!.getString(ARG_NAME)
-                time = arguments!!.getString(ARG_TIME)
-                days = arguments!!.getString(ARG_DAYS)
+                schedId = arguments!!.getString(
+                        ARG_SCHED_ID)
+                name = arguments!!.getString(
+                        ARG_NAME)
+                time = arguments!!.getString(
+                        ARG_TIME)
+                days = arguments!!.getString(
+                        ARG_DAYS)
 
                 selectedDays = days.split(",").toMutableList()
                 val size = selectedDays.size
@@ -72,10 +80,14 @@ class MedicationDayFragment : AppCompatDialogFragment() {
                 time = "9:15 PM"
             }
         } else {
-            schedId = savedInstanceState.getString(ARG_SCHED_ID)
-            name = savedInstanceState.getString(ARG_NAME)
-            time = savedInstanceState.getString(ARG_TIME)
-            days = savedInstanceState.getString(ARG_DAYS)
+            schedId = savedInstanceState.getString(
+                    ARG_SCHED_ID)
+            name = savedInstanceState.getString(
+                    ARG_NAME)
+            time = savedInstanceState.getString(
+                    ARG_TIME)
+            days = savedInstanceState.getString(
+                    ARG_DAYS)
         }
     }
 
@@ -116,22 +128,17 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try {
-            listener = context as DaySelectedListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException(activity.toString() + " must implement DaySelectedListener")
-        }
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putString(ARG_SCHED_ID, schedId)
-        outState.putString(ARG_NAME, name)
-        outState.putString(ARG_TIME, time)
-        outState.putString(ARG_DAYS, days)
+        outState.putString(
+                ARG_SCHED_ID, schedId)
+        outState.putString(
+                ARG_NAME, name)
+        outState.putString(
+                ARG_TIME, time)
+        outState.putString(
+                ARG_DAYS, days)
     }
 
     fun getDays(): ArrayList<String> {

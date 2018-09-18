@@ -58,7 +58,9 @@ public class MedicationAddDetailsFragment extends
     @Override
     public MedicationAddDetailsAdapter initializeAdapter() {
         MedicationAddDetailsListener medicationAddDetailsListener = (config, position) -> {
-            // TODO launch the scheduling fragment for the given config.
+            MedicationSchedulingFragment fragment
+                    = MedicationSchedulingFragment.Companion.newInstance(stepView, config.getIdentifier());
+            addChildFragmentOnTop(fragment, "Scheduling");
             adapter.itemConfigured(position);
             adapter.notifyDataSetChanged();
         };

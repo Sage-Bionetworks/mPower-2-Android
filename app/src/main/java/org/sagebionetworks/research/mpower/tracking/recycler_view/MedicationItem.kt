@@ -1,9 +1,9 @@
-package org.sagebionetworks.research.mpower.medication
+package org.sagebionetworks.research.mpower.tracking.recycler_view
 
 import android.view.View
-import org.sagebionetworks.research.mpower.medication.Type.ADD
-import org.sagebionetworks.research.mpower.medication.Type.DOSAGE
-import org.sagebionetworks.research.mpower.medication.Type.SCHEDULE
+import org.sagebionetworks.research.mpower.tracking.recycler_view.Type.ADD
+import org.sagebionetworks.research.mpower.tracking.recycler_view.Type.DOSAGE
+import org.sagebionetworks.research.mpower.tracking.recycler_view.Type.SCHEDULE
 
 interface MedicationItem {
     var type: Type
@@ -21,6 +21,7 @@ data class Dosage(var name: String?) :
 
     }
 }
+
 data class Schedule(var id: String) :
         MedicationItem {
     override var type: Type = SCHEDULE
