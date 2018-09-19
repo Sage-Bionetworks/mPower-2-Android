@@ -35,8 +35,7 @@ public class TrackingTaskViewModelFactory {
                         case Tasks.TRIGGERS:
                             return (T) new SimpleTrackingTaskViewModel(trackingStepView, null);
                         case Tasks.MEDICATION:
-                            // TODO use the medication specific view model here.
-                            return (T) new SimpleTrackingTaskViewModel(trackingStepView, null);
+                            return (T) new MedicationTrackingTaskViewModel(trackingStepView, null);
                         case Tasks.SYMPTOMS:
                             return (T) new SymptomTrackingTaskViewModel(trackingStepView, null);
                     }

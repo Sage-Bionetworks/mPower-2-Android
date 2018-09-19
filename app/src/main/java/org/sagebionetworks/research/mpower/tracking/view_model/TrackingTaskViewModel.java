@@ -202,6 +202,18 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     // endregion
 
     // region Configuration
+    public void addConfig(@NonNull ConfigType config) {
+        Map<String, ConfigType> activeElements = activeElementsById.getValue();
+        activeElements.put(config.getIdentifier(), config);
+        activeElementsById.setValue(activeElements);
+    }
+
+    public void removeConfig(@NonNull String identifier) {
+        Map<String, ConfigType> activeElements = activeElementsById.getValue();
+        activeElements.remove(identifier);
+        activeElementsById.setValue(activeElements);
+    }
+
     /**
      * Returns a map from identifier to config for the active elements in view model.
      *

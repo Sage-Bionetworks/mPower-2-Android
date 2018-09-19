@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower.medication
+package org.sagebionetworks.research.mpower.tracking.fragment
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -32,7 +32,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         val ARG_TIME = "ARG_TIME"
         val ARG_DAYS = "ARG_DAYS"
 
-        fun newInstance(id: String, name: String, time: String, days: String): MedicationDayFragment {
+        fun newInstance(id: String, name: String, time: String, days: String?): MedicationDayFragment {
             val fragment = MedicationDayFragment()
             val args = Bundle()
             args.putString(ARG_SCHED_ID, id)
@@ -46,26 +46,21 @@ class MedicationDayFragment : AppCompatDialogFragment() {
 
     lateinit var customView: View
     lateinit var listener: DaySelectedListener
-    var selectedDays: MutableList<String> = arrayListOf()
-
+    lateinit var selectedDays: MutableList<String>
     lateinit var schedId: String
     lateinit var name: String
     lateinit var time: String
-    lateinit var days: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        var days : String? = null
         if (savedInstanceState == null) {
             if (arguments != null) {
                 schedId = arguments!!.getString(ARG_SCHED_ID)
                 name = arguments!!.getString(ARG_NAME)
                 time = arguments!!.getString(ARG_TIME)
                 days = arguments!!.getString(ARG_DAYS)
-
-                selectedDays = days.split(",").toMutableList()
-                val size = selectedDays.size
-                LOGGER.debug("Selected days on init: $size")
             } else {
                 LOGGER.warn("No arguments found")
                 name = "Default"
@@ -77,6 +72,9 @@ class MedicationDayFragment : AppCompatDialogFragment() {
             time = savedInstanceState.getString(ARG_TIME)
             days = savedInstanceState.getString(ARG_DAYS)
         }
+
+        selectedDays = if (days != null) days.split(",").toMutableList() else mutableListOf()
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -116,22 +114,12 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try {
-            listener = context as DaySelectedListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException(activity.toString() + " must implement DaySelectedListener")
-        }
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
         outState.putString(ARG_SCHED_ID, schedId)
         outState.putString(ARG_NAME, name)
         outState.putString(ARG_TIME, time)
-        outState.putString(ARG_DAYS, days)
+        outState.putString(ARG_DAYS, selectedDays.joinToString(","))
     }
 
     fun getDays(): ArrayList<String> {
@@ -151,7 +139,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         }
 
         override fun onBindViewHolder(holder: DayViewHolder, position: Int) {
-            var text = items.get(position)
+            val text = items[position]
             holder.tvDay.text = text
             if (selectedDays.contains(text)) {
                 holder.root.setBackgroundResource(R.color.royal300)
@@ -173,7 +161,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
 }
 
 interface DaySelectedListener {
-    fun onDaySelected(id: String, days: String)
+    fun onDaySelected(scheduleIdentifier: String, days: String)
 }
 
 class DayViewHolder(view: View) : RecyclerView.ViewHolder(view) {
