@@ -12,20 +12,24 @@ import android.text.TextWatcher
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.medication_dosage.dosage_input
 import kotlinx.android.synthetic.main.mpower2_logging_step.rs2_step_navigation_action_add_more
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.recycler_view.Listener
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAdapter
-import org.sagebionetworks.research.mpower.tracking.recycler_view.Schedule
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
+import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.slf4j.LoggerFactory
-import java.text.SimpleDateFormat
+import org.threeten.bp.DateTimeUtils
+import org.threeten.bp.LocalDate
+import org.threeten.bp.ZoneId
+import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.zone.ZoneRulesException
 import java.util.Calendar
 
 class MedicationSchedulingFragment :
@@ -105,14 +109,18 @@ class MedicationSchedulingFragment :
             }
 
             override fun onTimeSelectionPressed(schedule: Schedule, position: Int) {
-                val sdf = SimpleDateFormat("h:mm aa")
                 val cal = Calendar.getInstance()
-                cal.time = sdf.parse(schedule.time)
+                val zoneId : ZoneId = try {
+                    ZoneId.systemDefault()
+                } catch (e : ZoneRulesException) {
+                    ZoneId.of("Z")
+                }
+
+                cal.time = DateTimeUtils.toDate(schedule.time.atDate(LocalDate.now()).toInstant(zoneId))
                 val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hours, minutes ->
                     cal.set(Calendar.HOUR, hours)
                     cal.set(Calendar.MINUTE, minutes)
-                    val format = sdf.format(cal.time)
-                    schedule.time = format
+                    schedule.time = DateTimeUtils.toZonedDateTime(cal).toLocalTime()
                     val schedules = config!!.schedules.toMutableList()
                     schedules[position] = schedule
                     adapter.updateSchedule(position, schedule)
@@ -126,13 +134,14 @@ class MedicationSchedulingFragment :
             }
 
             override fun onDaySelectionPressed(schedule: Schedule, position: Int) {
+                val formatter = DateTimeFormatter.ofPattern("h:mm a")
                 LOGGER.debug("showDaySelection()")
                 var days: String? = schedule.days.joinToString(",")
                 if (days == "") {
                     days = null
                 }
 
-                val dialog = MedicationDayFragment.newInstance(schedule.id, identifier, schedule.time, days)
+                val dialog = MedicationDayFragment.newInstance(schedule.id, identifier, formatter.format(schedule.time), days)
                 dialog.listener = object : DaySelectedListener {
                     override fun onDaySelected(scheduleIdentifier: String, days: String) {
                         val daysList = days.split(",")
@@ -190,7 +199,8 @@ class MedicationSchedulingFragment :
 
     private fun addSchedule() {
         val schedules = config!!.schedules.toMutableList()
-        val newSchedule = Schedule(schedules.size.toString())
+        val newSchedule = Schedule(
+                schedules.size.toString())
         schedules.add(newSchedule)
         adapter.addSchedule(newSchedule)
         val updatedConfig = config!!.toBuilder().setSchedules(schedules).build()

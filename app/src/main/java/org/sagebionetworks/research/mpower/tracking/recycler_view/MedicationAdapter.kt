@@ -13,7 +13,9 @@ import kotlinx.android.synthetic.main.medication_schedule.view.time_container
 import kotlinx.android.synthetic.main.medication_schedule.view.time_text
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.SortUtil
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
 import org.slf4j.LoggerFactory
+import org.threeten.bp.format.DateTimeFormatter
 
 class MedicationAdapter(var items: MutableList<Schedule>, val listener: Listener) : RecyclerView.Adapter<ScheduleViewHolder>() {
 
@@ -54,7 +56,8 @@ class MedicationAdapter(var items: MutableList<Schedule>, val listener: Listener
         scheduleViewHolder.dayContainer.visibility = visibility
         scheduleViewHolder.timeContainer.visibility = visibility
 
-        scheduleViewHolder.timeText.text = schedule.time
+        val formatter = DateTimeFormatter.ofPattern("h:mm a")
+        scheduleViewHolder.timeText.text = formatter.format(schedule.time)
         scheduleViewHolder.timeContainer.setOnClickListener { _ ->
             LOGGER.debug("Time clicked")
             listener.onTimeSelectionPressed(schedule, position)
