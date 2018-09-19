@@ -58,8 +58,13 @@ public abstract class RecyclerViewTrackingFragment
     @BindView(R.id.rs2_detail)
     protected TextView detail;
 
+    @Nullable
     @BindView(R.id.rs2_step_navigation_action_cancel)
     protected ActionButton cancelButton;
+
+    @Nullable
+    @BindView(R.id.rs2_step_navigation_action_backward)
+    protected ActionButton backButton;
 
     @Nullable
     @BindView(R.id.rs2_step_navigation_action_add_more)
@@ -77,7 +82,14 @@ public abstract class RecyclerViewTrackingFragment
         View result = super.onCreateView(inflater, container, savedInstanceState);
         OnApplyWindowInsetsListener topInsetListener = SystemWindowHelper
                 .getOnApplyWindowInsetsListener(Direction.TOP);
-        ViewCompat.setOnApplyWindowInsetsListener(this.cancelButton, topInsetListener);
+        if (this.cancelButton != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(this.cancelButton, topInsetListener);
+        }
+
+        if (this.backButton != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(this.backButton, topInsetListener);
+        }
+
         this.layoutManager = this.initializeLayoutManager();
         this.recyclerView.setLayoutManager(this.layoutManager);
         this.recyclerView.setFocusable(false);

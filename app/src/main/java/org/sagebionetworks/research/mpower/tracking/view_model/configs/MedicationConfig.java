@@ -5,8 +5,10 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
+import org.sagebionetworks.research.mpower.tracking.recycler_view.Schedule;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,15 +26,31 @@ public abstract class MedicationConfig implements TrackingItemConfig {
 
         @NonNull
         public abstract Builder setTrackingItem(@NonNull TrackingItem trackingItem);
+
+        @NonNull
+        public abstract Builder setDosage(@Nullable String dosage);
+
+        @NonNull
+        public abstract Builder setSchedules(@NonNull List<Schedule> schedules);
     }
 
+    @Nullable
+    public abstract String getDosage();
+
+    @NonNull
+    public abstract List<Schedule> getSchedules();
+
+    @NonNull
     public static Builder builder() {
-        return new AutoValue_MedicationConfig.Builder();
+        return new AutoValue_MedicationConfig.Builder()
+                .setSchedules(Collections.singletonList(new Schedule("0")));
     }
+
+    @NonNull
+    public abstract Builder toBuilder();
 
     @Override
     public boolean isConfigured() {
-        // TODO rkolmos 09/12/2018 implement this method when the config has the correct data.
-        return false;
+        return getDosage() != null && !getSchedules().isEmpty();
     }
 }
