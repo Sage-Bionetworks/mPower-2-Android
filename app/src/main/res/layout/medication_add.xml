@@ -9,12 +9,8 @@
         android:id="@+id/schedule_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/appTextDark"
-        android:drawableLeft="@drawable/ic_add_black_24dp"
-        android:drawableTint="@color/appTextDark"
         android:text="@string/schedule_add_label"
         android:textSize="16dp"
-        android:paddingLeft="20dp"
         style="@style/MPower.RoundedCornerMaterialButton.Gray"
         android:layout_margin="10dp"/>
 

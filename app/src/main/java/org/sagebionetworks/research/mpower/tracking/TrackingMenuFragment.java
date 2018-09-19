@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
-import org.sagebionetworks.research.mpower.medication.MedicationActivity;
+import org.sagebionetworks.research.mpower.tracking.fragment.MedicationSchedulingFragment;
 import org.sagebionetworks.research.mpower.Tasks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,15 +125,6 @@ public class TrackingMenuFragment extends Fragment {
         result.setOnTouchListener((view, event) -> {
             view.performClick();
             return this.gestureDetector.onTouchEvent(event);
-        });
-
-        //TODO: this is temporary to launch into the medication schedule UI
-        this.imageViews.get(0).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                Intent intent = new Intent(getActivity(), MedicationActivity.class);
-                getActivity().startActivity(intent);
-            }
         });
 
         return result;
