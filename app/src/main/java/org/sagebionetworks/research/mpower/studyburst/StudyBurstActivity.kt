@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.studyburst
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.support.v7.app.AppCompatActivity
@@ -208,5 +209,12 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 //                                    Toast.LENGTH_LONG).show()
 //                    }
 //                })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == TaskLauncher.TASK_REQUEST_CODE && resultCode == RESULT_OK) {
+
+        }
     }
 }
