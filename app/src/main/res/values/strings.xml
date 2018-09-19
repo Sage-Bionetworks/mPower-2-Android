@@ -116,6 +116,24 @@
     <string name="task_singular_term_for_symptoms">"%1$d Symptom"</string>
     <string name="task_singular_term_for_activities">"%1$d Activity"</string>
 
+    <string name="remove_medication">Remove medication</string>
+    <string name="schedule_title">Schedule</string>
+    <string name="schedule_anytime">Take this medication anytime</string>
+    <string name="schedule_add_label">Add another schedule</string>
+    <string name="dosage_title">Dosage</string>
+    <string name="dosage_hint">e.g.: 10/100 mg</string>
+    <string name="medication_day_selection_title">On which days do you want to take %1$s at %2$s</string>
+    <string name="medication_day_selection_message">Select all that apply</string>
+    <string-array name="days_of_the_week">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
+
     <string name="measuring_walk_and_balance_label">Walk And Balance</string>
     <string name="measuring_finger_tapping_label">Finger Tapping</string>
     <string name="measuring_tremor_test_label">Tremor Test</string>
@@ -145,4 +163,10 @@
     <string name="duration_fragment_title">Duration</string>
     <string name="duration_fragment_detail">Select one</string>
     <string name="duration_fragment_forward_button">Save</string>
+
+    <string name="medication_add_details_title">Add medication details</string>
+    <string name="medication_add_details_detail">Select to add your medication dosing information and schedule(s).</string>
+    <string name="medication_add_more">Edit medication list</string>
+    <string name="medication_schedule_add_more">Add another schedule</string>
+    <string name="medication_schedule_everyday">Everyday</string>
 </resources>

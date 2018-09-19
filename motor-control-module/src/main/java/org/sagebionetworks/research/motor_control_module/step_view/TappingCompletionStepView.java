@@ -13,11 +13,10 @@ import org.sagebionetworks.research.presentation.mapper.DrawableMapper;
 import org.sagebionetworks.research.presentation.model.ColorThemeView;
 import org.sagebionetworks.research.presentation.model.ImageThemeView;
 import org.sagebionetworks.research.presentation.model.action.ActionView;
-import org.sagebionetworks.research.presentation.model.implementations.CompletionStepViewBase;
 import org.sagebionetworks.research.presentation.model.implementations.UIStepViewBase;
 import org.sagebionetworks.research.presentation.model.interfaces.UIStepView;
 
-public class TappingCompletionStepView extends CompletionStepViewBase {
+public class TappingCompletionStepView extends CompletionStepView {
     public static final String TYPE = AppStepType.TAPPING_COMPLETION;
 
     public TappingCompletionStepView(@NonNull String identifier, int navDirection, @NonNull ImmutableMap<String, ActionView> actions,

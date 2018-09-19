@@ -12,6 +12,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ItemDecoration;
 import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.view.LayoutInflater;
@@ -32,36 +33,63 @@ import butterknife.BindView;
 
 /**
  * A RecyclerViewTrackingFragment allows for easier creation of TrackingFragments that use a recycler view to display
- * their options. It requires a subclass to override initializeAdapter to give the recycler view it's adapter but handles
- * the logic of setting up the recycler view, and laying it out appropriately.
- * @param <ConfigType> The type of TrackingItemConfig.
- * @param <LogType> The type of TrackingItemLog.
- * @param <ViewModelType> The type of TrackingTaskViewModel.
+ * their options. It requires a subclass to override initializeAdapter to give the recycler view it's adapter but
+ * handles the logic of setting up the recycler view, and laying it out appropriately.
+ *
+ * @param <ConfigType>
+ *         The type of TrackingItemConfig.
+ * @param <LogType>
+ *         The type of TrackingItemLog.
+ * @param <ViewModelType>
+ *         The type of TrackingTaskViewModel.
+ * @param <AdapterType>
+ *         The type of recycler view adapter
  */
 public abstract class RecyclerViewTrackingFragment
-        <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog, ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
+        <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog,
+                ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>, AdapterType extends Adapter<?>>
         extends TrackingFragment<ConfigType, LogType, ViewModelType> {
     @BindView(R.id.rs2_recycler_view)
     protected RecyclerView recyclerView;
+
     @BindView(R.id.rs2_title)
     protected TextView title;
+
     @BindView(R.id.rs2_detail)
     protected TextView detail;
+
+    @Nullable
     @BindView(R.id.rs2_step_navigation_action_cancel)
     protected ActionButton cancelButton;
+
+    @Nullable
+    @BindView(R.id.rs2_step_navigation_action_backward)
+    protected ActionButton backButton;
+
     @Nullable
     @BindView(R.id.rs2_step_navigation_action_add_more)
     protected ActionButton addMore;
+
     @BindView(R.id.rs2_step_navigation_action_bar)
     protected NavigationActionBar navigationActionBar;
 
     protected LayoutManager layoutManager;
 
+    protected AdapterType adapter;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
-        OnApplyWindowInsetsListener topInsetListener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
-        ViewCompat.setOnApplyWindowInsetsListener(this.cancelButton, topInsetListener);
+        OnApplyWindowInsetsListener topInsetListener = SystemWindowHelper
+                .getOnApplyWindowInsetsListener(Direction.TOP);
+        if (this.cancelButton != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(this.cancelButton, topInsetListener);
+        }
+
+        if (this.backButton != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(this.backButton, topInsetListener);
+        }
+
         this.layoutManager = this.initializeLayoutManager();
         this.recyclerView.setLayoutManager(this.layoutManager);
         this.recyclerView.setFocusable(false);
@@ -75,7 +103,8 @@ public abstract class RecyclerViewTrackingFragment
         super.onStart();
         // Recycler view initialization deliberately in on start so up to date information is received from the view
         // model every time the fragment starts.
-        this.recyclerView.setAdapter(this.initializeAdapter());
+        adapter = this.initializeAdapter();
+        this.recyclerView.setAdapter(adapter);
         ItemDecoration itemDecoration = this.initializeItemDecoration();
         if (itemDecoration != null) {
             this.recyclerView.addItemDecoration(itemDecoration);
@@ -85,8 +114,8 @@ public abstract class RecyclerViewTrackingFragment
     }
 
     /**
-     * Initializes and returns the layout manager to use on the fragment's recycler view. The default behavior is to use a
-     * linear layout manager.
+     * Initializes and returns the layout manager to use on the fragment's recycler view. The default behavior is to
+     * use a linear layout manager.
      *
      * @return the layout manager to use on the fragments recycler view.
      */
@@ -116,5 +145,5 @@ public abstract class RecyclerViewTrackingFragment
      * @return the Adapter to use on the fragment's recycler view.
      */
     @NonNull
-    public abstract RecyclerView.Adapter<?> initializeAdapter();
+    public abstract AdapterType initializeAdapter();
 }

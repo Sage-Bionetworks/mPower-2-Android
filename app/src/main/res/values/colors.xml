@@ -37,4 +37,6 @@
     <color name="sageResearchSecondary">@color/butterscotch500</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="butterscotch_disabled">#59BD7900</color>
 </resources>
