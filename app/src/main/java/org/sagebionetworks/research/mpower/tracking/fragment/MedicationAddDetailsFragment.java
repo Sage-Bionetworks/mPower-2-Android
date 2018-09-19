@@ -38,25 +38,31 @@ public class MedicationAddDetailsFragment extends
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       View result = super.onCreateView(inflater, container, savedInstanceState);
-       title.setText(R.string.medication_add_details_title);
-       detail.setText(R.string.medication_add_details_detail);
-       addMore.setText(R.string.medication_add_more);
-       addMore.setOnClickListener(view -> {
-           getFragmentManager().beginTransaction()
-                   .replace(((ViewGroup)getView().getParent()).getId(), MedicationSelectionFragment.newInstance(stepView))
-                   .commit();
-       });
+        View result = super.onCreateView(inflater, container, savedInstanceState);
+        title.setText(R.string.medication_add_details_title);
+        detail.setText(R.string.medication_add_details_detail);
+        addMore.setText(R.string.medication_add_more);
+        addMore.setOnClickListener(view -> {
+            MedicationSelectionFragment fragment = MedicationSelectionFragment.newInstance(stepView);
+            replaceWithFragment(fragment);
+        });
 
-       navigationActionBar.setActionButtonClickListener(actionButton -> {
-           if (actionButton.getId() == R.id.rs2_step_navigation_action_forward) {
-               getFragmentManager().beginTransaction()
-                       .replace(((ViewGroup)getView().getParent()).getId(), MedicationReviewFragment.newInstance(stepView))
-                       .commit();
-           }
-       });
+        navigationActionBar.setActionButtonClickListener(actionButton -> {
+            if (actionButton.getId() == R.id.rs2_step_navigation_action_forward) {
+                List<MedicationConfig> unconfiguredElements = getUnconfiguredElements();
+                if (unconfiguredElements.isEmpty()) {
+                    MedicationReviewFragment fragment = MedicationReviewFragment.Companion.newInstance(stepView);
+                    replaceWithFragment(fragment);
+                } else {
+                    MedicationConfig nextConfig = unconfiguredElements.get(0);
+                    MedicationSchedulingFragment fragment =
+                            MedicationSchedulingFragment.Companion.newInstance(stepView, nextConfig.getIdentifier());
+                    addChildFragmentOnTop(fragment, "medicationAddDetails");
+                }
+            }
+        });
 
-       return result;
+        return result;
     }
 
     @Override

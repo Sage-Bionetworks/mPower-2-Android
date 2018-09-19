@@ -43,7 +43,7 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationConfig, 
         val medicationReviewListener : MedicationReviewListener = object : MedicationReviewListener {
             override fun editButtonPressed(config: MedicationConfig, position: Int) {
                 val schedulingFragment = MedicationSchedulingFragment.newInstance(stepView, config.identifier)
-                replaceWithFragment(schedulingFragment)
+                addChildFragmentOnTop(schedulingFragment, "MedicationReviewFragment")
             }
         }
 

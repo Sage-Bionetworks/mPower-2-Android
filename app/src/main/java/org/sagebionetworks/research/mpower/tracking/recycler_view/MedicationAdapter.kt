@@ -86,7 +86,6 @@ class ScheduleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 }
 
 interface Listener {
-    fun onAddSchedulePressed()
     fun onTimeSelectionPressed(schedule: Schedule, position: Int)
     fun onDaySelectionPressed(schedule: Schedule, position: Int)
     fun onAnytimeSet(schedule: Schedule, anytime: Boolean, position: Int)

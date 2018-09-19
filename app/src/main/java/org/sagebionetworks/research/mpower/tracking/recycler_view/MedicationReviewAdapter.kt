@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.tracking.recycler_view
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.SortUtil
@@ -10,11 +11,11 @@ import org.sagebionetworks.research.mpower.tracking.widget.MedicationReviewWidge
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 
-class MedicationReviewAdapter(val configs : List<MedicationConfig>, private val listener : MedicationReviewListener)
+class MedicationReviewAdapter(val configs: List<MedicationConfig>, private val listener: MedicationReviewListener)
     : RecyclerView.Adapter<MedicationReviewViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MedicationReviewViewHolder {
-        val widget : MedicationReviewWidget = LayoutInflater.from(parent.context)
+        val widget: MedicationReviewWidget = LayoutInflater.from(parent.context)
                 .inflate(R.layout.mpower2_medication_review_view_holder, parent, false) as MedicationReviewWidget
         return MedicationReviewViewHolder(widget, listener)
     }
@@ -33,25 +34,41 @@ class MedicationReviewViewHolder(val widget: MedicationReviewWidget, private val
     : RecyclerView.ViewHolder(widget) {
 
     fun setContent(config: MedicationConfig, position: Int) {
-        widget.title.text = config.identifier
-        val times: MutableList<LocalTime> = mutableListOf()
-        val days: MutableList<String> = mutableListOf()
-        for (schedule in config.schedules) {
-            times.add(schedule.time)
-            days.addAll(schedule.days)
-        }
+        var title = config.identifier + " " + config.dosage
+        widget.title.text = title
+        if (config.schedules[0].anytime) {
+            widget.timeLabel.setText(R.string.medication_schedule_anytime)
+            widget.daysLabel.visibility = View.GONE
+        } else {
+            val days: MutableList<String> = mutableListOf()
+            for (schedule in config.schedules) {
+                days.addAll(schedule.days)
+            }
 
-        val sortedDays = SortUtil.sortDaysList(days, widget.context)
-        val sortedTimes = SortUtil.sortTimesList(times)
-        val formatter = DateTimeFormatter.ofPattern("h:mm a")
-        val timesStrings: MutableList<String> = mutableListOf()
-        for (time in sortedTimes) {
-            timesStrings.add(formatter.format(time))
-        }
+            val dayString = if (days.isEmpty()) {
+                widget.context.resources.getString(R.string.medication_schedule_everyday)
+            } else {
+                val sortedDays = SortUtil.sortDaysList(days, widget.context)
+                sortedDays.joinToString("")
+            }
 
-        widget.timeLabel.text = timesStrings.joinToString(",")
-        widget.daysLabel.text = sortedDays.joinToString(",")
-        widget.editButton.setOnClickListener { _ -> listener.editButtonPressed(config, position) }
+            widget.daysLabel.visibility = View.VISIBLE
+            widget.daysLabel.text = dayString
+            val times: MutableList<LocalTime> = mutableListOf()
+            for (schedule in config.schedules) {
+                times.add(schedule.time)
+            }
+
+            val sortedTimes = SortUtil.sortTimesList(times)
+            val formatter = DateTimeFormatter.ofPattern("h:mm a")
+            val timesStrings: MutableList<String> = mutableListOf()
+            for (time in sortedTimes) {
+                timesStrings.add(formatter.format(time))
+            }
+
+            widget.timeLabel.text = timesStrings.joinToString(",")
+            widget.editButton.setOnClickListener { _ -> listener.editButtonPressed(config, position) }
+        }
     }
 }
 

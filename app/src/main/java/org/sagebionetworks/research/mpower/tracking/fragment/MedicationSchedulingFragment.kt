@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.medication_dosage.dosage_input
 import kotlinx.android.synthetic.main.mpower2_logging_step.rs2_step_navigation_action_add_more
 import org.sagebionetworks.research.mpower.R
+import org.sagebionetworks.research.mpower.tracking.SortUtil
 import org.sagebionetworks.research.mpower.tracking.recycler_view.Listener
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAdapter
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
@@ -76,6 +77,20 @@ class MedicationSchedulingFragment :
         val content = SpannableString(getString(R.string.remove_medication))
         content.setSpan(UnderlineSpan(), 0, str.length, 0)
         detail.text = content
+        navigationActionBar.setActionButtonClickListener { actionButton ->
+            var configs = SortUtil.getActiveElementsSorted(viewModel.activeElementsById.value!!)
+            configs = configs.filter { config -> !config.isConfigured }
+            val iterator = configs.iterator()
+            val fragment = if (iterator.hasNext()) {
+                val nextConfig = iterator.next()
+                MedicationSchedulingFragment.newInstance(stepView, nextConfig.identifier)
+            } else {
+                MedicationReviewFragment.newInstance(stepView)
+            }
+
+            replaceWithFragment(fragment)
+        }
+
         return view
     }
 
@@ -85,7 +100,7 @@ class MedicationSchedulingFragment :
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                val updatedConfig = config!!.toBuilder().setDosage(p0 as? String).build()
+                val updatedConfig = config!!.toBuilder().setDosage(p0.toString()).build()
                 viewModel.addConfig(updatedConfig)
                 rs2_step_navigation_action_add_more.visibility
             }
@@ -105,8 +120,6 @@ class MedicationSchedulingFragment :
 
     override fun initializeAdapter(): MedicationAdapter {
         val listener: Listener = object : Listener {
-            override fun onAddSchedulePressed() {
-            }
 
             override fun onTimeSelectionPressed(schedule: Schedule, position: Int) {
                 val cal = Calendar.getInstance()
@@ -144,7 +157,8 @@ class MedicationSchedulingFragment :
                 val dialog = MedicationDayFragment.newInstance(schedule.id, identifier, formatter.format(schedule.time), days)
                 dialog.listener = object : DaySelectedListener {
                     override fun onDaySelected(scheduleIdentifier: String, days: String) {
-                        val daysList = days.split(",")
+                        val daysList = days.split(",").toMutableList()
+                        daysList.removeAll { str -> str == "" }
                         if (daysList.size < 7 && !daysList.isEmpty()) {
                             schedule.everday = false
                             schedule.days = daysList
