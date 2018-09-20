@@ -108,4 +108,5 @@
     <string name="medication_schedule_everyday">Everyday</string>
     <string name="medication_schedule_anytime">Anytime</string>
     <string name="medication_review_title">Medication list</string>
+    <string name="medication_logging_time_button_suffix"> - Edit</string>
 </resources>

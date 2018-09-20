@@ -39,7 +39,7 @@ public class MedicationReviewWidget extends ConstraintLayout{
     }
 
     private void commonInit() {
-        inflate(getContext(), R.layout.mpower2_medication_review, this);
+        inflate(getContext(), R.layout.mpower2_medication_review_widget, this);
         ButterKnife.bind(this);
     }
 
