@@ -19,6 +19,7 @@ install:
   - gem install bundler
   - bundle install
   - ./setup_git_crypt.sh || travis_terminate 1
+  - ./git_crypt_unlock.sh || travis_terminate 1
   - ./install-gcloud.sh || travis_terminate 1
 
 # Path is used for zipalign
@@ -40,7 +41,7 @@ jobs:
     - stage: test
       script: bundle exec fastlane test
     - stage: firebase-test
-      script: ./firebase-test.sh
+      script: ./firebase-test.sh || travis_terminate 1
     - stage: check
       script: bundle exec fastlane assemble
     - stage: deploy
