@@ -18,6 +18,9 @@ before_install:
 install:
   - gem install bundler
   - bundle install
+  - ./setup_git_crypt.sh || travis_terminate 1
+  - ./git_crypt_unlock.sh || travis_terminate 1
+  - ./install-gcloud.sh || travis_terminate 1
 
 # Path is used for zipalign
 before_script:
@@ -25,6 +28,8 @@ before_script:
 
 stages:
   - name: test
+    if: branch !~ /^stable-.*$/
+  - name: firebase-test
     if: branch !~ /^stable-.*$/
   - name: check
     if: branch !~ /^stable-.*$/
@@ -35,10 +40,12 @@ jobs:
   include:
     - stage: test
       script: bundle exec fastlane test
+    - stage: firebase-test
+      script: ./firebase-test.sh || travis_terminate 1
     - stage: check
       script: bundle exec fastlane assemble
     - stage: deploy
-      script: ./travis/deploy.sh
+      script: "bundle exec fastlane internal alias:$KEY_ALIAS storepass:$KEYSTORE_PASSWORD keypass:$KEY_PASSWORD signed_apk_path:"app/build/outputs/apk/app-internal-release.apk"
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
