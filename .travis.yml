@@ -45,7 +45,7 @@ jobs:
     - stage: check
       script: bundle exec fastlane assemble
     - stage: deploy
-      script: "bundle exec fastlane internal alias:$KEY_ALIAS storepass:$KEYSTORE_PASSWORD keypass:$KEY_PASSWORD signed_apk_path:"app/build/outputs/apk/app-internal-release.apk"
+      script: bundle exec fastlane internal alias:"$KEY_ALIAS" storepass:"$KEYSTORE_PASSWORD" keypass:"$KEY_PASSWORD" signed_apk_path:"app/build/outputs/apk/app-internal-release.apk"
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
