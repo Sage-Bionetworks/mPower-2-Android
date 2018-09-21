@@ -2,17 +2,18 @@ package org.sagebionetworks.research.mpower.tracking.recycler_view
 
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.mpower2_medication_review_widget.view.days_label
+import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.taken_at_label
+import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.taken_button
+import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.time_button
+import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.undo_button
 import kotlinx.android.synthetic.main.mpower2_symptoms_logging_item.view.item_title
-import kotlinx.android.synthetic.main.mpower2_symptoms_logging_item.view.time_button
 import kotlinx.android.synthetic.main.mpower2_triggers_logging_item.view.checkmark
-import kotlinx.android.synthetic.main.mpower2_triggers_logging_item.view.undo_button
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingItem.TYPE.SCHEDULE
@@ -85,6 +86,14 @@ class MedicationLoggingAdapter(private val items: List<MedicationLoggingItem>,
                 }
 
                 scheduleHolder.daysLabel.text = daysText
+                // add click- listeners to the buttons
+                scheduleHolder.takenButton.setOnClickListener { _ ->
+                    listener.onTakenPressed(scheduleItem.config.identifier, scheduleItem.schedule, position)
+                }
+
+                scheduleHolder.undoButton.setOnClickListener { _ ->
+                    listener.onUndoPressed(scheduleItem.config.identifier, scheduleItem.schedule, position)
+                }
             }
         }
     }
@@ -124,6 +133,6 @@ class MedicationScheduleViewHolder(view: View) : ViewHolder(view) {
 }
 
 interface MedicationLoggingListener {
-    fun onTakenPressed(itemIdentifier: String, schedule: Schedule, position: Int)
-    fun onUndoPressed(itemIdentifier: String, schedule: Schedule, position: Int)
+    fun onTakenPressed(medicationIdentifier: String, schedule: Schedule, position: Int)
+    fun onUndoPressed(medicationIdentifier: String, schedule: Schedule, position: Int)
 }

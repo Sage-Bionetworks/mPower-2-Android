@@ -35,8 +35,14 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationConfig, 
             replaceWithFragment(fragment)
         }
 
-        return result
+        navigationActionBar.setActionButtonClickListener{ actionButton ->
+            if (actionButton.id == R.id.rs2_step_navigation_action_forward) {
+                val fragment = MedicationLoggingFragment.newInstance(stepView)
+                replaceWithFragment(fragment)
+            }
+        }
 
+        return result
     }
 
     override fun initializeAdapter(): MedicationReviewAdapter {

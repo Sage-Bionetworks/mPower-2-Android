@@ -13,4 +13,5 @@
 
     <dimen name="severity_button_height">60dp</dimen>
     <dimen name="tracking_chevron_width">10dp</dimen>
+    <dimen name="medication_logging_taken_button_width">150dp</dimen>
 </resources>
