@@ -45,13 +45,76 @@
     <string name="tracking_tab_title">Tracking</string>
     <string name="measuring_tab_title">Measuring</string>
 
+    <!--Study Burst titles-->
+    <string name="study_burst_action_bar_title">Study Burst</string>
+    <string name="study_burst_title_day_1">This is your time!</string>
+    <string name="study_burst_title_day_2">You are making a difference!</string>
+    <string name="study_burst_title_day_3">Great Job!</string>
+    <string name="study_burst_title_day_4">Your input matters!</string>
+    <string name="study_burst_title_day_5">Let’s see how you are doing today!</string>
+    <string name="study_burst_title_day_6">Thank you!</string>
+    <string name="study_burst_title_day_7">You can do it!</string>
+    <string name="study_burst_title_day_8">You are fantastic!</string>
+    <string name="study_burst_title_day_9">You are on a roll!</string>
+    <string name="study_burst_title_day_10">You are amazing!</string>
+    <string name="study_burst_title_day_11">Keep up the good work!</string>
+    <string name="study_burst_title_day_12">Your contribution is important!</string>
+    <string name="study_burst_title_day_13">Every day is a new day!</string>
+    <string name="study_burst_title_day_14">This is your time!</string>
+    <string name="study_burst_title_day_15">Thank you!</string>
+    <string name="study_burst_title_day_16">You can do it!</string>
+    <string name="study_burst_title_day_17">You are fantastic!</string>
+    <string name="study_burst_title_day_18">You are amazing!</string>
+    <string name="study_burst_title_day_19">Your contribution is important!</string>
+
+    <!-- Study Burst messages -->
+    <string name="study_burst_message_day_1">Use the daily activities to focus on your health.</string>
+    <string name="study_burst_message_day_2">You are contributing to PD research.</string>
+    <string name="study_burst_message_day_3">We could not do this study without you.</string>
+    <string name="study_burst_message_day_4">Your participation is helping PD research.</string>
+    <string name="study_burst_message_day_5">Use the following activities to track your memory &amp; tremors.</string>
+    <string name="study_burst_message_day_6">You are helping us make a difference in PD research.</string>
+    <string name="study_burst_message_day_7">By completing activities, you can track your daily health.</string>
+    <string name="study_burst_message_day_8">Log your medications and symptoms to keep on track.</string>
+    <string name="study_burst_message_day_9">The finger tapping activity allows you to see trends in your motor skills.</string>
+    <string name="study_burst_message_day_10">We could not do this study without you.</string>
+    <string name="study_burst_message_day_11">As you complete activities, check out the trends feature.</string>
+    <string name="study_burst_message_day_12">The walking activity provides us with daily data on your gait and balance.</string>
+    <string name="study_burst_message_day_13">As you complete more activities, you will be able to see trends &amp; patterns.</string>
+    <string name="study_burst_message_day_14">Use the activities to track how you are doing today.</string>
+    <string name="study_burst_message_day_15">You are helping us make a difference in PD research.</string>
+    <string name="study_burst_message_day_16">By completing activities, you can track your daily health.</string>
+    <string name="study_burst_message_day_17">Log your medications and symptoms to keep on track.</string>
+    <string name="study_burst_message_day_18">We could not do this study without you.</string>
+    <string name="study_burst_message_day_19">The walking activity provides us with daily data on your gait and balance.</string>
+
     <string name="study_burst_progress_bar_day">Day</string>
     <string name="study_burst_progress_bar_title">Study Burst</string>
-    <string name="study_burst_progress_message">Progress expires in <b>%1$s</b></string>
-    <string name="study_burst_cell_number_label">#%1$d</string>
-    <string name="study_burst_message_day">Activities should be done every day and ideally all at once. You can begin them at any point during the day.</string>
-    <string name="study_burst_message_days_missed">In %1$d days you’ve only missed %2$d Study Burst days!</string>
-    <string name="study_burst_message_days_missed_one">In %1$d days you’ve only missed 1 Study Burst day!</string>
+    <string name="study_burst_progress_message">Progress expires in</string>
+    <string name="task_info_estimated_time_label">%1$d minutes</string>
+    <string name="study_burst_activities_to_do">%1$d activities to do</string>
+
+    <string name="study_burst_message_days_missed">In %1$d days you\'ve only missed %2$d Study Burst days!</string>
+    <string name="study_burst_message_days_missed_one">In %1$d days you\'ve only missed 1 Study Burst day!</string>
+
+    <string name="measuring_center_label">Walk And Balance</string>
+    <string name="measuring_left_label">Finger Tapping</string>
+    <string name="measuring_right_label">Tremor Test</string>
+    <string name="tracking_center_label">Medication</string>
+    <string name="tracking_left_label">Symptom</string>
+    <string name="tracking_right_label">Trigger</string>
+
+    <!-- Today Fragment -->
+    <!-- The term to use when referring to multiple instances of a task, such as when describing-->
+    <!-- how may times the user has logged taking medication.-->
+    <string name="task_plural_term_for_medication">"%1$d Doses"</string>
+    <string name="task_plural_term_for_triggers">"%1$d Triggers"</string>
+    <string name="task_plural_term_for_symptoms">"%1$d Symptoms"</string>
+    <string name="task_plural_term_for_activities">"%1$d Activities"</string>
+    <string name="task_singular_term_for_medication">"%1$d Dose"</string>
+    <string name="task_singular_term_for_triggers">"%1$d Trigger"</string>
+    <string name="task_singular_term_for_symptoms">"%1$d Symptom"</string>
+    <string name="task_singular_term_for_activities">"%1$d Activity"</string>
 
     <string name="remove_medication">Remove medication</string>
     <string name="schedule_title">Schedule</string>
