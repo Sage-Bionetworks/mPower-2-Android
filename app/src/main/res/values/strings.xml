@@ -111,4 +111,12 @@
     <string name="medication_logging_time_button_suffix"> - Edit</string>
     <string name="medication_logging_taken_at_label">Taken at</string>
     <string name="medication_logging_undo_button">Undo</string>
+
+    <string name="medication_logging_morning_time_block">Morning</string>
+    <string name="medication_logging_afternoon_time_block">Afternoon</string>
+    <string name="medication_logging_evening_time_block">Evening</string>
+    <string name="medication_logging_night_time_block">Night</string>
+    <string name="medication_logging_current_medications">%1$s Medications</string>
+    <string name="medication_logging_missed_medications">Missed Medications</string>
+    <string name="medication_logging_add_more">View medication list</string>
 </resources>

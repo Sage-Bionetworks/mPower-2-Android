@@ -44,6 +44,20 @@ public abstract class SymptomLog implements TrackingItemLog {
         public abstract Builder setMedicationTiming(@Nullable String medicationTiming);
     }
 
+    /**
+     * Returns the text of this log.
+     * @return the text of this log.
+     */
+    @NonNull
+    public abstract String getText();
+
+    /**
+     * Returns the timestamp of this log.
+     * @return the timestamp of this log.
+     */
+    @Nullable
+    public abstract Instant getTimestamp();
+
     @Nullable
     public abstract Integer getSeverity();
 

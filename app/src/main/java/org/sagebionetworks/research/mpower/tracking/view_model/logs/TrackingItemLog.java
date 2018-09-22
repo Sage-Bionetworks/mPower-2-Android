@@ -18,19 +18,4 @@ public interface TrackingItemLog {
      */
     @NonNull
     String getIdentifier();
-
-    /**
-     * Returns the text of this log.
-     * @return the text of this log.
-     */
-    @NonNull
-    String getText();
-
-    /**
-     * Returns the Instant that is the timestamp for when this lcg was created.
-     * @return the Instant that is the timestamp for when this log was created.
-     */
-    @Nullable
-    @SerializedName("loggedDate")
-    Instant getTimestamp();
 }

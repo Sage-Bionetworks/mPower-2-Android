@@ -22,7 +22,7 @@ import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAdap
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
-import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
 import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.slf4j.LoggerFactory
@@ -34,7 +34,7 @@ import org.threeten.bp.zone.ZoneRulesException
 import java.util.Calendar
 
 class MedicationSchedulingFragment :
-        RecyclerViewTrackingFragment<MedicationConfig, SimpleTrackingItemLog,
+        RecyclerViewTrackingFragment<MedicationConfig, MedicationLog,
                 MedicationTrackingTaskViewModel, MedicationAdapter>() {
 
     private val LOGGER = LoggerFactory.getLogger(MedicationSchedulingFragment::class.java)

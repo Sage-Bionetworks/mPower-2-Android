@@ -29,6 +29,20 @@ public abstract class SimpleTrackingItemLog implements TrackingItemLog {
         public abstract Builder setTimestamp(@Nullable Instant timestamp);
     }
 
+    /**
+     * Returns the text of this log.
+     * @return the text of this log.
+     */
+    @NonNull
+    public abstract String getText();
+
+    /**
+     * Returns the timestamp of this log.
+     * @return the timestamp of this log.
+     */
+    @Nullable
+    public abstract Instant getTimestamp();
+
     public static Builder builder() {
         return new AutoValue_SimpleTrackingItemLog.Builder();
     }

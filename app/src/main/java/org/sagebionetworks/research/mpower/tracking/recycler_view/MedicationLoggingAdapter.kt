@@ -20,12 +20,12 @@ import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLogg
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingItem.TYPE.TITLE
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
-import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
 import org.sagebionetworks.research.mpower.tracking.widget.UnderlinedButton
 import org.threeten.bp.format.DateTimeFormatter
 
 class MedicationLoggingAdapter(private val items: List<MedicationLoggingItem>,
-        val logs: Map<String, SimpleTrackingItemLog>,
+        val logs: Map<String, MedicationLog>,
         private val listener: MedicationLoggingListener) : RecyclerView.Adapter<ViewHolder>() {
 
     companion object {
@@ -62,6 +62,21 @@ class MedicationLoggingAdapter(private val items: List<MedicationLoggingItem>,
             SCHEDULE -> {
                 val scheduleItem = items[position] as MedicationLoggingSchedule
                 val scheduleHolder = holder as MedicationScheduleViewHolder
+                if (scheduleItem.schedule.anytime) {
+                    holder.daysLabel.setText(R.string.medication_schedule_anytime)
+                } else {
+                    val formatter = DateTimeFormatter.ofPattern("h:mm a")
+                    val timeText = formatter.format(scheduleItem.schedule.time) +
+                            holder.itemView.resources.getString(R.string.medication_logging_time_button_suffix)
+                    scheduleHolder.timeButton.text = timeText
+                    val daysText = when {
+                        scheduleItem.schedule.everday -> holder.itemView.resources.getString(R.string.medication_schedule_everyday)
+                        else -> scheduleItem.schedule.days.joinToString(",")
+                    }
+
+                    scheduleHolder.daysLabel.text = daysText
+                }
+
                 val log = logs[scheduleItem.config.identifier]
                 val isLogged = when (log) {
                     null -> false
@@ -76,16 +91,6 @@ class MedicationLoggingAdapter(private val items: List<MedicationLoggingItem>,
                 scheduleHolder.undoButton.visibility = loggedViewVisibility
                 scheduleHolder.daysLabel.visibility = unloggedViewVisibility
                 scheduleHolder.takenButton.visibility = unloggedViewVisibility
-                val formatter = DateTimeFormatter.ofPattern("h:mm a")
-                val timeText = formatter.format(scheduleItem.schedule.time) +
-                        holder.itemView.resources.getString(R.string.medication_logging_time_button_suffix)
-                scheduleHolder.timeButton.text = timeText
-                val daysText = when {
-                    scheduleItem.schedule.everday -> holder.itemView.resources.getString(R.string.medication_schedule_everyday)
-                    else -> scheduleItem.schedule.days.joinToString(",")
-                }
-
-                scheduleHolder.daysLabel.text = daysText
                 // add click- listeners to the buttons
                 scheduleHolder.takenButton.setOnClickListener { _ ->
                     listener.onTakenPressed(scheduleItem.config.identifier, scheduleItem.schedule, position)
