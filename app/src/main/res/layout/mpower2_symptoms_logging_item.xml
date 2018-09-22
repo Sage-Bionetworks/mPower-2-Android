@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/item_title"
+        style="@style/Widget.MPower.TextView.SelectionSectionTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_small"
+        android:text="Title"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/item_detail"
+        style="@style/Widget.MPower.TextView.SelectionDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_xsmall"
+        android:text="Detail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_title" />
+
+    <TextView
+        android:id="@+id/serverity_label"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="Severity"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_detail" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/margin_xxsmall"
+        android:background="@drawable/form_step_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/serverity_label" />
+
+    <RadioButton
+        android:id="@+id/none_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/severity_button_height"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_xsmall"
+        android:background="@drawable/mpower2_severity_button"
+        android:button="@android:color/transparent"
+        android:checked="false"
+        android:gravity="center"
+        android:text="None"
+        app:layout_constraintEnd_toStartOf="@+id/mild_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+    <RadioButton
+        android:id="@+id/mild_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/severity_button_height"
+        android:layout_marginStart="@dimen/margin_xxsmall"
+        android:background="@drawable/mpower2_severity_button"
+        android:button="@android:color/transparent"
+        android:gravity="center"
+        android:text="Mild"
+        app:layout_constraintEnd_toStartOf="@+id/moderate_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/none_button"
+        app:layout_constraintTop_toTopOf="@+id/none_button" />
+
+    <RadioButton
+        android:id="@+id/moderate_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/severity_button_height"
+        android:layout_marginStart="@dimen/margin_xxsmall"
+        android:background="@drawable/mpower2_severity_button"
+        android:button="@android:color/transparent"
+        android:gravity="center"
+        android:text="Moderate"
+        app:layout_constraintEnd_toStartOf="@+id/severe_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/mild_button"
+        app:layout_constraintTop_toTopOf="@+id/none_button" />
+
+    <RadioButton
+        android:id="@+id/severe_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/severity_button_height"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_xxsmall"
+        android:background="@drawable/mpower2_severity_button"
+        android:button="@android:color/transparent"
+        android:gravity="center"
+        android:text="Severe"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/moderate_button"
+        app:layout_constraintTop_toTopOf="@+id/none_button" />
+
+    <TextView
+        android:id="@+id/start_time_label"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_xlarge"
+        android:text="Start time"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/none_button" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/margin_xxsmall"
+        android:background="@drawable/form_step_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_time_label" />
+
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/time_button"
+        style="@style/Widget.MPower.TextView.UnderlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/symptoms_logging_time_button_default"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/duration_button"
+        style="@style/Widget.MPower.TextView.UnderlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_xlarge"
+        android:text="@string/symptoms_logging_duration_button_default"
+        app:layout_constraintStart_toEndOf="@+id/time_button"
+        app:layout_constraintTop_toTopOf="@+id/time_button" />
+
+    <TextView
+        android:id="@+id/details_label"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_xlarge"
+        android:text="Details"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/time_button" />
+
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/margin_xxsmall"
+        android:background="@drawable/form_step_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details_label" />
+
+    <org.sagebionetworks.research.mpower.MPowerRadioButton
+        android:id="@+id/pre_meds_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider3"
+        app:text="Pre-meds" />
+
+    <org.sagebionetworks.research.mpower.MPowerRadioButton
+        android:id="@+id/post_meds_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_large"
+        app:layout_constraintBottom_toBottomOf="@+id/pre_meds_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pre_meds_button"
+        app:layout_constraintTop_toTopOf="@+id/pre_meds_button"
+        app:text="Post-meds" />
+
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        android:id="@+id/add_note_button"
+        style="@style/Widget.ResearchStack.NavigationActionBar.PrimaryButton.Backward"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_large"
+        android:background="@drawable/mp_round_button_light_gray"
+        android:text="Add note"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pre_meds_button" />
+
+</android.support.constraint.ConstraintLayout>

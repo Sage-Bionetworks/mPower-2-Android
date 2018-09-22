@@ -7,13 +7,14 @@ import org.sagebionetworks.research.domain.inject.TaskModule;
 import org.sagebionetworks.research.mpower.MPowerApplication;
 import org.sagebionetworks.research.mpower.researchstack.inject.MPowerResearchStackModule;
 import org.sagebionetworks.research.mpower.sageresearch.inject.MPowerSageResearchModule;
+import org.sagebionetworks.research.sageresearch_app_sdk.inject.SageResearchAppSDKModule;
 
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;
 
 @Component(modules = {MPowerApplicationModule.class, TaskModule.class, MPowerResearchStackModule.class,
-        MPowerSageResearchModule.class, AndroidInjectionModule.class},
+        MPowerSageResearchModule.class, SageResearchAppSDKModule.class, AndroidInjectionModule.class},
         dependencies = {BridgeManagerProvider.class})
 public interface MPowerApplicationComponent {
 

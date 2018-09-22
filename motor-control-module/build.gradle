@@ -94,4 +94,6 @@ dependencies {
     testImplementation 'com.google.dagger:dagger-android-support:2.15'
     testAnnotationProcessor 'com.google.dagger:dagger-android-processor:2.15'
     testAnnotationProcessor "com.google.dagger:dagger-compiler:2.15"
+
+    implementation 'com.ibm.icu:icu4j:53.1'
 }

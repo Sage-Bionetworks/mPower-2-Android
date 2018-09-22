@@ -22,12 +22,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <Button
+
+            <FrameLayout
                 android:id="@+id/studyBurstBack"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="8dp"
-                android:background="@drawable/rs2_cancel_icon"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:background="@color/transparent"
+                android:padding="@dimen/rsb_padding_small">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    app:srcCompat="@drawable/rs2_cancel_icon"/>
+
+            </FrameLayout>
+
+
             <ProgressBar
                 android:id="@+id/studyBurstTopProgressBar"
                 style="?android:attr/progressBarStyleHorizontal"
@@ -94,50 +105,59 @@
             android:background="@color/appLightGray"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/expiresText"
+    <LinearLayout
+        android:id="@+id/expiresTextContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:text="Progress expires"
-        android:textStyle="italic"
-        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:padding="@dimen/rsb_padding_small"
         app:layout_constraintTop_toBottomOf="@id/middle_container"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/taskContainer"/>
+        app:layout_constraintBottom_toTopOf="@id/taskContainer">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="@string/study_burst_progress_message"
+            android:textStyle="italic" />
+        <TextView
+            android:id="@+id/expiresText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/taskContainer"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        app:layout_constraintTop_toBottomOf="@id/expiresText"
+        android:layout_marginTop="@dimen/rsb_padding_large"
+        android:layout_marginLeft="@dimen/rsb_padding_large"
+        android:layout_marginRight="@dimen/rsb_padding_large"
+        app:layout_constraintTop_toBottomOf="@id/middle_container"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/studyBurstRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </android.support.v7.widget.RecyclerView>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/rsb_padding_large"
+            android:layout_above="@+id/study_burst_next"/>
 
         <Button
-            android:id="@+id/study_burst_next"
+            android:id="@id/study_burst_next"
             android:layout_width="match_parent"
             android:layout_height="@dimen/mp_rounded_button_height"
             android:text="@string/rsb_next"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="@dimen/rsb_padding_large"
+            android:layout_marginBottom="@dimen/rsb_padding_large"
+            android:layout_alignParentBottom="true"
             style="@style/MPower.RoundedCornerMaterialButton"/>
-    </LinearLayout>
 
-
+    </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
