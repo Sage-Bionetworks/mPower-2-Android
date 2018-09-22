@@ -16,8 +16,12 @@ before_install:
   - git config --global user.email "tcisagebio@sagebase.org"
 
 install:
+  # upgrade to dpkg >= 1.17.5ubuntu5.8, which fixes https://bugs.launchpad.net/ubuntu/+source/dpkg/+bug/1730627
+  - sudo apt-get install -y dpkg  
   - gem install bundler
   - bundle install
+  - ./setup_git_crypt.sh || travis_terminate 1
+  - ./install-gcloud.sh || travis_terminate 1
 
 # Path is used for zipalign
 before_script:
@@ -26,6 +30,8 @@ before_script:
 stages:
   - name: test
     if: branch !~ /^stable-.*$/
+  - name: firebase-test
+    if: branch !~ /^stable-.*$/ AND type != pull_request
   - name: check
     if: branch !~ /^stable-.*$/
   - name: deploy
@@ -35,10 +41,14 @@ jobs:
   include:
     - stage: test
       script: bundle exec fastlane test
+    - stage: firebase-test
+      script:
+        - ./git_crypt_unlock.sh || travis_terminate 1
+        - ./firebase-test.sh || travis_terminate 1
     - stage: check
       script: bundle exec fastlane assemble
     - stage: deploy
-      script: ./travis/deploy.sh
+      script: bundle exec fastlane internal alias:"$KEY_ALIAS" storepass:"$KEYSTORE_PASSWORD" keypass:"$KEY_PASSWORD" signed_apk_path:"app/build/outputs/apk/app-internal-release.apk"
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
