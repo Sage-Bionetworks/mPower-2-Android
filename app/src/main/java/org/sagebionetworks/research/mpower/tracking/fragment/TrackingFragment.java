@@ -114,6 +114,17 @@ public abstract class TrackingFragment
     }
 
     /**
+     * Replaces this fragment with the given fragment. Doesn't add the transaction to the back stack.
+     * @param fragment The fragment to replace this fragment with.
+     */
+    public void replaceWithFragment(Fragment fragment) {
+        getFragmentManager()
+                .beginTransaction()
+                .replace(((ViewGroup)this.getView().getParent()).getId(), fragment)
+                .commit();
+    }
+
+    /**
      * Returns the id of the layout to inflate for this fragment.
      *
      * @return the id of the layout to inflate for this fragment.

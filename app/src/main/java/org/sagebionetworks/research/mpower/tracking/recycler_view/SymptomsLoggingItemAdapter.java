@@ -15,6 +15,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewM
 import org.sagebionetworks.research.mpower.tracking.widget.SymptomsLoggingUIFormItemWidget;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +33,8 @@ public class SymptomsLoggingItemAdapter extends Adapter<SymptomsLoggingItemViewH
             @NonNull SymptomsLoggingItemViewHolder.SymptomsLoggingListener symptomsLoggingListener,
             Map<Integer, SymptomLog> logsByPosition) {
         this.symptomsLoggingListener = symptomsLoggingListener;
-        this.configs = configs;
-        this.logsByPosition = logsByPosition;
+        this.configs = new ArrayList<>(configs);
+        this.logsByPosition = new HashMap<>(logsByPosition);
     }
 
     public void updateLog(int position, @Nullable SymptomLog log) {
