@@ -57,7 +57,7 @@ public class TaskLauncher {
         }
 
         @Type
-        String getState() {
+        public String getState() {
             return state;
         }
     }

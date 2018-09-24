@@ -1,0 +1,21 @@
+{
+  "items" : [
+    {
+      "text" : "Hot",
+      "identifier" : "Hot"
+    },
+    {
+      "text" : "Sitting still",
+      "identifier" : "Sitting still"
+    },
+    {
+      "loggedDate" : "2018-08-29T12:24:26.552Z",
+      "identifier" : "Bedtime, late",
+      "text" : "Bedtime, late"
+    }
+  ],
+  "startDate" : "2018-08-29T12:24:20.767Z",
+  "type" : "loggingCollection",
+  "identifier" : "trackedItems",
+  "endDate" : "2018-08-29T12:24:20.767Z"
+}
