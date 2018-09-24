@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
-import org.sagebionetworks.research.mpower.tracking.recycler_view.Schedule;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 
 import java.util.Collections;
