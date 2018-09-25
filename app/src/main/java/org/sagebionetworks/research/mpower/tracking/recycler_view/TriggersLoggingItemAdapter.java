@@ -13,6 +13,8 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTracki
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.TriggersLoggingUIFormItemWidget;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -27,9 +29,9 @@ public class TriggersLoggingItemAdapter extends Adapter<TriggersLoggingItemViewH
 
     public TriggersLoggingItemAdapter(List<SimpleTrackingItemConfig> items,
             @NonNull TriggersLoggingItemViewHolder.TriggersLoggingListener triggersLoggingListener, Set<Integer> selectedIndices) {
-        this.items = items;
+        this.items = new ArrayList<>(items);
         this.triggersLoggingListener = triggersLoggingListener;
-        this.selectedIndices = selectedIndices;
+        this.selectedIndices = new HashSet<>(selectedIndices);
     }
 
     @NonNull
