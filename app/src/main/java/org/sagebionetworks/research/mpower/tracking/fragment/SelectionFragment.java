@@ -46,9 +46,7 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
         this.navigationActionBar.setActionButtonClickListener((actionButton -> {
             if (actionButton.getId() == R.id.rs2_step_navigation_action_forward) {
                 Fragment nextFragment = this.getNextFragment();
-                this.getFragmentManager().beginTransaction()
-                        .replace(((ViewGroup)this.getView().getParent()).getId(), nextFragment)
-                        .commit();
+                replaceWithFragment(nextFragment);
             }
         }));
 

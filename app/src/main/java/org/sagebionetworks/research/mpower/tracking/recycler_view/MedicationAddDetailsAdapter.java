@@ -11,6 +11,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.configs.Medicatio
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.widget.MedicationAddDetailsWidget;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MedicationAddDetailsAdapter extends Adapter<MedicationAddDetailsViewHolder> {
@@ -22,7 +23,7 @@ public class MedicationAddDetailsAdapter extends Adapter<MedicationAddDetailsVie
     public MedicationAddDetailsAdapter(@NonNull final List<MedicationConfig> unconfiguredElements,
             @NonNull final MedicationAddDetailsListener medicationAddDetailsListener) {
         this.medicationAddDetailsListener = medicationAddDetailsListener;
-        this.unconfiguredElements = unconfiguredElements;
+        this.unconfiguredElements = new ArrayList<>(unconfiguredElements);
     }
 
     public void itemConfigured(int position) {
