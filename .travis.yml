@@ -31,7 +31,7 @@ stages:
   - name: test
     if: branch !~ /^stable-.*$/
   - name: firebase-test
-    if: branch !~ /^stable-.*$/ AND type != pull_request
+    if: type == pull_request
   - name: check
     if: branch !~ /^stable-.*$/
   - name: deploy
