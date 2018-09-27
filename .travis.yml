@@ -49,13 +49,13 @@ jobs:
       script:
         - ./git_crypt_unlock.sh || travis_terminate 1
         - ./firebase-test-setup.sh || travis_terminate 1
-        - echo "y" | gcloud firebase test android run --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk --test-targets "size large"
+        - echo "y" | gcloud firebase test android run --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk --test-targets "size large" --device model=NexusLowRes
     - stage: firebase-test
       name: "Small and Medium androidTests"
       script:
         - ./git_crypt_unlock.sh || travis_terminate 1
         - ./firebase-test-setup.sh || travis_terminate 1
-        - echo "y" | gcloud firebase test android run --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk --test-targets "size small","size medium"
+        - echo "y" | gcloud firebase test android run --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk --test-targets "size small","size medium" --device model=NexusLowRes
     - stage: deploy
       script: bundle exec fastlane internal alias:"$KEY_ALIAS" storepass:"$KEYSTORE_PASSWORD" keypass:"$KEY_PASSWORD" signed_apk_path:"app/build/outputs/apk/app-internal-release.apk"
 
