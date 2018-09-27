@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "274744837571",
+    "firebase_url": "https://mpower2-e03b9.firebaseio.com",
+    "project_id": "mpower2-e03b9",
+    "storage_bucket": "mpower2-e03b9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:274744837571:android:3278ee86fbba19d6",
+        "android_client_info": {
+          "package_name": "org.sagebionetworks.research.mpower"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "274744837571-262geh5i9gp0emkqs1ek83p4i9goqped.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.sagebionetworks.research.mpower",
+            "certificate_hash": "00fa4cc894c17749715ce9351e3d0df44bbf76fc"
+          }
+        },
+        {
+          "client_id": "274744837571-pc4s47h3jh0clrfksefu6jn4ks8neg2r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDO--t1SDE_fJY7zVVZ0WP2QauKRI4zM64"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "274744837571-pc4s47h3jh0clrfksefu6jn4ks8neg2r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
