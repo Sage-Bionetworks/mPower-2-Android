@@ -39,8 +39,7 @@ jobs:
   include:
     - stage: test
       script:
-        - bundle exec fastlane test
-        - bundle exec fastlane assemble
+        - bundle exec fastlane test && bundle exec fastlane assemble
     - stage: firebase-test
       name: "Large androidTests"
       if: type != pull_request
