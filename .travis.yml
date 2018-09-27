@@ -31,7 +31,7 @@ stages:
   - name: test
     if: branch !~ /^stable-.*$/
   - name: firebase-test
-    if: env(encrypted_cafca427fc2f_iv) IS present
+    if: env(TRAVIS_SECURE_ENV_VARS) IS true
   - name: deploy
     if: branch =~ /^stable-.*$/
 
