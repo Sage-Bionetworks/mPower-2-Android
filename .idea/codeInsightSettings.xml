@@ -2,18 +2,21 @@
 <project version="4">
   <component name="JavaProjectCodeInsightSettings">
     <excluded-names>
+      <name>android.app.Activity</name>
+      <name>android.app.Fragment</name>
       <name>android.support.test.espresso.core.deps</name>
+      <name>android.support.v4.util</name>
       <name>android.support.v4.util.Preconditions</name>
       <name>ch.qos.logback.core.Context</name>
       <name>ch.qos.logback.core.util.Duration</name>
+      <name>com.google.common.base.Verify</name>
       <name>com.google.gson.internal</name>
       <name>dagger.internal</name>
       <name>io.reactivex.annotations.Nullable</name>
       <name>java.time</name>
+      <name>javax.annotation.Nullable</name>
       <name>javax.xml.datatype</name>
       <name>junit.framework</name>
-      <name>android.app.Activity</name>
-      <name>android.app.Fragment</name>
     </excluded-names>
   </component>
 </project>
