@@ -99,8 +99,8 @@ public class TrackingTaskViewModelTest {
     @UiThreadTest
     public void initializeViewModel() {
         this.viewModel = new TestViewModel(TRACKING_STEP_VIEW, null);
-        this.viewModel.setTaskStartDate(START_DATE);
-        this.viewModel.setTaskEndDate(END_DATE);
+//        this.viewModel.setTaskStartDate(START_DATE);
+//        this.viewModel.setTaskEndDate(END_DATE);
     }
 
     private void setupSelections() {

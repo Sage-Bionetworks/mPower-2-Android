@@ -48,7 +48,7 @@ import org.threeten.bp.format.DateTimeFormatter
 //
 
 @RunWith(AndroidJUnit4::class)
-// ran into multidex issues moving this to a library project, leaving it here for now
+// ran into multi-dex issues moving this to a library project, leaving it here for now
 class RoomScheduledActivityTests: RoomTestHelper() {
 
     companion object {
@@ -397,5 +397,9 @@ class RoomScheduledActivityTests: RoomTestHelper() {
     fun assertTaskContains(guids: Array<String>, activityList: List<ScheduledActivityEntity>) {
         assertEquals(guids.size, activityList.size)
         assertEquals(0, activityList.filter { !guids.contains(it.guid) }.size)
+    }
+
+    @Test fun query_needsSyncedWithBridge() {
+        // TODO: mdephillips 9/24/18 do tests
     }
 }

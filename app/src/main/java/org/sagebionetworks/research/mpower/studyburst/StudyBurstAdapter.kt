@@ -13,7 +13,7 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.study_burst_cell.view.*
 import org.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.R
-import org.sagebionetworks.research.sageresearch.manager.TaskInfo
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 
 class StudyBurstAdapter(context: Context, val items : List<StudyBurstTaskInfo>?) : RecyclerView.Adapter<ViewHolder>() {
 
@@ -80,11 +80,6 @@ class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
     val ivImage: ImageView = view.cell_image
     val ivComplete: ImageView = view.checkmark
 }
-
-data class StudyBurstTaskInfo(
-        val task: TaskInfo,
-        val isActive: Boolean,
-        val isComplete: Boolean)
 
 interface StudyBurstAdapterListener {
     fun itemSelected(item: StudyBurstTaskInfo)

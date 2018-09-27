@@ -121,7 +121,6 @@ public class TaskLauncher {
 
             sageResearchTaskLauncher.launchTask(context, taskIdentifier, taskRunUUID);
             tls = new MutableLiveData<>();
-            tls.postValue(new TaskLaunchState(Type.LAUNCH_ERROR));
         } else if (RS_TASKS.contains(taskIdentifier)) {
             LOGGER.debug("Launching ResearchStack task: {}", taskIdentifier);
 

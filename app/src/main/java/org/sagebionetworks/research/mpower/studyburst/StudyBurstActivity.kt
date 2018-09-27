@@ -1,6 +1,5 @@
 package org.sagebionetworks.research.mpower.studyburst
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
@@ -9,20 +8,19 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.view.View
 import android.widget.Toast
+import dagger.android.AndroidInjection
 import org.slf4j.LoggerFactory
 
 import org.sagebionetworks.research.mpower.R
 import kotlinx.android.synthetic.main.activity_study_burst.*
+import org.researchstack.backbone.result.TaskResult
+import org.researchstack.backbone.ui.ViewTaskActivity
 import org.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.TaskLauncher
 import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type.LAUNCH_ERROR
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
-import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.Instant
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 
@@ -30,17 +28,25 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
     private val LOGGER = LoggerFactory.getLogger(StudyBurstActivity::class.java)
 
+    /**
+     * @property studyBurstViewModel encapsulates all read/write data operations
+     */
     private val studyBurstViewModel: StudyBurstViewModel by lazy {
         StudyBurstViewModel.create(this)
     }
 
-    @Inject
-    lateinit var taskLauncher: TaskLauncher
+    /**
+     * @property taskLauncher used to launch the study burst tasks
+     */
+    @Inject lateinit var taskLauncher: TaskLauncher
 
+    /**
+     * @propert countdownTask used to countdown the progress to the study burst ends
+     */
     private var countdownTask: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         LOGGER.debug("StudyBurstActivity.onCreate()")
         setContentView(R.layout.activity_study_burst)
@@ -181,40 +187,40 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * Sets up the study burst adapter to display the tasks the user can complete
      */
     private fun setupStudyBurstAdapter(item: StudyBurstItem) {
-        var firstUnfinishedReached = false
-        val adapter = StudyBurstAdapter(this, item.orderedTasks.map { task ->
-            val isFinished = item.isStudyBurstTaskFinished(task.identifier)
-            val isActive = isFinished || !firstUnfinishedReached
-            if (!firstUnfinishedReached) {
-                firstUnfinishedReached = !isFinished
-            }
-            // Tasks are active and can be run if they are finished or they are the first unfinished in the list
-            StudyBurstTaskInfo(task, isActive, isFinished)
-        })
+        val adapter = StudyBurstAdapter(this, item.orderedTasks)
         adapter.listener = this
         studyBurstRecycler.adapter = adapter
     }
 
+    /**
+     * StudyBurstAdapterListener function, called when a task icon in the RecyclerView is selected.
+     */
     override fun itemSelected(item: StudyBurstTaskInfo) {
-        Toast.makeText(this,
-                "Feature not implemented yet: run " + item.task.identifier,
-                Toast.LENGTH_LONG).show()
-//    TODO: mdephillips 9/13/18 run task and complete schedule
-//        taskLauncher.launchTask(this, item.task.identifier, null)
-//                .observe(this, Observer {
-//                    when(it?.state) {
-//                        LAUNCH_ERROR ->
-//                            Toast.makeText(this,
-//                                    "Error launching  " + item.task.identifier,
-//                                    Toast.LENGTH_LONG).show()
-//                    }
-//                })
+        studyBurstViewModel.selectedTaskInfo = item
+        taskLauncher.launchTask(this, item.task.identifier, null)
+                .observe(this, Observer {
+                    when(it?.state) {
+                        LAUNCH_ERROR -> {
+                            studyBurstViewModel.selectedTaskInfo = null
+                            Toast.makeText(this,
+                                    "Error launching  " + item.task.identifier,
+                                    Toast.LENGTH_LONG).show()
+                        }
+                    }
+                })
     }
 
+    /**
+     * This function is called when the user finishes or cancels a research stack task, i.e. tapping, tremor, etc.
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == TaskLauncher.TASK_REQUEST_CODE && resultCode == RESULT_OK) {
-
+            (data?.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT) as? TaskResult)?.let {
+                studyBurstViewModel.updateSchedule(
+                        studyBurstViewModel.selectedTaskInfo?.schedule, it)
+            }
         }
+        studyBurstViewModel.selectedTaskInfo = null
     }
 }

@@ -26,6 +26,7 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.sagebionetworks.research.sageresearch.extensions.endOfDay
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.extensions.inSameDayAs
+import org.sagebionetworks.research.sageresearch.extensions.mostRecentSchedule
 import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
@@ -63,6 +64,11 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
             return listOf(Tapping, WalkAndBalance, Tremor)
         }
     }
+
+    /**
+     * @property selectedTaskInfo used to store the selected schedule task info while a task is running
+     */
+    var selectedTaskInfo: StudyBurstTaskInfo? = null
 
     private val prefs = app.getSharedPreferences("StudyBurstViewModel", MODE_PRIVATE)
 
@@ -298,7 +304,7 @@ data class StudyBurstItem(
     /**
      * @property orderedTasks the sorted task info objects that need done for a study burst's day to be completed.
      */
-    val orderedTasks: List<TaskInfo>
+    val orderedTasks: List<StudyBurstTaskInfo>
     /**
      * @property finishedSchedules subset of the finished schedules.
      */
@@ -327,6 +333,8 @@ data class StudyBurstItem(
      * @property shouldMarkStudyBurstAsCompleted true if the view model should mark the study burst as completed
      */
     internal val shouldMarkStudyBurstAsCompleted: Boolean
+
+
 
     init {
         val filteredFinishedOn = filterFinishedSchedules(schedules)
@@ -372,10 +380,21 @@ data class StudyBurstItem(
 
         this.hasStudyBurst = hasStudyBurst
 
-        orderedTasks = activityGroup?.tasks?.sortedWith(Comparator { o1, o2 ->
+        val sortedOrderedTasks = activityGroup?.tasks?.sortedWith(Comparator { o1, o2 ->
             studyBurstTasksSortOrder.indexOf(o1.identifier).compareTo(
                     studyBurstTasksSortOrder.indexOf(o2.identifier))
         }) ?: StudyBurstViewModel.defaultTaskInfoSortOrder
+        var firstUnfinishedReached = false
+        orderedTasks = sortedOrderedTasks.map {
+            val schedule = schedules.mostRecentSchedule(it.identifier)
+            val isFinished = isStudyBurstTaskFinished(it.identifier)
+            val isActive = isFinished || !firstUnfinishedReached
+            if (!firstUnfinishedReached) {
+                firstUnfinishedReached = !isFinished
+            }
+            // Tasks are active and can be run if they are finished or they are the first unfinished in the list
+            StudyBurstTaskInfo(schedule, it, isActive, isFinished)
+        }
     }
 
     /**
@@ -639,4 +658,10 @@ data class TodayActionBarItem(
         val title: String,
         val detail: String?,
         @DrawableRes val image: Int?)
+
+data class StudyBurstTaskInfo(
+        val schedule: ScheduledActivityEntity?,
+        val task: TaskInfo,
+        val isActive: Boolean,
+        val isComplete: Boolean)
 
