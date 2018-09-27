@@ -31,22 +31,29 @@ stages:
   - name: test
     if: branch !~ /^stable-.*$/
   - name: firebase-test
-    if: type == pull_request
-  - name: check
-    if: branch !~ /^stable-.*$/
+    if: env(encrypted_cafca427fc2f_iv) IS present
   - name: deploy
     if: branch =~ /^stable-.*$/
 
 jobs:
   include:
     - stage: test
-      script: bundle exec fastlane test
+      script:
+        - bundle exec fastlane test
+        - bundle exec fastlane assemble
     - stage: firebase-test
+      name: "Large androidTests"
+      if: type != pull_request
       script:
         - ./git_crypt_unlock.sh || travis_terminate 1
-        - ./firebase-test.sh || travis_terminate 1
-    - stage: check
-      script: bundle exec fastlane assemble
+        - ./firebase-test-setup.sh || travis_terminate 1
+        - echo "y" | gcloud firebase test android run --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk --test-targets "size large"
+    - stage: firebase-test
+      name: "Small and Medium androidTests"
+      script:
+        - ./git_crypt_unlock.sh || travis_terminate 1
+        - ./firebase-test-setup.sh || travis_terminate 1
+        - echo "y" | gcloud firebase test android run --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk --test-targets "size small","size medium"
     - stage: deploy
       script: bundle exec fastlane internal alias:"$KEY_ALIAS" storepass:"$KEYSTORE_PASSWORD" keypass:"$KEY_PASSWORD" signed_apk_path:"app/build/outputs/apk/app-internal-release.apk"
 
