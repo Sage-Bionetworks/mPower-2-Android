@@ -44,18 +44,18 @@ jobs:
     - stage: test
       script:
         - bundle exec fastlane test && bundle exec fastlane assemble
-    - stage: firebase-test
-      name: "Large androidTests"
-      if: type != pull_request
-      script:
-        - ./git_crypt_unlock.sh || travis_terminate 1
-        - ./firebase-test-setup.sh || travis_terminate 1
-        - |
-          echo "y" | gcloud firebase test android run \
-          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
-          --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk \
-          --test-targets "size large" \
-          --device model=NexusLowRes
+#    - stage: firebase-test
+#      name: "Large androidTests"
+#      if: type != pull_request
+#      script:
+#        - ./git_crypt_unlock.sh || travis_terminate 1
+#        - ./firebase-test-setup.sh || travis_terminate 1
+#        - |
+#          echo "y" | gcloud firebase test android run \
+#          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
+#          --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk \
+#          --test-targets "size large" \
+#          --device model=NexusLowRes
     - stage: firebase-test
       name: "Small and Medium androidTests"
       script:
