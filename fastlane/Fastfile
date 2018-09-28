@@ -96,10 +96,10 @@ platform :android do
   end
 
   error do |lane, exception|
-    slack(
-      message: exception.message,
-      success: false
-    )
+    # slack(
+    #   message: exception.message,
+    #   success: false
+    # )
   end
 
   desc "Run a local test"
