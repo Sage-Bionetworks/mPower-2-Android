@@ -76,7 +76,7 @@ jobs:
           bundle exec fastlane \
           deploy_bundle track:internal \
           alias:$KEY_ALIAS storepass:$KEYSTORE_PASSWORD keypass:$KEY_PASSWORD \
-          storefile:$TRAVIS_BUILD_DIR/android-certificates/SageBionetworks.keystore
+          storefile:$TRAVIS_BUILD_DIR/../android-certificates/SageBionetworks.keystore
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
