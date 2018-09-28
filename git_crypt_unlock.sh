@@ -8,4 +8,3 @@ pushd ../android-certificates
 git-crypt unlock $TRAVIS_BUILD_DIR/git-crypt-android-certificates.key
 rm -rf git-crypt-android-certificates.key
 popd
-
