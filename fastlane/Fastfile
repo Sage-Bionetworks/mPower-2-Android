@@ -50,10 +50,7 @@ platform :android do
         }
     )
 
-    all_aab_paths = [
-            Actions.lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS],
-            Actions.lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH]
-        ].flatten.compact
+    all_aab_paths = Actions.lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS]
 
     all_aab_paths.each do |aab_path|
        supply(
