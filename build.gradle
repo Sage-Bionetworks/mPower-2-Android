@@ -46,6 +46,6 @@ task clean(type: Delete) {
 
 tasks.withType(JavaCompile) {
     options.compilerArgs += [
-            '-XepExcludedPaths:.*/build/classes/.*'
+            '-XepExcludedPaths:.*/build/generated/.*'
     ]
 }
