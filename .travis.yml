@@ -21,7 +21,7 @@ before_install:
 
 install:
   # upgrade to dpkg >= 1.17.5ubuntu5.8, which fixes https://bugs.launchpad.net/ubuntu/+source/dpkg/+bug/1730627
-  - sudo apt-get install -y dpkg  
+  - sudo apt-get install -y dpkg
   - gem install bundler
   - bundle install
   - ./setup_git_crypt.sh || travis_terminate 1
@@ -35,7 +35,7 @@ stages:
   - name: test
     if: branch !~ /^stable-.*$/
   - name: firebase-test
-    if: env(TRAVIS_SECURE_ENV_VARS) IS true
+    if: env(encrypted_cafca427fc2f_iv) IS present
   - name: deploy
     if: branch =~ /^stable-.*$/
 
@@ -43,21 +43,30 @@ jobs:
   include:
     - stage: test
       script:
-        - bundle exec fastlane test
-        - bundle exec fastlane assemble
+        - bundle exec fastlane test && bundle exec fastlane assemble
     - stage: firebase-test
       name: "Large androidTests"
       if: type != pull_request
       script:
         - ./git_crypt_unlock.sh || travis_terminate 1
         - ./firebase-test-setup.sh || travis_terminate 1
-        - echo "y" | gcloud firebase test android run --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk --test-targets "size large"
+        - |
+          echo "y" | gcloud firebase test android run \
+          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
+          --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk \
+          --test-targets "size large" \
+          --device model=NexusLowRes
     - stage: firebase-test
       name: "Small and Medium androidTests"
       script:
         - ./git_crypt_unlock.sh || travis_terminate 1
         - ./firebase-test-setup.sh || travis_terminate 1
-        - echo "y" | gcloud firebase test android run --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk --test-targets "size small","size medium"
+        - |
+          echo "y" | gcloud firebase test android run \
+          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
+          --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk \
+          --test-targets "size small","size medium" \
+          --device model=NexusLowRes
     - stage: deploy
       script:
         - ./git_crypt_unlock.sh || travis_terminate 1
