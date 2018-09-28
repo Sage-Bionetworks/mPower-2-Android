@@ -62,7 +62,7 @@ jobs:
 #      script:
 #        - ./git_crypt_unlock.sh || travis_terminate 1
 #        - ./firebase-test-setup.sh || travis_terminate 1
-#        - ./gradlew assembleInternalDebug
+#        - ./gradlew :app:assembleInternalDebugAndroidTest
 #        - |
 #          echo "y" | gcloud firebase test android run \
 #          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \

@@ -43,7 +43,7 @@ platform :android do
       build_type: "Release",
 
       properties: {
-          "android.injected.signing.store.file" => "../android-certificates/SageBionetworks.keystore",
+          "android.injected.signing.store.file" => "$TRAVIS_BUILD_DIR/android-certificates/SageBionetworks.keystore",
           "android.injected.signing.store.password" => options[:storepass],
           "android.injected.signing.key.alias" => options[:alias],
           "android.injected.signing.key.password" => options[:keypass]
