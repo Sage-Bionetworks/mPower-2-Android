@@ -448,7 +448,7 @@
       "identifier": "completion",
       "type": "completion",
       "title": "Great job!",
-      "text": "You just completed your %@ Walk and Balance activity.",
+      "text": "You just completed your Walk and Balance activity.",
       "image": {
         "type": "fetchable",
         "imageName": "completion_tremor",

@@ -19,7 +19,7 @@ skip_docs
 
 platform :android do
   before_all do
-    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
+    ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
   end
 
   desc "Runs all the tests"
@@ -33,8 +33,41 @@ platform :android do
     gradle(task: "assemble")
   end
 
-  desc "Deploy a new version to the Google Play"
-  lane :alpha do |options|
+  desc "Deploy a new AAB to the Google Play"
+  lane :deploy_bundle do |options|
+    #ensure_git_status_clean
+    version_name = get_version_name(gradle_file_path:"app/build.gradle")
+    next_version_code = increment_version_code(gradle_file_path: "app/build.gradle")
+    gradle(
+      task: ":app:bundle",
+      build_type: "Release",
+
+      properties: {
+          "android.injected.signing.store.file" => options[:storefile],
+          "android.injected.signing.store.password" => options[:storepass],
+          "android.injected.signing.key.alias" => options[:alias],
+          "android.injected.signing.key.password" => options[:keypass]
+        }
+    )
+
+    all_aab_paths = Actions.lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS]
+
+    all_aab_paths.each do |aab_path|
+       supply(
+             track: options[:track],
+             aab: aab_path,
+             json_key: "../android-certificates/play_service_account_79bda59f.json",
+             check_superseded_tracks: true
+       )
+    end
+
+    git_commit(path: "app/build.gradle", message: "[skip ci] Version Bump #{version_name}, #{next_version_code}")
+    add_git_tag(tag: "#{version_name}_#{next_version_code}")
+    push_to_git_remote(remote_branch: ENV["TRAVIS_BRANCH"])
+  end
+
+  desc "Deploy a new APK to the Google Play"
+  lane :deploy do |options|
     ensure_git_status_clean
     version_name = get_version_name(gradle_file_path:"app/build.gradle")
     next_version_code = increment_version_code(gradle_file_path: "app/build.gradle")
@@ -49,33 +82,7 @@ platform :android do
     )
     zipalign(apk_path: "#{lane_context[SharedValues::SIGNED_APK_PATH]}")
     supply(
-      track: "alpha",
-      apk: "#{lane_context[SharedValues::SIGNED_APK_PATH]}",
-      json_key: "../android-certificates/play_service_account_79bda59f.json",
-      check_superseded_tracks: true
-    )
-    git_commit(path: "app/build.gradle", message: "[skip ci] Version Bump")
-    add_git_tag(tag: "#{version_name}_#{next_version_code}")
-    push_to_git_remote(remote_branch: ENV["TRAVIS_BRANCH"])
-  end
-
-  desc "Deploy a new version to the Google Play"
-  lane :internal do |options|
-    ensure_git_status_clean
-    version_name = get_version_name(gradle_file_path:"app/build.gradle")
-    next_version_code = increment_version_code(gradle_file_path: "app/build.gradle")
-    gradle(task: ":app:assembleRelease")
-    sign_apk(
-      alias: options[:alias],
-      storepass: options[:storepass],
-      keystore_path: "../android-certificates/SageBionetworks.keystore",
-      tsa: "http://timestamp.comodoca.com/rfc316",
-      signed_apk_path: options[:signed_apk_path],
-      keypass: options[:keypass]
-    )
-    zipalign(apk_path: "#{lane_context[SharedValues::SIGNED_APK_PATH]}")
-    supply(
-      track: "internal",
+      track: options[:track],
       apk: "#{lane_context[SharedValues::SIGNED_APK_PATH]}",
       json_key: "../android-certificates/play_service_account_79bda59f.json",
       check_superseded_tracks: true
@@ -90,9 +97,9 @@ platform :android do
   after_all do |lane|
     # This block is called, only if the executed lane was successful
 
-    # slack(
-    #   message: "Successfully deployed new App Update."
-    # )
+    slack(
+      message: "Successfully deployed new App Update."
+    )
   end
 
   error do |lane, exception|

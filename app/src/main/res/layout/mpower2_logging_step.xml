@@ -84,7 +84,7 @@
                 android:background="@drawable/mp_round_button_white"
                 android:gravity="center"
                 android:text="Edit Triggers"
-                android:textColor="@color/royal500"
+                android:textColor="@color/appTextDark"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

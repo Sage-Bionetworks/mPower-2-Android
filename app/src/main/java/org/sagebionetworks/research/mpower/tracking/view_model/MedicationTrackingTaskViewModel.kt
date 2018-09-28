@@ -1,6 +1,5 @@
 package org.sagebionetworks.research.mpower.tracking.view_model
 
-import org.sagebionetworks.research.mpower.tracking.recycler_view.Schedule
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig

@@ -7,12 +7,10 @@ import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.model.SelectionUIFormItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
+import org.threeten.bp.LocalTime;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +66,17 @@ public class SortUtil {
     public static List<String> sortDaysList(@NonNull List<String> daysList, @NonNull Context context) {
         List<String> result = new ArrayList<>(daysList);
         Collections.sort(result, (o1, o2) -> Integer.compare(getDayIndex(o1, context), getDayIndex(o2, context)));
+        return result;
+    }
+
+    /**
+     * Returns a sorted list of times in the order they appear in a day.
+     * @param timesList The list of times to return a sorted version of.
+     * @return a sorted list of the times in the order they appear in.
+     */
+    public static List<LocalTime> sortTimesList(@NonNull List<LocalTime> timesList) {
+        List<LocalTime> result = new ArrayList<>(timesList);
+        Collections.sort(result);
         return result;
     }
 

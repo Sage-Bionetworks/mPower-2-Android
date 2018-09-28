@@ -169,4 +169,6 @@
     <string name="medication_add_more">Edit medication list</string>
     <string name="medication_schedule_add_more">Add another schedule</string>
     <string name="medication_schedule_everyday">Everyday</string>
+    <string name="medication_schedule_anytime">Anytime</string>
+    <string name="medication_review_title">Medication list</string>
 </resources>
