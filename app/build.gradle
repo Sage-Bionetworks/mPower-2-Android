@@ -12,8 +12,8 @@ android {
         applicationId "org.sagebionetworks.research.mpower"
         minSdkVersion 19
         targetSdkVersion 28
-        // this is not the final versionCode, product flavors add to it
-        versionCode 1
+        // this is not the final version code, product flavors add to it
+        versionCode 8
         versionName "0.2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

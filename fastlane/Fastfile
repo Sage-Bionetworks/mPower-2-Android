@@ -64,11 +64,6 @@ platform :android do
        )
     end
 
-    supply(
-      track: options[:track],
-      json_key: "../android-certificates/play_service_account_79bda59f.json",
-      check_superseded_tracks: true
-    )
     git_commit(path: "app/build.gradle", message: "[skip ci] Version Bump #{version_name}, #{next_version_code}")
     add_git_tag(tag: "#{version_name}_#{next_version_code}")
     push_to_git_remote(remote_branch: ENV["TRAVIS_BRANCH"])
