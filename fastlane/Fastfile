@@ -49,6 +49,21 @@ platform :android do
           "android.injected.signing.key.password" => options[:keypass]
         }
     )
+
+    all_aab_paths = [
+            Actions.lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS],
+            Actions.lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH]
+        ].flatten.compact
+
+    all_aab_paths.each do |aab_path|
+       supply(
+             track: options[:track],
+             aab: aab_path,
+             json_key: "../android-certificates/play_service_account_79bda59f.json",
+             check_superseded_tracks: true
+       )
+    end
+
     supply(
       track: options[:track],
       json_key: "../android-certificates/play_service_account_79bda59f.json",
