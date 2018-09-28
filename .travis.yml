@@ -50,25 +50,25 @@ jobs:
 #      script:
 #        - ./git_crypt_unlock.sh || travis_terminate 1
 #        - ./firebase-test-setup.sh || travis_terminate 1
-#        - bundle exec fastlane assemble
+#        - ./gradlew assembleInternalDebug
 #        - |
 #          echo "y" | gcloud firebase test android run \
 #          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
 #          --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk \
 #          --test-targets "size large" \
 #          --device model=NexusLowRes
-    - stage: firebase-test
-      name: "Small and Medium androidTests"
-      script:
-        - ./git_crypt_unlock.sh || travis_terminate 1
-        - ./firebase-test-setup.sh || travis_terminate 1
-        - bundle exec fastlane assemble
-        - |
-          echo "y" | gcloud firebase test android run \
-          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
-          --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk \
-          --test-targets "size small","size medium" \
-          --device model=NexusLowRes
+#    - stage: firebase-test
+#      name: "Small and Medium androidTests"
+#      script:
+#        - ./git_crypt_unlock.sh || travis_terminate 1
+#        - ./firebase-test-setup.sh || travis_terminate 1
+#        - ./gradlew assembleInternalDebug
+#        - |
+#          echo "y" | gcloud firebase test android run \
+#          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
+#          --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk \
+#          --test-targets "size small","size medium" \
+#          --device model=NexusLowRes
     - stage: deploy
       script:
         - ./git_crypt_unlock.sh || travis_terminate 1
