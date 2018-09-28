@@ -3,6 +3,7 @@ package org.sagebionetworks.research.mpower
 import android.app.Application
 
 import android.support.test.InstrumentationRegistry
+import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
@@ -54,6 +55,7 @@ import org.threeten.bp.ZonedDateTime
 //
 
 @RunWith(AndroidJUnit4::class)
+@MediumTest
 class TodayScheduleViewModelTests: RoomTestHelper() {
 
     companion object {
