@@ -11,25 +11,24 @@ import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
 import org.sagebionetworks.research.mpower.history.HistoryFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;
-import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
 import org.sagebionetworks.research.mpower.sageresearch.archive.TappingResultArchiveFactory;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
+import org.sagebionetworks.research.mpower.studyburst.StudyBurstTaskResultProcessor;
 import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment;
+import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
+import org.sagebionetworks.research.presentation.perform_task.TaskResultProcessingManager.TaskResultProcessor;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AbstractResultArchiveFactory.ResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.BaseResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.FileResultArchiveFactory;
-import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.TimePickerFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.TriggersLoggingFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.TriggersSelectionFragment;
 
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
+import dagger.multibindings.IntoSet;
 
 @Module(includes = {PerformTaskModule.class, MotorControlStepModule.class, TrackingStepModule.class,
         AppDataModule.class, TrackingFragmentsModule.class})
@@ -64,6 +63,11 @@ public abstract class MPowerApplicationModule {
 
     @ContributesAndroidInjector
     abstract TrackingMenuFragment contributeTrackingMenuFragmentInjector();
+
+    @IntoSet
+    @Binds
+    abstract TaskResultProcessor provideStudyBurstTaskResultProcessor(
+            StudyBurstTaskResultProcessor taskResultProcessor);
 
     @Provides
     static ImmutableList<ResultArchiveFactory> provideAbstractResultArchiveFactory(
