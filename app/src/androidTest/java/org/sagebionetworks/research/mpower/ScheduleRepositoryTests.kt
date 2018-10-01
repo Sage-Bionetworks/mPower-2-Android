@@ -84,10 +84,11 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         assertNotNull(schedule1)
         assertTrue(schedule1?.needsSyncedToBridge == null || schedule1.needsSyncedToBridge == false)
         val repo = MockScheduleRepository(InstrumentationRegistry.getTargetContext(), activityDao)
+        val uuid = repo.createScheduleTaskRunUuid(schedule1!!)
         repo.throwableOnUpdate = Throwable("Unable to resolve host " +
                 "\"webservices.sagebase.org\", no address associated with hostname")
-        repo.updateSchedule(schedule1, TaskResult("id"))
-        val newSchedule1 = getValue(activityDao.activity(schedule1?.guid ?: ""))
+        repo.updateSchedule(TaskResult("id"), uuid)
+        val newSchedule1 = activityDao.activity(schedule1.guid)
         assertEquals(1, newSchedule1.size)
         assertTrue(newSchedule1.first().needsSyncedToBridge ?: false)
     }
@@ -101,11 +102,12 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         assertNotNull(schedule1)
         assertTrue(schedule1?.needsSyncedToBridge == null || schedule1.needsSyncedToBridge == false)
         val repo = MockScheduleRepository(InstrumentationRegistry.getTargetContext(), activityDao)
+        val uuid = repo.createScheduleTaskRunUuid(schedule1!!)
         repo.throwableOnUpdate = EntityNotFoundException("Account not found.", "webservices.sagebase.org")
-        repo.updateSchedule(schedule1, TaskResult("id"))
+        repo.updateSchedule(TaskResult("id"), uuid)
         // See BridgeExtensions.isUnrecoverableAccountNotFoundError for logic
         // on why we don't try to re-upload account not found schedule update failures
-        val newSchedule1 = getValue(activityDao.activity(schedule1?.guid ?: ""))
+        val newSchedule1 = activityDao.activity(schedule1.guid)
         assertEquals(1, newSchedule1.size)
         assertFalse(newSchedule1.first().needsSyncedToBridge ?: true)
     }
@@ -119,22 +121,14 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         assertNotNull(schedule1)
         assertNull(schedule1?.needsSyncedToBridge)
         val repo = MockScheduleRepository(InstrumentationRegistry.getTargetContext(), activityDao)
+        val uuid = repo.createScheduleTaskRunUuid(schedule1!!)
         repo.throwableOnUpdate = Throwable("Client data too large, please consider a smaller payload")
-        repo.updateSchedule(schedule1, TaskResult("id"))
+        repo.updateSchedule(TaskResult("id"), uuid)
         // See BridgeExtensions.isUnrecoverableClientDataTooLargeError for logic
         // on why we don't try to re-upload client data too large schedule update failures
-        val newSchedule1 = getValue(activityDao.activity(schedule1?.guid ?: ""))
+        val newSchedule1 = activityDao.activity(schedule1.guid)
         assertEquals(1, newSchedule1.size)
         assertFalse(newSchedule1.first().needsSyncedToBridge ?: true)
-    }
-
-    @Test
-    fun scheduleUpdateFailed_nullSchedule() {
-        val repo = MockScheduleRepository(InstrumentationRegistry.getTargetContext(), activityDao)
-        assertEquals(0, repo.uploadCounter)
-        repo.updateSchedule(null, TaskResult("id"))
-        // no schedule update, but upload should have been called
-        assertEquals(1, repo.uploadCounter)
     }
 
     @Test
@@ -194,11 +188,6 @@ class ScheduleRepositoryTests: RoomTestHelper() {
             return participantCreatedOn
         }
 
-        var uploadCounter = 0
-        override fun uploadTaskResultS3(taskResult: TaskResult) {
-            uploadCounter++
-        }
-
         override fun cacheSchedules(schedules: List<ScheduledActivityEntity>) {
             dao.upsert(schedules)
         }
@@ -208,6 +197,14 @@ class ScheduleRepositoryTests: RoomTestHelper() {
                 onError.call(it)
             } ?: run {
                 onNext.call(Message())
+            }
+        }
+
+        override fun findSchedule(scheduleGuid: String, onNext: Action1<ScheduledActivityEntity>, onError: Action1<Throwable>) {
+            dao.activity(scheduleGuid).firstOrNull()?.let {
+                onNext.call(it)
+            } ?: run {
+                onError.call(Throwable("No schedule found in DB with guid $scheduleGuid"))
             }
         }
     }

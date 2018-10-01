@@ -196,31 +196,16 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * StudyBurstAdapterListener function, called when a task icon in the RecyclerView is selected.
      */
     override fun itemSelected(item: StudyBurstTaskInfo) {
-        studyBurstViewModel.selectedTaskInfo = item
-        taskLauncher.launchTask(this, item.task.identifier, null)
+        val uuid = studyBurstViewModel.createScheduleTaskRunUuid(item.schedule)
+        taskLauncher.launchTask(this, item.task.identifier, uuid)
                 .observe(this, Observer {
                     when(it?.state) {
                         LAUNCH_ERROR -> {
-                            studyBurstViewModel.selectedTaskInfo = null
                             Toast.makeText(this,
                                     "Error launching  " + item.task.identifier,
                                     Toast.LENGTH_LONG).show()
                         }
                     }
                 })
-    }
-
-    /**
-     * This function is called when the user finishes or cancels a research stack task, i.e. tapping, tremor, etc.
-     */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TaskLauncher.TASK_REQUEST_CODE && resultCode == RESULT_OK) {
-            (data?.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT) as? TaskResult)?.let {
-                studyBurstViewModel.updateSchedule(
-                        studyBurstViewModel.selectedTaskInfo?.schedule, it)
-            }
-        }
-        studyBurstViewModel.selectedTaskInfo = null
     }
 }

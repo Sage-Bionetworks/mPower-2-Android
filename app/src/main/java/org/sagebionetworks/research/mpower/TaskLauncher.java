@@ -111,7 +111,6 @@ public class TaskLauncher {
             @Nullable UUID taskRunUUID) {
         checkNotNull(context);
         checkArgument(!Strings.isNullOrEmpty(taskIdentifier), "taskIdentifier cannot be null or empty");
-        checkState(taskRunUUID == null, "taskRunUUID not supported yet");
 
         // TODO: figure out what type of return values are appropriate @liujoshua 2018/08/06
         MutableLiveData<TaskLaunchState> tls;

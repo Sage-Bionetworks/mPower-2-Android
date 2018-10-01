@@ -65,11 +65,6 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
         }
     }
 
-    /**
-     * @property selectedTaskInfo used to store the selected schedule task info while a task is running
-     */
-    var selectedTaskInfo: StudyBurstTaskInfo? = null
-
     private val prefs = app.getSharedPreferences("StudyBurstViewModel", MODE_PRIVATE)
 
     // TODO: mdephillips 9/8/18 get this from bridge config
