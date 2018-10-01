@@ -1,5 +1,7 @@
 package org.sagebionetworks.research.mpower.tracking.view_model;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
@@ -35,7 +37,7 @@ import java.util.TreeSet;
  *         The type of TrackingItemLog.
  */
 public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog>
-        extends ViewModel {
+        extends AndroidViewModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackingTaskViewModel.class);
 
     public static final String LOGGING_COLLECTION_IDENTIFIER = "trackedItems";
@@ -62,8 +64,10 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
     @NonNull
     protected TrackingStepView stepView;
 
-    protected TrackingTaskViewModel(@NonNull final TrackingStepView stepView,
+    protected TrackingTaskViewModel(@NonNull final Application application,
+            @NonNull final TrackingStepView stepView,
             @Nullable final LoggingCollection<LogType> previousLoggingCollection) {
+        super(application);
         this.stepView = stepView;
         availableElements = new MutableLiveData<>();
         activeElementsById = new MutableLiveData<>();

@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking.view_model;
 
+import android.app.Application;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
@@ -17,9 +18,11 @@ import javax.inject.Inject;
  */
 public class TrackingTaskViewModelFactory {
 
-    @Inject
-    public TrackingTaskViewModelFactory() {
+    private Application application;
 
+    @Inject
+    public TrackingTaskViewModelFactory(Application application) {
+        this.application = application;
     }
 
     public ViewModelProvider.Factory create(@NonNull final TrackingStepView trackingStepView) {
@@ -33,11 +36,11 @@ public class TrackingTaskViewModelFactory {
                 if (whichTask != null) {
                     switch (whichTask) {
                         case Tasks.TRIGGERS:
-                            return (T) new SimpleTrackingTaskViewModel(trackingStepView, null);
+                            return (T) new SimpleTrackingTaskViewModel(application, trackingStepView, null);
                         case Tasks.MEDICATION:
-                            return (T) new MedicationTrackingTaskViewModel(trackingStepView, null);
+                            return (T) new MedicationTrackingTaskViewModel(application, trackingStepView, null);
                         case Tasks.SYMPTOMS:
-                            return (T) new SymptomTrackingTaskViewModel(trackingStepView, null);
+                            return (T) new SymptomTrackingTaskViewModel(application, trackingStepView, null);
                     }
                 }
 

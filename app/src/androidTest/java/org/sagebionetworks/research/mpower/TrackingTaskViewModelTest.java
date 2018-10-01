@@ -5,8 +5,11 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
+import android.app.Application;
+import android.app.Instrumentation;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.annotation.UiThreadTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -36,8 +39,10 @@ public class TrackingTaskViewModelTest {
     // Basic Implementation of a ViewModel.
     private class TestViewModel extends TrackingTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> {
         private TestViewModel(
-                @NonNull final TrackingStepView stepView, @Nullable final LoggingCollection<SimpleTrackingItemLog> previousLoggingCollection) {
-            super(stepView, previousLoggingCollection);
+                @NonNull Application application,
+                @NonNull final TrackingStepView stepView,
+                @Nullable final LoggingCollection<SimpleTrackingItemLog> previousLoggingCollection) {
+            super(application, stepView, previousLoggingCollection);
         }
 
         @Override
@@ -48,7 +53,8 @@ public class TrackingTaskViewModelTest {
         }
 
         @Override
-        protected SimpleTrackingItemLog instantiateLogForUnloggedItem(@NonNull final SimpleTrackingItemConfig config) {
+        protected SimpleTrackingItemLog instantiateLogForUnloggedItem(
+                @NonNull final SimpleTrackingItemConfig config) {
             return SimpleTrackingItemLog.builder()
                     .setIdentifier(config.getIdentifier())
                     .setText(config.getIdentifier())
@@ -65,7 +71,9 @@ public class TrackingTaskViewModelTest {
     }
 
     private static Set<TrackingItem> TRACKING_ITEMS;
+
     private static Instant START_DATE = Instant.ofEpochMilli(1000);
+
     private static Instant END_DATE = Instant.ofEpochMilli(20000);
 
     static {
@@ -95,12 +103,14 @@ public class TrackingTaskViewModelTest {
 
     private TestViewModel viewModel;
 
+    private Application getApplication() {
+        return new Application();
+    }
+
     @Before
     @UiThreadTest
-    public void initializeViewModel() {
-        this.viewModel = new TestViewModel(TRACKING_STEP_VIEW, null);
-        this.viewModel.setTaskStartDate(START_DATE);
-        this.viewModel.setTaskEndDate(END_DATE);
+    public void initializeViewModel() throws IllegalAccessException, ClassNotFoundException, InstantiationException {
+        this.viewModel = new TestViewModel(getApplication(), TRACKING_STEP_VIEW, null);
     }
 
     private void setupSelections() {
@@ -186,7 +196,8 @@ public class TrackingTaskViewModelTest {
                 .setIdentifier(item2.getIdentifier())
                 .setText(item2.getIdentifier())
                 .build();
-        LoggingCollection<SimpleTrackingItemLog> previousCollection = LoggingCollection.<SimpleTrackingItemLog>builder()
+        LoggingCollection<SimpleTrackingItemLog> previousCollection
+                = LoggingCollection.<SimpleTrackingItemLog>builder()
                 .setIdentifier("trackedItems")
                 .setItems(Arrays.asList(log1, log2))
                 .setStartDate(START_DATE)
@@ -194,12 +205,14 @@ public class TrackingTaskViewModelTest {
                 .build();
 
         // re-create the view model with the previous collection.
-        viewModel = new TestViewModel(TRACKING_STEP_VIEW, previousCollection);
+        viewModel = new TestViewModel(getApplication(), TRACKING_STEP_VIEW, previousCollection);
         allAvailableElementsPresent();
         Map<String, SimpleTrackingItemConfig> activeElements = viewModel.getActiveElementsById().getValue();
         assertNotNull("Active elements was unexpectedly null", activeElements);
-        assertTrue("First log was unexpectedly not in the active elements", activeElements.containsKey(log1.getIdentifier()));
-        assertTrue("Second log was unexpectedly not in the active elements", activeElements.containsKey(log2.getIdentifier()));
+        assertTrue("First log was unexpectedly not in the active elements",
+                activeElements.containsKey(log1.getIdentifier()));
+        assertTrue("Second log was unexpectedly not in the active elements",
+                activeElements.containsKey(log2.getIdentifier()));
         assertTrue("Active elements contained extra items", activeElements.size() == 2);
         loggedElementsIsEmpty();
     }
@@ -297,7 +310,8 @@ public class TrackingTaskViewModelTest {
         Map<String, SimpleTrackingItemLog> loggedElements = this.viewModel.getLoggedElementsById().getValue();
         assertNotNull("Logged elements was unexpectedly null", loggedElements);
         assertTrue("Logged elements didn't contain item", this.viewModel.isLogged(item.getIdentifier()));
-        assertEquals("Unexpected log found for item", log, this.viewModel.getLoggedElement(item.getIdentifier()).getValue());
+        assertEquals("Unexpected log found for item", log,
+                this.viewModel.getLoggedElement(item.getIdentifier()).getValue());
         assertTrue("Logged elements contained extra items", loggedElements.size() == 1);
     }
 
@@ -323,9 +337,11 @@ public class TrackingTaskViewModelTest {
         Map<String, SimpleTrackingItemLog> loggedElements = this.viewModel.getLoggedElementsById().getValue();
         assertNotNull("Logged elements was unexpectedly null", loggedElements);
         assertTrue("Logged elements didn't contain item", this.viewModel.isLogged(item1.getIdentifier()));
-        assertEquals("Unexpected log found for item", log1, this.viewModel.getLoggedElement(item1.getIdentifier()).getValue());
+        assertEquals("Unexpected log found for item", log1,
+                this.viewModel.getLoggedElement(item1.getIdentifier()).getValue());
         assertTrue("Logged elements didn't contain item", this.viewModel.isLogged(item2.getIdentifier()));
-        assertEquals("Unexpected log found for item", log2, this.viewModel.getLoggedElement(item2.getIdentifier()).getValue());
+        assertEquals("Unexpected log found for item", log2,
+                this.viewModel.getLoggedElement(item2.getIdentifier()).getValue());
         assertTrue("Logged elements contained extra items", loggedElements.size() == 2);
     }
 
@@ -368,7 +384,8 @@ public class TrackingTaskViewModelTest {
         assertNotNull("Logged elements was unexpectedly null", loggedElements);
         assertFalse("Logged elements still contained removed item", this.viewModel.isLogged(item1.getIdentifier()));
         assertTrue("Logged elements didn't contain item", this.viewModel.isLogged(item2.getIdentifier()));
-        assertEquals("Unexpected log found for item", log2, this.viewModel.getLoggedElement(item2.getIdentifier()).getValue());
+        assertEquals("Unexpected log found for item", log2,
+                this.viewModel.getLoggedElement(item2.getIdentifier()).getValue());
         assertTrue("Logged elements contained extra items", loggedElements.size() == 1);
     }
 
@@ -396,7 +413,8 @@ public class TrackingTaskViewModelTest {
         assertNotNull("Logged elements was unexpectedly null", loggedElements);
         assertFalse("Logged elements still contained removed item", this.viewModel.isLogged(item2.getIdentifier()));
         assertTrue("Logged elements didn't contain item", this.viewModel.isLogged(item1.getIdentifier()));
-        assertEquals("Unexpected log found for item", log1, this.viewModel.getLoggedElement(item1.getIdentifier()).getValue());
+        assertEquals("Unexpected log found for item", log1,
+                this.viewModel.getLoggedElement(item1.getIdentifier()).getValue());
         assertTrue("Logged elements contained extra items", loggedElements.size() == 1);
     }
     // endregion
@@ -424,10 +442,12 @@ public class TrackingTaskViewModelTest {
         this.viewModel.addLoggedElement(log2);
         LoggingCollection<SimpleTrackingItemLog> loggingCollection = this.viewModel.getLoggingCollection();
         assertNotNull("Failed to get logging collection", loggingCollection);
-        assertEquals("Logging collection had unexpected identifier", TrackingTaskViewModel.LOGGING_COLLECTION_IDENTIFIER,
+        assertEquals("Logging collection had unexpected identifier",
+                TrackingTaskViewModel.LOGGING_COLLECTION_IDENTIFIER,
                 loggingCollection.getIdentifier());
         assertEquals("Logging collection had unexpected startDate", START_DATE, loggingCollection.getStartDate());
-        assertEquals("Logging collection had unexpected type", LoggingCollection.DEFAULT_TYPE, loggingCollection.getType());
+        assertEquals("Logging collection had unexpected type", LoggingCollection.DEFAULT_TYPE,
+                loggingCollection.getType());
         assertTrue("Logging collection was missing first log", loggingCollection.getItems().contains(log1));
         assertTrue("Logging collection was missing second log", loggingCollection.getItems().contains(log2));
         assertTrue("Logging collection contained extra items", loggingCollection.getItems().size() == 2);
@@ -449,10 +469,12 @@ public class TrackingTaskViewModelTest {
         this.viewModel.addLoggedElement(log1);
         LoggingCollection<SimpleTrackingItemLog> loggingCollection = this.viewModel.getLoggingCollection();
         assertNotNull("Failed to get logging collection", loggingCollection);
-        assertEquals("Logging collection had unexpected identifier", TrackingTaskViewModel.LOGGING_COLLECTION_IDENTIFIER,
+        assertEquals("Logging collection had unexpected identifier",
+                TrackingTaskViewModel.LOGGING_COLLECTION_IDENTIFIER,
                 loggingCollection.getIdentifier());
         assertEquals("Logging collection had unexpected startDate", START_DATE, loggingCollection.getStartDate());
-        assertEquals("Logging collection had unexpected type", LoggingCollection.DEFAULT_TYPE, loggingCollection.getType());
+        assertEquals("Logging collection had unexpected type", LoggingCollection.DEFAULT_TYPE,
+                loggingCollection.getType());
         assertTrue("Logging collection was missing first log", loggingCollection.getItems().contains(log1));
         // log2 should be generated by the call to getLoggingCollection();
         SimpleTrackingItemLog log2 = SimpleTrackingItemLog.builder()

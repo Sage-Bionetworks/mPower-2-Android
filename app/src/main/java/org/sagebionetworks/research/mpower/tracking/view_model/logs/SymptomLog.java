@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.SerializedName;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.AutoValue_SymptomLog.GsonTypeAdapter;
@@ -56,6 +57,7 @@ public abstract class SymptomLog implements TrackingItemLog {
      * @return the timestamp of this log.
      */
     @Nullable
+    @SerializedName("loggedDate")
     public abstract Instant getTimestamp();
 
     @Nullable

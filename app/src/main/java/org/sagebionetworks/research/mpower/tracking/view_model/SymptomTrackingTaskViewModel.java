@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking.view_model;
 
+import android.app.Application;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -14,9 +15,10 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
  */
 public class SymptomTrackingTaskViewModel extends TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> {
     protected SymptomTrackingTaskViewModel(
+            @NonNull final Application application,
             @NonNull final TrackingStepView stepView,
             @Nullable final LoggingCollection<SymptomLog> previousLoggingCollection) {
-        super(stepView, previousLoggingCollection);
+        super(application, stepView, previousLoggingCollection);
     }
 
     @Override

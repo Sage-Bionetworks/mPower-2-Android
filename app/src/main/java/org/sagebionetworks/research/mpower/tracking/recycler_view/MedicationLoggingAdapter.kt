@@ -24,7 +24,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLo
 import org.sagebionetworks.research.mpower.tracking.widget.UnderlinedButton
 import org.threeten.bp.format.DateTimeFormatter
 
-class MedicationLoggingAdapter(private val items: List<MedicationLoggingItem>,
+class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingItem>,
         val logs: Map<String, MedicationLog>,
         private val listener: MedicationLoggingListener) : RecyclerView.Adapter<ViewHolder>() {
 
@@ -41,6 +41,11 @@ class MedicationLoggingAdapter(private val items: List<MedicationLoggingItem>,
             else -> MedicationScheduleViewHolder(
                     inflater.inflate(R.layout.mpower2_medication_schedule_view_holder, parent, false))
         }
+    }
+
+    fun updateItem(item: MedicationLoggingItem, position: Int) {
+        items[position] = item
+        notifyItemChanged(position)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -77,15 +82,9 @@ class MedicationLoggingAdapter(private val items: List<MedicationLoggingItem>,
                     scheduleHolder.daysLabel.text = daysText
                 }
 
-                val log = logs[scheduleItem.config.identifier]
-                val isLogged = when (log) {
-                    null -> false
-                // TODO rkolmos 09/19/2018 make isLogged correct
-                    else -> true
-                }
                 // update the view to contain the correct information.
-                val loggedViewVisibility = if (isLogged) View.VISIBLE else View.GONE
-                val unloggedViewVisibility = if (isLogged) View.GONE else View.VISIBLE
+                val loggedViewVisibility = if (scheduleItem.isLogged) View.VISIBLE else View.GONE
+                val unloggedViewVisibility = if (scheduleItem.isLogged) View.GONE else View.VISIBLE
                 scheduleHolder.checkmark.visibility = loggedViewVisibility
                 scheduleHolder.takenAtLabel.visibility = loggedViewVisibility
                 scheduleHolder.undoButton.visibility = loggedViewVisibility
@@ -93,11 +92,11 @@ class MedicationLoggingAdapter(private val items: List<MedicationLoggingItem>,
                 scheduleHolder.takenButton.visibility = unloggedViewVisibility
                 // add click- listeners to the buttons
                 scheduleHolder.takenButton.setOnClickListener { _ ->
-                    listener.onTakenPressed(scheduleItem.config.identifier, scheduleItem.schedule, position)
+                    listener.onTakenPressed(scheduleItem.config.identifier, scheduleItem, position)
                 }
 
                 scheduleHolder.undoButton.setOnClickListener { _ ->
-                    listener.onUndoPressed(scheduleItem.config.identifier, scheduleItem.schedule, position)
+                    listener.onUndoPressed(scheduleItem.config.identifier, scheduleItem, position)
                 }
             }
         }
@@ -120,7 +119,8 @@ class MedicationLoggingTitle(val title: String) : MedicationLoggingItem() {
     override val type: TYPE = TITLE
 }
 
-class MedicationLoggingSchedule(val config: MedicationConfig, val schedule: Schedule) : MedicationLoggingItem() {
+class MedicationLoggingSchedule(val config: MedicationConfig, val schedule: Schedule, val isLogged: Boolean)
+    : MedicationLoggingItem() {
     override val type: TYPE = SCHEDULE
 }
 
@@ -138,6 +138,6 @@ class MedicationScheduleViewHolder(view: View) : ViewHolder(view) {
 }
 
 interface MedicationLoggingListener {
-    fun onTakenPressed(medicationIdentifier: String, schedule: Schedule, position: Int)
-    fun onUndoPressed(medicationIdentifier: String, schedule: Schedule, position: Int)
+    fun onTakenPressed(medicationIdentifier: String, scheduleItem: MedicationLoggingSchedule, position: Int)
+    fun onUndoPressed(medicationIdentifier: String, scheduleItem: MedicationLoggingSchedule, position: Int)
 }

@@ -7,7 +7,8 @@ import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
-import java.time.Instant;
+import org.threeten.bp.Instant;
+
 
 @AutoValue
 public abstract class MedicationTimestamp {

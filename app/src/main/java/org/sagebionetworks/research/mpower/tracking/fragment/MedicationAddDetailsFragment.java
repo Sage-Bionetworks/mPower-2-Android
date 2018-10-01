@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsViewHolder.MedicationAddDetailsListener;
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel;
@@ -79,7 +80,7 @@ public class MedicationAddDetailsFragment extends
 
     private List<MedicationConfig> getUnconfiguredElements() {
         List<MedicationConfig> result = new ArrayList<>();
-        for (MedicationConfig config : viewModel.getActiveElementsById().getValue().values()) {
+        for (MedicationConfig config : SortUtil.getActiveElementsSorted(viewModel.getActiveElementsById().getValue())) {
             if (!config.isConfigured()) {
                 result.add(config);
             }
