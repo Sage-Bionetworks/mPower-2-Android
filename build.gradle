@@ -10,10 +10,11 @@ buildscript {
         maven{ url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.2.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+        classpath 'com.google.gms:google-services:4.1.0'
 
         // SageResearch
         classpath "org.jetbrains.dokka:dokka-android-gradle-plugin:0.9.17"
@@ -41,4 +42,10 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += [
+            '-XepExcludedPaths:.*/build/generated/.*'
+    ]
 }
