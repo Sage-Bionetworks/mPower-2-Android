@@ -1,7 +1,6 @@
 package org.sagebionetworks.research.mpower.studyburst
 
 import android.arch.lifecycle.Observer
-import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.support.v7.app.AppCompatActivity
@@ -13,8 +12,6 @@ import org.slf4j.LoggerFactory
 
 import org.sagebionetworks.research.mpower.R
 import kotlinx.android.synthetic.main.activity_study_burst.*
-import org.researchstack.backbone.result.TaskResult
-import org.researchstack.backbone.ui.ViewTaskActivity
 import org.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.TaskLauncher
 import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type.LAUNCH_ERROR
@@ -41,6 +38,11 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
     @Inject lateinit var taskLauncher: TaskLauncher
 
     /**
+     * @property studyBurstAdapter used in the RecyclerView
+     */
+    private var studyBurstAdapter: StudyBurstAdapter? = null
+
+    /**
      * @propert countdownTask used to countdown the progress to the study burst ends
      */
     private var countdownTask: CountDownTimer? = null
@@ -53,6 +55,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
         studyBurstRecycler.layoutManager = GridLayoutManager(this, 2)
         observeLiveData()
+        study_burst_next.setOnClickListener { onNextClicked() }
         studyBurstBack.setOnClickListener { finish() }
     }
 
@@ -135,7 +138,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * Sets up the expires on text using a Chronometer TextView or hides it if expires on is null
      */
     private fun setupExpiresOnText(item: StudyBurstItem) {
-        if (item.millisToExpiration == null || item.studyBurstExpirationTime == null) {
+        if (item.millisToExpiration == null || item.timeUntilStudyBurstExpiration == null) {
             expiresTextContainer.visibility = View.GONE
             return
         }
@@ -144,7 +147,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         item.millisToExpiration?.let {
             countdownTask = object : CountDownTimer(it, 1000L) {
                 override fun onTick(millisUntilFinished: Long) {
-                    expiresText.text = item.studyBurstExpirationTime
+                    expiresText.text = item.timeUntilStudyBurstExpiration
                 }
 
                 override fun onFinish() {
@@ -187,9 +190,18 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * Sets up the study burst adapter to display the tasks the user can complete
      */
     private fun setupStudyBurstAdapter(item: StudyBurstItem) {
-        val adapter = StudyBurstAdapter(this, item.orderedTasks)
-        adapter.listener = this
-        studyBurstRecycler.adapter = adapter
+        studyBurstAdapter = StudyBurstAdapter(this, item.orderedTasks)
+        studyBurstAdapter?.listener = this
+        studyBurstRecycler.adapter = studyBurstAdapter
+    }
+
+    /**
+     * Next button run the next incomplete task
+     */
+    private fun onNextClicked() {
+        studyBurstAdapter?.nextItem?.let {
+            itemSelected(it)
+        }
     }
 
     /**

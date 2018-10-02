@@ -7,10 +7,10 @@ import junit.framework.Assert.*
 import org.joda.time.DateTime
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.researchstack.backbone.result.TaskResult
 import org.sagebionetworks.bridge.rest.exceptions.EntityNotFoundException
 import org.sagebionetworks.bridge.rest.model.Message
 import org.sagebionetworks.bridge.rest.model.ScheduledActivity
+import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
 import org.sagebionetworks.research.mpower.ScheduleRepositoryTests.MockScheduleRepository.Companion.participantCreatedOn
 import org.sagebionetworks.research.mpower.ScheduleRepositoryTests.MockScheduleRepository.Companion.syncDateFirst
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
@@ -18,6 +18,7 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepositoryHelper
 import rx.functions.Action1
+import java.util.UUID
 
 //
 //  Copyright © 2016-2018 Sage Bionetworks. All rights reserved.
@@ -87,7 +88,7 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         val uuid = repo.createScheduleTaskRunUuid(schedule1!!)
         repo.throwableOnUpdate = Throwable("Unable to resolve host " +
                 "\"webservices.sagebase.org\", no address associated with hostname")
-        repo.updateSchedule(TaskResult("id"), uuid)
+        repo.updateSchedule(TaskResultBase("id", uuid))
         val newSchedule1 = activityDao.activity(schedule1.guid)
         assertEquals(1, newSchedule1.size)
         assertTrue(newSchedule1.first().needsSyncedToBridge ?: false)
@@ -104,7 +105,7 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         val repo = MockScheduleRepository(InstrumentationRegistry.getTargetContext(), activityDao)
         val uuid = repo.createScheduleTaskRunUuid(schedule1!!)
         repo.throwableOnUpdate = EntityNotFoundException("Account not found.", "webservices.sagebase.org")
-        repo.updateSchedule(TaskResult("id"), uuid)
+        repo.updateSchedule(TaskResultBase("id", uuid))
         // See BridgeExtensions.isUnrecoverableAccountNotFoundError for logic
         // on why we don't try to re-upload account not found schedule update failures
         val newSchedule1 = activityDao.activity(schedule1.guid)
@@ -123,7 +124,7 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         val repo = MockScheduleRepository(InstrumentationRegistry.getTargetContext(), activityDao)
         val uuid = repo.createScheduleTaskRunUuid(schedule1!!)
         repo.throwableOnUpdate = Throwable("Client data too large, please consider a smaller payload")
-        repo.updateSchedule(TaskResult("id"), uuid)
+        repo.updateSchedule(TaskResultBase("id", uuid))
         // See BridgeExtensions.isUnrecoverableClientDataTooLargeError for logic
         // on why we don't try to re-upload client data too large schedule update failures
         val newSchedule1 = activityDao.activity(schedule1.guid)
@@ -200,11 +201,16 @@ class ScheduleRepositoryTests: RoomTestHelper() {
             }
         }
 
-        override fun findSchedule(scheduleGuid: String, onNext: Action1<ScheduledActivityEntity>, onError: Action1<Throwable>) {
-            dao.activity(scheduleGuid).firstOrNull()?.let {
+        override fun findSchedule(taskRunUuid: UUID, onNext: Action1<ScheduledActivityEntity>, onError: Action1<Throwable>) {
+            val guid = scheduleTaskRunUuidMap[taskRunUuid] ?: run {
+                onError.call(Throwable("No schedule guid found for taskRunUuid $taskRunUuid, " +
+                        "are you sure you function createScheduleTaskRunUuid() before running the task?"))
+                return
+            }
+            dao.activity(guid).firstOrNull()?.let {
                 onNext.call(it)
             } ?: run {
-                onError.call(Throwable("No schedule found in DB with guid $scheduleGuid"))
+                onError.call(Throwable("No schedule found in DB with guid $guid"))
             }
         }
     }

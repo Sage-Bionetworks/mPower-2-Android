@@ -13,6 +13,7 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.study_burst_cell.view.*
 import org.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.R
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 
 class StudyBurstAdapter(context: Context, val items : List<StudyBurstTaskInfo>?) : RecyclerView.Adapter<ViewHolder>() {
@@ -31,6 +32,17 @@ class StudyBurstAdapter(context: Context, val items : List<StudyBurstTaskInfo>?)
     })
     private val blackColor = ResourcesCompat.getColor(context.resources, R.color.black, null)
     private val lightGrayColor = ResourcesCompat.getColor(context.resources, R.color.appLightGray, null)
+
+    val nextItem: StudyBurstTaskInfo? get() {
+        items?.let {
+            it.forEach {
+                if (!it.isComplete) {
+                    return it
+                }
+            }
+        }
+        return null
+    }
 
     override fun getItemCount(): Int {
         return items?.size ?: 0

@@ -6,27 +6,25 @@ import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.content.res.Resources
 import android.support.annotation.DrawableRes
 import android.support.annotation.VisibleForTesting
 import android.support.v4.app.FragmentActivity
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.activity_study_burst.expiresText
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.research.CompletionTask
 import org.sagebionetworks.research.mpower.research.DataSourceManager
 import org.sagebionetworks.research.mpower.research.MpIdentifier.*
-import org.sagebionetworks.research.mpower.research.MpTaskInfo
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
+import org.sagebionetworks.research.sageresearch.extensions.availableToday
 import org.sagebionetworks.research.sageresearch.extensions.endOfDay
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.extensions.inSameDayAs
-import org.sagebionetworks.research.sageresearch.extensions.mostRecentSchedule
+import org.sagebionetworks.research.sageresearch.extensions.scheduleClosestToNow
 import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
@@ -35,8 +33,10 @@ import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
 import java.lang.Integer.MAX_VALUE
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -381,7 +381,7 @@ data class StudyBurstItem(
         }) ?: StudyBurstViewModel.defaultTaskInfoSortOrder
         var firstUnfinishedReached = false
         orderedTasks = sortedOrderedTasks.map {
-            val schedule = schedules.mostRecentSchedule(it.identifier)
+            val schedule = schedules.filterByActivityId(it.identifier).availableToday()?.scheduleClosestToNow()
             val isFinished = isStudyBurstTaskFinished(it.identifier)
             val isActive = isFinished || !firstUnfinishedReached
             if (!firstUnfinishedReached) {
@@ -614,7 +614,7 @@ data class StudyBurstItem(
             val title = context.getString(R.string.study_burst_action_bar_title)
             var details: String? = null
             expiresOn?.let {
-                details = studyBurstExpirationTime
+                details = timeUntilStudyBurstExpiration
             } ?: run {
                 val activitiesTodoCount = totalActivitiesCount - finishedSchedules.size
                 details = context.getString(R.string.study_burst_activities_to_do).format(activitiesTodoCount)
@@ -629,15 +629,17 @@ data class StudyBurstItem(
 
     val millisToExpiration: Long? get() {
         expiresOn?.let {
-            return it.toEpochMilli() - System.currentTimeMillis()
+            return it.toEpochMilli() - Instant.now().toEpochMilli()
         } ?: return null
     }
 
-    val studyBurstExpirationTime: String? get() {
-        expiresOn?.let {
+    val timeUntilStudyBurstExpiration: String? get() {
+        millisToExpiration?.let {
+            val secondsToExpiration = it / 1000
+            val progressDate = ZonedDateTime.now().startOfDay().plusSeconds(secondsToExpiration)
+            val dateEpochMillis = progressDate.toEpochSecond() * 1000
             val formatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-            val newMillisToExpiration = expiresOn.toEpochMilli() - System.currentTimeMillis()
-            return formatter.format(Date(newMillisToExpiration))
+            return formatter.format(Date(dateEpochMillis))
         } ?: return null
     }
 
