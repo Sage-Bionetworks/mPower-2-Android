@@ -1,15 +1,13 @@
 package org.sagebionetworks.research.mpower
 
-import android.app.Application
-import android.app.Instrumentation
+import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.RangeSet
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.*
+import org.junit.Assert.*
+import org.junit.runner.*
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStep
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView
@@ -160,11 +158,14 @@ class MedicationTimeBasedFilteringTest {
         }
     }
 
+    @get:Rule
+    var instantTaskExecutorRule = InstantTaskExecutorRule()
+
     private lateinit var viewModel: MedicationTrackingTaskViewModel
 
     @Before
     fun setupViewModel() {
-        viewModel = MedicationTrackingTaskViewModel(Application(), STEP_VIEW, null)
+        viewModel = MedicationTrackingTaskViewModel(InstrumentationRegistry.getTargetContext(), STEP_VIEW, null)
         viewModel.addConfig(CONFIG_1)
         viewModel.addConfig(CONFIG_2)
         viewModel.addConfig(CONFIG_3)

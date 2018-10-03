@@ -36,11 +36,11 @@ public class TrackingTaskViewModelFactory {
                 if (whichTask != null) {
                     switch (whichTask) {
                         case Tasks.TRIGGERS:
-                            return (T) new SimpleTrackingTaskViewModel(application, trackingStepView, null);
+                            return (T) new SimpleTrackingTaskViewModel(trackingStepView, null);
                         case Tasks.MEDICATION:
                             return (T) new MedicationTrackingTaskViewModel(application, trackingStepView, null);
                         case Tasks.SYMPTOMS:
-                            return (T) new SymptomTrackingTaskViewModel(application, trackingStepView, null);
+                            return (T) new SymptomTrackingTaskViewModel(trackingStepView, null);
                     }
                 }
 

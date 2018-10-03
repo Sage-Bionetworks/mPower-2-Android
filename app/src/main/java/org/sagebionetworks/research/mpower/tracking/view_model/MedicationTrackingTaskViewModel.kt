@@ -1,32 +1,32 @@
 package org.sagebionetworks.research.mpower.tracking.view_model
 
-import android.app.Application
+import android.content.Context
 import com.google.common.collect.ImmutableRangeSet
 import com.google.common.collect.Range
+import com.google.common.collect.RangeSet
+import org.sagebionetworks.research.mpower.R
+import org.sagebionetworks.research.mpower.tracking.SortUtil
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView
+import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingItem
+import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingSchedule
+import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingTitle
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
 import org.slf4j.LoggerFactory
 import org.threeten.bp.LocalDate
-import org.threeten.bp.format.DateTimeFormatter
-import com.google.common.collect.RangeSet
-import org.sagebionetworks.research.mpower.R
-import org.sagebionetworks.research.mpower.tracking.SortUtil
-import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingItem
-import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingSchedule
-import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingTitle
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
+import org.threeten.bp.format.DateTimeFormatter
 
 typealias TimeBlock = Pair<String, RangeSet<LocalTime>>
 
-class MedicationTrackingTaskViewModel(application: Application,
+class MedicationTrackingTaskViewModel(context: Context,
         stepView: TrackingStepView,
         previousLoggingCollection: LoggingCollection<MedicationLog>?)
-    : TrackingTaskViewModel<MedicationConfig, MedicationLog>(application, stepView, previousLoggingCollection) {
+    : TrackingTaskViewModel<MedicationConfig, MedicationLog>(stepView, previousLoggingCollection) {
 
     private val LOGGER = LoggerFactory.getLogger(MedicationTrackingTaskViewModel::class.java)
 
@@ -36,7 +36,8 @@ class MedicationTrackingTaskViewModel(application: Application,
         val fiveAM = LocalTime.MIDNIGHT.plusHours(5)
         val fivePM = LocalTime.NOON.plusHours(5)
         val tenPM = LocalTime.NOON.plusHours(10)
-        val resources = getApplication<Application>().resources
+        // TODO: move from presentation layer to UI layer; move test from androidTest to test @liujoshua 2018/10/03
+        val resources = context.resources
         val morning = resources.getString(R.string.medication_logging_morning_time_block)
         val afternoon = resources.getString(R.string.medication_logging_afternoon_time_block)
         val evening = resources.getString(R.string.medication_logging_evening_time_block)
