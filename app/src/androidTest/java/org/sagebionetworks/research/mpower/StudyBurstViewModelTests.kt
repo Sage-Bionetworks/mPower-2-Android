@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower
 
 import android.app.Application
 import android.support.test.InstrumentationRegistry
+import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
 import com.google.gson.Gson
 import junit.framework.Assert.*
@@ -59,6 +60,7 @@ import org.threeten.bp.format.DateTimeFormatter
 //
 
 @RunWith(AndroidJUnit4::class)
+@MediumTest
 class StudyBurstViewModelTests: RoomTestHelper() {
     companion object {
         lateinit var application: Application
