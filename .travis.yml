@@ -46,7 +46,7 @@ jobs:
         - bundle exec fastlane test && bundle exec fastlane assemble
     - stage: firebase-test
       name: "Large androidTests"
-      if: type != pull_request
+      if: branch =~ /^stable-.*$/
       script:
         - ./git_crypt_unlock.sh || travis_terminate 1
         - ./firebase-test-setup.sh || travis_terminate 1
@@ -59,6 +59,7 @@ jobs:
           --device model=NexusLowRes
     - stage: firebase-test
       name: "Small and Medium androidTests"
+      if: type == pull_request OR branch =~ /^stable-.*$/
       script:
         - ./git_crypt_unlock.sh || travis_terminate 1
         - ./firebase-test-setup.sh || travis_terminate 1
