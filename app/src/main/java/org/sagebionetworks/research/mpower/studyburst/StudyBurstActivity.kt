@@ -1,6 +1,5 @@
 package org.sagebionetworks.research.mpower.studyburst
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -8,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.view.View
 import android.widget.Toast
+import dagger.android.AndroidInjection
 import org.slf4j.LoggerFactory
 
 import org.sagebionetworks.research.mpower.R
@@ -16,12 +16,8 @@ import org.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.TaskLauncher
 import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type.LAUNCH_ERROR
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
-import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.Instant
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 
@@ -29,23 +25,37 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
     private val LOGGER = LoggerFactory.getLogger(StudyBurstActivity::class.java)
 
+    /**
+     * @property studyBurstViewModel encapsulates all read/write data operations
+     */
     private val studyBurstViewModel: StudyBurstViewModel by lazy {
         StudyBurstViewModel.create(this)
     }
 
-    @Inject
-    lateinit var taskLauncher: TaskLauncher
+    /**
+     * @property taskLauncher used to launch the study burst tasks
+     */
+    @Inject lateinit var taskLauncher: TaskLauncher
 
+    /**
+     * @property studyBurstAdapter used in the RecyclerView
+     */
+    private var studyBurstAdapter: StudyBurstAdapter? = null
+
+    /**
+     * @propert countdownTask used to countdown the progress to the study burst ends
+     */
     private var countdownTask: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         LOGGER.debug("StudyBurstActivity.onCreate()")
         setContentView(R.layout.activity_study_burst)
 
         studyBurstRecycler.layoutManager = GridLayoutManager(this, 2)
         observeLiveData()
+        study_burst_next.setOnClickListener { onNextClicked() }
         studyBurstBack.setOnClickListener { finish() }
     }
 
@@ -128,7 +138,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * Sets up the expires on text using a Chronometer TextView or hides it if expires on is null
      */
     private fun setupExpiresOnText(item: StudyBurstItem) {
-        if (item.millisToExpiration == null || item.studyBurstExpirationTime == null) {
+        if (item.millisToExpiration == null || item.timeUntilStudyBurstExpiration == null) {
             expiresTextContainer.visibility = View.GONE
             return
         }
@@ -137,7 +147,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         item.millisToExpiration?.let {
             countdownTask = object : CountDownTimer(it, 1000L) {
                 override fun onTick(millisUntilFinished: Long) {
-                    expiresText.text = item.studyBurstExpirationTime
+                    expiresText.text = item.timeUntilStudyBurstExpiration
                 }
 
                 override fun onFinish() {
@@ -180,33 +190,34 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * Sets up the study burst adapter to display the tasks the user can complete
      */
     private fun setupStudyBurstAdapter(item: StudyBurstItem) {
-        var firstUnfinishedReached = false
-        val adapter = StudyBurstAdapter(this, item.orderedTasks.map { task ->
-            val isFinished = item.isStudyBurstTaskFinished(task.identifier)
-            val isActive = isFinished || !firstUnfinishedReached
-            if (!firstUnfinishedReached) {
-                firstUnfinishedReached = !isFinished
-            }
-            // Tasks are active and can be run if they are finished or they are the first unfinished in the list
-            StudyBurstTaskInfo(task, isActive, isFinished)
-        })
-        adapter.listener = this
-        studyBurstRecycler.adapter = adapter
+        studyBurstAdapter = StudyBurstAdapter(this, item.orderedTasks)
+        studyBurstAdapter?.listener = this
+        studyBurstRecycler.adapter = studyBurstAdapter
     }
 
+    /**
+     * Next button run the next incomplete task
+     */
+    private fun onNextClicked() {
+        studyBurstAdapter?.nextItem?.let {
+            itemSelected(it)
+        }
+    }
+
+    /**
+     * StudyBurstAdapterListener function, called when a task icon in the RecyclerView is selected.
+     */
     override fun itemSelected(item: StudyBurstTaskInfo) {
-        Toast.makeText(this,
-                "Feature not implemented yet: run " + item.task.identifier,
-                Toast.LENGTH_LONG).show()
-//    TODO: mdephillips 9/13/18 run task and complete schedule
-//        taskLauncher.launchTask(this, item.task.identifier, null)
-//                .observe(this, Observer {
-//                    when(it?.state) {
-//                        LAUNCH_ERROR ->
-//                            Toast.makeText(this,
-//                                    "Error launching  " + item.task.identifier,
-//                                    Toast.LENGTH_LONG).show()
-//                    }
-//                })
+        val uuid = studyBurstViewModel.createScheduleTaskRunUuid(item.schedule)
+        taskLauncher.launchTask(this, item.task.identifier, uuid)
+                .observe(this, Observer {
+                    when(it?.state) {
+                        LAUNCH_ERROR -> {
+                            Toast.makeText(this,
+                                    "Error launching  " + item.task.identifier,
+                                    Toast.LENGTH_LONG).show()
+                        }
+                    }
+                })
     }
 }

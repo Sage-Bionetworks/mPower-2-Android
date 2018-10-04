@@ -113,18 +113,20 @@
         android:padding="@dimen/rsb_padding_small"
         app:layout_constraintTop_toBottomOf="@id/middle_container"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/taskContainer">
+        app:layout_constraintRight_toRightOf="parent">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="@string/study_burst_progress_message"
-            android:textStyle="italic" />
+            android:textStyle="italic"
+            android:textColor="@color/black"/>
         <TextView
             android:id="@+id/expiresText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingStart="3sp"
+            android:textColor="@color/black"
             android:textStyle="bold"/>
     </LinearLayout>
 
