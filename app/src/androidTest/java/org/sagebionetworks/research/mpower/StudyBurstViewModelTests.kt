@@ -14,6 +14,7 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.StudyParticipant
 import org.sagebionetworks.research.mpower.research.CompletionTask
@@ -93,7 +94,9 @@ class StudyBurstViewModelTests: RoomTestHelper() {
     val studyBurstSettingsDao = StudyBurstSettingsDao(InstrumentationRegistry.getTargetContext())
     val scheduleDao = database.scheduleDao()
     val scheduleRepo = ScheduleRepository(scheduleDao,
-            ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()))
+            ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()),
+            BridgeManagerProvider.getInstance().activityManager,
+            BridgeManagerProvider.getInstance().participantManager)
 
     @Before
     fun setupForEachTest() {

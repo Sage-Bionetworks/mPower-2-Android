@@ -1,5 +1,11 @@
 package org.sagebionetworks.research.mpower.inject;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
+
 import com.google.common.collect.ImmutableList;
 
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
@@ -11,21 +17,24 @@ import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
 import org.sagebionetworks.research.mpower.history.HistoryFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;
-import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
 import org.sagebionetworks.research.mpower.sageresearch.archive.TappingResultArchiveFactory;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment;
+import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstSettingsDao;
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
+import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
+import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao;
+import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AbstractResultArchiveFactory.ResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.BaseResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.FileResultArchiveFactory;
-import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.TimePickerFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.TriggersLoggingFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.TriggersSelectionFragment;
+
+import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
@@ -72,5 +81,57 @@ public abstract class MPowerApplicationModule {
             BaseResultArchiveFactory baseResultArchiveFactory) {
         return ImmutableList.of(tappingResultArchiveFactory, fileResultArchiveFactory, answerResultArchiveFactory,
                 baseResultArchiveFactory);
+    }
+
+    @Provides
+    @Named("todayScheduleViewModel")
+    static ViewModelProvider.Factory provideScheduleViewModel(ScheduledActivityEntityDao scheduledActivityEntityDao,
+            ScheduleRepository scheduleRepository) {
+        return new ViewModelProvider.Factory() {
+
+            @NonNull
+            @Override
+            @SuppressWarnings(value = "unchecked")
+            public <T extends ViewModel> T create(@NonNull final Class<T> modelClass) {
+                checkArgument(modelClass.isAssignableFrom(TodayScheduleViewModel.class));
+
+                return (T) new TodayScheduleViewModel(scheduledActivityEntityDao, scheduleRepository);
+            }
+        };
+    }
+
+    @Provides
+    @Named("studyBurstViewModel")
+    static ViewModelProvider.Factory provideStudyBurstViewModel(ScheduledActivityEntityDao scheduledActivityEntityDao,
+            ScheduleRepository scheduleRepository, StudyBurstSettingsDao studyBurstSettingsDao) {
+        return new ViewModelProvider.Factory() {
+
+            @NonNull
+            @Override
+            @SuppressWarnings(value = "unchecked")
+            public <T extends ViewModel> T create(@NonNull final Class<T> modelClass) {
+                checkArgument(modelClass.isAssignableFrom(StudyBurstViewModel.class));
+
+                return (T) new StudyBurstViewModel(scheduledActivityEntityDao, scheduleRepository,
+                        studyBurstSettingsDao);
+            }
+        };
+    }
+
+    @Provides
+    @Named("surveyViewModel")
+    static ViewModelProvider.Factory provideSurveyViewModel(ScheduledActivityEntityDao scheduledActivityEntityDao,
+            ScheduleRepository scheduleRepository) {
+        return new ViewModelProvider.Factory() {
+
+            @NonNull
+            @Override
+            @SuppressWarnings(value = "unchecked")
+            public <T extends ViewModel> T create(@NonNull final Class<T> modelClass) {
+                checkArgument(modelClass.isAssignableFrom(SurveyViewModel.class));
+
+                return (T) new SurveyViewModel(scheduledActivityEntityDao, scheduleRepository);
+            }
+        };
     }
 }

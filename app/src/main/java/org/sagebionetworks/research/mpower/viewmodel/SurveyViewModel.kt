@@ -48,13 +48,6 @@ import org.threeten.bp.LocalDateTime
 open class SurveyViewModel(private var scheduleDao: ScheduledActivityEntityDao,
         scheduleRepo: ScheduleRepository) : ScheduleViewModel(scheduleDao, scheduleRepo) {
 
-    companion object {
-        @JvmStatic
-        fun create(activity: FragmentActivity): SurveyViewModel {
-            return ViewModelProviders.of(activity).get(SurveyViewModel::class.java)
-        }
-    }
-
     @VisibleForTesting
     protected open val excludeGroup: Set<String> = DataSourceManager.installedGroups
             .map { it.activityIdentifiers }.flatMap { it }.toSet()

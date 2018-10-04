@@ -42,11 +42,6 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
         ScheduleViewModel(scheduleDao, scheduleRepo) {
 
     companion object {
-        @JvmStatic
-        fun create(activity: FragmentActivity): StudyBurstViewModel {
-            return ViewModelProviders.of(activity).get(StudyBurstViewModel::class.java)
-        }
-
         fun getStudyBurst(config: StudyBurstConfiguration, today: LocalDateTime,
                 schedules: List<ScheduledActivityEntity>): ScheduledActivityEntity? {
             return schedules.firstOrNull {

@@ -1,26 +1,22 @@
 package org.sagebionetworks.research.mpower
 
 import android.app.Application
-
 import android.support.test.InstrumentationRegistry
 import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
-
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel
+import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.ACTIVITIES
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.MEDICATION
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.SYMPTOMS
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.TRIGGERS
-import org.sagebionetworks.research.mpower.viewmodel.StudyBurstSettingsDao
+import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel
 import org.sagebionetworks.research.mpower.viewmodel.find
-import org.sagebionetworks.research.sageresearch.dao.room.ResearchDatabase
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduledRepositorySyncStateDao
@@ -75,7 +71,9 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
 
     val scheduleDao = database.scheduleDao()
     val scheduleRepo = ScheduleRepository(scheduleDao,
-            ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()))
+            ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()),
+            BridgeManagerProvider.getInstance().activityManager,
+            BridgeManagerProvider.getInstance().participantManager)
 
     @Before
     fun setupForEachTest() {

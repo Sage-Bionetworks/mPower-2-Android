@@ -5,8 +5,6 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
 import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertNotNull
@@ -17,18 +15,16 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
 import org.sagebionetworks.bridge.rest.exceptions.EntityNotFoundException
-import org.sagebionetworks.bridge.rest.model.Message
 import org.sagebionetworks.bridge.rest.model.ScheduledActivity
 import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
+import org.sagebionetworks.research.mpower.MPowerApplication
 import org.sagebionetworks.research.mpower.RoomTestHelper
 import org.sagebionetworks.research.mpower.TestResourceHelper
-import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepositoryTests.MockScheduleRepository.Companion.participantCreatedOn
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepositoryTests.MockScheduleRepository.Companion.syncDateFirst
-import rx.functions.Action1
-import java.util.concurrent.TimeUnit.SECONDS
 
 //
 //  Copyright © 2016-2018 Sage Bionetworks. All rights reserved.
@@ -188,7 +184,9 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         assertEquals(DateTime.parse("2018-08-26T23:59:59.999-04:00"), requestMap[requestMap.keys.elementAt(1)])
     }
 
-    class MockScheduleRepository(scheduleDao: ScheduledActivityEntityDao, syncStateDao: ScheduledRepositorySyncStateDao): ScheduleRepository(scheduleDao, syncStateDao) {
+    class MockScheduleRepository(scheduleDao: ScheduledActivityEntityDao,
+            syncStateDao: ScheduledRepositorySyncStateDao) : ScheduleRepository(scheduleDao, syncStateDao,
+            BridgeManagerProvider.getInstance().activityManager, BridgeManagerProvider.getInstance().participantManager) {
 
         companion object {
             val participantCreatedOn = DateTime.parse("2018-08-10T10:00:00.000-04:00")
@@ -213,18 +211,5 @@ class ScheduleRepositoryTests: RoomTestHelper() {
                 Completable.complete()
             }
         }
-
-//        override fun findSchedule(taskRunUuid: UUID, onNext: Action1<ScheduledActivityEntity>, onError: Action1<Throwable>) {
-//            val guid = scheduleTaskRunUuidMap[taskRunUuid] ?: run {
-//                onError.call(Throwable("No schedule guid found for taskRunUuid $taskRunUuid, " +
-//                        "are you sure you function createScheduleTaskRunUuid() before running the task?"))
-//                return
-//            }
-//            dao.activity(guid).firstOrNull()?.let {
-//                onNext.call(it)
-//            } ?: run {
-//                onError.call(Throwable("No schedule found in DB with guid $guid"))
-//            }
-//        }
     }
 }

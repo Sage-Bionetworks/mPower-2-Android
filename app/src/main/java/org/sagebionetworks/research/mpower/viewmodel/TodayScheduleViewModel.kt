@@ -58,13 +58,6 @@ import org.threeten.bp.ZonedDateTime
 open class TodayScheduleViewModel(private val scheduleDao: ScheduledActivityEntityDao,
         scheduleRepository: ScheduleRepository) : ScheduleViewModel(scheduleDao, scheduleRepository) {
 
-    companion object {
-        @JvmStatic
-        fun create(activity: FragmentActivity): TodayScheduleViewModel {
-            return ViewModelProviders.of(activity).get(TodayScheduleViewModel::class.java)
-        }
-    }
-
     private val excludeIds = setOf(STUDY_BURST_COMPLETED)
     private val excludeTaskGroup = excludeIds.toSet()
 
