@@ -45,8 +45,14 @@ import org.sagebionetworks.research.motor_control_module.inject.OverviewStepModu
 import org.sagebionetworks.research.motor_control_module.inject.TappingCompletionStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.TappingStepModule;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskActivity;
+import org.sagebionetworks.research.sageresearch_app_sdk.inject.SageResearchAppSDKModule.ResearchDatabaseFilename;
 
+import javax.inject.Named;
+import javax.inject.Qualifier;
+
+import dagger.Binds;
 import dagger.Module;
+import dagger.Provides;
 import dagger.android.AndroidInjectionModule;
 import dagger.android.ContributesAndroidInjector;
 
@@ -57,4 +63,10 @@ import dagger.android.ContributesAndroidInjector;
 public abstract class MPowerSageResearchModule {
     @ContributesAndroidInjector
     abstract PerformTaskActivity contributePerformTaskActivityInjector();
+
+    @Provides
+    @ResearchDatabaseFilename
+    static String provideResearchDBFilename() {
+        return "SageResearch-mPower";
+    }
 }

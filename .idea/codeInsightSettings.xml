@@ -13,6 +13,7 @@
       <name>com.google.gson.internal</name>
       <name>dagger.internal</name>
       <name>io.reactivex.annotations.Nullable</name>
+      <name>io.reactivex.annotations.NonNull</name>
       <name>java.time</name>
       <name>javax.annotation.Nullable</name>
       <name>javax.xml.datatype</name>
