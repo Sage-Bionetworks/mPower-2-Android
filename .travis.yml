@@ -63,8 +63,8 @@ jobs:
       script:
         - ./git_crypt_unlock.sh || travis_terminate 1
         - ./firebase-test-setup.sh || travis_terminate 1
-        - ./gradlew assembleInternalDebug
-        - bundle exec fastlane assemble
+        - ./gradlew :app:assembleInternalDebugAndroidTest :app:assembleInternalDebug
+#        - bundle exec fastlane assemble
         - |
           echo "y" | gcloud firebase test android run \
           --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
