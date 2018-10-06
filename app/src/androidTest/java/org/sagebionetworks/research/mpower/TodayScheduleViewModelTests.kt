@@ -1,22 +1,18 @@
 package org.sagebionetworks.research.mpower
 
 import android.app.Application
-
-import androidx.test.InstrumentationRegistry
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
-
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
-import org.junit.runner.RunWith
-
-import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel
+import org.junit.*
+import org.junit.Assert.*
+import org.junit.runner.*
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.ACTIVITIES
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.MEDICATION
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.SYMPTOMS
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.TRIGGERS
+import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel
+import org.sagebionetworks.research.mpower.viewmodel.find
 import org.sagebionetworks.research.sageresearch.dao.room.ResearchDatabase
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.threeten.bp.Instant
@@ -63,9 +59,12 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
         @BeforeClass @JvmStatic
         fun setup() {
             RoomTestHelper.setup()
-            application = InstrumentationRegistry.getTargetContext().applicationContext as Application
+            application = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as Application
         }
     }
+
+    @get:Rule
+    var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
     fun setupForEachTest() {

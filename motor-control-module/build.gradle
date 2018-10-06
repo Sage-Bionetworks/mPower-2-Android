@@ -87,7 +87,8 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.0-beta01'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta01'
     implementation project(path: ':data')
-    testImplementation "org.mockito:mockito-core:2.+"
+    testImplementation 'org.mockito:mockito-core:2.22.0'
+    testImplementation 'net.bytebuddy:byte-buddy:1.8.22'
 
     testImplementation 'com.google.dagger:dagger-android:2.15'
     testImplementation 'com.google.dagger:dagger-android-support:2.15'
