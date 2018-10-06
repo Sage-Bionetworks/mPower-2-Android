@@ -65,16 +65,13 @@ public class TrackingTabFragment extends Fragment {
     TrackingViewModelFactory trackingViewModelFactory;
 
     @Inject
-    @Named("todayScheduleViewModel")
-    ViewModelProvider.Factory todayScheduleViewModelFactory;
+    TodayScheduleViewModel.Factory todayScheduleViewModelFactory;
 
     @Inject
-    @Named("studyBurstViewModel")
-    ViewModelProvider.Factory studyBurstViewModelFactory;
+    StudyBurstViewModel.Factory studyBurstViewModelFactory;
 
     @Inject
-    @Named("surveyViewModel")
-    ViewModelProvider.Factory surveyViewModelFactory;
+    SurveyViewModel.Factory surveyViewModelFactory;
 
     private TrackingViewModel trackingViewModel;
 

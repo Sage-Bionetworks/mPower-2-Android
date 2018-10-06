@@ -46,7 +46,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      */
     @Inject lateinit var taskLauncher: TaskLauncher
 
-    @Inject @field:Named("studyBurstViewModel") lateinit var studyBurstViewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var studyBurstViewModelFactory: StudyBurstViewModel.Factory
 
     /**
      * @property studyBurstAdapter used in the RecyclerView

@@ -2,10 +2,11 @@ package org.sagebionetworks.research.mpower.viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Transformations.map
-import android.arch.lifecycle.ViewModelProviders
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.support.annotation.VisibleForTesting
-import android.support.v4.app.FragmentActivity
+import com.google.common.base.Preconditions.checkArgument
 import org.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.research.MpIdentifier
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
@@ -19,6 +20,7 @@ import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
+import javax.inject.Inject
 
 //
 //  Copyright © 2018 Sage Bionetworks. All rights reserved.
@@ -57,6 +59,17 @@ import org.threeten.bp.ZonedDateTime
  */
 open class TodayScheduleViewModel(private val scheduleDao: ScheduledActivityEntityDao,
         scheduleRepository: ScheduleRepository) : ScheduleViewModel(scheduleDao, scheduleRepository) {
+
+    class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,
+            private val scheduleRepository: ScheduleRepository) : ViewModelProvider.Factory {
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            checkArgument(modelClass.isAssignableFrom(TodayScheduleViewModel::class.java))
+
+            return TodayScheduleViewModel(scheduledActivityEntityDao, scheduleRepository) as T
+        }
+    }
 
     private val excludeIds = setOf(STUDY_BURST_COMPLETED)
     private val excludeTaskGroup = excludeIds.toSet()

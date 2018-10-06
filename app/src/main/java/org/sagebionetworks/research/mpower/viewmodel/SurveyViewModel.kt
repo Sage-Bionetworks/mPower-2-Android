@@ -1,9 +1,10 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModelProviders
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.support.annotation.VisibleForTesting
-import android.support.v4.app.FragmentActivity
+import com.google.common.base.Preconditions
 import org.sagebionetworks.research.mpower.research.DataSourceManager
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
@@ -11,6 +12,7 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.threeten.bp.LocalDateTime
+import javax.inject.Inject
 
 //
 //  Copyright © 2018 Sage Bionetworks. All rights reserved.
@@ -47,6 +49,17 @@ import org.threeten.bp.LocalDateTime
  */
 open class SurveyViewModel(private var scheduleDao: ScheduledActivityEntityDao,
         scheduleRepo: ScheduleRepository) : ScheduleViewModel(scheduleDao, scheduleRepo) {
+
+    class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,
+            private val scheduleRepository: ScheduleRepository) : ViewModelProvider.Factory {
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            Preconditions.checkArgument(modelClass.isAssignableFrom(SurveyViewModel::class.java))
+
+            return SurveyViewModel(scheduledActivityEntityDao, scheduleRepository) as T
+        }
+    }
 
     @VisibleForTesting
     protected open val excludeGroup: Set<String> = DataSourceManager.installedGroups

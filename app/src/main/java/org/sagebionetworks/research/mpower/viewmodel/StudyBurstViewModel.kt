@@ -2,11 +2,12 @@ package org.sagebionetworks.research.mpower.viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.ViewModelProviders
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.support.annotation.DrawableRes
 import android.support.annotation.VisibleForTesting
-import android.support.v4.app.FragmentActivity
+import com.google.common.base.Preconditions.checkArgument
 import com.google.gson.reflect.TypeToken
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.research.mpower.R
@@ -17,7 +18,6 @@ import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
-import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel.Companion
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.extensions.availableToday
@@ -44,6 +44,19 @@ import javax.inject.Inject
 open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
         scheduleRepo: ScheduleRepository, private val studyBurstSettingsDao: StudyBurstSettingsDao) :
         ScheduleViewModel(scheduleDao, scheduleRepo) {
+
+    class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,
+            private val scheduleRepository: ScheduleRepository,
+            private val studyBurstSettingsDao: StudyBurstSettingsDao) : ViewModelProvider.Factory {
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            checkArgument(modelClass.isAssignableFrom(StudyBurstViewModel::class.java))
+
+            return StudyBurstViewModel(scheduledActivityEntityDao, scheduleRepository,
+                    studyBurstSettingsDao) as T
+        }
+    }
 
     companion object {
         fun getStudyBurst(config: StudyBurstConfiguration, today: LocalDateTime,
