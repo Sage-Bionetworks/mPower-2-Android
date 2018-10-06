@@ -2,9 +2,9 @@ package org.sagebionetworks.research.mpower;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.annotation.NonNull;
 
 import org.sagebionetworks.bridge.android.manager.AuthenticationManager;
 

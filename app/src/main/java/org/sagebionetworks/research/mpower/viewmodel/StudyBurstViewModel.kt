@@ -1,20 +1,19 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import androidx.annotation.DrawableRes
 import androidx.annotation.VisibleForTesting
-import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModelProviders
 import com.google.gson.reflect.TypeToken
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.research.CompletionTask
 import org.sagebionetworks.research.mpower.research.DataSourceManager
-import org.sagebionetworks.research.mpower.research.MpIdentifier.*
+import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance

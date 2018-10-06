@@ -3,23 +3,24 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModelFactory;
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
 import javax.inject.Inject;

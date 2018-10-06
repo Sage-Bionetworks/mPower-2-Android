@@ -1,6 +1,11 @@
 package org.sagebionetworks.research.motor_control_module;
 
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.sagebionetworks.research.motor_control_module.StepTestHelper.mockResultWithIdentifier;
+import static org.sagebionetworks.research.motor_control_module.StepTestHelper.simulateAdvance;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -14,8 +19,8 @@ import org.sagebionetworks.research.domain.step.interfaces.SectionStep;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.domain.task.navigation.StepNavigator;
-import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
+import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
 import org.sagebionetworks.research.motor_control_module.step.InstructionStep;
 import org.sagebionetworks.research.motor_control_module.step.MPowerActiveUIStep;
 import org.threeten.bp.Instant;
@@ -24,14 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.sagebionetworks.research.motor_control_module.StepTestHelper.mockResultWithIdentifier;
-import static org.sagebionetworks.research.motor_control_module.StepTestHelper.simulateAdvance;
 
 /**
  * The test task has the following structure:

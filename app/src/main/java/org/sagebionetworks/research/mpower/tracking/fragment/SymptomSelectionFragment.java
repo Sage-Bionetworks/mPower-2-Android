@@ -1,11 +1,12 @@
 package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 
+import org.sagebionetworks.research.mpower.tracking.view_model.SymptomTrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.SymptomTrackingTaskViewModel;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
 /**

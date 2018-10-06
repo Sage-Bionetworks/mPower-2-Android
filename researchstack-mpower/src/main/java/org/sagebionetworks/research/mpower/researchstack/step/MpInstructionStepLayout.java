@@ -2,7 +2,6 @@ package org.sagebionetworks.research.mpower.researchstack.step;
 
 import android.content.Context;
 import android.graphics.Matrix;
-import androidx.core.content.res.ResourcesCompat;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -11,6 +10,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import androidx.core.content.res.ResourcesCompat;
 
 import org.researchstack.backbone.result.StepResult;
 import org.researchstack.backbone.step.Step;

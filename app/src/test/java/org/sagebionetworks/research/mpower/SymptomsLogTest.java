@@ -9,12 +9,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.junit.Test;
-import org.researchstack.backbone.onboarding.ReConsentInstructionStep;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.threeten.bp.Instant;
-
-import java.lang.reflect.ParameterizedType;
-import java.net.URL;
 
 public class SymptomsLogTest {
     private static final Gson GSON = DaggerTrackingTestComponent.builder().build().gson();

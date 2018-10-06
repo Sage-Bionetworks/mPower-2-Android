@@ -1,9 +1,10 @@
 package org.sagebionetworks.research.mpower.tracking.widget;
 
 import android.content.Context;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import org.sagebionetworks.research.mpower.R;
 

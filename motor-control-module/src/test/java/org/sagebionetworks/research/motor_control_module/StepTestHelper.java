@@ -1,5 +1,12 @@
 package org.sagebionetworks.research.motor_control_module;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -7,12 +14,6 @@ import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.domain.task.navigation.StepNavigator;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public abstract class StepTestHelper {
     public static Step mockStepWithIdentifier(String identifier) {

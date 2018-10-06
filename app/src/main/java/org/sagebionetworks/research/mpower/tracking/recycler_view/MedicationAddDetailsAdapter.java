@@ -1,10 +1,10 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
-
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsViewHolder.MedicationAddDetailsListener;

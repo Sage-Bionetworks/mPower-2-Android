@@ -1,25 +1,19 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModelProviders
-import androidx.fragment.app.FragmentActivity
-
-import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
-
-import androidx.lifecycle.Transformations.map
 import android.content.Context
 import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations.map
+import androidx.lifecycle.ViewModelProviders
 import org.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.research.MpIdentifier
-import org.sagebionetworks.research.mpower.research.MpIdentifier.*
-
-import org.sagebionetworks.research.mpower.viewmodel.ItemType.*
-
+import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
+import org.sagebionetworks.research.mpower.viewmodel.ItemType.ACTIVITIES
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.extensions.startOfNextDay
-
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime

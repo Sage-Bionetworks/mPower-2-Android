@@ -1,13 +1,14 @@
 package org.sagebionetworks.research.motor_control_module.show_step_view_model;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 import android.graphics.Rect;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Size;
 import androidx.annotation.StringRes;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import org.sagebionetworks.research.domain.result.interfaces.CollectionResult;
 import org.sagebionetworks.research.domain.result.interfaces.Result;

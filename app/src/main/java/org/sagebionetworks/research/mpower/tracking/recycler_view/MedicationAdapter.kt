@@ -2,7 +2,6 @@ package org.sagebionetworks.research.mpower.tracking.recycler_view
 
 import android.os.Handler
 import android.os.Looper
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

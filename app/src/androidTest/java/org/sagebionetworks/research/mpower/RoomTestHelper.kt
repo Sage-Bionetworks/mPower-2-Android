@@ -1,10 +1,13 @@
 package org.sagebionetworks.research.mpower
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.room.Room
 import androidx.test.InstrumentationRegistry
+import androidx.test.runner.AndroidJUnit4
 import junit.framework.Assert.assertNull
-import org.junit.AfterClass
-import org.junit.BeforeClass
+import org.junit.*
+import org.junit.runner.*
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.ScheduledActivityListV4
 import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters
@@ -13,11 +16,6 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import java.io.IOException
 import java.nio.charset.Charset
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
-import androidx.test.runner.AndroidJUnit4
-import org.junit.runner.RunWith
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 

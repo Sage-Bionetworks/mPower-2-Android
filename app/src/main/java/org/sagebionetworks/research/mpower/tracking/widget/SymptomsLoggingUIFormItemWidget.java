@@ -2,11 +2,12 @@ package org.sagebionetworks.research.mpower.tracking.widget;
 
 import android.content.Context;
 import android.graphics.Paint;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.MPowerRadioButton;

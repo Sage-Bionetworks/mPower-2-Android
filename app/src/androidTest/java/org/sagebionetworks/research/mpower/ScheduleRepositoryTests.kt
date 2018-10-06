@@ -3,10 +3,14 @@ package org.sagebionetworks.research.mpower
 import android.content.Context
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
-import junit.framework.Assert.*
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertFalse
+import junit.framework.Assert.assertNotNull
+import junit.framework.Assert.assertNull
+import junit.framework.Assert.assertTrue
 import org.joda.time.DateTime
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.*
+import org.junit.runner.*
 import org.sagebionetworks.bridge.rest.exceptions.EntityNotFoundException
 import org.sagebionetworks.bridge.rest.model.Message
 import org.sagebionetworks.bridge.rest.model.ScheduledActivity

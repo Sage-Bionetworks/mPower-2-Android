@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
+
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 import androidx.multidex.MultiDex;
-import android.util.DisplayMetrics;
-import android.view.WindowManager;
 
 import org.researchstack.backbone.ResearchStack;
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;

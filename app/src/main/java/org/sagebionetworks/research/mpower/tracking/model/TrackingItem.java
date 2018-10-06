@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.tracking.model;
 
 
 import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 

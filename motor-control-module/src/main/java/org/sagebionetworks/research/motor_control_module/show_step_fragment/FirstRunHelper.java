@@ -34,6 +34,7 @@ package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import org.sagebionetworks.research.domain.result.interfaces.AnswerResult;
 import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;

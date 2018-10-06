@@ -2,8 +2,9 @@ package org.sagebionetworks.research.mpower.tracking.widget;
 
 import android.content.Context;
 import android.graphics.Paint;
-import androidx.appcompat.widget.AppCompatTextView;
 import android.util.AttributeSet;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 public class UnderlinedButton extends AppCompatTextView {
     public UnderlinedButton(final Context context) {

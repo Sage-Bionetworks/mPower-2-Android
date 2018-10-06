@@ -1,11 +1,11 @@
 package org.sagebionetworks.research.mpower.authentication;
 
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.annotation.MainThread;
-import androidx.annotation.NonNull;
 
 import com.google.common.base.Strings;
 

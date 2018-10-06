@@ -1,21 +1,27 @@
 package org.sagebionetworks.research.mpower;
 
+import static androidx.test.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.Visibility;
+import static androidx.test.espresso.matcher.ViewMatchers.withAlpha;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
+import static org.hamcrest.Matchers.not;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
 import androidx.test.rule.ActivityTestRule;
+
 import org.hamcrest.core.AllOf;
 import org.hamcrest.core.AnyOf;
 import org.junit.Rule;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.threeten.bp.Instant;
-
-import static androidx.test.InstrumentationRegistry.getInstrumentation;
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static org.hamcrest.Matchers.not;
 
 public abstract class UITestHelper {
     public static final String TREMOR_SHARED_PREFS_KEY = "Tremor";

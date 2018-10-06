@@ -2,7 +2,6 @@ package org.sagebionetworks.research.mpower;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import static org.sagebionetworks.research.mpower.Tasks.MEDICATION;
 import static org.sagebionetworks.research.mpower.Tasks.SYMPTOMS;
@@ -12,13 +11,14 @@ import static org.sagebionetworks.research.mpower.Tasks.TRIGGERS;
 import static org.sagebionetworks.research.mpower.Tasks.WALK_AND_BALANCE;
 
 import android.app.Activity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 import androidx.annotation.VisibleForTesting;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;

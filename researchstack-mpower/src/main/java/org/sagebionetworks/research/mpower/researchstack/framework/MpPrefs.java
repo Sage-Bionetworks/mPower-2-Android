@@ -3,6 +3,7 @@ package org.sagebionetworks.research.mpower.researchstack.framework;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.VisibleForTesting;
 
 import com.google.gson.Gson;

@@ -4,8 +4,6 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import android.text.Editable
 import android.text.SpannableString
 import android.text.TextWatcher
@@ -13,15 +11,16 @@ import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import kotlinx.android.synthetic.main.medication_dosage.dosage_input
 import kotlinx.android.synthetic.main.mpower2_logging_step.rs2_step_navigation_action_add_more
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.SortUtil
 import org.sagebionetworks.research.mpower.tracking.recycler_view.Listener
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAdapter
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
 import org.sagebionetworks.research.sageresearch.extensions.toInstant

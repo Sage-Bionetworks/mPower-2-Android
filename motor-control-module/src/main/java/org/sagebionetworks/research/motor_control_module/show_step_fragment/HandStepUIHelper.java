@@ -1,18 +1,13 @@
 package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 
 import android.graphics.Matrix;
-import android.view.Display;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
-import org.sagebionetworks.research.domain.task.Task;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.view_binding.UIStepViewBinding;
 import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
-import org.sagebionetworks.research.presentation.DisplayString;
 import org.sagebionetworks.research.presentation.model.interfaces.UIStepView;
-import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowUIStepViewModel;
 
 public class HandStepUIHelper {
     // private constructor to prevent instantiation

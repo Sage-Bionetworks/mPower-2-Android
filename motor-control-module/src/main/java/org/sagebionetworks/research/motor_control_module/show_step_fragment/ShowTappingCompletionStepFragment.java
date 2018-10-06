@@ -1,16 +1,16 @@
 package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
-import android.view.LayoutInflater;
-import android.view.View;
-
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragmentBase;

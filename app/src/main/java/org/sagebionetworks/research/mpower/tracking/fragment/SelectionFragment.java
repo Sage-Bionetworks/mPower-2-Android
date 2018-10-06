@@ -1,11 +1,12 @@
 package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.google.common.collect.ImmutableList;
 
@@ -14,9 +15,9 @@ import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.model.SelectionUIFormItem;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.SelectionItemAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.SelectionItemViewHolder;
+import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -4,7 +4,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -15,12 +14,9 @@ import org.junit.Test;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
 import org.threeten.bp.Instant;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URL;
 
 
 public class LoggingCollectionTest {

@@ -5,6 +5,7 @@ import static org.sagebionetworks.research.mpower.Tasks.SYMPTOMS;
 import static org.sagebionetworks.research.mpower.Tasks.TRIGGERS;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableSet;

@@ -1,6 +1,7 @@
 package org.sagebionetworks.research.mpower.tracking;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import org.sagebionetworks.research.mpower.R;

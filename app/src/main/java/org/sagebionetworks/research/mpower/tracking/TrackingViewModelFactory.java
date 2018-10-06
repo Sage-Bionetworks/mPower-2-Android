@@ -1,8 +1,8 @@
 package org.sagebionetworks.research.mpower.tracking;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.annotation.NonNull;
 
 import org.sagebionetworks.bridge.android.manager.ActivityManager;
 import org.sagebionetworks.research.mpower.TaskLauncher;

@@ -1,13 +1,13 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
 
+import android.view.View;
+import android.widget.RadioButton;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.View;
-import android.widget.RadioButton;
 
 import com.google.common.base.Objects;
 

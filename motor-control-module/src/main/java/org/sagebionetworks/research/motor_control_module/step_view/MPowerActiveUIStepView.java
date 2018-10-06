@@ -2,7 +2,6 @@ package org.sagebionetworks.research.motor_control_module.step_view;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.common.collect.ImmutableMap;
 

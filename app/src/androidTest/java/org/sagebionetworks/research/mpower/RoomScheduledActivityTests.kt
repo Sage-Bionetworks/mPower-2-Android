@@ -4,12 +4,9 @@ import androidx.test.runner.AndroidJUnit4
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
-
-
 import org.joda.time.DateTime
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.*
+import org.junit.runner.*
 import org.sagebionetworks.bridge.rest.model.ActivityType
 import org.sagebionetworks.bridge.rest.model.ScheduleStatus
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity

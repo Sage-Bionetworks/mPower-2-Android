@@ -1,11 +1,11 @@
 package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsAdapter;

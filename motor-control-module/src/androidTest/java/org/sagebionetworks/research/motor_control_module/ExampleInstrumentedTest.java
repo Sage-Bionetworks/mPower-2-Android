@@ -1,12 +1,14 @@
 package org.sagebionetworks.research.motor_control_module;
 
+import static org.junit.Assert.assertEquals;
+
 import android.content.Context;
+
 import androidx.test.InstrumentationRegistry;
 import androidx.test.runner.AndroidJUnit4;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Instrumented test, which will execute on an Android device.

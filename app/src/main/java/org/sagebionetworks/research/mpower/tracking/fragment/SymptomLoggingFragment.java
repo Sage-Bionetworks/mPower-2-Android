@@ -2,8 +2,8 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
-import androidx.lifecycle.LiveData;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 
 import org.sagebionetworks.research.mpower.R;
@@ -11,9 +11,9 @@ import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.SymptomsLoggingItemAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.SymptomsLoggingItemViewHolder;
+import org.sagebionetworks.research.mpower.tracking.view_model.SymptomTrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.SymptomTrackingTaskViewModel;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

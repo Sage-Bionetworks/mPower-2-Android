@@ -1,13 +1,10 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
 import android.app.Application
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProviders
-
-import androidx.annotation.VisibleForTesting
-import androidx.fragment.app.FragmentActivity
 import org.sagebionetworks.research.mpower.research.DataSourceManager
-
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
