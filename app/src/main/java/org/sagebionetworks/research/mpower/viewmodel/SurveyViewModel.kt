@@ -1,11 +1,11 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
 import android.app.Application
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProviders
 
-import android.support.annotation.VisibleForTesting
-import android.support.v4.app.FragmentActivity
+import androidx.annotation.VisibleForTesting
+import androidx.fragment.app.FragmentActivity
 import org.sagebionetworks.research.mpower.research.DataSourceManager
 
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
@@ -50,7 +50,7 @@ open class SurveyViewModel(app: Application): ScheduleViewModel(app) {
 
     companion object {
         @JvmStatic
-        fun create(activity: FragmentActivity): SurveyViewModel {
+        fun create(activity: androidx.fragment.app.FragmentActivity): SurveyViewModel {
             return ViewModelProviders.of(activity).get(SurveyViewModel::class.java)
         }
     }

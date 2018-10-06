@@ -4,8 +4,8 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.RecyclerView.ItemDecoration
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import android.text.Editable
 import android.text.SpannableString
 import android.text.TextWatcher
@@ -112,7 +112,8 @@ class MedicationSchedulingFragment :
     }
 
     override fun initializeItemDecoration(): ItemDecoration? {
-        val itemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        val itemDecoration = androidx.recyclerview.widget.DividerItemDecoration(context,
+                androidx.recyclerview.widget.DividerItemDecoration.VERTICAL)
         val drawable = resources.getDrawable(R.drawable.mpower2_logging_item_decoration)
         itemDecoration.setDrawable(drawable)
         return itemDecoration

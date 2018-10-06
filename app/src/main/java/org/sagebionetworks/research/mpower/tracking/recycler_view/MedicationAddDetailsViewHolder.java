@@ -1,10 +1,9 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.ViewHolder;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.widget.MedicationAddDetailsWidget;
 
 public class MedicationAddDetailsViewHolder extends ViewHolder {

@@ -5,10 +5,10 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.test.annotation.UiThreadTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.test.annotation.UiThreadTest;
+import androidx.test.runner.AndroidJUnit4;
 
 
 import org.junit.Before;

@@ -1,15 +1,15 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
 import android.app.Application
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModelProviders
-import android.support.v4.app.FragmentActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.FragmentActivity
 
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 
-import android.arch.lifecycle.Transformations.map
+import androidx.lifecycle.Transformations.map
 import android.content.Context
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import org.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.research.MpIdentifier
 import org.sagebionetworks.research.mpower.research.MpIdentifier.*
@@ -63,7 +63,7 @@ open class TodayScheduleViewModel(app: Application): ScheduleViewModel(app) {
 
     companion object {
         @JvmStatic
-        fun create(activity: FragmentActivity): TodayScheduleViewModel {
+        fun create(activity: androidx.fragment.app.FragmentActivity): TodayScheduleViewModel {
             return ViewModelProviders.of(activity).get(TodayScheduleViewModel::class.java)
         }
     }

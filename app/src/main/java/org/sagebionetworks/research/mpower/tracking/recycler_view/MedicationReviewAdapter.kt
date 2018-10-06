@@ -1,6 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +12,7 @@ import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 
 class MedicationReviewAdapter(val configs: List<MedicationConfig>, private val listener: MedicationReviewListener)
-    : RecyclerView.Adapter<MedicationReviewViewHolder>() {
+    : androidx.recyclerview.widget.RecyclerView.Adapter<MedicationReviewViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MedicationReviewViewHolder {
         val widget: MedicationReviewWidget = LayoutInflater.from(parent.context)
@@ -31,7 +31,7 @@ class MedicationReviewAdapter(val configs: List<MedicationConfig>, private val l
 }
 
 class MedicationReviewViewHolder(val widget: MedicationReviewWidget, private val listener: MedicationReviewListener)
-    : RecyclerView.ViewHolder(widget) {
+    : androidx.recyclerview.widget.RecyclerView.ViewHolder(widget) {
 
     fun setContent(config: MedicationConfig, position: Int) {
         var title = config.identifier + " " + config.dosage

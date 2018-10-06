@@ -1,25 +1,30 @@
 package org.sagebionetworks.research.mpower.studyburst
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import dagger.android.AndroidInjection
-import org.slf4j.LoggerFactory
-
-import org.sagebionetworks.research.mpower.R
-import kotlinx.android.synthetic.main.activity_study_burst.*
+import kotlinx.android.synthetic.main.activity_study_burst.expiresText
+import kotlinx.android.synthetic.main.activity_study_burst.expiresTextContainer
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstBack
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstMessage
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstRecycler
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstStatusWheel
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstTitle
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstTopProgressBar
+import kotlinx.android.synthetic.main.activity_study_burst.study_burst_next
 import org.researchstack.backbone.utils.ResUtils
+import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.TaskLauncher
 import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type.LAUNCH_ERROR
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
+import org.slf4j.LoggerFactory
 import javax.inject.Inject
-
 
 class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
@@ -53,7 +58,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         LOGGER.debug("StudyBurstActivity.onCreate()")
         setContentView(R.layout.activity_study_burst)
 
-        studyBurstRecycler.layoutManager = GridLayoutManager(this, 2)
+        studyBurstRecycler.layoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 2)
         observeLiveData()
         study_burst_next.setOnClickListener { onNextClicked() }
         studyBurstBack.setOnClickListener { finish() }

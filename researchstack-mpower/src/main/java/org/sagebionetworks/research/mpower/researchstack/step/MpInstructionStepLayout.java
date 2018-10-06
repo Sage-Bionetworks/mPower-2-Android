@@ -2,7 +2,7 @@ package org.sagebionetworks.research.mpower.researchstack.step;
 
 import android.content.Context;
 import android.graphics.Matrix;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.core.content.res.ResourcesCompat;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.view.Gravity;

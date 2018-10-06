@@ -1,17 +1,15 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
-import android.arch.lifecycle.Lifecycle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
+
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.SymptomsLoggingUIFormItemWidget;
 
 import java.util.ArrayList;

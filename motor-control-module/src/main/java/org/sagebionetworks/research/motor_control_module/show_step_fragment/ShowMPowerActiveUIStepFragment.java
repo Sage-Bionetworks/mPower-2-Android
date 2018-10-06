@@ -2,7 +2,7 @@ package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;

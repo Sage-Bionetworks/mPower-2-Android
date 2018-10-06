@@ -1,7 +1,7 @@
 package org.sagebionetworks.research.motor_control_module.step;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
@@ -20,8 +20,6 @@ import org.threeten.bp.Instant;
 
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.concurrent.Immutable;
 
 @AutoValue
 public abstract class TappingCompletionStep implements ThemedUIStep {

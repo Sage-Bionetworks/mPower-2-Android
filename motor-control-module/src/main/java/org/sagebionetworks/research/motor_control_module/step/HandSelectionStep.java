@@ -32,8 +32,8 @@
 
 package org.sagebionetworks.research.motor_control_module.step;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -44,7 +44,6 @@ import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

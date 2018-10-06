@@ -1,15 +1,17 @@
 package org.sagebionetworks.research.mpower.authentication;
 
-import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 
-import android.arch.lifecycle.ViewModelProviders;
+import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
+
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Strings;
 
 import org.sagebionetworks.research.mpower.R;

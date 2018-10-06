@@ -1,15 +1,11 @@
 package org.sagebionetworks.research.mpower.tracking;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstStatusWheel;

@@ -8,9 +8,11 @@ buildscript {
         google()
         jcenter()
         maven { url 'https://plugins.gradle.org/m2/' }
+
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.android.tools.build:gradle:3.3.0-alpha01'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
@@ -18,7 +20,7 @@ buildscript {
 
         // SageResearch
         classpath "org.jetbrains.dokka:dokka-android-gradle-plugin:0.9.17"
-        classpath 'com.jakewharton:butterknife-gradle-plugin:8.4.0'
+        classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0-SNAPSHOT'
 
         //quality
         classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.13'
@@ -36,6 +38,7 @@ allprojects {
         maven { url "https://dl.bintray.com/touchlab/Squeaky" }
         maven { url "https://jitpack.io" }
         maven { url 'http://repo-maven.sagebridge.org/' }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         mavenLocal()
     }
 }

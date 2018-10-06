@@ -1,10 +1,9 @@
 package org.sagebionetworks.research.mpower.tracking.model;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
@@ -12,16 +11,9 @@ import com.google.gson.annotations.SerializedName;
 
 import org.sagebionetworks.research.domain.async.AsyncActionConfiguration;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
-import org.sagebionetworks.research.domain.step.ui.action.Action;
 
 import java.io.Serializable;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * A TrackingStep stores all of hte required information for a TrackingTask to run, from which TrackingItems to allow the

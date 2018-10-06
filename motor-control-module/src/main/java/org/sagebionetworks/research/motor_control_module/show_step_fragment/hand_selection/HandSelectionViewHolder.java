@@ -32,13 +32,12 @@
 
 package org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import org.sagebionetworks.research.domain.form.interfaces.Choice;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.sagebionetworks.research.mobile_ui.R;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 

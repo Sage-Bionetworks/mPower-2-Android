@@ -1,7 +1,7 @@
 package org.sagebionetworks.research.mpower
 
-import android.arch.persistence.room.Room
-import android.support.test.InstrumentationRegistry
+import androidx.room.Room
+import androidx.test.InstrumentationRegistry
 import junit.framework.Assert.assertNull
 import org.junit.AfterClass
 import org.junit.BeforeClass
@@ -13,10 +13,10 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import java.io.IOException
 import java.nio.charset.Charset
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.Observer
-import android.support.test.runner.AndroidJUnit4
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Observer
+import androidx.test.runner.AndroidJUnit4
 import org.junit.runner.RunWith
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit

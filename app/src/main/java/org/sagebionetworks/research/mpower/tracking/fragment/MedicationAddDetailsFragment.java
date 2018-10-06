@@ -1,29 +1,22 @@
 package org.sagebionetworks.research.mpower.tracking.fragment;
 
-import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
+import androidx.annotation.NonNull;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.NumberPicker.OnValueChangeListener;
 
-import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
-import org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar.ActionButtonClickListener;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsViewHolder.MedicationAddDetailsListener;
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel;
-import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class MedicationAddDetailsFragment extends
         RecyclerViewTrackingFragment<MedicationConfig, SimpleTrackingItemLog, MedicationTrackingTaskViewModel,

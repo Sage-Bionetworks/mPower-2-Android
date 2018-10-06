@@ -5,7 +5,8 @@ import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+
+import androidx.fragment.app.DialogFragment;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Calendar;
 
 import dagger.android.support.AndroidSupportInjection;
+
 
 /**
  * The time picker fragment allows the user to input a time. In order to receive a callback when the user submits a time

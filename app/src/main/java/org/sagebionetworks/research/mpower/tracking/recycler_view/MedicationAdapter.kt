@@ -2,7 +2,7 @@ package org.sagebionetworks.research.mpower.tracking.recycler_view
 
 import android.os.Handler
 import android.os.Looper
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +17,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
 import org.slf4j.LoggerFactory
 import org.threeten.bp.format.DateTimeFormatter
 
-class MedicationAdapter(var items: MutableList<Schedule>, val listener: Listener) : RecyclerView.Adapter<ScheduleViewHolder>() {
+class MedicationAdapter(var items: MutableList<Schedule>, val listener: Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<ScheduleViewHolder>() {
 
     private val LOGGER = LoggerFactory.getLogger(
             MedicationAdapter::class.java)
@@ -77,7 +77,7 @@ class MedicationAdapter(var items: MutableList<Schedule>, val listener: Listener
     }
 }
 
-class ScheduleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class ScheduleViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
     val checkbox = view.schedule_anytime!!
     val timeText = view.time_text!!
     val timeContainer = view.time_container!!

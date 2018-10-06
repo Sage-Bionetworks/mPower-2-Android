@@ -34,7 +34,7 @@ package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

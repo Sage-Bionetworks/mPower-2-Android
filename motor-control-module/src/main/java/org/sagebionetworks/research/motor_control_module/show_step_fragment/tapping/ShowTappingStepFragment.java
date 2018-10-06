@@ -37,11 +37,11 @@
 package org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping;
 
 import android.animation.Animator;
-import android.arch.lifecycle.Observer;
+import androidx.lifecycle.Observer;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;

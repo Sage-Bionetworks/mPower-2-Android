@@ -2,10 +2,9 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
+import androidx.annotation.NonNull;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.SortUtil;
@@ -24,7 +23,6 @@ import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
 import org.threeten.bp.zone.ZoneRulesException;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;

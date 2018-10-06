@@ -3,18 +3,18 @@ package org.sagebionetworks.research.mpower;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.test.rule.ActivityTestRule;
+import androidx.test.rule.ActivityTestRule;
 import org.hamcrest.core.AllOf;
 import org.hamcrest.core.AnyOf;
 import org.junit.Rule;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.threeten.bp.Instant;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
+import static androidx.test.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static org.hamcrest.Matchers.not;
 
 public abstract class UITestHelper {

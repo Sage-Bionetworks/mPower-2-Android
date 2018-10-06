@@ -1,14 +1,13 @@
 package org.sagebionetworks.research.motor_control_module.step;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.sagebionetworks.research.domain.result.interfaces.AnswerResult;
 import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.interfaces.SectionStep;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
-import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
 import org.sagebionetworks.research.presentation.DisplayString;
 

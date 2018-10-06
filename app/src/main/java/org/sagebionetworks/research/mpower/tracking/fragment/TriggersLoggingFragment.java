@@ -1,10 +1,9 @@
 package org.sagebionetworks.research.mpower.tracking.fragment;
 
-import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
-import android.support.v7.widget.SimpleItemAnimator;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+
 
 import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.TriggersLoggingItemAdapter;
@@ -15,7 +14,6 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTracki
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import org.threeten.bp.Instant;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

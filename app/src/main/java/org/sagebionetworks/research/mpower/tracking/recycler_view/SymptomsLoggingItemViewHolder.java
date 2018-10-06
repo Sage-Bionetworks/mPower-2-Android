@@ -1,14 +1,11 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 import android.widget.RadioButton;
 
@@ -20,8 +17,6 @@ import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.sagebionetworks.research.mpower.tracking.widget.SymptomsLoggingUIFormItemWidget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;

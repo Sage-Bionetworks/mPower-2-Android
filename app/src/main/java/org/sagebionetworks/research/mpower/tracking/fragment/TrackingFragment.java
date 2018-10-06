@@ -3,13 +3,13 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +37,7 @@ import dagger.android.support.AndroidSupportInjection;
  */
 public abstract class TrackingFragment
         <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog, ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
-        extends Fragment  {
+        extends Fragment {
     public static final String ARGUMENT_STEP_VIEW = "stepView";
 
     protected TrackingStepView stepView;

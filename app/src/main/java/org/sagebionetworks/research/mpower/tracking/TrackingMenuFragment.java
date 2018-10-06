@@ -2,26 +2,24 @@ package org.sagebionetworks.research.mpower.tracking;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.GestureDetectorCompat;
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.fragment.app.Fragment;
+
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
-import org.sagebionetworks.research.mpower.tracking.fragment.MedicationSchedulingFragment;
 import org.sagebionetworks.research.mpower.Tasks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -32,8 +32,8 @@
 
 package org.sagebionetworks.research.motor_control_module.step_view;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import org.sagebionetworks.research.motor_control_module.step.Icon;
 import org.sagebionetworks.research.presentation.DisplayDrawable;

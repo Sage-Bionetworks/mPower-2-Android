@@ -1,7 +1,7 @@
 package org.sagebionetworks.research.mpower.tracking.view_model.logs;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
@@ -11,10 +11,8 @@ import com.google.gson.reflect.TypeToken;
 
 import org.threeten.bp.Instant;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A logging collection stores a group of logs from a tracking task. This allows logs to be serialized/deserialized

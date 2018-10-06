@@ -1,16 +1,14 @@
 package org.sagebionetworks.research.motor_control_module.show_step_view_model;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.interfaces.SectionStep;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.motor_control_module.R;
 import org.sagebionetworks.research.motor_control_module.result.TappingResult;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.TappingButtonIdentifier;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.TappingSample;
 import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
 import org.sagebionetworks.research.motor_control_module.step.HandStepHelper.Hand;
 import org.sagebionetworks.research.motor_control_module.step.TappingStep;

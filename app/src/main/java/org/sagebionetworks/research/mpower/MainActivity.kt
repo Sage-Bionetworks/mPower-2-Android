@@ -1,12 +1,11 @@
 package org.sagebionetworks.research.mpower
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.google.common.base.Supplier
 import com.google.common.collect.ImmutableMap
 import dagger.android.AndroidInjection
@@ -30,7 +29,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     private val TAG_FRAGMENT_PROFILE = "profile"
 
     // Mapping of a tag to a creation method for a fragment
-    private val FRAGMENT_TAG_TO_CREATOR = ImmutableMap.Builder<String, Supplier<Fragment>>()
+    private val FRAGMENT_TAG_TO_CREATOR = ImmutableMap.Builder<String, Supplier<androidx.fragment.app.Fragment>>()
             .put(TAG_FRAGMENT_TRACKING, Supplier { TrackingTabFragment() })
             .put(TAG_FRAGMENT_PROFILE, Supplier { ProfileFragment() })
             .build()
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     private lateinit var mainViewModel: MainViewModel
 
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+    private val mOnNavigationItemSelectedListener = com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener { item ->
         showFragment(FRAGMENT_NAV_ID_TO_TAG[item.itemId])
         return@OnNavigationItemSelectedListener true
     }
@@ -122,7 +121,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         var nextFragment = supportFragmentManager.findFragmentByTag(fragmentTag)
         if (nextFragment == null) {
             LOGGER.debug("no fragment found for tag: {}, creating a new one ", fragmentTag)
-            val fragmentSupplier: Supplier<Fragment>? = FRAGMENT_TAG_TO_CREATOR[fragmentTag]
+            val fragmentSupplier: Supplier<androidx.fragment.app.Fragment>? = FRAGMENT_TAG_TO_CREATOR[fragmentTag]
                     ?: FRAGMENT_TAG_TO_CREATOR[TAG_FRAGMENT_TRACKING]
 
             if (fragmentSupplier == null) {

@@ -1,10 +1,10 @@
 package org.sagebionetworks.research.mpower.tracking.view_model;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
-import android.arch.lifecycle.ViewModelProvider.Factory;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider.Factory;
+import androidx.annotation.NonNull;
 
 import org.sagebionetworks.research.mpower.Tasks;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;

@@ -1,14 +1,14 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
 import android.app.Application
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.support.annotation.DrawableRes
-import android.support.annotation.VisibleForTesting
-import android.support.v4.app.FragmentActivity
+import androidx.annotation.DrawableRes
+import androidx.annotation.VisibleForTesting
+import androidx.fragment.app.FragmentActivity
 import com.google.gson.reflect.TypeToken
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.research.mpower.R
@@ -36,7 +36,6 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import java.lang.Integer.MAX_VALUE
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -44,7 +43,7 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
 
     companion object {
         @JvmStatic
-        fun create(activity: FragmentActivity): StudyBurstViewModel {
+        fun create(activity: androidx.fragment.app.FragmentActivity): StudyBurstViewModel {
             return ViewModelProviders.of(activity).get(StudyBurstViewModel::class.java)
         }
 

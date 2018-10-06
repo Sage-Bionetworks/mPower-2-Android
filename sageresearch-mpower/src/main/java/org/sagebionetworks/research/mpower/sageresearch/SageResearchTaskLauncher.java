@@ -2,10 +2,8 @@ package org.sagebionetworks.research.mpower.sageresearch;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
-import com.google.common.collect.ImmutableSet;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.sagebionetworks.research.domain.repository.TaskRepository;
 import org.sagebionetworks.research.domain.task.TaskInfoView;
