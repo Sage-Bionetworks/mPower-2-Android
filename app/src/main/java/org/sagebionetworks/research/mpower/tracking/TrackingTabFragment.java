@@ -135,7 +135,7 @@ public class TrackingTabFragment extends Fragment {
             // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
         });
 
-        studyBurstViewModel = ViewModelProviders.of(this,        studyBurstViewModelFactory)
+        studyBurstViewModel = ViewModelProviders.of(this, studyBurstViewModelFactory)
                 .get(StudyBurstViewModel.class);
         studyBurstViewModel.liveData().observe(this, this::setupActionBar);
 

@@ -4,6 +4,8 @@ package org.sagebionetworks.research.sageresearch.viewmodel
 import android.support.test.InstrumentationRegistry
 import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Completable
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertFalse
@@ -11,17 +13,18 @@ import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
 import junit.framework.Assert.assertTrue
 import org.joda.time.DateTime
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.*
+import org.junit.runner.*
+import org.mockito.Mockito.`when`
+import org.sagebionetworks.bridge.android.manager.ActivityManager
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
+import org.sagebionetworks.bridge.android.manager.ParticipantRecordManager
 import org.sagebionetworks.bridge.rest.exceptions.EntityNotFoundException
-import org.sagebionetworks.bridge.rest.model.ScheduledActivity
+import org.sagebionetworks.bridge.rest.model.Message
 import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
-import org.sagebionetworks.research.mpower.MPowerApplication
 import org.sagebionetworks.research.mpower.RoomTestHelper
 import org.sagebionetworks.research.mpower.TestResourceHelper
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepositoryTests.MockScheduleRepository.Companion.participantCreatedOn
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepositoryTests.MockScheduleRepository.Companion.syncDateFirst
@@ -124,7 +127,6 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         // See BridgeExtensions.isUnrecoverableAccountNotFoundError for logic
         // on why we don't try to re-upload account not found schedule update failures
 
-
         val newSchedule1 = activityDao.activity(schedule1.guid)
         assertEquals(1, newSchedule1.size)
         assertFalse(newSchedule1.first().needsSyncedToBridge ?: true)
@@ -185,8 +187,10 @@ class ScheduleRepositoryTests: RoomTestHelper() {
     }
 
     class MockScheduleRepository(scheduleDao: ScheduledActivityEntityDao,
-            syncStateDao: ScheduledRepositorySyncStateDao) : ScheduleRepository(scheduleDao, syncStateDao,
-            BridgeManagerProvider.getInstance().activityManager, BridgeManagerProvider.getInstance().participantManager) {
+            syncStateDao: ScheduledRepositorySyncStateDao, val activityManager: ActivityManager = mock())
+        : ScheduleRepository(scheduleDao, syncStateDao,
+            activityManager,
+            mock()) {
 
         companion object {
             val participantCreatedOn = DateTime.parse("2018-08-10T10:00:00.000-04:00")
@@ -204,12 +208,15 @@ class ScheduleRepositoryTests: RoomTestHelper() {
             return participantCreatedOn
         }
 
-        override fun updateActivityOnBridge(bridgeSchedule: ScheduledActivity): Completable {
-            return throwableOnUpdate?.let {
-                Completable.error(it)
+        override fun updateSchedulesToBridge(schedules: List<ScheduledActivityEntity>): Completable {
+            throwableOnUpdate?.let {
+                `when`(activityManager.updateActivities(any()))
+                        .thenReturn(rx.Single.error(it))
             } ?: run {
-                Completable.complete()
+                `when`(activityManager.updateActivities(any()))
+                        .thenReturn(rx.Single.just(Message()))
             }
+            return super.updateSchedulesToBridge(schedules)
         }
     }
 }

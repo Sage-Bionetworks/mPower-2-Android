@@ -7,6 +7,8 @@ import android.content.Context
 import android.support.annotation.DrawableRes
 import android.support.annotation.VisibleForTesting
 import android.support.v4.app.FragmentActivity
+import com.google.gson.reflect.TypeToken
+import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.research.CompletionTask
 import org.sagebionetworks.research.mpower.research.DataSourceManager
@@ -15,6 +17,7 @@ import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel.Companion
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.extensions.availableToday
@@ -36,6 +39,7 @@ import java.lang.Integer.MAX_VALUE
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
 open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
         scheduleRepo: ScheduleRepository, private val studyBurstSettingsDao: StudyBurstSettingsDao) :
@@ -632,3 +636,29 @@ data class StudyBurstTaskInfo(
         val isActive: Boolean,
         val isComplete: Boolean)
 
+open class StudyBurstSettingsDao @Inject constructor(context: Context) {
+    val orderKey = "StudyBurstTaskOrder"
+    val timestampKey = "StudyBurstTimestamp"
+
+    private val prefs = context.getSharedPreferences("StudyBurstViewModel", Context.MODE_PRIVATE)
+
+    @VisibleForTesting
+    open fun setOrderedTasks(sortOrder: List<String>, timestamp: LocalDateTime) {
+        val editPrefs = prefs.edit()
+        editPrefs.putString(orderKey, RestUtils.GSON.toJson(sortOrder))
+        editPrefs.putString(timestampKey, timestamp.toString())
+        editPrefs.apply()
+    }
+
+    open fun getTaskSortOrder(): List<String> {
+        prefs.getString(orderKey, null)?.let {
+            return RestUtils.GSON.fromJson(it, object : TypeToken<List<String>>() {}.type)
+        } ?: return StudyBurstViewModel.defaultTaskSortOrder
+    }
+
+    open fun getTaskSortOrderTimestamp(): LocalDateTime? {
+        prefs.getString(timestampKey, null)?.let {
+            return LocalDateTime.parse(it)
+        } ?: return null
+    }
+}
