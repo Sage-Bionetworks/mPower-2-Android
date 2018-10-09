@@ -1,8 +1,10 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
 import android.app.Application
+import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
@@ -38,7 +40,6 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import java.lang.Integer.MAX_VALUE
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -151,6 +152,16 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
         }.invoke()
         studyBurstLiveData = liveDataChecked
         return liveDataChecked
+    }
+
+    /**
+     * @param lifecycleOwner that previously was observing the return of the liveData() function
+     * @return a new LiveData object that is refreshed based on the current time of day
+     */
+    fun refreshLiveData(lifecycleOwner: LifecycleOwner): LiveData<StudyBurstItem> {
+        liveData().removeObservers(lifecycleOwner)
+        studyBurstLiveData = null
+        return liveData()
     }
 
     /**

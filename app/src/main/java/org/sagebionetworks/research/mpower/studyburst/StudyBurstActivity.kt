@@ -20,7 +20,6 @@ import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
 import javax.inject.Inject
 
-
 class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
     private val LOGGER = LoggerFactory.getLogger(StudyBurstActivity::class.java)
@@ -43,6 +42,11 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
     private var studyBurstAdapter: StudyBurstAdapter? = null
 
     /**
+     * @property viewModelObserver keeps track of the previous observer so we can refresh after the expiration timer
+     */
+    private var viewModelObserver: Observer<StudyBurstItem>? = null
+
+    /**
      * @propert countdownTask used to countdown the progress to the study burst ends
      */
     private var countdownTask: CountDownTimer? = null
@@ -59,16 +63,20 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         studyBurstBack.setOnClickListener { finish() }
     }
 
+    /**
+     * This should be called from the onCreate() function only once.
+     * It will observer the study burst view model in all lifecycle scenarios.
+     */
     private fun observeLiveData() {
-        studyBurstViewModel.liveData().observe(this, Observer { it?.let {
+        viewModelObserver = Observer { item -> item?.let {
             // StudyBurstItem actually can't be null but appears Nullable because of the Observer @Nullable annotation
             if (!it.hasStudyBurst) {
                 // If we don't have a study burst, this means that we should send the user to a completion task
                 // Or, if we don't have any completion tasks, we should probably leave this Activity
-                it.nextCompletionActivityToShow?.let {
+                it.nextCompletionActivityToShow?.let { schedule ->
                     // TODO: mdephillips 9/12/18 run the completion task
                     Toast.makeText(this,
-                            "Feature not implemented: run " + it.activityIdentifier(),
+                            "Feature not implemented: run " + schedule.activityIdentifier(),
                             Toast.LENGTH_LONG).show()
                 } ?: run {
                     // TODO: mdephillips 9/12/18 run the completion task
@@ -86,7 +94,21 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
             setupStatusBarWheel(it)
             setupStudyBurstTopProgress(it)
             setupStudyBurstAdapter(it)
-        }})
+        }}
+        viewModelObserver?.let {
+            studyBurstViewModel.liveData().observe(this, it)
+        }
+    }
+
+    /**
+     * This should only be called when you need to force a refresh on the view model queries to the db.
+     * Some scenarios of when that would be useful are when time passes into tomorrow, or when the expiration timer
+     * is finished and we need to reset all previously finished study burst activities.
+     */
+    private fun refreshLiveData() {
+        viewModelObserver?.let {
+            studyBurstViewModel.refreshLiveData(this).observe(this, it)
+        }
     }
 
     override fun onStop() {
@@ -152,7 +174,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
                 override fun onFinish() {
                     expiresTextContainer.visibility = View.GONE
-                    observeLiveData()
+                    refreshLiveData()
                 }
             }
             countdownTask?.start()
