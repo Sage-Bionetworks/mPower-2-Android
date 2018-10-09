@@ -50,8 +50,8 @@ public class MPowerApplication extends BridgeSageResearchApp implements HasSuppo
     protected MPowerApplicationComponent initAppComponent() {
         return DaggerMPowerApplicationComponent
                 .builder()
-                .bridgeManagerProvider(BridgeManagerProvider.getInstance())
                 .application(this)
+//                .bridgeManagerProvider(getBridgeManagerProvider())
                 .build();
     }
 

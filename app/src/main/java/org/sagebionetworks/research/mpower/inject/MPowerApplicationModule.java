@@ -22,6 +22,8 @@ import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerResultArc
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.BaseResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.FileResultArchiveFactory;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
@@ -61,6 +63,7 @@ public abstract class MPowerApplicationModule {
     abstract TrackingMenuFragment contributeTrackingMenuFragmentInjector();
 
     @Provides
+    @Singleton
     static ImmutableList<ResultArchiveFactory> provideAbstractResultArchiveFactory(
             TappingResultArchiveFactory tappingResultArchiveFactory,
             FileResultArchiveFactory fileResultArchiveFactory, AnswerResultArchiveFactory answerResultArchiveFactory,
