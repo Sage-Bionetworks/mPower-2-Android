@@ -29,7 +29,9 @@ import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo
+import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
+import org.slf4j.LoggerFactory
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
@@ -41,6 +43,8 @@ import java.util.Date
 import java.util.Locale
 
 open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
+
+    private val logger = LoggerFactory.getLogger(ScheduleRepository::class.java)
 
     companion object {
         @JvmStatic
@@ -158,6 +162,7 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
         val todaySchedules = todayLiveData?.value ?: return null
         val completedBurstSchedules = completedBurstsLiveData?.value ?: return null
         val schedules = listOf(todaySchedules, completedBurstSchedules).flatten()
+        logger.info("Posting LiveData update")
         return createStudyBurstItem(schedules)
     }
 
@@ -613,7 +618,7 @@ data class StudyBurstItem(
         if (!isCompletedForToday) {
             val title = context.getString(R.string.study_burst_action_bar_title)
             var details: String? = null
-            expiresOn?.let {
+            millisToExpiration?.let {
                 details = timeUntilStudyBurstExpiration
             } ?: run {
                 val activitiesTodoCount = totalActivitiesCount - finishedSchedules.size
@@ -629,17 +634,26 @@ data class StudyBurstItem(
 
     val millisToExpiration: Long? get() {
         expiresOn?.let {
-            return it.toEpochMilli() - Instant.now().toEpochMilli()
+            val millis = it.toEpochMilli() - Instant.now().toEpochMilli()
+            // check for a negative time, because this means that progress did exist, but now it is over
+            if (millis < 0) {
+                return null
+            }
+            return millis
         } ?: return null
     }
 
     val timeUntilStudyBurstExpiration: String? get() {
         millisToExpiration?.let {
-            val secondsToExpiration = it / 1000
-            val progressDate = ZonedDateTime.now().startOfDay().plusSeconds(secondsToExpiration)
-            val dateEpochMillis = progressDate.toEpochSecond() * 1000
-            val formatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-            return formatter.format(Date(dateEpochMillis))
+            if (it < 0) {
+                return null
+            } else {
+                val secondsToExpiration = it / 1000
+                val progressDate = ZonedDateTime.now().startOfDay().plusSeconds(secondsToExpiration)
+                val dateEpochMillis = progressDate.toEpochSecond() * 1000
+                val formatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                return formatter.format(Date(dateEpochMillis))
+            }
         } ?: return null
     }
 

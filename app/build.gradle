@@ -70,6 +70,7 @@ dependencies {
 
     // Local projects
     implementation project(':android-sdk')
+    api project(':researchstack-sdk')
     implementation project(':backbone')
     implementation project(':data')
     implementation project(':sageresearch-mpower')
