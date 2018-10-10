@@ -5,15 +5,15 @@ import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.support.annotation.VisibleForTesting;
-import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import org.researchstack.backbone.ResearchStack;
-import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
+import org.sagebionetworks.bridge.android.di.BridgeStudyComponent;
 import org.sagebionetworks.research.mpower.inject.DaggerMPowerApplicationComponent;
-import org.sagebionetworks.research.mpower.inject.MPowerApplicationComponent;
+import org.sagebionetworks.research.mpower.inject.DaggerMPowerUserScopeComponent;
+import org.sagebionetworks.research.mpower.inject.MPowerUserScopeComponent;
 import org.sagebionetworks.research.sageresearch.BridgeSageResearchApp;
 
 import javax.inject.Inject;
@@ -22,8 +22,8 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import dagger.android.HasServiceInjector;
+import dagger.android.support.DaggerApplication;
 import dagger.android.support.HasSupportFragmentInjector;
-import dagger.multibindings.IntoSet;
 
 public class MPowerApplication extends BridgeSageResearchApp implements HasSupportFragmentInjector,
         HasActivityInjector, HasServiceInjector {
@@ -40,20 +40,25 @@ public class MPowerApplication extends BridgeSageResearchApp implements HasSuppo
     @Inject
     ResearchStack researchStack;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        initAppComponent().inject(this);
-    }
-
     @VisibleForTesting
-    protected MPowerApplicationComponent initAppComponent() {
+    @Override
+    protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
         return DaggerMPowerApplicationComponent
                 .builder()
+                .mPowerUserScopeComponent((MPowerUserScopeComponent) getOrInitBridgeManagerProvider())
                 .application(this)
-//                .bridgeManagerProvider(getBridgeManagerProvider())
                 .build();
     }
+
+    @Override
+    protected MPowerUserScopeComponent initBridgeManagerScopedComponent(BridgeStudyComponent bridgeStudyComponent) {
+        MPowerUserScopeComponent bridgeManagerProvider = DaggerMPowerUserScopeComponent.builder()
+                .applicationContext(this.getApplicationContext())
+                .bridgeStudyComponent(bridgeStudyComponent)
+                .build();
+        return bridgeManagerProvider;
+    }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -75,27 +80,5 @@ public class MPowerApplication extends BridgeSageResearchApp implements HasSuppo
             metrics.scaledDensity = configuration.fontScale * metrics.density;
             context.getResources().updateConfiguration(configuration, metrics);
         }
-    }
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        // This is needed for android versions < 5.0 or you can extend MultiDexApplication
-        super.attachBaseContext(base);
-        MultiDex.install(this);
-    }
-
-    @Override
-    public AndroidInjector<Activity> activityInjector() {
-        return dispatchingActivityInjector;
-    }
-
-    @Override
-    public AndroidInjector<Service> serviceInjector() {
-        return dispatchingServiceInjector;
-    }
-
-    @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
-        return dispatchingSupportFragmentInjector;
     }
 }

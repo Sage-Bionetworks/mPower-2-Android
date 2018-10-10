@@ -2,11 +2,11 @@ package org.sagebionetworks.research.mpower.inject;
 
 import com.google.common.collect.ImmutableList;
 
-import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
+import org.sagebionetworks.bridge.android.di.BridgeApplicationScope;
+import org.sagebionetworks.research.mobile_ui.inject.PerformTaskFragmentScope;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.sagebionetworks.research.motor_control_module.inject.MotorControlShowStepFragmentsModule;
-import org.sagebionetworks.research.motor_control_module.inject.MotorControlStepModule;
 import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
 import org.sagebionetworks.research.mpower.history.HistoryFragment;
@@ -22,15 +22,12 @@ import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerResultArc
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.BaseResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.FileResultArchiveFactory;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
 
-@Module(includes = {PerformTaskModule.class, MotorControlStepModule.class, TrackingStepModule.class,
-        AppDataModule.class, TrackingFragmentsModule.class})
-public abstract class MPowerApplicationModule {
+@Module(includes = {})
+public abstract class MPowerUserModule {
     @ContributesAndroidInjector
     abstract ExternalIdSignInActivity contributeExternalIdSignInActivityInjector();
 
@@ -42,6 +39,7 @@ public abstract class MPowerApplicationModule {
 
     // these modules contain an aggregate of ShowStepFragment subcomponents, so they are scoped under the PerformTaskFragment
     @ContributesAndroidInjector(modules = {ShowStepFragmentModule.class, MotorControlShowStepFragmentsModule.class})
+    @PerformTaskFragmentScope
     abstract PerformTaskFragment contributePerformTaskFragmentInjector();
 
     @ContributesAndroidInjector
@@ -63,7 +61,7 @@ public abstract class MPowerApplicationModule {
     abstract TrackingMenuFragment contributeTrackingMenuFragmentInjector();
 
     @Provides
-    @Singleton
+    @BridgeApplicationScope
     static ImmutableList<ResultArchiveFactory> provideAbstractResultArchiveFactory(
             TappingResultArchiveFactory tappingResultArchiveFactory,
             FileResultArchiveFactory fileResultArchiveFactory, AnswerResultArchiveFactory answerResultArchiveFactory,
