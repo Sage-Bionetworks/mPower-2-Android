@@ -228,6 +228,7 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
                 identifier, studyMarker.startedOn ?: nowInstant,
                 studyMarker.finishedOn, uuid, null, results, results)
 
+        scheduleRepo.updateSchedule(taskResult)
         scheduleRepo.uploadTaskResult(taskResult)
     }
 
