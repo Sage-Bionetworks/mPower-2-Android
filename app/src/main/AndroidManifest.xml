@@ -40,6 +40,11 @@
             android:windowSoftInputMode="stateHidden">
 
         </activity>
+
+        <activity
+            android:name="org.researchstack.backbone.ui.ViewTaskActivity"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>
