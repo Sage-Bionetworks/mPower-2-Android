@@ -23,6 +23,7 @@ import org.researchstack.backbone.DataProvider;
 import org.researchstack.backbone.factory.IntentFactory;
 import org.researchstack.backbone.result.TaskResult;
 import org.researchstack.backbone.ui.ViewTaskActivity;
+import org.sagebionetworks.bridge.researchstack.BridgeDataProvider;
 import org.sagebionetworks.bridge.researchstack.survey.SurveyTaskScheduleModel;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
@@ -36,6 +37,7 @@ import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TodayActionBarItem;
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
+import org.threeten.bp.Instant;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -68,6 +70,8 @@ public class TrackingTabFragment extends Fragment {
     // Note: state is not stored so killing the app and restarting will redisplay the finished schedules
     // on the first day.
     private boolean hasShownStudyBurst = false;
+
+    private @Nullable ScheduledActivityEntity surveyLaunched;
 
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
@@ -191,6 +195,7 @@ public class TrackingTabFragment extends Fragment {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     if (newTask != null) {
+                        surveyLaunched = surveySchedule;
                         // This is a survey task.
                         startActivityForResult(IntentFactory.INSTANCE.newTaskIntent(getActivity(),
                                 ViewTaskActivity.class, newTask), REQUEST_TASK);
@@ -211,8 +216,15 @@ public class TrackingTabFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TASK) {
             TaskResult taskResult = (TaskResult)
                     data.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT);
-            int i = 0;
-            //MpDataProvider.getInstance().completeActivity(context, taskResult);
+            if (surveyLaunched != null) {
+                surveyLaunched.setStartedOn(Instant.ofEpochMilli(taskResult.getStartDate().getTime()));
+                surveyLaunched.setFinishedOn(Instant.ofEpochMilli(taskResult.getEndDate().getTime()));
+                // TODO: mdephillips 10/10/18 upload taskresult to s3
+                studyBurstViewModel.updateSchedule(surveyLaunched);
+                // TODO: mdephillips 10/10/18 this is how we used to upload task results but won't work with the new ScheduleRepository
+                // BridgeDataProvider.getInstance().uploadTaskResult(taskResult);
+            }
         }
+        surveyLaunched = null;
     }
 }
