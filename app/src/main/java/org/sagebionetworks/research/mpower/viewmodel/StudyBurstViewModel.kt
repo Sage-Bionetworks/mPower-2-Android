@@ -1,8 +1,10 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
 import android.app.Application
+import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
@@ -11,12 +13,10 @@ import android.support.annotation.VisibleForTesting
 import android.support.v4.app.FragmentActivity
 import com.google.gson.reflect.TypeToken
 import org.sagebionetworks.bridge.rest.RestUtils
-import org.sagebionetworks.bridge.rest.model.ScheduledActivity
 import org.sagebionetworks.research.domain.result.AnswerResultType.DATE
 import org.sagebionetworks.research.domain.result.AnswerResultType.STRING
 import org.sagebionetworks.research.domain.result.implementations.AnswerResultBase
 import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
-import org.sagebionetworks.research.domain.result.interfaces.AnswerResult
 import org.sagebionetworks.research.domain.result.interfaces.Result
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.research.CompletionTask
@@ -36,18 +36,21 @@ import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo
+import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
+import org.slf4j.LoggerFactory
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import java.lang.Integer.MAX_VALUE
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
+
+    private val logger = LoggerFactory.getLogger(ScheduleRepository::class.java)
 
     companion object {
         @JvmStatic
@@ -149,6 +152,16 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
     }
 
     /**
+     * @param lifecycleOwner that previously was observing the return of the liveData() function
+     * @return a new LiveData object that is refreshed based on the current time of day
+     */
+    fun refreshLiveData(lifecycleOwner: LifecycleOwner): LiveData<StudyBurstItem> {
+        liveData().removeObservers(lifecycleOwner)
+        studyBurstLiveData = null
+        return liveData()
+    }
+
+    /**
      * @param items schedule items from live data query
      * @return a list of history items derived from today's finished schedules
      */
@@ -166,7 +179,8 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
             }
         }
 
-        return item
+        logger.info("Posting LiveData update")
+        return createStudyBurstItem(schedules)
     }
 
     @VisibleForTesting
@@ -637,7 +651,7 @@ data class StudyBurstItem(
         if (!isCompletedForToday) {
             val title = context.getString(R.string.study_burst_action_bar_title)
             var details: String? = null
-            expiresOn?.let {
+            millisToExpiration?.let {
                 details = timeUntilStudyBurstExpiration
             } ?: run {
                 val activitiesTodoCount = totalActivitiesCount - finishedSchedules.size
@@ -653,17 +667,26 @@ data class StudyBurstItem(
 
     val millisToExpiration: Long? get() {
         expiresOn?.let {
-            return it.toEpochMilli() - Instant.now().toEpochMilli()
+            val millis = it.toEpochMilli() - Instant.now().toEpochMilli()
+            // check for a negative time, because this means that progress did exist, but now it is over
+            if (millis < 0) {
+                return null
+            }
+            return millis
         } ?: return null
     }
 
     val timeUntilStudyBurstExpiration: String? get() {
         millisToExpiration?.let {
-            val secondsToExpiration = it / 1000
-            val progressDate = ZonedDateTime.now().startOfDay().plusSeconds(secondsToExpiration)
-            val dateEpochMillis = progressDate.toEpochSecond() * 1000
-            val formatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-            return formatter.format(Date(dateEpochMillis))
+            if (it < 0) {
+                return null
+            } else {
+                val secondsToExpiration = it / 1000
+                val progressDate = ZonedDateTime.now().startOfDay().plusSeconds(secondsToExpiration)
+                val dateEpochMillis = progressDate.toEpochSecond() * 1000
+                val formatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                return formatter.format(Date(dateEpochMillis))
+            }
         } ?: return null
     }
 
