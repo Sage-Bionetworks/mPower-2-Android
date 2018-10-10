@@ -11,6 +11,13 @@ import android.support.annotation.VisibleForTesting
 import android.support.v4.app.FragmentActivity
 import com.google.gson.reflect.TypeToken
 import org.sagebionetworks.bridge.rest.RestUtils
+import org.sagebionetworks.bridge.rest.model.ScheduledActivity
+import org.sagebionetworks.research.domain.result.AnswerResultType.DATE
+import org.sagebionetworks.research.domain.result.AnswerResultType.STRING
+import org.sagebionetworks.research.domain.result.implementations.AnswerResultBase
+import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
+import org.sagebionetworks.research.domain.result.interfaces.AnswerResult
+import org.sagebionetworks.research.domain.result.interfaces.Result
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.research.CompletionTask
 import org.sagebionetworks.research.mpower.research.DataSourceManager
@@ -46,14 +53,6 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
         @JvmStatic
         fun create(activity: FragmentActivity): StudyBurstViewModel {
             return ViewModelProviders.of(activity).get(StudyBurstViewModel::class.java)
-        }
-
-        fun getStudyBurst(config: StudyBurstConfiguration, today: LocalDateTime,
-                schedules: List<ScheduledActivityEntity>): ScheduledActivityEntity? {
-            return schedules.firstOrNull {
-                it.activityIdentifier() == config.identifier &&
-                        (it.scheduledOn?.inSameDayAs(today) ?: false)
-            }
         }
 
         internal val defaultTaskSortOrder: List<String> get() {
@@ -158,7 +157,16 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
         val todaySchedules = todayLiveData?.value ?: return null
         val completedBurstSchedules = completedBurstsLiveData?.value ?: return null
         val schedules = listOf(todaySchedules, completedBurstSchedules).flatten()
-        return createStudyBurstItem(schedules)
+        val item = createStudyBurstItem(schedules)
+
+        // Check for a new state where the study burst was just completed.
+        if (item.studyBurstWasJustCompleted) {
+            item.studyBurstMarker?.let {
+                markCompleted(item, it)
+            }
+        }
+
+        return item
     }
 
     @VisibleForTesting
@@ -168,49 +176,45 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
                 shouldContinueStudyBurst(), getTaskSortOrder())
     }
 
-    //studyMarker: SBBScheduledActivity, startedOn: Date?, finishedOn: Date, finishedSchedules: [SBBScheduledActivity]) {
-    private fun markCompleted(
-            studyMarker: ScheduledActivityEntity,
-            filteredFinishedSchedules: Triple<List<ScheduledActivityEntity>?, Instant?, Instant?>) {
+    /**
+     * @param studyMarker to mark as complete on bridge and to upload the result info to s3
+     */
+    private fun markCompleted(item: StudyBurstItem, studyMarker: ScheduledActivityEntity) {
+        val identifier = studyMarker.activityIdentifier() ?: STUDY_BURST_COMPLETED
+        val nowInstant = now().toInstant(timezone)
 
-        studyMarker.startedOn = filteredFinishedSchedules.second ?: toInstant(now())
-        studyMarker.finishedOn = filteredFinishedSchedules.third
+        // Creating the uuid through this function will make sure it's registered in the ScheduleRepository
+        val uuid = createScheduleTaskRunUuid(studyMarker)
 
-        // TODO: mdephillips 9/10/18 archive, upload, and update schedule on bridge
-//        let identifier = studyMarker.activityIdentifier ?? RSDIdentifier.studyBurstCompletedTask.stringValue
-//        let schemaInfo: RSDSchemaInfo = {
-//            guard let info = self.schemaInfo(for: identifier) else {
-//            assertionFailure("Failed to retrieve schema info for \(String(describing: studyMarker.activityIdentifier))")
-//            return RSDSchemaInfoObject(identifier: identifier, revision: 1)
-//        }
-//            return info
-//        }()
-//
-//        do {
-//
-//            // build the archive
-//            let archive = SBAScheduledActivityArchive(identifier: identifier, schemaInfo: schemaInfo, schedule: studyMarker)
-//            var json: [String : Any] = [ "taskOrder" : self.orderedTasks.map { $0.identifier }.joined(separator: ",")]
-//            finishedSchedules.forEach {
-//                guard let identifier = $0.activityIdentifier, let finishedOn = $0.finishedOn else { return }
-//                json["\(identifier).startDate"] = ($0.startedOn ?? today()).jsonObject()
-//                json["\(identifier).endDate"] = finishedOn.jsonObject()
-//                json["\(identifier).scheduleGuid"] = $0.guid
-//            }
-//            archive.insertDictionary(intoArchive: json, filename: "tasks", createdOn: finishedOn)
-//
-//            try archive.completeArchive(createdOn: finishedOn, with: nil)
-//                studyMarker.clientData = json as NSDictionary
-//
-//                self.offMainQueue.async {
-//                    archive.encryptAndUploadArchive()
-//                }
-//            }
-//            catch let err {
-//                debugPrint("Failed to archive the study burst data. \(err)")
-//            }
-//
-//            self.sendUpdated(for: [studyMarker])
+        val results = ArrayList<Result>()
+
+        // Add task order result
+        results.add(AnswerResultBase(
+                "tasks.taskOrder", nowInstant, nowInstant,
+                getTaskSortOrder().joinToString(), STRING))
+
+        // json filename must be tasks, can I just prefix with "tasks." instead? TODO: mdephillips 10/9/18
+        // Fill in info about the finished tasks' guids and start/end dates
+        item.finishedSchedules.forEach {
+            it.activityIdentifier()?.let { identifier ->
+                it.finishedOn?.let { finishedOn ->
+                    val startDate: Instant = it.startedOn ?: nowInstant
+                    results.add(AnswerResultBase(
+                            "tasks.$identifier.startDate", startDate, startDate, startDate, DATE))
+                    val endDate: Instant = it.finishedOn ?: nowInstant
+                    results.add(AnswerResultBase(
+                            "tasks.$identifier.endDate", endDate, endDate, endDate, DATE))
+                    results.add(AnswerResultBase(
+                            "tasks.$identifier.scheduleGuid", nowInstant, nowInstant, it.guid, STRING))
+                }
+            }
+        }
+
+        val taskResult = TaskResultBase(
+                identifier, studyMarker.startedOn ?: nowInstant,
+                studyMarker.finishedOn, uuid, null, results, results)
+
+        scheduleRepo.uploadTaskResult(taskResult)
     }
 
     /**
@@ -328,8 +332,14 @@ data class StudyBurstItem(
      * @property shouldMarkStudyBurstAsCompleted true if the view model should mark the study burst as completed
      */
     internal val shouldMarkStudyBurstAsCompleted: Boolean
-
-
+    /**
+     * @property studyBurstMarker the schedule for marking the study burst as complete
+     */
+    val studyBurstMarker: ScheduledActivityEntity?
+    /*
+     * @property studyBurstWasJustCompleted true if the last study burst activity was just finished, false otherwise
+     */
+    val studyBurstWasJustCompleted: Boolean
 
     init {
         val filteredFinishedOn = filterFinishedSchedules(schedules)
@@ -337,9 +347,12 @@ data class StudyBurstItem(
         finishedSchedules = filteredFinishedOn.first ?: listOf()
         // Find the study burst tasks and calculate the state
         val todayStart = date.startOfDay()
-        val studyMarker = StudyBurstViewModel.getStudyBurst(config, date, schedules)
+        studyBurstMarker = schedules.firstOrNull {
+            it.activityIdentifier() == config.identifier &&
+                    (it.scheduledOn?.inSameDayAs(date) ?: false)
+        }
         val markerSchedules = schedules.filter {
-            studyMarker?.activityIdentifier() == it.activityIdentifier()
+            studyBurstMarker?.activityIdentifier() == it.activityIdentifier()
         }
         val pastSchedules = markerSchedules.filter {
             it.scheduledOn?.isBefore(todayStart) ?: false
@@ -349,7 +362,7 @@ data class StudyBurstItem(
         val missedDayCount = pastSchedules
                 .map { if (it.finishedOn == null) 1 else 0 }.sum()
         val finishedCount = dayCount - missedDayCount
-        val hasStudyBurst = (studyMarker != null && ((dayCount <= config.numberOfDays) ||
+        val hasStudyBurst = (studyBurstMarker != null && ((dayCount <= config.numberOfDays) ||
                 ((finishedCount < config.minimumRequiredDays) && shouldContinueStudyBurst)))
 
         val newMaxDayCount = markerSchedules.size
@@ -357,11 +370,11 @@ data class StudyBurstItem(
             config.maxDayCount = markerSchedules.size
         }
         pastDaysCount = pastSchedules.size
-        this.dayCount = if (hasStudyBurst && studyMarker != null) dayCount else null
+        this.dayCount = if (hasStudyBurst && studyBurstMarker != null) dayCount else null
         this.missedDayCount = if (hasStudyBurst) missedDayCount else 0
 
         val todayStudyMarkerNotFinished =
-                (studyMarker != null && studyMarker.finishedOn == null)
+                (studyBurstMarker != null && studyBurstMarker.finishedOn == null)
         val allTodaysTaskCompletedWithinFinishedOn =
                 (totalActivitiesCount == filteredFinishedOn.first?.size && filteredFinishedOn.third != null)
 
@@ -369,7 +382,7 @@ data class StudyBurstItem(
                 (todayStudyMarkerNotFinished && allTodaysTaskCompletedWithinFinishedOn)
 
         expiresOn =
-            if (studyMarker != null && todayStudyMarkerNotFinished && !allTodaysTaskCompletedWithinFinishedOn) {
+            if (studyBurstMarker != null && todayStudyMarkerNotFinished && !allTodaysTaskCompletedWithinFinishedOn) {
                 filteredFinishedOn.third?.plusSeconds(config.expiresLimit)
             } else null
 
@@ -389,6 +402,17 @@ data class StudyBurstItem(
             }
             // Tasks are active and can be run if they are finished or they are the first unfinished in the list
             StudyBurstTaskInfo(schedule, it, isActive, isFinished)
+        }
+
+        studyBurstWasJustCompleted =
+                isCompletedForToday &&
+                studyBurstMarker != null &&
+                studyBurstMarker.finishedOn == null
+        // Computed property isCompletedForToday should be accessed last
+        if (studyBurstWasJustCompleted) {
+            // Only assign the study burst marker start/finish dates if the study burst was just finished
+            studyBurstMarker?.startedOn = filteredFinishedOn.second ?: date.toInstant(timezone)
+            studyBurstMarker?.finishedOn = filteredFinishedOn.third
         }
     }
 

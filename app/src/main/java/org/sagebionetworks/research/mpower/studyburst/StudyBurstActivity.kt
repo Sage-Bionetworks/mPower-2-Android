@@ -55,6 +55,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
         studyBurstRecycler.layoutManager = GridLayoutManager(this, 2)
         observeLiveData()
+
         study_burst_next.setOnClickListener { onNextClicked() }
         studyBurstBack.setOnClickListener { finish() }
     }
