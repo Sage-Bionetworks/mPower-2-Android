@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower.researchstack.step;
+package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
 import org.researchstack.backbone.result.TaskResult;
 import org.researchstack.backbone.step.InstructionStep;

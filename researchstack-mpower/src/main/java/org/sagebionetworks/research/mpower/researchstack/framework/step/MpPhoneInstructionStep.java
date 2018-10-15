@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower.researchstack.step;
+package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
 public class MpPhoneInstructionStep extends MpInstructionStep {
     /**

@@ -5,28 +5,55 @@ import android.support.annotation.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 
+import org.researchstack.backbone.model.survey.BaseSurveyItem;
+import org.researchstack.backbone.model.survey.BooleanQuestionSurveyItem;
+import org.researchstack.backbone.model.survey.ChoiceQuestionSurveyItem;
+import org.researchstack.backbone.model.survey.DateRangeSurveyItem;
+import org.researchstack.backbone.model.survey.IntegerRangeSurveyItem;
 import org.researchstack.backbone.model.survey.SurveyItem;
+import org.researchstack.backbone.model.survey.TextfieldSurveyItem;
 import org.sagebionetworks.bridge.researchstack.task.creation.BridgeSurveyItemAdapter;
-import org.sagebionetworks.research.mpower.researchstack.step.MpInstructionSurveyItem;
+import org.sagebionetworks.research.mpower.researchstack.framework.step.MpFormSurveyItem;
+import org.sagebionetworks.research.mpower.researchstack.framework.step.MpInstructionSurveyItem;
+import org.sagebionetworks.research.mpower.researchstack.framework.step.MpReminderStepLayout;
+
+import java.util.Map;
 
 public class MpSurveyItemAdapter extends BridgeSurveyItemAdapter {
 
-    // Custom Survey Items
-    public static final String MP_INSTRUCTION_SURVEY_ITEM_TYPE = "mpInstruction";
+    // Form Survey Items
+    public static final String MP_FORM_SURVEY_ITEM_TYPE             = "bpForm";
+    public static final String MP_TEXT_SURVEY_ITEM_TYPE             = "bpText";
+    public static final String MP_INTEGER_SURVEY_ITEM_TYPE          = "bpInteger";
+    public static final String MP_SINGLE_CHOICE_SURVEY_ITEM_TYPE    = "bpSingleChoice";
+    public static final String MP_MULTIPLE_CHOICE_SURVEY_ITEM_TYPE  = "bpMultipleChoice";
+    public static final String MP_CHECKBOX_SURVEY_ITEM_TYPE         = "bpCheckbox";
+    public static final String MP_MULTI_CHECKBOX_SURVEY_ITEM_TYPE   = "bpMultiCheckbox";
+    public static final String MP_BOOLEAN_SURVEY_ITEM_TYPE          = "bpBoolean";
 
+    // Custom Survey Items
+    public static final String MP_REMINDER_SURVEY_ITEM_TYPE = "mpReminder";
+    public static final String MP_INSTRUCTION_SURVEY_ITEM_TYPE = "mpInstruction";
     public static final String MP_INSTRUCTION_PHONE_SURVEY_ITEM_TYPE = "mpPhoneInstruction";
 
     @VisibleForTesting
-    static final ImmutableMap<String, Class<? extends SurveyItem>> TYPE_TO_CLASS =
-            ImmutableMap.<String, Class<? extends SurveyItem>>builder()
-                    // Consent Mappings
+    static final Map<String, Class<? extends SurveyItem>> TYPE_TO_CLASS =
+            ImmutableMap.<String, Class<? extends org.researchstack.backbone.model.survey.SurveyItem>>builder()
 
                     // Form Mappings
+                    .put(MP_FORM_SURVEY_ITEM_TYPE,              MpFormSurveyItem.class)
+                    .put(MP_TEXT_SURVEY_ITEM_TYPE,              TextfieldSurveyItem.class)
+                    .put(MP_INTEGER_SURVEY_ITEM_TYPE,           IntegerRangeSurveyItem.class)
+                    .put(MP_SINGLE_CHOICE_SURVEY_ITEM_TYPE,     ChoiceQuestionSurveyItem.class)
+                    .put(MP_MULTIPLE_CHOICE_SURVEY_ITEM_TYPE,   ChoiceQuestionSurveyItem.class)
+                    .put(MP_CHECKBOX_SURVEY_ITEM_TYPE,          BooleanQuestionSurveyItem.class)
+                    .put(MP_MULTI_CHECKBOX_SURVEY_ITEM_TYPE,    ChoiceQuestionSurveyItem.class)
+                    .put(MP_BOOLEAN_SURVEY_ITEM_TYPE,           BooleanQuestionSurveyItem.class)
 
                     // Custom Mappings
-                    .put(MP_INSTRUCTION_SURVEY_ITEM_TYPE, MpInstructionSurveyItem.class)
+                    .put(MP_INSTRUCTION_SURVEY_ITEM_TYPE,       MpInstructionSurveyItem.class)
                     .put(MP_INSTRUCTION_PHONE_SURVEY_ITEM_TYPE, MpInstructionSurveyItem.class)
-
+                    .put(MP_REMINDER_SURVEY_ITEM_TYPE,          MpReminderStepLayout.SurveyItem.class)
                     .build();
 
     @Override

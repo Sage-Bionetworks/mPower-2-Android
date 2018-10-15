@@ -1,10 +1,15 @@
-package org.sagebionetworks.research.mpower.researchstack.step;
+package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
 import com.google.gson.annotations.SerializedName;
 
 import org.researchstack.backbone.model.survey.InstructionSurveyItem;
 
 public class MpInstructionSurveyItem extends InstructionSurveyItem {
+
+    /* Default constructor needed for serialization/deserialization of object */
+    public MpInstructionSurveyItem() {
+        super();
+    }
 
     /**
      * When next button is clicked, step layout will perform a task ACTION_END

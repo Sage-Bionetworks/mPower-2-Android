@@ -1,0 +1,179 @@
+{
+  "guid": "7beb8a71-65d0-4217-a4fb-3bb029b55258",
+  "createdOn": "2018-08-07T22:41:52.186Z",
+  "modifiedOn": "2018-08-07T22:57:14.371Z",
+  "version": 5,
+  "name": "Motivation",
+  "identifier": "Motivation",
+  "published": true,
+  "deleted": false,
+  "schemaRevision": 1,
+  "elements": [
+    {
+      "surveyCompoundKey": "7beb8a71-65d0-4217-a4fb-3bb029b55258:1533681712186",
+      "guid": "d429af05-1f6d-4b36-8c6b-a08f79eed73e",
+      "identifier": "motivation_II_T_Intro",
+      "type": "SurveyInfoScreen",
+      "beforeRules": [
+        {
+          "operator": "all",
+          "dataGroups": [
+            "gr_BR_AD",
+            "gr_DT_T"
+          ],
+          "skipTo": "motivation_AD_T",
+          "type": "SurveyRule"
+        },
+        {
+          "operator": "all",
+          "dataGroups": [
+            "gr_BR_AD",
+            "gr_DT_F"
+          ],
+          "skipTo": "motivation_AD_F",
+          "type": "SurveyRule"
+        },
+        {
+          "operator": "all",
+          "dataGroups": [
+            "gr_DT_F",
+            "gr_BR_II"
+          ],
+          "skipTo": "motivation_II_F_Intro",
+          "type": "SurveyRule"
+        }
+      ],
+      "afterRules": [
+
+      ],
+      "prompt": "Research has found that people are much more likely to do something when they have created a plan for exactly when, where, and how they will do it.\n",
+      "promptDetail": "You might also want to use one of the mPower tasks, such as tapping, every day to make it a habit and, also, to give you even greater understanding of your Parkinson’s symptoms.\n",
+      "title": "Hello,"
+    },
+    {
+      "surveyCompoundKey": "7beb8a71-65d0-4217-a4fb-3bb029b55258:1533681712186",
+      "guid": "8fd3284f-5bcc-4ece-9ed1-29687f075d20",
+      "identifier": "motivation_II_T",
+      "type": "SurveyQuestion",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+        {
+          "operator": "always",
+          "value": "",
+          "endSurvey": true,
+          "type": "SurveyRule"
+        }
+      ],
+      "prompt": "To create a habit of using mPower, please complete this statement:",
+      "promptDetail": "\"Each day, whenever I ______, I will complete the mPower battery.\"\n",
+      "fireEvent": false,
+      "constraints": {
+        "rules": [
+          {
+            "operator": "always",
+            "value": "",
+            "endSurvey": true,
+            "type": "SurveyRule"
+          }
+        ],
+        "dataType": "string",
+        "minLength": 0,
+        "maxLength": 255,
+        "patternPlaceholder": "Fill in the blank",
+        "type": "StringConstraints"
+      },
+      "uiHint": "textfield"
+    },
+    {
+      "surveyCompoundKey": "7beb8a71-65d0-4217-a4fb-3bb029b55258:1533681712186",
+      "guid": "ec523970-b3f2-4bda-a479-e318ec72e865",
+      "identifier": "motivation_II_F_Intro",
+      "type": "SurveyInfoScreen",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+
+      ],
+      "prompt": "Research has found that people are much more likely to do something when they have created a plan for exactly when, where, and how they will do it.\n",
+      "title": "Hello"
+    },
+    {
+      "surveyCompoundKey": "7beb8a71-65d0-4217-a4fb-3bb029b55258:1533681712186",
+      "guid": "f500acbd-7a3f-449a-9f27-7718548af76d",
+      "identifier": "motivation_II_F",
+      "type": "SurveyQuestion",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+        {
+          "operator": "always",
+          "value": "",
+          "endSurvey": true,
+          "type": "SurveyRule"
+        }
+      ],
+      "prompt": "To create a habit of using mPower, please complete this statement:\n",
+      "promptDetail": "\"Each day, whenever I ______, I will complete the mPower battery during the 2-week burst week.\" \n",
+      "fireEvent": false,
+      "constraints": {
+        "rules": [
+          {
+            "operator": "always",
+            "value": "",
+            "endSurvey": true,
+            "type": "SurveyRule"
+          }
+        ],
+        "dataType": "string",
+        "minLength": 0,
+        "maxLength": 255,
+        "patternPlaceholder": "Fill in the blank",
+        "type": "StringConstraints"
+      },
+      "uiHint": "textfield"
+    },
+    {
+      "surveyCompoundKey": "7beb8a71-65d0-4217-a4fb-3bb029b55258:1533681712186",
+      "guid": "a4c90ac8-a181-4b89-9630-cd7e18e28c6d",
+      "identifier": "motivation_AD_T",
+      "type": "SurveyInfoScreen",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+        {
+          "operator": "always",
+          "value": "",
+          "endSurvey": true,
+          "type": "SurveyRule"
+        }
+      ],
+      "prompt": "The first assessment for the mPower study is coming up! To make it easier for you to remember to do these assessments, you can do the assessments during something you normally do every day, such as taking your meds. You might also want to use one of the mPower tasks, such as tapping, every day to make it a habit and, also, to give you even greater understanding of your Parkinson’s symptoms.",
+      "title": "Hello,"
+    },
+    {
+      "surveyCompoundKey": "7beb8a71-65d0-4217-a4fb-3bb029b55258:1533681712186",
+      "guid": "529a475a-40df-43be-943f-043de7812b5b",
+      "identifier": "motivation_AD_F",
+      "type": "SurveyInfoScreen",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+        {
+          "operator": "always",
+          "value": "",
+          "endSurvey": true,
+          "type": "SurveyRule"
+        }
+      ],
+      "prompt": "The next burst of the mPower study is coming up! To ensure you successfully complete your mPower tasks each day during this burst, why don't you try doing the mPower tasks when you take your meds.",
+      "title": "Hello,"
+    }
+  ],
+  "type": "Survey"
+}

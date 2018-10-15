@@ -31,8 +31,8 @@
   -->
 
 <resources>
-    <color name="sageResearchPrimaryLight">@color/royal600</color>
-    <color name="sageResearchPrimary">@color/royal700</color>
+    <color name="sageResearchPrimaryLight">@color/royal300</color>
+    <color name="sageResearchPrimary">@color/royal500</color>
     <color name="sageResearchPrimaryDark">@color/royal800</color>
     <color name="sageResearchSecondary">@color/butterscotch500</color>
 

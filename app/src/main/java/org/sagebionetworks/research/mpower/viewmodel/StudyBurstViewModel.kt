@@ -581,6 +581,14 @@ data class StudyBurstItem(
         return schedules.filterByActivityId(config.motivationIdentifier).firstOrNull()
     }
 
+    val demographicsSurvey: ScheduledActivityEntity? get() {
+        return schedules.filterByActivityId(DEMOGRAPHICS).firstOrNull()
+    }
+
+    val backgroundSurvey: ScheduledActivityEntity? get() {
+        return schedules.filterByActivityId(BACKGROUND).firstOrNull()
+    }
+
     private fun hasReport(schedule: ScheduledActivityEntity?): Boolean {
         if (schedule == null) return false
         // TODO: mdephillips: ios code has this as the finished calculation

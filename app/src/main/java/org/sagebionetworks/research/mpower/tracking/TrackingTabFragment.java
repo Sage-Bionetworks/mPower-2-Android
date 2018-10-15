@@ -30,6 +30,7 @@ import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
+import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
@@ -144,8 +145,10 @@ public class TrackingTabFragment extends Fragment {
             return;
         }
         if (!hasShownStudyBurst && !item.hasCompletedMotivationSurvey()) {
-            hasShownStudyBurst = true;
             showActionBarFlow(false, item);
+        }
+        if (!hasShownStudyBurst && item.getBackgroundSurvey() != null) {
+            launchSurvey(item.getBackgroundSurvey());
         }
         if (!item.getHasStudyBurst() || item.getDayCount() == null) {
             trackingStatusBar.setVisibility(View.GONE);
@@ -188,6 +191,7 @@ public class TrackingTabFragment extends Fragment {
                 surveySchedule.getActivity().getSurvey() == null) {
             return; // NPE guard statements
         }
+        hasShownStudyBurst = true;
         SurveyTaskScheduleModel survey = new SurveyTaskScheduleModel();
         survey.surveyGuid = surveySchedule.getActivity().getSurvey().getGuid();
         // Load task attempts to load a survey task based, based on the data provider.
@@ -198,7 +202,7 @@ public class TrackingTabFragment extends Fragment {
                         surveyLaunched = surveySchedule;
                         // This is a survey task.
                         startActivityForResult(IntentFactory.INSTANCE.newTaskIntent(getActivity(),
-                                ViewTaskActivity.class, newTask), REQUEST_TASK);
+                                MpViewTaskActivity.class, newTask), REQUEST_TASK);
                     }
                 });
             }

@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower.researchstack.step;
+package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
 import android.content.Context;
 import android.graphics.Matrix;
@@ -18,8 +18,12 @@ import org.researchstack.backbone.ui.callbacks.StepCallbacks;
 import org.researchstack.backbone.ui.step.layout.InstructionStepLayout;
 import org.researchstack.backbone.utils.ResUtils;
 import org.sagebionetworks.research.mpower.researchstack.R;
+import org.sagebionetworks.research.mpower.researchstack.framework.step.toolbar.MpTaskBehindToolbarManipulator;
+import org.sagebionetworks.research.mpower.researchstack.framework.step.toolbar.MpTaskStatusBarManipulator;
+import org.sagebionetworks.research.mpower.researchstack.framework.step.toolbar.MpTaskToolbarProgressManipulator;
 
-public class MpInstructionStepLayout extends InstructionStepLayout {
+public class MpInstructionStepLayout extends InstructionStepLayout implements
+        MpTaskBehindToolbarManipulator, MpTaskStatusBarManipulator, MpTaskToolbarProgressManipulator {
 
     protected Button backButton;
 
@@ -47,6 +51,28 @@ public class MpInstructionStepLayout extends InstructionStepLayout {
 
     public MpInstructionStepLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    @Override
+    public int mpStatusBarColor() {
+        if (mpInstructionStep.statusBarColorRes != null) {
+            return ResUtils.getColorResourceId(getContext(), mpInstructionStep.statusBarColorRes);
+        } else if (mpInstructionStep.backgroundColorRes != null) {
+            return ResUtils.getColorResourceId(getContext(), mpInstructionStep.backgroundColorRes);
+        } else if (mpInstructionStep.imageBackgroundColorRes != null) {
+            return ResUtils.getColorResourceId(getContext(), mpInstructionStep.imageBackgroundColorRes);
+        }
+        return MpTaskStatusBarManipulator.DEFAULT_COLOR;
+    }
+
+    @Override
+    public boolean mpToolbarShowProgress() {
+        return !mpInstructionStep.hideProgress;
+    }
+
+    @Override
+    public boolean mpToolbarStepLayoutBehind() {
+        return mpInstructionStep.behindToolbar;
     }
 
     @Override
@@ -169,7 +195,7 @@ public class MpInstructionStepLayout extends InstructionStepLayout {
         }
 
         if (mpInstructionStep.advanceOnImageClick) {
-            imageView.setOnClickListener(view -> goForwardClicked(view));
+            imageView.setOnClickListener(this::goForwardClicked);
         }
 
         if (mpInstructionStep.bottomContainerColorRes != null) {

@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="rsb_item_size_submit_bar">84dp</dimen>
     <!-- Button Sizes -->
     <dimen name="mp_rounded_button_height">50dp</dimen>
     <dimen name="mp_rounded_button_radius">25dp</dimen>
+    <!-- ResearchStack Sizes -->
+    <dimen name="mp_bottom_container_shadow_height">4dp</dimen>
+    <dimen name="mp_toolbar_top_padding">24dp</dimen>
+    <dimen name="mp_toolbar_height_and_top_padding">64dp</dimen>
+    <dimen name="mp_progress_bar_height">12dp</dimen>
+    <dimen name="mp_progress_bar_radius">6dp</dimen>
+    <!-- Form and Question Steps -->
+    <dimen name="mp_single_choice_question_margin">1dp</dimen>
+    <dimen name="mp_number_picker_width">90dp</dimen>
 </resources>

@@ -22,6 +22,14 @@ public class MpPrefs {
 
     private Gson gson;
 
+    public static final String KEY_REMINDER_FREQUENCY_BODY_AND_MIND = "reminder_frequency_body_and_mind";
+    public static final String KEY_REMINDER_FREQUENCY_MORNING = "reminder_frequency_morning";
+    public static final String KEY_REMINDER_FREQUENCY_EVENING = "reminder_frequency_evening";
+    public static final String KEY_REMINDER_TIME_BODY_AND_MIND = "reminder_time_body_and_mind";
+    public static final String KEY_REMINDER_TIME_MORNING = "reminder_time_morning";
+    public static final String KEY_REMINDER_TIME_EVENING = "reminder_time_evening";
+    public static final String KEY_REMINDERS_NOTIFICATIONS_GLOBAL = "reminder_notifications_global";
+
     //    protected DailyActivitiesDAO dailyActivities;
 //    protected OnceActivitiesDAO onceActivities;
 //    protected ActivityListDAO needUpdatedOnBridgeActivities;

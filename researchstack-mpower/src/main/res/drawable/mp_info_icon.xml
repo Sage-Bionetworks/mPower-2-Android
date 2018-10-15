@@ -1,0 +1,44 @@
+<!--
+  ~ BSD 3-Clause License
+  ~
+  ~ Copyright 2018  Sage Bionetworks. All rights reserved.
+  ~
+  ~ Redistribution and use in source and binary forms, with or without modification,
+  ~ are permitted provided that the following conditions are met:
+  ~
+  ~ 1.  Redistributions of source code must retain the above copyright notice, this
+  ~ list of conditions and the following disclaimer.
+  ~
+  ~ 2.  Redistributions in binary form must reproduce the above copyright notice,
+  ~ this list of conditions and the following disclaimer in the documentation and/or
+  ~ other materials provided with the distribution.
+  ~
+  ~ 3.  Neither the name of the copyright holder(s) nor the names of any contributors
+  ~ may be used to endorse or promote products derived from this software without
+  ~ specific prior written permission. No license is granted to the trademarks of
+  ~ the copyright holders even if such marks are included in this software.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ~ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportHeight="24"
+    android:viewportWidth="24">
+    <group>
+        <clip-path android:pathData="M0,0L24,0L24,24L0,24L0,0Z M 0,0" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M12,0C5.3716,0 0,5.3716 0,12C0,18.6284 5.3716,24 12,24C18.6284,24 24,18.6284 24,12C24.0093,5.3716 18.6284,0 12,0ZM12.9868,18.7401L10.9666,18.7401L10.9666,10.3615L12.9868,10.3615L12.9868,18.7401ZM11.9814,8.3879C11.1063,8.3879 10.3708,7.6524 10.3708,6.7867C10.3708,5.8743 11.1063,5.1575 11.9814,5.1575C12.8844,5.1575 13.6385,5.8836 13.6385,6.7867C13.6385,7.6524 12.8844,8.3879 11.9814,8.3879Z" />
+    </group>
+</vector>

@@ -88,7 +88,7 @@
     </style>
 
     <style name="MPower.RoundedCornerMaterialButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:background">@drawable/mpower2_rounded_button_butterscotch</item>
+        <item name="android:background">@drawable/mp_rounded_button_butterscotch</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:fontFamily">@font/lato_bold</item>
@@ -96,7 +96,7 @@
     </style>
 
     <style name="MPower.RoundedCornerMaterialButton.Gray" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:background">@drawable/mpower2_rounded_button_gray</item>
+        <item name="android:background">@drawable/mp_rounded_button_gray</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:fontFamily">@font/lato_bold</item>

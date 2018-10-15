@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rsb_survey_content_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/rsb_survey_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/lato_regular"
+        android:layout_marginTop="@dimen/rsb_padding_medium"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/rsb_survey_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/lato_light"
+        android:visibility="gone"/>
+
+    <Space
+        android:id="@+id/rsb_survey_step_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

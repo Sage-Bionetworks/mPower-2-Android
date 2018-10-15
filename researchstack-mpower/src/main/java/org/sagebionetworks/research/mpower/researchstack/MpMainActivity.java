@@ -40,7 +40,7 @@ public class MpMainActivity extends AppCompatActivity {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_mp_main);
+        setContentView(R.layout.mp_activity_main);
 
         handleIntent(getIntent());
     }

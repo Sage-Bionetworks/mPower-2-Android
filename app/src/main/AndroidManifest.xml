@@ -35,14 +35,21 @@
                   android:screenOrientation="portrait">
 
         </activity>
-        <activity android:name=".tracking.fragment.MedicationSchedulingFragment"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden">
+        <!--<activity android:name=".tracking.fragment.MedicationSchedulingFragment"-->
+            <!--android:screenOrientation="portrait"-->
+            <!--android:windowSoftInputMode="stateHidden">-->
 
-        </activity>
+        <!--</activity>-->
 
         <activity
             android:name="org.researchstack.backbone.ui.ViewTaskActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".researchstack.framework.MpViewTaskActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MP.Survey"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
 
     </application>
