@@ -89,13 +89,15 @@ public class MpSmartSurveyTask extends SmartSurveyTask {
 
                     QuestionStep questionStep = new QuestionStep(stepModel.identifier + "Form", null, answerFormat);
                     questionStep.setText(stepModel.promptDetail);
-                    questionStep.setOptional(true);
+                    // MP survey questions are not skip-able
+                    questionStep.setOptional(false);
                     List<QuestionStep> questionStepList = new ArrayList<>();
                     questionStepList.add(questionStep);
 
                     MpFormStep formStep = new MpFormStep(stepModel.identifier,
                             stepModel.prompt, stepModel.promptDetail, questionStepList);
-                    formStep.setOptional(true);
+                    // MP survey questions are not skip-able
+                    formStep.setOptional(false);
 
                     steps.add(formStep);
                     staticStepIdentifiers.add(stepModel.identifier);

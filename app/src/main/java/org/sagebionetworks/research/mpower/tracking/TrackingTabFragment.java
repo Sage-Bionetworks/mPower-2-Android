@@ -25,6 +25,7 @@ import org.researchstack.backbone.result.TaskResult;
 import org.researchstack.backbone.ui.ViewTaskActivity;
 import org.sagebionetworks.bridge.researchstack.BridgeDataProvider;
 import org.sagebionetworks.bridge.researchstack.survey.SurveyTaskScheduleModel;
+import org.sagebionetworks.bridge.rest.model.ScheduledActivity;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
@@ -37,6 +38,7 @@ import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TodayActionBarItem;
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
+import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters;
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
 import org.threeten.bp.Instant;
 
@@ -223,10 +225,17 @@ public class TrackingTabFragment extends Fragment {
             if (surveyLaunched != null) {
                 surveyLaunched.setStartedOn(Instant.ofEpochMilli(taskResult.getStartDate().getTime()));
                 surveyLaunched.setFinishedOn(Instant.ofEpochMilli(taskResult.getEndDate().getTime()));
-                // TODO: mdephillips 10/10/18 upload taskresult to s3
+                // This function updates the schedule on bridge and in the ScheduleRepository
                 studyBurstViewModel.updateSchedule(surveyLaunched);
-                // TODO: mdephillips 10/10/18 this is how we used to upload task results but won't work with the new ScheduleRepository
-                // BridgeDataProvider.getInstance().uploadTaskResult(taskResult);
+
+                // We only need to provide enough information in the ScheduledActivity
+                // for the BridgeDataProvider to create the metadata JSON file
+                ScheduledActivity bridgeSchedule = EntityTypeConverters.bridgeMetaDataSchedule(surveyLaunched);
+                // We give it the schedule for the metadata, but we specify not to update the schedule on bridge
+                // Because we do that ourselves through the ScheduleRepository
+                // on the line above studyBurstViewModel.updateSchedule(surveyLaunched)
+                BridgeDataProvider.getInstance().uploadTaskResult(
+                        getActivity(), taskResult, bridgeSchedule, false);
             }
         }
         surveyLaunched = null;

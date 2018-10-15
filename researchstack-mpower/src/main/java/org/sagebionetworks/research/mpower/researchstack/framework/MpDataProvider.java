@@ -31,13 +31,22 @@ public class MpDataProvider extends BridgeDataProvider {
     }
 
     @Override
-    public TaskHelper createTaskHelper(NotificationHelper notif, StorageAccessWrapper wrapper,
-            BridgeManagerProvider provider) {
-        return new TaskHelper(wrapper, ResourceManager.getInstance(), AppPrefs.getInstance(), notif, provider);
+    public void processInitialTaskResult(Context context, TaskResult taskResult) {
+        // no op
     }
 
     @Override
-    public void processInitialTaskResult(Context context, TaskResult taskResult) {
-        // no op
+    public TaskHelper createTaskHelper(
+            NotificationHelper notif,
+            StorageAccessWrapper wrapper,
+            BridgeManagerProvider provider) {
+
+        // Override to provide our own custom MpTaskHelper
+        return new MpTaskHelper(
+                wrapper,
+                ResourceManager.getInstance(),
+                AppPrefs.getInstance(),
+                notif,
+                provider);
     }
 }
