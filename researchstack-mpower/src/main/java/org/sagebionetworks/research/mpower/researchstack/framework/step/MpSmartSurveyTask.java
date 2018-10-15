@@ -87,21 +87,22 @@ public class MpSmartSurveyTask extends SmartSurveyTask {
                 case SURVEY_TYPE_QUESTION: {
                     AnswerFormat answerFormat = from(context, stepModel);
 
-                    QuestionStep questionStep = new QuestionStep(stepModel.identifier + "Form", null, answerFormat);
+                    QuestionStep questionStep = new QuestionStep(stepModel.identifier, null, answerFormat);
                     questionStep.setText(stepModel.promptDetail);
                     // MP survey questions are not skip-able
                     questionStep.setOptional(false);
                     List<QuestionStep> questionStepList = new ArrayList<>();
                     questionStepList.add(questionStep);
 
-                    MpFormStep formStep = new MpFormStep(stepModel.identifier,
+                    String formStepIdentifier = stepModel.identifier + "Form";
+                    MpFormStep formStep = new MpFormStep(formStepIdentifier,
                             stepModel.prompt, stepModel.promptDetail, questionStepList);
                     // MP survey questions are not skip-able
                     formStep.setOptional(false);
 
                     steps.add(formStep);
-                    staticStepIdentifiers.add(stepModel.identifier);
-                    rules.put(stepModel.identifier, stepModel.constraints.rules);
+                    staticStepIdentifiers.add(formStepIdentifier);
+                    rules.put(formStepIdentifier, stepModel.constraints.rules);
                     break;
                 }
                 /*

@@ -149,8 +149,8 @@ public class TrackingTabFragment extends Fragment {
         if (!hasShownStudyBurst && !item.hasCompletedMotivationSurvey()) {
             showActionBarFlow(false, item);
         }
-        if (!hasShownStudyBurst && item.getBackgroundSurvey() != null) {
-            launchSurvey(item.getBackgroundSurvey());
+        if (!hasShownStudyBurst && item.getDemographicsSurvey() != null) {
+            launchSurvey(item.getDemographicsSurvey());
         }
         if (!item.getHasStudyBurst() || item.getDayCount() == null) {
             trackingStatusBar.setVisibility(View.GONE);

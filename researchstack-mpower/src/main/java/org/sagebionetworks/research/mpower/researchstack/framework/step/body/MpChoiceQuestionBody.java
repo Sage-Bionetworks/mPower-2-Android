@@ -255,6 +255,15 @@ public class MpChoiceQuestionBody<T> extends SingleChoiceQuestionBody
             bodyTextViewList.add(new WeakReference<>(tv));
 
             view.addView(v);
+
+            if (i >= (choices.length - 1)) {
+                View space = new View(parent.getContext());
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        res.getDimensionPixelSize(R.dimen.mp_single_choice_question_margin));
+                space.setLayoutParams(lp);
+                view.addView(space);
+                space.setBackgroundResource(dividerColor());
+            }
         }
 
         LinearLayout.MarginLayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
