@@ -24,7 +24,7 @@
         android:paddingTop="@dimen/rsb_padding_medium"
         android:paddingBottom="@dimen/rsb_padding_medium"
         android:layout_margin="@dimen/rsb_padding_large"
-        android:imeOptions="actionDone"
+        android:imeOptions="actionNext"
         android:inputType="text"
         android:minHeight="@dimen/rsb_item_size_default"
         android:maxLines="1"

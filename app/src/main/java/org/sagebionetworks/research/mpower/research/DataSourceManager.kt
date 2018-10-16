@@ -122,10 +122,11 @@ data class StudyBurstConfiguration(
          * @property completionTasks for each day of the study burst.
          */
         val completionTasks: Set<CompletionTask> = setOf(
-                // TODO: mdephillips 10/16/18 add study burst reminder back in when development is done on that feature
+                // TODO: mdephillips 10/16/18 Add study burst reminder and engagement
+                // TODO: mdephillips 10/16/18 back in when development is done on those features
                 CompletionTask(linkedSetOf(/**STUDY_BURST_REMINDER, */DEMOGRAPHICS), 1),
-                CompletionTask(linkedSetOf(BACKGROUND), 9),
-                CompletionTask(linkedSetOf(ENGAGEMENT), 14)),
+                CompletionTask(linkedSetOf(BACKGROUND), 9)/**,
+                CompletionTask(linkedSetOf(ENGAGEMENT), 14)*/),
         /**
          * @property engagementGroups set of the possible engagement data groups.
          */

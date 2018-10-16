@@ -145,7 +145,9 @@ public class TrackingTabFragment extends Fragment {
         if (item == null) {
             return;
         }
-        if (!hasShownStudyBurst && !item.hasCompletedMotivationSurvey()) {
+        if (!hasShownStudyBurst &&
+                !item.hasCompletedMotivationSurvey() &&
+                item.getMotivationSurvey() != null) {
             showActionBarFlow(item);
         }
         if (!item.getHasStudyBurst() || item.getDayCount() == null) {
@@ -177,7 +179,7 @@ public class TrackingTabFragment extends Fragment {
      */
     private void showActionBarFlow(@Nonnull StudyBurstItem item) {
         ScheduledActivityEntity nextCompletionTask = item.getNextCompletionActivityToShow();
-        if (!item.hasCompletedMotivationSurvey() && getActivity() != null) {
+        if (!item.hasCompletedMotivationSurvey() && item.getMotivationSurvey() != null) {
             launchRsSurvey(item.getMotivationSurvey());
         } else if (nextCompletionTask != null) {
             launchRsSurvey(nextCompletionTask);
