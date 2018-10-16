@@ -229,7 +229,9 @@ open class StudyBurstViewModel(app: Application): ScheduleViewModel(app) {
                 studyMarker.finishedOn, uuid, null, results, results)
 
         scheduleRepo.updateSchedule(taskResult)
-        scheduleRepo.uploadTaskResult(taskResult)
+
+        // TODO: mdephillips 10/16/18 waiting for josh's injection code to be able to use a task result uploader
+        //scheduleRepo.uploadTaskResult(taskResult)
     }
 
     /**
