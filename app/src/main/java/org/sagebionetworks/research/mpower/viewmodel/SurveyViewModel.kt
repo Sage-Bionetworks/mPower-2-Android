@@ -77,8 +77,8 @@ open class SurveyViewModel(private var scheduleDao: ScheduledActivityEntityDao,
      * @return the live data for the schedules, it will always be the same live data object.
      */
     fun liveData(): LiveData<List<ScheduledActivityEntity>> {
-        val liveDataChecked = surveyLiveDateTime ?: scheduleDao.excludeSurveyGroupUnfinishedAvailableOn(
-                excludeGroup, queryDate)
+        val liveDataChecked = surveyLiveDateTime
+                ?: scheduleDao.excludeSurveyGroupUnfinishedAvailableOn(excludeGroup, queryDate)
         surveyLiveDateTime = liveDataChecked
         return liveDataChecked
     }
