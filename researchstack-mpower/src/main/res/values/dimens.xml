@@ -13,4 +13,5 @@
     <!-- Form and Question Steps -->
     <dimen name="mp_single_choice_question_margin">1dp</dimen>
     <dimen name="mp_number_picker_width">90dp</dimen>
+    <dimen name="mp_padding_none">0dp</dimen>
 </resources>

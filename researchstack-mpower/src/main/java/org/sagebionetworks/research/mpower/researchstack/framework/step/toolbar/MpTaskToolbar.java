@@ -65,7 +65,6 @@ import org.researchstack.backbone.task.Task;
 import org.researchstack.backbone.ui.step.layout.StepLayout;
 import org.researchstack.backbone.ui.views.StepSwitcher;
 import org.sagebionetworks.research.mpower.researchstack.R;
-import org.sagebionetworks.research.mpower.researchstack.framework.step.MpReminderStepLayout;
 
 /**
  * Created by TheMDP on 10/26/17.
@@ -379,8 +378,7 @@ public class MpTaskToolbar extends Toolbar {
 
             int stepCount = 0;
             for (Step step : orderedTask.getSteps()) {
-                if (!step.getIdentifier().equals("completion") &&
-                    !(step instanceof MpReminderStepLayout.Step)) {
+                if (!step.getIdentifier().equals("completion")) {
                     stepCount++;
                 }
             }

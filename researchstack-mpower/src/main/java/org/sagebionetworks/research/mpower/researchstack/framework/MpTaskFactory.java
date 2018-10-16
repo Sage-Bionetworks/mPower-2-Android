@@ -24,7 +24,6 @@ import org.researchstack.backbone.model.survey.factory.SurveyFactory;
 import org.researchstack.backbone.model.taskitem.TaskItem;
 import org.researchstack.backbone.model.taskitem.TaskItemAdapter;
 import org.researchstack.backbone.step.QuestionStep;
-import org.researchstack.backbone.task.SmartSurveyTask;
 import org.researchstack.backbone.task.Task;
 import org.sagebionetworks.bridge.researchstack.onboarding.BridgeSurveyFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpFormStep;
@@ -32,7 +31,6 @@ import org.sagebionetworks.research.mpower.researchstack.framework.step.MpFormSu
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpInstructionStep;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpInstructionSurveyItem;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpPhoneInstructionStep;
-import org.sagebionetworks.research.mpower.researchstack.framework.step.MpReminderStepLayout;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpBooleanAnswerFormat;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpCheckboxAnswerFormat;
@@ -40,6 +38,7 @@ import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpC
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpIntegerAnswerFormat;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpMultiCheckboxAnswerFormat;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpRadioButtonAnswerFormat;
+import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpSpinnerAnswerFormat;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpTextQuestionBody;
 
 import java.util.Collections;
@@ -109,11 +108,6 @@ public class MpTaskFactory extends BridgeSurveyFactory {
                             throw new IllegalStateException("Error in json parsing, Mp_form types must be MpFormSurveyItem");
                         }
                         return createMpFormStep(context, (MpFormSurveyItem)item);
-                    case MpSurveyItemAdapter.MP_REMINDER_SURVEY_ITEM_TYPE:
-                        if (!(item instanceof MpReminderStepLayout.SurveyItem)) {
-                            throw new IllegalStateException("Error in json parsing, mpReminder types must be MpReminderStepLayout.SurveyItem");
-                        }
-                        return createMpReminderStep(context, (MpReminderStepLayout.SurveyItem)item);
                     case MP_BOOLEAN_SURVEY_ITEM_TYPE:
                     case MP_INTEGER_SURVEY_ITEM_TYPE:
                     case MP_MULTIPLE_CHOICE_SURVEY_ITEM_TYPE:
@@ -168,6 +162,8 @@ public class MpTaskFactory extends BridgeSurveyFactory {
                     return createMpCheckboxAnswerFormat(context, item);
                 case MP_MULTI_CHECKBOX_SURVEY_ITEM_TYPE:
                     return createMpMultiCheckboxAnswerFormat(context, item);
+                case MP_SPINNER_SURVEY_ITEM_TYPE:
+                    return createBpSpinnerAnswerFormat(context, item);
             }
         }
         return super.createCustomAnswerFormat(context, item);
@@ -359,24 +355,14 @@ public class MpTaskFactory extends BridgeSurveyFactory {
         return format;
     }
 
-    protected MpReminderStepLayout.Step createMpReminderStep(
-            Context context, MpReminderStepLayout.SurveyItem item) {
-        if (item.items == null || item.items.isEmpty()) {
-            throw new IllegalStateException("compound surveys must have step items to proceed");
+    public MpSpinnerAnswerFormat createBpSpinnerAnswerFormat(Context context, QuestionSurveyItem item) {
+        if (!(item instanceof ChoiceQuestionSurveyItem)) {
+            throw new IllegalStateException("Error in json parsing, this type must be ChoiceQuestionSurveyItem");
         }
-        List<QuestionStep> questionSteps = super.formStepCreateQuestionSteps(context, item);
-        MpReminderStepLayout.Step step = new MpReminderStepLayout.Step(
-                item.identifier, item.title, item.text, questionSteps);
-        fillMpFormStep(step, item);
-        step.setImage(item.image);
-        step.setReminderType(item.reminderType);
-        if (item.neverSkip != null && item.neverSkip) {
-            step.setNeverSkip(true);
-        }
-        if (item.hideToolbar != null && item.hideToolbar) {
-            step.setHideToolbar(true);
-        }
-        return step;
+        MpSpinnerAnswerFormat format = new MpSpinnerAnswerFormat();
+        fillChoiceAnswerFormat(format, (ChoiceQuestionSurveyItem)item);
+
+        return format;
     }
 
     protected MpPhoneInstructionStep createMpPhoneInstructionStep(MpInstructionSurveyItem item) {

@@ -664,7 +664,8 @@ data class StudyBurstItem(
      * @return action bar item with information for showing the study burst action bar.
      */
     fun getActionBarItem(context: Context): TodayActionBarItem? {
-        if (!isCompletedForToday) {
+        val pastUnfinishedCompletionTasks = getUnfinishedSchedule()
+        if (!isCompletedForToday && pastUnfinishedCompletionTasks == null) {
             val title = context.getString(R.string.study_burst_action_bar_title)
             var details: String? = null
             millisToExpiration?.let {
@@ -675,7 +676,7 @@ data class StudyBurstItem(
             }
             return TodayActionBarItem(title, details, null)
         }
-        getUnfinishedSchedule()?.let {
+        pastUnfinishedCompletionTasks?.let {
             return TodayActionBarItem(it.first, it.second, null)
         }
         return null

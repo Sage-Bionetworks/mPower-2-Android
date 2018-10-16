@@ -79,7 +79,7 @@ public class MpFormStepLayout extends FormStepLayout implements
         MpTaskStatusBarManipulator, MpTaskBehindToolbarManipulator, MpTaskToolbarTintManipulator,
         MpFormStepLayoutBottomController, MpQuestionBodyResultChangedListener {
 
-    protected MpFormStep bpFormStep;
+    protected MpFormStep mpFormStep;
     protected LinearLayout textContainer;
 
     protected LinearLayout bottomBodyContainer;
@@ -188,9 +188,9 @@ public class MpFormStepLayout extends FormStepLayout implements
         textContainer = findViewById(R.id.mp_text_container);
         if (textContainer != null) {  // sub-classes may get rid of the text container
             int defaultPadding = getResources().getDimensionPixelOffset(R.dimen.rsb_padding_large);
-            if (bpFormStep.textContainerBottomPaddingRes != null){
+            if (mpFormStep.textContainerBottomPaddingRes != null){
                 int bottomPaddingRes = ResUtils.getDimenResourceId(
-                        getContext(), bpFormStep.textContainerBottomPaddingRes);
+                        getContext(), mpFormStep.textContainerBottomPaddingRes);
                 int bottomPadding = getResources().getDimensionPixelOffset(bottomPaddingRes);
                 textContainer.setPadding(defaultPadding, defaultPadding, defaultPadding, bottomPadding);
             } else{
@@ -198,11 +198,11 @@ public class MpFormStepLayout extends FormStepLayout implements
             }
         }
 
-        if (bpFormStep.backgroundColorRes != null) {
+        if (mpFormStep.backgroundColorRes != null) {
             View container = findViewById(getBackgroundContainerRes());
             if (container != null) {
                 @ColorRes int backgroundColor = ResUtils.getColorResourceId(
-                        getContext(), bpFormStep.backgroundColorRes);
+                        getContext(), mpFormStep.backgroundColorRes);
                 if (backgroundColor != 0) {
                     container.setBackgroundResource(backgroundColor);
                 }
@@ -227,7 +227,7 @@ public class MpFormStepLayout extends FormStepLayout implements
         if (!(step instanceof MpFormStep)) {
             throw new IllegalStateException("BpFormStepLayout only works with MpFormStep");
         }
-        this.bpFormStep = (MpFormStep) step;
+        this.mpFormStep = (MpFormStep) step;
     }
 
     protected void refreshNextButtonEnabled() {
@@ -264,9 +264,9 @@ public class MpFormStepLayout extends FormStepLayout implements
 
     protected void onSkipButtonClicked(View v) {
         hideKeyboard();
-        if (bpFormStep.bottomLinkTaskId != null) {
+        if (mpFormStep.bottomLinkTaskId != null) {
             MpTaskFactory taskFactory = new MpTaskFactory();
-            Task task = taskFactory.createTask(getContext(), bpFormStep.bottomLinkTaskId);
+            Task task = taskFactory.createTask(getContext(), mpFormStep.bottomLinkTaskId);
             getContext().startActivity(IntentFactory.INSTANCE.newTaskIntent(
                     getContext(), MpViewTaskActivity.class, task));
         } else {
@@ -286,14 +286,14 @@ public class MpFormStepLayout extends FormStepLayout implements
 
     protected void refreshCustomSubmitBar() {
         backButton.setText(R.string.rsb_AX_BUTTON_BACK);
-        if (bpFormStep.hideBackButton) {
+        if (mpFormStep.hideBackButton) {
             backButton.setVisibility(View.GONE);
         }
 
-        if (bpFormStep.buttonTitle == null) {
+        if (mpFormStep.buttonTitle == null) {
             nextButton.setText(R.string.rsb_BUTTON_NEXT);
         } else {
-            nextButton.setText(bpFormStep.buttonTitle);
+            nextButton.setText(mpFormStep.buttonTitle);
         }
 
         String skipButtonTitle = super.skipButtonTitle();
@@ -346,12 +346,12 @@ public class MpFormStepLayout extends FormStepLayout implements
 
     @Override
     public int mpStatusBarColor() {
-        if (bpFormStep.statusBarColorRes != null) {
-            return ResUtils.getColorResourceId(getContext(), bpFormStep.statusBarColorRes);
-        } else if (bpFormStep.backgroundColorRes != null) {
-            return ResUtils.getColorResourceId(getContext(), bpFormStep.backgroundColorRes);
-        } else if (bpFormStep.imageBackgroundColorRes != null) {
-            return ResUtils.getColorResourceId(getContext(), bpFormStep.imageBackgroundColorRes);
+        if (mpFormStep.statusBarColorRes != null) {
+            return ResUtils.getColorResourceId(getContext(), mpFormStep.statusBarColorRes);
+        } else if (mpFormStep.backgroundColorRes != null) {
+            return ResUtils.getColorResourceId(getContext(), mpFormStep.backgroundColorRes);
+        } else if (mpFormStep.imageBackgroundColorRes != null) {
+            return ResUtils.getColorResourceId(getContext(), mpFormStep.imageBackgroundColorRes);
         }
         return MpTaskStatusBarManipulator.DEFAULT_COLOR;
     }

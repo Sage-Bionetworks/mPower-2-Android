@@ -61,16 +61,15 @@ public class MpCheckboxQuestionBody extends SingleChoiceQuestionBody<Boolean>
         if(result != null) {
             currentSelected = (Boolean)result.getResult();
         } else {
-            currentSelected = true; // default
+            currentSelected = false; // default
         }
-
     }
 
     @Override
     public View getBodyView(int viewType, LayoutInflater inflater, ViewGroup parent) {
 
         Resources res = parent.getResources();
-        LinearLayout view = (LinearLayout)inflater.inflate(R.layout.mp_step_body_radio_group, parent, false);
+        LinearLayout view = (LinearLayout)inflater.inflate(R.layout.mp_step_body_checkbox, parent, false);
 
         parent.findViewById(R.id.rsb_survey_text).setVisibility(View.GONE);
 
@@ -80,7 +79,7 @@ public class MpCheckboxQuestionBody extends SingleChoiceQuestionBody<Boolean>
             notifyResultChangedListeners();
         });
         checkbox.setText(step.getText());
-        checkbox.setChecked(currentSelected);
+        checkbox.setChecked(currentSelected == null ? false : currentSelected);
 
         return view;
     }

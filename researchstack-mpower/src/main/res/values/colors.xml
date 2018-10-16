@@ -14,6 +14,8 @@
     <color name="sageResearchPrimaryDark">@color/royal800</color>
     <color name="sageResearchSecondary">@color/butterscotch500</color>
 
+    <color name="statusBarGray">#E6E6E6</color>
+
     <color name="royal100A25">#80907FBA</color>
     <color name="royal300">#B2A5D1</color>
     <color name="royal500">#5A478F</color>

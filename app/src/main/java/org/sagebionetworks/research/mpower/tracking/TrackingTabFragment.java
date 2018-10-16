@@ -13,7 +13,6 @@ import android.support.v4.view.OnApplyWindowInsetsListener;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -177,10 +176,11 @@ public class TrackingTabFragment extends Fragment {
      * or when the user has not done their motivation survey yet.
      */
     private void showActionBarFlow(@Nonnull StudyBurstItem item) {
+        ScheduledActivityEntity nextCompletionTask = item.getNextCompletionActivityToShow();
         if (!item.hasCompletedMotivationSurvey() && getActivity() != null) {
-            launchSurvey(item.getMotivationSurvey());
-        } else if (item.getNextCompletionActivityToShow() != null) {
-            launchSurvey(item.getNextCompletionActivityToShow());
+            launchRsSurvey(item.getMotivationSurvey());
+        } else if (nextCompletionTask != null) {
+            launchRsSurvey(nextCompletionTask);
         } else {
             startActivity(new Intent(getActivity(), StudyBurstActivity.class));
         }
@@ -190,7 +190,7 @@ public class TrackingTabFragment extends Fragment {
      * Launches an old style ResearchStack SmartSurveyTask
      * @param surveySchedule of the survey to launch
      */
-    private void launchSurvey(@Nullable ScheduledActivityEntity surveySchedule) {
+    private void launchRsSurvey(@Nullable ScheduledActivityEntity surveySchedule) {
         if (surveySchedule == null ||
                 surveySchedule.getActivity() == null ||
                 surveySchedule.getActivity().getSurvey() == null) {

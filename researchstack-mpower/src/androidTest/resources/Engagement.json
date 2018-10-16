@@ -1,0 +1,196 @@
+{
+  "guid": "56fbeb25-0a90-499a-a0d8-3c4935b60312",
+  "createdOn": "2018-07-23T22:42:34.300Z",
+  "modifiedOn": "2018-07-23T23:08:13.238Z",
+  "version": 5,
+  "name": "Engagement",
+  "identifier": "Engagement",
+  "published": true,
+  "deleted": false,
+  "schemaRevision": 1,
+  "elements": [
+    {
+      "surveyCompoundKey": "56fbeb25-0a90-499a-a0d8-3c4935b60312:1532385754300",
+      "guid": "b5f51bc3-554b-4ff1-935f-a93651957e82",
+      "identifier": "greatJob",
+      "type": "SurveyInfoScreen",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+
+      ],
+      "prompt": "You completed your first Study Burst. Let’s look back on your experience to learn more about the pros and cons of your participation.\n",
+      "title": "Great Job!"
+    },
+    {
+      "surveyCompoundKey": "56fbeb25-0a90-499a-a0d8-3c4935b60312:1532385754300",
+      "guid": "c1878596-a662-44bd-b1fc-3b8b49671ac9",
+      "identifier": "benefits",
+      "type": "SurveyQuestion",
+      "beforeRules": [
+        {
+          "operator": "any",
+          "dataGroups": [
+            "gr_SC_CS"
+          ],
+          "skipTo": "studyCommitment_CS",
+          "type": "SurveyRule"
+        }
+      ],
+      "afterRules": [
+
+      ],
+      "prompt": "Benefits to participating",
+      "promptDetail": "Now that you’ve completed the Study Burst, what were the benefits to participating?",
+      "fireEvent": false,
+      "constraints": {
+        "rules": [
+
+        ],
+        "dataType": "string",
+        "minLength": 0,
+        "maxLength": 255,
+        "patternPlaceholder": "Write any benefits that you think the study had.",
+        "type": "StringConstraints"
+      },
+      "uiHint": "multilinetext"
+    },
+    {
+      "surveyCompoundKey": "56fbeb25-0a90-499a-a0d8-3c4935b60312:1532385754300",
+      "guid": "c8c10baf-f8be-4ae1-ac45-5a50c101c17d",
+      "identifier": "drawbacks",
+      "type": "SurveyQuestion",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+
+      ],
+      "prompt": "Drawbacks to participating",
+      "promptDetail": "What do you think the drawbacks were for you to participate? What about the pros of NOT participating in future studies?",
+      "fireEvent": false,
+      "constraints": {
+        "rules": [
+
+        ],
+        "dataType": "string",
+        "minLength": 0,
+        "maxLength": 255,
+        "patternPlaceholder": "Write any drawbacks that you think the study had.",
+        "type": "StringConstraints"
+      },
+      "uiHint": "multilinetext"
+    },
+    {
+      "surveyCompoundKey": "56fbeb25-0a90-499a-a0d8-3c4935b60312:1532385754300",
+      "guid": "85bef6f9-16fe-4dfe-a185-d3414be51400",
+      "identifier": "consOfNotParticipating",
+      "type": "SurveyQuestion",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+
+      ],
+      "prompt": "Cons of NOT participating",
+      "promptDetail": "What do you think the cons might be for NOT participating in future studies?",
+      "fireEvent": false,
+      "constraints": {
+        "rules": [
+
+        ],
+        "dataType": "string",
+        "minLength": 0,
+        "maxLength": 255,
+        "patternPlaceholder": "Write any cons that you think NOT participating in future studies may have?",
+        "type": "StringConstraints"
+      },
+      "uiHint": "multilinetext"
+    },
+    {
+      "surveyCompoundKey": "56fbeb25-0a90-499a-a0d8-3c4935b60312:1532385754300",
+      "guid": "3f2db4c6-32e5-4b23-83bb-245b059eeb48",
+      "identifier": "studyCommitment_DB",
+      "type": "SurveyQuestion",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+        {
+          "operator": "always",
+          "value": "",
+          "endSurvey": true,
+          "type": "SurveyRule"
+        }
+      ],
+      "prompt": "Now that you have thought through all of this, what do you want to do?",
+      "fireEvent": false,
+      "constraints": {
+        "rules": [
+          {
+            "operator": "always",
+            "value": "",
+            "endSurvey": true,
+            "type": "SurveyRule"
+          }
+        ],
+        "dataType": "string",
+        "enumeration": [
+          {
+            "label": "I agree to taking part in the study for 2 year, including taking part in all 2-week bursts asked of me.",
+            "value": "agree",
+            "type": "SurveyQuestionOption"
+          },
+          {
+            "label": "I am not willing to agree to this study at this time.",
+            "value": "disagree",
+            "type": "SurveyQuestionOption"
+          }
+        ],
+        "allowOther": false,
+        "allowMultiple": false,
+        "type": "MultiValueConstraints"
+      },
+      "uiHint": "radiobutton"
+    },
+    {
+      "surveyCompoundKey": "56fbeb25-0a90-499a-a0d8-3c4935b60312:1532385754300",
+      "guid": "5ae742aa-9502-4bd9-af21-98db6ebe18ad",
+      "identifier": "studyCommitment_CS",
+      "type": "SurveyQuestion",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+
+      ],
+      "prompt": "Study commitment",
+      "promptDetail": "This study involves engaging in a series of activities that will take 6 minutes per day for 2 weeks at a time.\n\nYou will be able to take a break for approximately 3 months in between these 2 bursts. Do you agree to doing this?\n",
+      "fireEvent": false,
+      "constraints": {
+        "rules": [
+
+        ],
+        "dataType": "string",
+        "enumeration": [
+          {
+            "label": "Yes, I agree",
+            "value": "agree",
+            "type": "SurveyQuestionOption"
+          },
+          {
+            "label": "No, I don't agree",
+            "value": "disagree",
+            "type": "SurveyQuestionOption"
+          }
+        ],
+        "allowOther": false,
+        "allowMultiple": false,
+        "type": "MultiValueConstraints"
+      },
+      "uiHint": "radiobutton"
+    }
+  ],
+  "type": "Survey"
+}

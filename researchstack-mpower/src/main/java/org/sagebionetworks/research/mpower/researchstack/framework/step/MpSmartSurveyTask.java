@@ -107,11 +107,12 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
 
 
     // StepModel uiHints suggest which type of UI element to show for the survey question
-    protected static final String UI_HINT_CHECKBOX  = "checkbox";
-    protected static final String UI_HINT_RADIO     = "radiobutton";
-    protected static final String UI_HINT_LIST      = "list";
-    protected static final String UI_HINT_NUMBER    = "numberfield";
-    protected static final String UI_HINT_TEXT      = "textfield";
+    protected static final String UI_HINT_CHECKBOX          = "checkbox";
+    protected static final String UI_HINT_RADIO             = "radiobutton";
+    protected static final String UI_HINT_LIST              = "list";
+    protected static final String UI_HINT_NUMBER            = "numberfield";
+    protected static final String UI_HINT_TEXT              = "textfield";
+    protected static final String UI_HINT_MULTILINE_TEXT    = "multilinetext";
 
     // Types of Enumeration Label/Values
     protected static final String ENUMERATION_TYPE_OPTION = "SurveyQuestionOption";
@@ -366,6 +367,7 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
                 answerFormat = taskFactory.createMpIntegerAnswerFormat(context, item);
                 break;
             }
+            case UI_HINT_MULTILINE_TEXT:
             case UI_HINT_TEXT: {
                 TextfieldSurveyItem item = fillTextSurveyItem(new TextfieldSurveyItem(), model);
                 answerFormat = taskFactory.createMpTextAnswerFormat(item);
@@ -381,7 +383,12 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
     }
 
     protected <T extends TextfieldSurveyItem> T fillTextSurveyItem(T item, StepModel model) {
-        item.isMultipleLines = model.constraints.multipleLines;
+        if (model.constraints.multipleLines ||
+                UI_HINT_MULTILINE_TEXT.equals(model.uiHint)) {
+            item.isMultipleLines = true;
+        } else {
+            item.isMultipleLines = false;
+        }
         item.maxLength = model.constraints.maxLength;
         item.placeholderText = model.constraints.patternPlaceholder;
         fillQuestionSurveyItem(item, model);
