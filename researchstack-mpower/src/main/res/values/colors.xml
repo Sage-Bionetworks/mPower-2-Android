@@ -22,8 +22,11 @@
 
     <color name="royal800">#251454</color>
     <color name="black_overlay">#66000000</color>
+    <color name="appVeryLightGray">#EDEDED</color>
+    <color name="appLightGray">#8D93A1</color>
     <color name="butterscotch_disabled">#59BD7900</color>
     <color name="butterscotch500">#F5B33C</color>
+    <color name="butterscotch800">#BD7900</color>
     <color name="appTextDark">#1A1C29</color>
 
 </resources>

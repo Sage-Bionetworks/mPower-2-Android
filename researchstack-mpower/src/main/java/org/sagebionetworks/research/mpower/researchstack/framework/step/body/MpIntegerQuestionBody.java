@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import org.researchstack.backbone.answerformat.IntegerAnswerFormat;
 import org.researchstack.backbone.result.StepResult;
 import org.researchstack.backbone.step.Step;
 import org.researchstack.backbone.ui.step.body.IntegerQuestionBody;
@@ -52,10 +53,16 @@ import org.sagebionetworks.research.mpower.researchstack.framework.step.MpQuesti
 public class MpIntegerQuestionBody extends IntegerQuestionBody
         implements StepBody, MpFormResultChangedListener {
 
+    protected MpIntegerAnswerFormat mpAnswerFormat;
     protected MpQuestionBodyResultChangedListener resultChangedListener;
 
     public MpIntegerQuestionBody(Step step, StepResult result) {
         super(step, result);
+        if (this.step != null &&
+                this.step.getAnswerFormat() != null &&
+                this.step.getAnswerFormat() instanceof MpIntegerAnswerFormat) {
+            mpAnswerFormat = (MpIntegerAnswerFormat)this.step.getAnswerFormat();
+        }
     }
 
     @Override
@@ -84,6 +91,9 @@ public class MpIntegerQuestionBody extends IntegerQuestionBody
                 notifyResultChangedListeners();
             }
         });
+        if (mpAnswerFormat != null) {
+            editText.setHint(mpAnswerFormat.hintText);
+        }
 
         Resources res = parent.getResources();
         LinearLayout.MarginLayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,

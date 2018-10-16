@@ -11,6 +11,7 @@ import com.google.common.base.Strings;
 
 import org.sagebionetworks.bridge.android.manager.AuthenticationManager;
 import org.sagebionetworks.bridge.rest.model.SignUp;
+import org.sagebionetworks.research.mpower.research.DataSourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +90,12 @@ public class ExternalIdSignInViewModel extends ViewModel {
         if (skipConsent) {
             signUp.addDataGroupsItem("test_no_consent");
         }
-        // TODO: add engagement groups @liujoshua 2018/08/09
+        // Add the random engagement groups
+        // TODO: mdephillips 10/15/18 DataSourceManager should be synced with bridge config
+        // as of now there is just hard-coded set of random engagement groups
+        for (String dataGroupStr : DataSourceManager.randomDefaultEngagementGroups()) {
+            signUp.addDataGroupsItem(dataGroupStr);
+        }
 
         compositeSubscription.add(
                 authenticationManager.signUp(signUp)

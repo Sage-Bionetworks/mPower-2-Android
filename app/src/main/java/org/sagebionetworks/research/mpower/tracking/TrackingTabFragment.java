@@ -14,11 +14,8 @@ import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
-import org.joda.time.DateTime;
 import org.researchstack.backbone.DataProvider;
 import org.researchstack.backbone.factory.IntentFactory;
 import org.researchstack.backbone.result.TaskResult;
@@ -29,9 +26,8 @@ import org.sagebionetworks.bridge.rest.model.ScheduledActivity;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.TaskLauncher;
-import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
+import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
@@ -43,13 +39,11 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.threeten.bp.Instant;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import dagger.android.support.AndroidSupportInjection;
-import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -74,7 +68,14 @@ public class TrackingTabFragment extends Fragment {
     // on the first day.
     private boolean hasShownStudyBurst = false;
 
-    private @Nullable ScheduledActivityEntity surveyLaunched;
+    /**
+     * The current survey task being run, null if no survey is running
+     */
+    private @Nullable MpSmartSurveyTask currentSurveyTask;
+    /**
+     * The current survey schedule for current survey task being run, null if no survey is running
+     */
+    private @Nullable ScheduledActivityEntity currentSurveySchedule;
 
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
@@ -125,7 +126,9 @@ public class TrackingTabFragment extends Fragment {
             });
             surveyViewModel = SurveyViewModel.create(getActivity());
             surveyViewModel.liveData().observe(this, scheduledActivityEntities -> {
-                // TODO: mdephillips 9/4/18 mimic what iOS does with these
+                // TODO: mdephillips 9/4/18 mimic On iOS, this runs any survey that managers may add
+                // TODO: mdephillips 9/4/18 we may want to hold off on implementing it
+                // TODO: mdephillips 9/4/18 because not all survey types are currently supported with UI right now
             });
             studyBurstViewModel = StudyBurstViewModel.create(getActivity());
             studyBurstViewModel.liveData().observe(this, this::setupActionBar);
@@ -148,9 +151,6 @@ public class TrackingTabFragment extends Fragment {
         }
         if (!hasShownStudyBurst && !item.hasCompletedMotivationSurvey()) {
             showActionBarFlow(false, item);
-        }
-        if (!hasShownStudyBurst && item.getDemographicsSurvey() != null) {
-            launchSurvey(item.getDemographicsSurvey());
         }
         if (!item.getHasStudyBurst() || item.getDayCount() == null) {
             trackingStatusBar.setVisibility(View.GONE);
@@ -201,7 +201,10 @@ public class TrackingTabFragment extends Fragment {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     if (newTask != null) {
-                        surveyLaunched = surveySchedule;
+                        if (newTask instanceof MpSmartSurveyTask) {
+                            currentSurveyTask = (MpSmartSurveyTask)newTask;
+                        }
+                        currentSurveySchedule = surveySchedule;
                         // This is a survey task.
                         startActivityForResult(IntentFactory.INSTANCE.newTaskIntent(getActivity(),
                                 MpViewTaskActivity.class, newTask), REQUEST_TASK);
@@ -222,22 +225,28 @@ public class TrackingTabFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TASK) {
             TaskResult taskResult = (TaskResult)
                     data.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT);
-            if (surveyLaunched != null) {
-                surveyLaunched.setStartedOn(Instant.ofEpochMilli(taskResult.getStartDate().getTime()));
-                surveyLaunched.setFinishedOn(Instant.ofEpochMilli(taskResult.getEndDate().getTime()));
+
+            if (currentSurveyTask != null) {
+                // This will trigger any after-rule processing like adding data groups based on survey answers
+                currentSurveyTask.processTaskResult(taskResult);
+            }
+            if (currentSurveySchedule != null) {
+                currentSurveySchedule.setStartedOn(Instant.ofEpochMilli(taskResult.getStartDate().getTime()));
+                currentSurveySchedule.setFinishedOn(Instant.ofEpochMilli(taskResult.getEndDate().getTime()));
                 // This function updates the schedule on bridge and in the ScheduleRepository
-                studyBurstViewModel.updateSchedule(surveyLaunched);
+                studyBurstViewModel.updateSchedule(currentSurveySchedule);
 
                 // We only need to provide enough information in the ScheduledActivity
                 // for the BridgeDataProvider to create the metadata JSON file
-                ScheduledActivity bridgeSchedule = EntityTypeConverters.bridgeMetaDataSchedule(surveyLaunched);
+                ScheduledActivity bridgeSchedule = EntityTypeConverters.bridgeMetaDataSchedule(currentSurveySchedule);
                 // We give it the schedule for the metadata, but we specify not to update the schedule on bridge
                 // Because we do that ourselves through the ScheduleRepository
-                // on the line above studyBurstViewModel.updateSchedule(surveyLaunched)
+                // on the line above studyBurstViewModel.updateSchedule(currentSurveySchedule)
                 BridgeDataProvider.getInstance().uploadTaskResult(
                         getActivity(), taskResult, bridgeSchedule, false);
             }
         }
-        surveyLaunched = null;
+        currentSurveyTask = null;
+        currentSurveySchedule = null;
     }
 }

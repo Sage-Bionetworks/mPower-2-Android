@@ -30,32 +30,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.mpower.researchstack.framework.step.body;
+package org.sagebionetworks.research.mpower.researchstack.researchstack_mpower;
 
-import org.researchstack.backbone.answerformat.IntegerAnswerFormat;
+import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 
-/**
- * Created by rianhouston on 11/27/17.
- */
+public class TestResourceHelper {
 
-public class MpIntegerAnswerFormat extends IntegerAnswerFormat {
+    public static String jsonStrFromFile(String filename) {
+        String json = null;
+        try {
+            InputStream inputStream = TestResourceHelper.class
+                    .getClassLoader().getResourceAsStream(filename);
 
-    /**
-     * When set, this will be displayed as the hint text of the input field
-     */
-    public String hintText;
-
-    public MpIntegerAnswerFormat() {
-        super();
-    }
-
-    public MpIntegerAnswerFormat(int minValue, int maxValue) {
-        super(minValue, maxValue);
-    }
-
-    public QuestionType getQuestionType() {
-        // For this to work, we must also provide custom code in CrfTaskHelper for this format
-        return () -> MpIntegerQuestionBody.class;
+            int streamSize = inputStream.available();
+            byte[] buffer = new byte[streamSize];
+            int result = inputStream.read(buffer);
+            inputStream.close();
+            json = new String(buffer, Charset.defaultCharset());
+        } catch (IOException e) {
+            assertNull("Error loading class resource", e);
+        }
+        return json;
     }
 }

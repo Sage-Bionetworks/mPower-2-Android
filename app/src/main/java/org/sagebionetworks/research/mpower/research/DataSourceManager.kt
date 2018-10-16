@@ -50,6 +50,19 @@ class DataSourceManager {
         fun installedGroup(forIdentifier: String): ActivityGroup? {
             return installedGroups.firstOrNull { it.identifier == forIdentifier }
         }
+
+        @JvmStatic
+        fun defaultEngagementGroups(): Set<Set<String>> {
+            return setOf(
+                setOf("gr_BR_AD", "gr_DT_T"),
+                setOf("gr_BR_AD", "gr_DT_F"),
+                setOf("gr_DT_F", "gr_BR_II"))
+        }
+
+        @JvmStatic
+        fun randomDefaultEngagementGroups(): Set<String> {
+            return defaultEngagementGroups().mapNotNull { it.randomElement() }.toSet()
+        }
     }
 }
 
@@ -116,10 +129,9 @@ data class StudyBurstConfiguration(
          * @property engagementGroups set of the possible engagement data groups.
          */
         val engagementGroups: Set<Set<String>>? = setOf(
-                setOf("gr_SC_DB", "gr_SC_CS"),
-                setOf("gr_BR_AD", "gr_BR_II"),
-                setOf("gr_ST_T", "gr_ST_F"),
-                setOf("gr_DT_F", "gr_DT_T"))
+                setOf("gr_BR_AD", "gr_DT_T"),
+                setOf("gr_BR_AD", "gr_DT_F"),
+                setOf("gr_DT_F", "gr_BR_II"))
 ) {
     /**
      * @return a set of the completion task's activity identifiers
@@ -141,17 +153,17 @@ data class StudyBurstConfiguration(
     fun startTimeWindow(now: LocalDateTime): LocalDateTime {
         return now.minusSeconds(expiresLimit)
     }
+}
 
-    /**
-     * @return a random element in the set if any exist
-     */
-    private fun <T> Set<T>?.randomElement(): T? {
-        if (this == null) {
-            return null
-        }
-        if (isEmpty()) {
-            return null
-        }
-        return elementAt(Random().nextInt(size))
+/**
+ * @return a random element in the set if any exist
+ */
+fun <T> Set<T>?.randomElement(): T? {
+    if (this == null) {
+        return null
     }
+    if (isEmpty()) {
+        return null
+    }
+    return elementAt(Random().nextInt(size))
 }
