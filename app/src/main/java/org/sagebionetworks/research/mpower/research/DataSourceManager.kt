@@ -54,9 +54,10 @@ class DataSourceManager {
         @JvmStatic
         fun defaultEngagementGroups(): Set<Set<String>> {
             return setOf(
-                setOf("gr_BR_AD", "gr_DT_T"),
-                setOf("gr_BR_AD", "gr_DT_F"),
-                setOf("gr_DT_F", "gr_BR_II"))
+                    setOf("gr_SC_DB","gr_SC_CS"),
+                    setOf("gr_BR_AD","gr_BR_II"),
+                    setOf("gr_ST_T","gr_ST_F"),
+                    setOf("gr_DT_F","gr_DT_T"))
         }
 
         @JvmStatic
