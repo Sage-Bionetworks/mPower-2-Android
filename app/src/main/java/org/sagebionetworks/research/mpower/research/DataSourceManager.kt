@@ -130,10 +130,7 @@ data class StudyBurstConfiguration(
         /**
          * @property engagementGroups set of the possible engagement data groups.
          */
-        val engagementGroups: Set<Set<String>>? = setOf(
-                setOf("gr_BR_AD", "gr_DT_T"),
-                setOf("gr_BR_AD", "gr_DT_F"),
-                setOf("gr_DT_F", "gr_BR_II"))
+        val engagementGroups: Set<Set<String>>? = DataSourceManager.defaultEngagementGroups()
 ) {
     /**
      * @return a set of the completion task's activity identifiers
