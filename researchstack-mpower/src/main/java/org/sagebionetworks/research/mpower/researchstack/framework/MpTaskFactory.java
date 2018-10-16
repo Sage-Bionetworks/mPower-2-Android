@@ -68,7 +68,7 @@ public class MpTaskFactory extends BridgeSurveyFactory {
     }
 
     @NonNull
-    public SmartSurveyTask createSmartSurveyTask(
+    public MpSmartSurveyTask createMpSmartSurveyTask(
             @NonNull Context context, @NonNull TaskModel taskModel) {
         return new MpSmartSurveyTask(context, taskModel);
     }

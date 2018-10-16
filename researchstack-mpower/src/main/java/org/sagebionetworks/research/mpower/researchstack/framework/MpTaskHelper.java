@@ -32,14 +32,19 @@
 
 package org.sagebionetworks.research.mpower.researchstack.framework;
 
+import android.content.Context;
+import android.support.annotation.Nullable;
+
 import org.joda.time.DateTime;
 import org.researchstack.backbone.AppPrefs;
 import org.researchstack.backbone.ResourceManager;
 import org.researchstack.backbone.answerformat.AnswerFormat;
+import org.researchstack.backbone.model.TaskModel;
 import org.researchstack.backbone.result.FileResult;
 import org.researchstack.backbone.result.Result;
 import org.researchstack.backbone.result.StepResult;
 import org.researchstack.backbone.storage.NotificationHelper;
+import org.researchstack.backbone.task.Task;
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
 import org.sagebionetworks.bridge.data.Archive;
 import org.sagebionetworks.bridge.data.ArchiveFile;
@@ -88,6 +93,15 @@ public class MpTaskHelper extends TaskHelper {
             trueIdentifier = RESULT_CONVERSION_MAP.get(trueIdentifier);
         }
         return super.bridgifyIdentifier(trueIdentifier);
+    }
+
+    @Override
+    protected Task createSmartSurveyTask(Context context, @Nullable TaskModel taskModel) {
+        // We provide our own smart survey tasks
+        if (surveyFactory instanceof MpTaskFactory) {
+            return ((MpTaskFactory) surveyFactory).createMpSmartSurveyTask(context, taskModel);
+        }
+        return surveyFactory.createSmartSurveyTask(context, taskModel);
     }
 
     /**

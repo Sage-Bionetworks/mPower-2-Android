@@ -114,7 +114,7 @@ public class MpSmartSurveyTaskTests {
     @Test
     public void test_motivationStepsAndRules() {
         assertNotNull(motivationTaskModel);
-        SmartSurveyTask task = new MockMpTaskFactory().createSmartSurveyTask(context, motivationTaskModel);
+        MpSmartSurveyTask task = new MockMpTaskFactory().createMpSmartSurveyTask(context, motivationTaskModel);
         assertNotNull(task);
         assertTrue(task instanceof MpSmartSurveyTask);
         MockMpSmartSurveyTask mpTask = (MockMpSmartSurveyTask)task;
@@ -314,7 +314,7 @@ public class MpSmartSurveyTaskTests {
     @Test
     public void test_demographicsStepsAndRules() {
         assertNotNull(demographicsTaskModel);
-        SmartSurveyTask task = new MockMpTaskFactory().createSmartSurveyTask(context, demographicsTaskModel);
+        MpSmartSurveyTask task = new MockMpTaskFactory().createMpSmartSurveyTask(context, demographicsTaskModel);
         assertNotNull(task);
         assertTrue(task instanceof MpSmartSurveyTask);
         MockMpSmartSurveyTask mpTask = (MockMpSmartSurveyTask) task;
@@ -485,7 +485,7 @@ public class MpSmartSurveyTaskTests {
     @Test
     public void test_backgroundStepsAndRules() {
         assertNotNull(backgroundTaskModel);
-        SmartSurveyTask task = new MockMpTaskFactory().createSmartSurveyTask(context, backgroundTaskModel);
+        MpSmartSurveyTask task = new MockMpTaskFactory().createMpSmartSurveyTask(context, backgroundTaskModel);
         assertNotNull(task);
         assertTrue(task instanceof MpSmartSurveyTask);
         MockMpSmartSurveyTask mpTask = (MockMpSmartSurveyTask) task;
@@ -597,7 +597,7 @@ public class MpSmartSurveyTaskTests {
     @Test
     public void test_demographicsNavigationParkinsonsDataGroup() {
         assertNotNull(demographicsTaskModel);
-        SmartSurveyTask task = new MockMpTaskFactory().createSmartSurveyTask(context, demographicsTaskModel);
+        MpSmartSurveyTask task = new MockMpTaskFactory().createMpSmartSurveyTask(context, demographicsTaskModel);
         assertNotNull(task);
         assertTrue(task instanceof MpSmartSurveyTask);
         MockMpSmartSurveyTask mpTask = (MockMpSmartSurveyTask) task;
@@ -620,7 +620,7 @@ public class MpSmartSurveyTaskTests {
     @Test
     public void test_demographicsNavigationControlDataGroup() {
         assertNotNull(demographicsTaskModel);
-        SmartSurveyTask task = new MockMpTaskFactory().createSmartSurveyTask(context, demographicsTaskModel);
+        MpSmartSurveyTask task = new MockMpTaskFactory().createMpSmartSurveyTask(context, demographicsTaskModel);
         assertNotNull(task);
         assertTrue(task instanceof MpSmartSurveyTask);
         MockMpSmartSurveyTask mpTask = (MockMpSmartSurveyTask) task;
@@ -647,7 +647,7 @@ public class MpSmartSurveyTaskTests {
     @Test
     public void test_demographicsNavigationNoDataGroup() {
         assertNotNull(demographicsTaskModel);
-        SmartSurveyTask task = new MockMpTaskFactory().createSmartSurveyTask(context, demographicsTaskModel);
+        MpSmartSurveyTask task = new MockMpTaskFactory().createMpSmartSurveyTask(context, demographicsTaskModel);
         assertNotNull(task);
         assertTrue(task instanceof MpSmartSurveyTask);
         MockMpSmartSurveyTask mpTask = (MockMpSmartSurveyTask) task;
@@ -674,7 +674,7 @@ public class MpSmartSurveyTaskTests {
     public void test_motivationNavigationAD_T() {
         assertNotNull(motivationTaskModel);
         List<String> dataGroups = Arrays.asList("gr_BR_AD", "gr_DT_T");
-        SmartSurveyTask task = new MockMpTaskFactory(dataGroups).createSmartSurveyTask(context, motivationTaskModel);
+        MpSmartSurveyTask task = new MockMpTaskFactory(dataGroups).createMpSmartSurveyTask(context, motivationTaskModel);
         assertNotNull(task);
         assertTrue(task instanceof MpSmartSurveyTask);
         MockMpSmartSurveyTask mpTask = (MockMpSmartSurveyTask) task;
@@ -693,7 +693,7 @@ public class MpSmartSurveyTaskTests {
     public void test_motivationNavigationAD_F() {
         assertNotNull(motivationTaskModel);
         List<String> dataGroups = Arrays.asList("gr_BR_AD", "gr_DT_F");
-        SmartSurveyTask task = new MockMpTaskFactory(dataGroups).createSmartSurveyTask(context, motivationTaskModel);
+        MpSmartSurveyTask task = new MockMpTaskFactory(dataGroups).createMpSmartSurveyTask(context, motivationTaskModel);
         assertNotNull(task);
         assertTrue(task instanceof MpSmartSurveyTask);
         MockMpSmartSurveyTask mpTask = (MockMpSmartSurveyTask) task;
@@ -712,7 +712,7 @@ public class MpSmartSurveyTaskTests {
     public void test_motivationNavigationII_F_Intro() {
         assertNotNull(motivationTaskModel);
         List<String> dataGroups = Arrays.asList("gr_DT_F", "gr_BR_II");
-        SmartSurveyTask task = new MockMpTaskFactory(dataGroups).createSmartSurveyTask(context, motivationTaskModel);
+        MpSmartSurveyTask task = new MockMpTaskFactory(dataGroups).createMpSmartSurveyTask(context, motivationTaskModel);
         assertNotNull(task);
         assertTrue(task instanceof MpSmartSurveyTask);
         MockMpSmartSurveyTask mpTask = (MockMpSmartSurveyTask) task;
@@ -821,7 +821,7 @@ public class MpSmartSurveyTaskTests {
      * Task is stopped at the "participatedPrevmPower" + FORM_STEP_SUFFIX survey question
      */
     private TaskStepHolder assertBackgroundTaskUpUntilExitJunction() {
-        SmartSurveyTask task = new MockMpTaskFactory().createSmartSurveyTask(context, backgroundTaskModel);
+        MpSmartSurveyTask task = new MockMpTaskFactory().createMpSmartSurveyTask(context, backgroundTaskModel);
         assertNotNull(task);
         assertTrue(task instanceof MpSmartSurveyTask);
         MockMpSmartSurveyTask mpTask = (MockMpSmartSurveyTask) task;
@@ -983,7 +983,7 @@ public class MpSmartSurveyTaskTests {
         }
 
         @Override @NonNull
-        public SmartSurveyTask createSmartSurveyTask(
+        public MpSmartSurveyTask createMpSmartSurveyTask(
                 @NonNull Context context, @NonNull TaskModel taskModel) {
             return new MockMpSmartSurveyTask(context, taskModel, dataGroups);
         }

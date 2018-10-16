@@ -37,6 +37,14 @@ import android.support.annotation.VisibleForTesting;
 import android.widget.ImageView.ScaleType;
 
 import org.researchstack.backbone.answerformat.AnswerFormat;
+import org.researchstack.backbone.answerformat.BooleanAnswerFormat;
+import org.researchstack.backbone.answerformat.ChoiceAnswerFormat;
+import org.researchstack.backbone.answerformat.DateAnswerFormat;
+import org.researchstack.backbone.answerformat.DecimalAnswerFormat;
+import org.researchstack.backbone.answerformat.DurationAnswerFormat;
+import org.researchstack.backbone.answerformat.IntegerAnswerFormat;
+import org.researchstack.backbone.answerformat.TextAnswerFormat;
+import org.researchstack.backbone.answerformat.UnknownAnswerFormat;
 import org.researchstack.backbone.model.Choice;
 import org.researchstack.backbone.model.TaskModel;
 import org.researchstack.backbone.model.TaskModel.EnumerationModel;
@@ -49,8 +57,10 @@ import org.researchstack.backbone.model.survey.SurveyItemType;
 import org.researchstack.backbone.model.survey.TextfieldSurveyItem;
 import org.researchstack.backbone.result.StepResult;
 import org.researchstack.backbone.result.TaskResult;
+import org.researchstack.backbone.step.InstructionStep;
 import org.researchstack.backbone.step.QuestionStep;
 import org.researchstack.backbone.step.Step;
+import org.researchstack.backbone.task.OrderedTask;
 import org.researchstack.backbone.task.SmartSurveyTask;
 
 import org.researchstack.backbone.utils.LogExt;
@@ -63,6 +73,7 @@ import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,14 +83,63 @@ import java.util.Set;
 
 import rx.subscriptions.CompositeSubscription;
 
-public class MpSmartSurveyTask extends SmartSurveyTask {
+public class MpSmartSurveyTask extends OrderedTask implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MpSmartSurveyTask.class);
 
     protected transient MpTaskFactory taskFactory = new MpTaskFactory();
 
+    // StepModel types that determine which type of survey question to show
+    protected static final String TYPE_BOOLEAN      = "BooleanConstraints";
+    protected static final String TYPE_CHOICE       = "MultiValueConstraints";
+    protected static final String TYPE_INTEGER      = "IntegerConstraints";
+    protected static final String TYPE_DECIMAL      = "DecimalConstraints";
+    protected static final String TYPE_TEXT         = "TextConstraints";
+    protected static final String TYPE_STRING       = "StringConstraints";
+    protected static final String TYPE_DATE         = "DateConstraints";
+    protected static final String TYPE_DATE_TIME    = "DateTimeConstraints";
+    protected static final String TYPE_DURATION     = "DurationConstraints";
+
+    // StepModel types
+    protected static final String SURVEY_TYPE_QUESTION  = "SurveyQuestion";
+    protected static final String SURVEY_TYPE_TEXT      = "SurveyTextOnly";
+    protected static final String SURVEY_TYPE_INFO      = "SurveyInfoScreen";
+
+
+    // StepModel uiHints suggest which type of UI element to show for the survey question
+    protected static final String UI_HINT_CHECKBOX  = "checkbox";
+    protected static final String UI_HINT_RADIO     = "radiobutton";
+    protected static final String UI_HINT_LIST      = "list";
+    protected static final String UI_HINT_NUMBER    = "numberfield";
+    protected static final String UI_HINT_TEXT      = "textfield";
+
+    // Types of Enumeration Label/Values
+    protected static final String ENUMERATION_TYPE_OPTION = "SurveyQuestionOption";
+
+    // use this as the 'skipTo' identifier to end the survey instead of going to a question
+    public static final String END_OF_SURVEY_MARKER = "END_OF_SURVEY";
+    public static final String NEXT_SURVEY_ELEMENT = "NEXT_SURVEY_ELEMENT";
+
+    // Skip rules for answers to survey questions
+    protected static final String OPERATOR_SKIP = "de";
+    protected static final String OPERATOR_EQUAL = "eq";
+    protected static final String OPERATOR_NOT_EQUAL = "ne";
+    protected static final String OPERATOR_LESS_THAN = "lt";
+    protected static final String OPERATOR_GREATER_THAN = "gt";
+    protected static final String OPERATOR_LESS_THAN_EQUAL = "le";
+    protected static final String OPERATOR_GREATER_THAN_EQUAL = "ge";
+    protected static final String OPERATOR_OTHER_THAN = "ot";
+    protected static final String OPERATOR_ALL = "all";
+    protected static final String OPERATOR_ALWAYS = "always";
+    protected static final String OPERATOR_ANY = "any";
+
     public static final String FORM_STEP_SUFFIX = "MpSmartSurveyTaskForm";
     private static final String STUDY_BURST_COMPLETE_STEP_ID = "studyBurstCompletion";
+
+    protected HashMap<String, List<TaskModel.RuleModel>> rules;
+
+    protected List<String> staticStepIdentifiers;
+    protected List<String> dynamicStepIdentifiers;
 
     protected Map<String, List<RuleModel>> beforeRules;
     protected Map<String, List<TaskModel.RuleModel>> afterRules;
@@ -240,12 +300,24 @@ public class MpSmartSurveyTask extends SmartSurveyTask {
         return nextStepIdentifier == null ? null : getStep(nextStepIdentifier);
     }
 
-    @Override
     protected Step getStep(String identifier) {
-        Step step = super.getStep(identifier);
+        Step step = null;
+        if (identifier == null || steps == null) {
+            return null;
+        }
+        for (Step taskStep : steps) {
+            if (identifier.equals(taskStep.getIdentifier())) {
+                step = taskStep;
+            }
+        }
         if (step == null) {
             // Some skipTo fields may not have our artificial Form step suffix on it
-            step = super.getStep(identifier + FORM_STEP_SUFFIX);
+            identifier = identifier + FORM_STEP_SUFFIX;
+            for (Step taskStep : steps) {
+                if (identifier.equals(taskStep.getIdentifier())) {
+                    step = taskStep;
+                }
+            }
         }
         return step;
     }
@@ -300,7 +372,8 @@ public class MpSmartSurveyTask extends SmartSurveyTask {
                 break;
             }
             default: {
-                answerFormat = super.from(context, model.constraints);
+                LOGGER.warn("No support for uiHint " + model.uiHint);
+                answerFormat = null;
                 break;
             }
         }
@@ -377,9 +450,15 @@ public class MpSmartSurveyTask extends SmartSurveyTask {
         return item;
     }
 
-    @Override
     protected String processRules(List<RuleModel> stepRules, Object answer) {
-        String skipToIdentifier = super.processRules(stepRules, answer);
+        String skipToIdentifier = null;
+
+        for (TaskModel.RuleModel stepRule : stepRules) {
+            skipToIdentifier = checkRule(stepRule, answer);
+            if (skipToIdentifier != null) {
+                break;
+            }
+        }
 
         // Rules were either not applicable, or not processed by the sub-class
         if (skipToIdentifier == null) {
@@ -455,7 +534,6 @@ public class MpSmartSurveyTask extends SmartSurveyTask {
      * @param taskResult to holding the StepResult list
      * @return the root answer value, null if none was found
      */
-    @Override
     protected Object answerForIdentifier(String stepIdentifier, TaskResult taskResult) {
         // We wrap answers in an extra Form step for UI purposes
         // To get the correct base answer, we need to provide the correct step identifier without the suffix
@@ -463,7 +541,13 @@ public class MpSmartSurveyTask extends SmartSurveyTask {
             stepIdentifier = stepIdentifier.substring(
                     0, stepIdentifier.length() - FORM_STEP_SUFFIX.length());
         }
-        return super.answerForIdentifier(stepIdentifier, taskResult);
+        Object result = null;
+        // Root StepResult will have a contained Result answer
+        StepResult stepResult = StepResultHelper.findStepResult(taskResult, stepIdentifier);
+        if (stepResult != null) {
+            result = stepResult.getResult();
+        }
+        return result;
     }
 
     protected void assignDataGroup(String dataGroup) {
@@ -481,5 +565,107 @@ public class MpSmartSurveyTask extends SmartSurveyTask {
                 }, throwable -> {
                     LOGGER.warn("Error updating data groups to " + finalDataGroups);
                 }));
+    }
+
+    @Override
+    public Step getStepWithIdentifier(String identifier) {
+        return getStep(identifier);
+    }
+    /**
+     * Returns the current progress String for use in the action bar
+     * <p>
+     * This is updated based on the current and total in the dynamic list of steps.
+     *
+     * @param context for fetching resources
+     * @param step    the current step
+     * @return the title that should be displayed for this step
+     */
+    @Override
+    public String getTitleForStep(Context context, Step step) {
+        int currentIndex = staticStepIdentifiers.indexOf(step.getIdentifier()) + 1;
+        return context.getString(org.researchstack.backbone.R.string.rsb_format_step_title,
+                currentIndex,
+                staticStepIdentifiers.size());
+    }
+
+    @Override
+    public TaskProgress getProgressOfCurrentStep(Step step, TaskResult result) {
+        int current = staticStepIdentifiers.indexOf(step == null ? -1 : step.getIdentifier());
+        return new TaskProgress(current, staticStepIdentifiers.size());
+    }
+
+    @Override
+    public void validateParameters() {
+        // Construction validates most issues, add some validation here if needed
+    }
+
+    protected String checkRule(TaskModel.RuleModel stepRule, Object answer) {
+        String operator = stepRule.operator;
+        String skipTo = stepRule.skipTo;
+        if (stepRule.endSurvey != null && stepRule.endSurvey) {
+            skipTo = END_OF_SURVEY_MARKER;
+        }
+        Object value = stepRule.value;
+
+        if (operator.equals(OPERATOR_SKIP)) {
+            return answer == null ? skipTo : null;
+        } else if (OPERATOR_ALWAYS.equals(operator)) {
+            return skipTo;
+        } else if (answer instanceof Integer) {
+            return checkNumberRule(operator, skipTo, ((Number) value).intValue(), (Integer) answer);
+        } else if (answer instanceof Double) {
+            return checkNumberRule(operator, skipTo, ((Number) value).doubleValue(), (Double) answer);
+        } else if (answer instanceof Boolean) {
+            Boolean booleanValue;
+
+            if (value instanceof Boolean) {
+                booleanValue = (Boolean) value;
+            } else if (value instanceof Number) {
+                booleanValue = ((Number) value).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE;
+            } else if (value instanceof String) {
+                booleanValue = Boolean.valueOf((String) value);
+            } else {
+                throw new RuntimeException("Invalid value for Boolean skip rule");
+            }
+
+            return checkEqualsRule(operator, skipTo, booleanValue, answer);
+        } else if (answer instanceof String) {
+            return checkEqualsRule(operator, skipTo, value, answer);
+        } else {
+            LogExt.e(getClass(), "Unsupported answer type for smart survey rules");
+        }
+
+        return null;
+    }
+
+    protected  <T> String checkEqualsRule(String operator, String skipTo, T value, T answer) {
+        switch (operator) {
+            case OPERATOR_EQUAL:
+                return value.equals(answer) ? skipTo : null;
+            case OPERATOR_NOT_EQUAL:
+                return !value.equals(answer) ? skipTo : null;
+        }
+        return null;
+    }
+
+    protected  <T extends Comparable<T>> String checkNumberRule(String operator, String skipTo, T value, T answer) {
+        int compare = answer.compareTo(value);
+
+        switch (operator) {
+            case OPERATOR_EQUAL:
+                return compare == 0 ? skipTo : null;
+            case OPERATOR_NOT_EQUAL:
+                return compare != 0 ? skipTo : null;
+            case OPERATOR_GREATER_THAN:
+                return compare > 0 ? skipTo : null;
+            case OPERATOR_GREATER_THAN_EQUAL:
+                return compare >= 0 ? skipTo : null;
+            case OPERATOR_LESS_THAN:
+                return compare < 0 ? skipTo : null;
+            case OPERATOR_LESS_THAN_EQUAL:
+                return compare <= 0 ? skipTo : null;
+        }
+
+        return null;
     }
 }

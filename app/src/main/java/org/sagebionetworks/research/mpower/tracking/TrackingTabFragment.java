@@ -13,6 +13,7 @@ import android.support.v4.view.OnApplyWindowInsetsListener;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -97,10 +98,6 @@ public class TrackingTabFragment extends Fragment {
         // Move the status bar down by the window insets.
         OnApplyWindowInsetsListener listener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
         ViewCompat.setOnApplyWindowInsetsListener(this.trackingStatusBar, listener);
-
-        this.trackingStatusBar.setOnClickListener((View v) -> {
-                startActivity(new Intent(getActivity(), StudyBurstActivity.class));
-            });
         return view;
     }
 
@@ -145,12 +142,12 @@ public class TrackingTabFragment extends Fragment {
      * Sets up the action bar according to the current state of the study burst
      * @param item most recent item from the StudyBurstViewModel
      */
-    private void setupActionBar(@Nullable StudyBurstItem item) {
+    private void setupActionBar(final @Nullable StudyBurstItem item) {
         if (item == null) {
             return;
         }
         if (!hasShownStudyBurst && !item.hasCompletedMotivationSurvey()) {
-            showActionBarFlow(false, item);
+            showActionBarFlow(item);
         }
         if (!item.getHasStudyBurst() || item.getDayCount() == null) {
             trackingStatusBar.setVisibility(View.GONE);
@@ -170,16 +167,22 @@ public class TrackingTabFragment extends Fragment {
             trackingStatusBar.setTitle(null);
             trackingStatusBar.setText(null);
         }
+
+        trackingStatusBar.setOnClickListener(view ->
+                showActionBarFlow(item));
     }
 
     /**
      * Shows the next screen when the action bar is tapped,
      * or when the user has not done their motivation survey yet.
-     * @param animated true there will be a slide animation, false there will be none
      */
-    private void showActionBarFlow(boolean animated, @Nonnull StudyBurstItem item) {
+    private void showActionBarFlow(@Nonnull StudyBurstItem item) {
         if (!item.hasCompletedMotivationSurvey() && getActivity() != null) {
             launchSurvey(item.getMotivationSurvey());
+        } else if (item.getNextCompletionActivityToShow() != null) {
+            launchSurvey(item.getNextCompletionActivityToShow());
+        } else {
+            startActivity(new Intent(getActivity(), StudyBurstActivity.class));
         }
     }
 
