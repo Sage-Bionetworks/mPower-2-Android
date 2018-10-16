@@ -124,7 +124,7 @@
                 android:textAllCaps="false"/>
 
             <Button
-                style="@style/BP.SkipButton"
+                style="@style/MP.ImageButton"
                 android:id="@+id/mp_remind_me_later_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

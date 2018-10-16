@@ -38,7 +38,7 @@
     </LinearLayout>
 
     <Button
-        style="@style/BP.SkipButton"
+        style="@style/MP.ImageButton"
         android:id="@+id/bp_submit_bar_skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
