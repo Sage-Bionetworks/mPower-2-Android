@@ -23,13 +23,11 @@ public class MpResourceManager extends ResourceManager {
     private static final String BASE_PATH_VIDEO = "mp4";
 
     public static final String SIGNUP_TASK_RESOURCE = "Signup";
-    public static final String STUDY_BURST_REMINDER = "StudyBurstReminder";
 
     public MpResourceManager() {
         super();
 
         addTaskResource(SIGNUP_TASK_RESOURCE);
-        addTaskResource(STUDY_BURST_REMINDER);
     }
 
     @Override
