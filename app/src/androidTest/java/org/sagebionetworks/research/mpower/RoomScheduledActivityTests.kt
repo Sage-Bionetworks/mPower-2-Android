@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower
 
+import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
@@ -49,6 +50,7 @@ import org.threeten.bp.format.DateTimeFormatter
 
 @RunWith(AndroidJUnit4::class)
 // ran into multi-dex issues moving this to a library project, leaving it here for now
+@MediumTest
 class RoomScheduledActivityTests: RoomTestHelper() {
 
     companion object {

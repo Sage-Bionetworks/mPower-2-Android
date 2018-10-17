@@ -5,9 +5,12 @@ import android.content.Context;
 
 import org.researchstack.backbone.ResearchStack;
 import org.researchstack.backbone.StorageAccess;
+import org.sagebionetworks.bridge.android.di.BridgeApplicationScope;
 import org.sagebionetworks.research.mpower.researchstack.MpMainActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpResearchStack;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
+
+import javax.inject.Singleton;
 
 import dagger.Binds;
 import dagger.Module;
@@ -28,11 +31,13 @@ public abstract class MPowerResearchStackModule {
             MpMainActivitySubcomponent.Builder builder);
 
     @Provides
+    @BridgeApplicationScope
     static MpTaskFactory provideMpTaskFactory() {
         return new MpTaskFactory();
     }
 
     @Provides
+    @BridgeApplicationScope
     static ResearchStack provideResearchStack(Context context) {
         MpResearchStack researchStack = new MpResearchStack(context);
         ResearchStack.init(context, researchStack);
