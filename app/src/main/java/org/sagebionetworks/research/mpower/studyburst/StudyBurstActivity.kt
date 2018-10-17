@@ -1,7 +1,9 @@
 package org.sagebionetworks.research.mpower.studyburst
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.support.v7.app.AppCompatActivity
@@ -32,8 +34,10 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
     private val LOGGER = LoggerFactory.getLogger(StudyBurstActivity::class.java)
 
-    val REQUEST_CODE_STUDY_BURST = 1483
-    val EXTRA_GUID_OF_TASK_TO_RUN = "StudyBurstActivity.Guid.ToRun"
+    companion object {
+        val REQUEST_CODE_STUDY_BURST = 1483
+        val EXTRA_GUID_OF_TASK_TO_RUN = "StudyBurstActivity.Guid.ToRun"
+    }
 
     /**
      * @property studyBurstViewModel encapsulates all read/write data operations
@@ -75,7 +79,10 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         observeLiveData()
 
         study_burst_next.setOnClickListener { onNextClicked() }
-        studyBurstBack.setOnClickListener { finish() }
+        studyBurstBack.setOnClickListener {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+        }
     }
 
     /**
@@ -84,23 +91,20 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      */
     private fun observeLiveData() {
         viewModelObserver = Observer { item -> item?.let {
+
             // StudyBurstItem actually can't be null but appears Nullable because of the Observer @Nullable annotation
             if (!it.hasStudyBurst) {
                 // If we don't have a study burst, this means that we should send the user to a completion task
                 // Or, if we don't have any completion tasks, we should probably leave this Activity
-                it.nextCompletionActivityToShow?.let { schedule ->
-                    // TODO: mdephillips 9/12/18 run the completion task
-                    Toast.makeText(this,
-                            "Feature not implemented: run " + schedule.activityIdentifier(),
-                            Toast.LENGTH_LONG).show()
-                } ?: run {
-                    // TODO: mdephillips 9/12/18 run the completion task
-                    Toast.makeText(this,
-                            "Study burst not available on this day",
-                            Toast.LENGTH_LONG).show()
-                    finish()
+                if (item.studyBurstWasJustCompleted) {
+                    item.nextCompletionActivityToShow?.let { schedule ->
+                        val resultIntent = Intent()
+                        resultIntent.putExtra(EXTRA_GUID_OF_TASK_TO_RUN, schedule)
+                        setResult(RESULT_OK, resultIntent)
+                        finish()
+                        return@Observer
+                    }
                 }
-                return@Observer
             }
 
             setupStudyBurstTitle(it)
@@ -239,6 +243,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         studyBurstAdapter?.nextItem?.let {
             itemSelected(it)
         } ?: run {
+            setResult(Activity.RESULT_CANCELED)
             finish()  // no more items to run, leave screen
         }
     }

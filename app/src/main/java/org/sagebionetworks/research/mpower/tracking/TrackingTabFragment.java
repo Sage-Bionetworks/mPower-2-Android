@@ -1,6 +1,8 @@
 package org.sagebionetworks.research.mpower.tracking;
 
 import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
@@ -208,7 +210,7 @@ public class TrackingTabFragment extends Fragment {
         } else if (nextCompletionTask != null) {
             launchRsSurvey(nextCompletionTask);
         } else {
-            startActivity(new Intent(getActivity(), StudyBurstActivity.class));
+            goToStudyBurst();
         }
     }
 
@@ -273,9 +275,26 @@ public class TrackingTabFragment extends Fragment {
                 // on the line above studyBurstViewModel.updateSchedule(currentSurveySchedule)
                 BridgeDataProvider.getInstance().uploadTaskResult(
                         getActivity(), taskResult, bridgeSchedule, false);
+
+                if (MOTIVATION.equals(currentSurveySchedule.activityIdentifier())) {
+                    // send the user straight into the study burst
+                    goToStudyBurst();
+                }
+            }
+        } else if (resultCode == Activity.RESULT_OK &&
+                requestCode == StudyBurstActivity.Companion.getREQUEST_CODE_STUDY_BURST()) {
+            ScheduledActivityEntity scheduleToRun = (ScheduledActivityEntity)
+                    data.getSerializableExtra(StudyBurstActivity.Companion.getEXTRA_GUID_OF_TASK_TO_RUN());
+            if (scheduleToRun != null) {
+                launchRsSurvey(scheduleToRun);
             }
         }
         currentSurveyTask = null;
         currentSurveySchedule = null;
+    }
+
+    private void goToStudyBurst() {
+        startActivityForResult(new Intent(getActivity(), StudyBurstActivity.class),
+                StudyBurstActivity.Companion.getREQUEST_CODE_STUDY_BURST());
     }
 }
