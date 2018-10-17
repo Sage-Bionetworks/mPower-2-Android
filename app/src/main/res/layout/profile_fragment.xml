@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".profile.ProfileFragment">
 
-    <View
+    <Space
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mp_profile_spacer_height"
