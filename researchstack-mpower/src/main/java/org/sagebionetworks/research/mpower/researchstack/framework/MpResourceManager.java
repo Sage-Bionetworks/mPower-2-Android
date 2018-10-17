@@ -91,6 +91,11 @@ public class MpResourceManager extends ResourceManager {
     }
 
     @Override
+    public Resource getLicense() {
+        return null;
+    }
+
+    @Override
     public Resource getConsentSections() {
         return new Resource(Resource.TYPE_JSON, BASE_PATH_JSON, "learn", SectionModel.class);
     }
