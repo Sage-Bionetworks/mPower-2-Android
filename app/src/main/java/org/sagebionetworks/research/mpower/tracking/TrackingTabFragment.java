@@ -185,15 +185,16 @@ public class TrackingTabFragment extends Fragment {
         }
         TodayActionBarItem actionBarItem = item.getActionBarItem(getContext());
         if (actionBarItem != null) {
+            trackingStatusBar.setOnClickListener(view -> showActionBarFlow(item));
+            trackingStatusBar.setTitleTextBackgroundVisibility(View.VISIBLE);
             trackingStatusBar.setTitle(actionBarItem.getTitle());
             trackingStatusBar.setText(actionBarItem.getDetail());
         } else {
+            trackingStatusBar.setOnClickListener(null);
+            trackingStatusBar.setTitleTextBackgroundVisibility(View.INVISIBLE);
             trackingStatusBar.setTitle(null);
             trackingStatusBar.setText(null);
         }
-
-        trackingStatusBar.setOnClickListener(view ->
-                showActionBarFlow(item));
     }
 
     /**

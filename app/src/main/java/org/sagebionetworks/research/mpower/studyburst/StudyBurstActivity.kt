@@ -32,6 +32,9 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
     private val LOGGER = LoggerFactory.getLogger(StudyBurstActivity::class.java)
 
+    val REQUEST_CODE_STUDY_BURST = 1483
+    val EXTRA_GUID_OF_TASK_TO_RUN = "StudyBurstActivity.Guid.ToRun"
+
     /**
      * @property studyBurstViewModel encapsulates all read/write data operations
      */
@@ -235,6 +238,8 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
     private fun onNextClicked() {
         studyBurstAdapter?.nextItem?.let {
             itemSelected(it)
+        } ?: run {
+            finish()  // no more items to run, leave screen
         }
     }
 

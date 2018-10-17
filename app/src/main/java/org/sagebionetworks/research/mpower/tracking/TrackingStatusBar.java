@@ -36,6 +36,9 @@ public class TrackingStatusBar extends ConstraintLayout {
     @BindView(R.id.study_burst_progress_bar_text)
     TextView text;
 
+    @BindView(R.id.title_text_background)
+    View titleTextBackground;
+
     private Unbinder unbinder;
 
     public TrackingStatusBar(final Context context) {
@@ -80,5 +83,9 @@ public class TrackingStatusBar extends ConstraintLayout {
 
     public void setText(String text) {
         this.text.setText(text);
+    }
+
+    public void setTitleTextBackgroundVisibility(int visibility) {
+        titleTextBackground.setVisibility(visibility);
     }
 }
