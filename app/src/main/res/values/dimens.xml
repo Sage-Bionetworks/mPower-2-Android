@@ -13,4 +13,6 @@
 
     <dimen name="severity_button_height">60dp</dimen>
     <dimen name="tracking_chevron_width">10dp</dimen>
+
+    <dimen name="mp_profile_spacer_height">25dp</dimen>
 </resources>
