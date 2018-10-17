@@ -60,7 +60,7 @@ android {
         sourceCompatibility 1.8
     }
 
-    kotlinOptions{
+    kotlinOptions {
         jvmTarget = '1.8'
     }
 }
@@ -120,6 +120,7 @@ dependencies {
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     kapt 'android.arch.persistence.room:compiler:1.1.1'
     androidTestImplementation 'android.arch.persistence.room:testing:1.1.1'
+    androidTestImplementation "android.arch.core:core-testing:1.1.1"
 
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 

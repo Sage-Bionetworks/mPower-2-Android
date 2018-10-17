@@ -1,17 +1,20 @@
 package org.sagebionetworks.research.mpower
 
 import android.app.Application
+import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.support.test.InstrumentationRegistry
 import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
 import com.google.gson.Gson
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertNotNull
-import junit.framework.Assert.assertNull
-import junit.framework.Assert.assertTrue
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+
 import org.junit.Before
 import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
@@ -90,6 +93,10 @@ class StudyBurstViewModelTests: RoomTestHelper() {
             application = InstrumentationRegistry.getTargetContext().applicationContext as Application
         }
     }
+
+    @Rule
+    @JvmField
+    var instantExecutor = InstantTaskExecutorRule()
 
     val studyBurstSettingsDao = StudyBurstSettingsDao(InstrumentationRegistry.getTargetContext())
     val scheduleDao = database.scheduleDao()
