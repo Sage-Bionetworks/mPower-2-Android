@@ -31,16 +31,10 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_marginStart="20dp"
         android:background="?attr/colorPrimary"
-        android:text="Profile"
-        android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="@color/white"
-        android:textSize="36sp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view"
-        tools:text="Profile" />
+        app:layout_constraintTop_toBottomOf="@+id/view" />
 
     <Button
         android:id="@+id/licenses_button"
