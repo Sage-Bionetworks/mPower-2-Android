@@ -57,12 +57,6 @@ public class TrackingViewModel extends ViewModel {
     // holds onto RxJava subscriptions for cleanup
     private final CompositeSubscription compositeSubscription = new CompositeSubscription();
 
-    private final MutableLiveData<List<ScheduledActivityView>> scheduledActivitiesLiveData = new MutableLiveData<>();
-
-    private final MutableLiveData<String> scheduledActivitiesLoadingErrorMessageLiveData = new MutableLiveData<>();
-
-    private final MutableLiveData<Boolean> scheduledActivitiesLoadingLiveData = new MutableLiveData<>();
-
     private final TaskLauncher taskLauncher;
 
     /**
@@ -72,20 +66,6 @@ public class TrackingViewModel extends ViewModel {
     public TrackingViewModel(@NonNull ActivityManager activityManager, @NonNull TaskLauncher taskLauncher) {
         this.activityManager = checkNotNull(activityManager, "activity manager cannot be null");
         this.taskLauncher = checkNotNull(taskLauncher, "task launcher cannot be null");
-
-        updateScheduledActivities();
-    }
-
-    public LiveData<List<ScheduledActivityView>> getScheduledActivitiesLiveData() {
-        return scheduledActivitiesLiveData;
-    }
-
-    public LiveData<String> getScheduledActivitiesLoadingErrorMessageLiveData() {
-        return scheduledActivitiesLoadingErrorMessageLiveData;
-    }
-
-    public LiveData<Boolean> getScheduledActivitiesLoadingLiveData() {
-        return scheduledActivitiesLoadingLiveData;
     }
 
     /**
@@ -105,38 +85,8 @@ public class TrackingViewModel extends ViewModel {
         return taskLauncher.launchTask(context, taskId, taskRunUUID);
     }
 
-    /**
-     * Receives action from the View (TrackingFragment)
-     */
-    @MainThread
-    public void reload() {
-        updateScheduledActivities();
-        // onReloadClicked any other data sources
-    }
-
     @Override
     protected void onCleared() {
         compositeSubscription.unsubscribe();
-    }
-
-    @VisibleForTesting
-    @AnyThread
-    void updateScheduledActivities() {
-        scheduledActivitiesLoadingErrorMessageLiveData.postValue(null);
-        scheduledActivitiesLoadingLiveData.postValue(true);
-
-        compositeSubscription.add(activityManager.getActivities(DateTime.now().minusDays(14), DateTime.now())
-                .delay(1, TimeUnit.SECONDS)
-                .doAfterTerminate(() -> scheduledActivitiesLoadingLiveData.postValue(false))
-                .subscribe(scheduledActivityListV4 -> {
-                    List<ScheduledActivityView> scheduledActivityViews = new ArrayList<>();
-                    for (ScheduledActivity sa : scheduledActivityListV4.getItems()) {
-                        scheduledActivityViews.add(new ScheduledActivityView(sa.getGuid()));
-                    }
-                    scheduledActivitiesLiveData.postValue(scheduledActivityViews);
-                }, throwable -> {
-                    LOGGER.warn("error retrieving scheduled activities", throwable);
-                    scheduledActivitiesLoadingErrorMessageLiveData.postValue(throwable.getMessage());
-                }));
     }
 }
