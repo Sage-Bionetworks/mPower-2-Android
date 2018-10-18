@@ -9,9 +9,11 @@
       <name>android.support.v4.util.Preconditions</name>
       <name>ch.qos.logback.core.Context</name>
       <name>ch.qos.logback.core.util.Duration</name>
+      <name>com.google.android.gms.common.internal</name>
       <name>com.google.common.base.Verify</name>
       <name>com.google.gson.internal</name>
       <name>dagger.internal</name>
+      <name>io.reactivex.annotations.NonNull</name>
       <name>io.reactivex.annotations.Nullable</name>
       <name>java.time</name>
       <name>javax.annotation.Nullable</name>

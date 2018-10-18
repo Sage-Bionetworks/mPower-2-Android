@@ -3,6 +3,7 @@ package org.sagebionetworks.research.mpower;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -14,6 +15,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
+@Ignore
 public class AppInstructionStepTest extends UITestHelper {
     public static final int TREMOR_PROGRESS_MAX = 3;
     // Instruction Step 1

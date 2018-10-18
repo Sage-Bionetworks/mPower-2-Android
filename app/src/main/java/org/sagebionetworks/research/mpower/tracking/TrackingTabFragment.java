@@ -3,6 +3,8 @@ package org.sagebionetworks.research.mpower.tracking;
 import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
 
 import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,6 +41,7 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.threeten.bp.Instant;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,8 +61,19 @@ public class TrackingTabFragment extends Fragment {
     @BindView(R.id.tracking_status_bar)
     TrackingStatusBar trackingStatusBar;
 
+    @Inject
+    TodayScheduleViewModel.Factory todayScheduleViewModelFactory;
+
+    @Inject
+    StudyBurstViewModel.Factory studyBurstViewModelFactory;
+
+    @Inject
+    SurveyViewModel.Factory surveyViewModelFactory;
+
     private TodayScheduleViewModel todayScheduleViewModel;
+
     private SurveyViewModel surveyViewModel;
+
     private StudyBurstViewModel studyBurstViewModel;
 
     private Unbinder unbinder;
@@ -97,6 +111,7 @@ public class TrackingTabFragment extends Fragment {
         // Move the status bar down by the window insets.
         OnApplyWindowInsetsListener listener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
         ViewCompat.setOnApplyWindowInsetsListener(this.trackingStatusBar, listener);
+
         return view;
     }
 
@@ -115,20 +130,24 @@ public class TrackingTabFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() != null) {
-            todayScheduleViewModel = TodayScheduleViewModel.create(getActivity());
-            todayScheduleViewModel.liveData().observe(this, todayHistoryItems -> {
-                // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
-            });
-            surveyViewModel = SurveyViewModel.create(getActivity());
-            surveyViewModel.liveData().observe(this, scheduledActivityEntities -> {
-                // TODO: mdephillips 9/4/18 mimic On iOS, this runs any survey that managers may add
-                // TODO: mdephillips 9/4/18 we may want to hold off on implementing it
-                // TODO: mdephillips 9/4/18 because not all survey types are currently supported with UI right now
-            });
-            studyBurstViewModel = StudyBurstViewModel.create(getActivity());
-            studyBurstViewModel.liveData().observe(this, this::setupActionBar);
-        }
+
+        todayScheduleViewModel = ViewModelProviders.of(this, todayScheduleViewModelFactory)
+                .get(TodayScheduleViewModel.class);
+        todayScheduleViewModel.liveData().observe(this, todayHistoryItems -> {
+            // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
+        });
+
+        studyBurstViewModel = ViewModelProviders.of(this, studyBurstViewModelFactory)
+                .get(StudyBurstViewModel.class);
+        studyBurstViewModel.liveData().observe(this, this::setupActionBar);
+
+        surveyViewModel = ViewModelProviders.of(this, surveyViewModelFactory)
+                .get(SurveyViewModel.class);
+        surveyViewModel.liveData().observe(this, scheduledActivityEntities -> {
+            // TODO: mdephillips 9/4/18 mimic On iOS, this runs any survey that managers may add
+            // TODO: mdephillips 9/4/18 we may want to hold off on implementing it
+            // TODO: mdephillips 9/4/18 because not all survey types are currently supported with UI right now
+        });
     }
 
     @Override
@@ -139,7 +158,9 @@ public class TrackingTabFragment extends Fragment {
 
     /**
      * Sets up the action bar according to the current state of the study burst
-     * @param item most recent item from the StudyBurstViewModel
+     *
+     * @param item
+     *         most recent item from the StudyBurstViewModel
      */
     private void setupActionBar(final @Nullable StudyBurstItem item) {
         if (item == null) {
@@ -159,7 +180,9 @@ public class TrackingTabFragment extends Fragment {
         trackingStatusBar.setMax(100);
         trackingStatusBar.setProgress(Math.round(100 * item.getProgress()));
 
-        if (getContext() == null) return;
+        if (getContext() == null) {
+            return;
+        }
         TodayActionBarItem actionBarItem = item.getActionBarItem(getContext());
         if (actionBarItem != null) {
             trackingStatusBar.setTitle(actionBarItem.getTitle());
@@ -239,7 +262,7 @@ public class TrackingTabFragment extends Fragment {
                 currentSurveySchedule.setStartedOn(Instant.ofEpochMilli(taskResult.getStartDate().getTime()));
                 currentSurveySchedule.setFinishedOn(Instant.ofEpochMilli(taskResult.getEndDate().getTime()));
                 // This function updates the schedule on bridge and in the ScheduleRepository
-                studyBurstViewModel.updateSchedule(currentSurveySchedule);
+                studyBurstViewModel.updateScheduleToBridge(currentSurveySchedule);
 
                 // We only need to provide enough information in the ScheduledActivity
                 // for the BridgeDataProvider to create the metadata JSON file

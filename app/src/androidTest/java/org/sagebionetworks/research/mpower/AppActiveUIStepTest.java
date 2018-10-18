@@ -2,6 +2,8 @@ package org.sagebionetworks.research.mpower;
 
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -13,6 +15,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
+@Ignore
 public class AppActiveUIStepTest extends UITestHelper {
     public static final String TREMOR_ACTIVE_TITLE = "Hold the phone still in your %@ hand.";
     public static final String FORWARD_ACTION_TEXT = "Restart test";
