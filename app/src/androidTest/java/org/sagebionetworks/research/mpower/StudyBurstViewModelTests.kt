@@ -1,28 +1,48 @@
 package org.sagebionetworks.research.mpower
 
 import android.app.Application
+import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.support.test.InstrumentationRegistry
+import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
 import com.google.gson.Gson
-import junit.framework.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+
 import org.junit.Before
 import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.StudyParticipant
 import org.sagebionetworks.research.mpower.research.CompletionTask
 import org.sagebionetworks.research.mpower.research.DataSourceManager
-import org.sagebionetworks.research.mpower.research.MpIdentifier.*
+import org.sagebionetworks.research.mpower.research.MpIdentifier.BACKGROUND
+import org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS
+import org.sagebionetworks.research.mpower.research.MpIdentifier.ENGAGEMENT
+import org.sagebionetworks.research.mpower.research.MpIdentifier.MEASURING
+import org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION
+import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
+import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER
+import org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING
+import org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR
+import org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstSettingsDao
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
 import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters
-import org.sagebionetworks.research.sageresearch.dao.room.ResearchDatabase
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
+import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
+import org.sagebionetworks.research.sageresearch.viewmodel.ScheduledRepositorySyncStateDao
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
@@ -59,6 +79,7 @@ import org.threeten.bp.format.DateTimeFormatter
 //
 
 @RunWith(AndroidJUnit4::class)
+@MediumTest
 class StudyBurstViewModelTests: RoomTestHelper() {
     companion object {
         lateinit var application: Application
@@ -72,6 +93,17 @@ class StudyBurstViewModelTests: RoomTestHelper() {
             application = InstrumentationRegistry.getTargetContext().applicationContext as Application
         }
     }
+
+    @Rule
+    @JvmField
+    var instantExecutor = InstantTaskExecutorRule()
+
+    val studyBurstSettingsDao = StudyBurstSettingsDao(InstrumentationRegistry.getTargetContext())
+    val scheduleDao = database.scheduleDao()
+    val scheduleRepo = ScheduleRepository(scheduleDao,
+            ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()),
+            BridgeManagerProvider.getInstance().activityManager,
+            BridgeManagerProvider.getInstance().participantManager)
 
     @Before
     fun setupForEachTest() {
@@ -148,7 +180,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurst_Day1_StartState() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day1_startupState)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day1_startupState)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -180,7 +213,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurstComplete_Day1() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day1_tasksFinished_surveysNotFinished)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day1_tasksFinished_surveysNotFinished)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -208,7 +242,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurstComplete_Day1_SurveysFinished() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day1_tasksFinished_surveysFinished)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day1_tasksFinished_surveysFinished)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -235,7 +270,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurstComplete_Day2_Day1SurveysNotFinished() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day2_surveysNotFinished)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day2_surveysNotFinished)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -263,7 +299,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurstComplete_Day15_Missing1() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day15_missing1_engagementNotFinished)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day15_missing1_engagementNotFinished)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -283,7 +320,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurstComplete_Day14_Missing1() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day14_missing1_tasksFinished_engagementNotFinished)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day14_missing1_tasksFinished_engagementNotFinished)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -305,7 +343,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurstComplete_Day14_Missing6() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day14_missing6_tasksFinished_engagementNotFinished)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day14_missing6_tasksFinished_engagementNotFinished)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -321,7 +360,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurstComplete_Day9_TasksFinished() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day9_tasksFinished)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day9_tasksFinished)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -344,7 +384,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurstComplete_Day21_Missing6() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day21_missing6_engagementNotFinished)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day21_missing6_engagementNotFinished)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -364,7 +405,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurstComplete_Day15_BurstComplete_EngagementNotComplete() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day15_burstCompleted_engagementNotFinished)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day15_burstCompleted_engagementNotFinished)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -385,7 +427,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurstComplete_Day15_BurstComplete_EngagementComplete() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day15_burstCompleted_engagementFinished)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day15_burstCompleted_engagementFinished)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -401,7 +444,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     @Test
     fun testStudyBurstComplete_Day1_AllFinished_2HoursAgo() {
-        val viewModel = MockStudyBurstViewModel(application, database, StudySetup.day1_allFinished_2HoursAgo)
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao,
+                StudySetup.day1_allFinished_2HoursAgo)
         val item = getValue(viewModel.liveData())
         assertNotNull(item)
         assertNotNull(item.activityGroup)
@@ -849,9 +893,9 @@ class StudyBurstViewModelTests: RoomTestHelper() {
     }
 
     class MockStudyBurstViewModel(
-            app: Application,
-            val mockDb: ResearchDatabase,
-            val studySetup: StudySetup): StudyBurstViewModel(app) {
+            scheduleDao: ScheduledActivityEntityDao,
+            scheduleRepo: ScheduleRepository, private val studyBurstSettingsDao: StudyBurstSettingsDao,
+            val studySetup: StudySetup): StudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao) {
 
         override val config = studySetup.config
 
@@ -867,28 +911,17 @@ class StudyBurstViewModelTests: RoomTestHelper() {
             return studySetup.timezone
         }
 
-        override fun scheduleDao(): ScheduledActivityEntityDao {
-            return mockDb.scheduleDao()
-        }
 
         init {
-            studySetup.populateDatabase(scheduleDao())
+            studySetup.populateDatabase(scheduleDao)
         }
 
         private var sortOrder: List<String>? = null
         private var timestamp: LocalDateTime? = null
 
-        public override fun setOrderedTasks(sortOrder: List<String>, timestamp: LocalDateTime) {
-            this.sortOrder = sortOrder
-            this.timestamp = timestamp
+        fun setOrderedTasks(sortOrder: List<String>, timestamp: LocalDateTime) {
+            studyBurstSettingsDao.setOrderedTasks(sortOrder, timestamp)
         }
 
-        override fun getTaskSortOrder(): List<String> {
-            return sortOrder ?: StudyBurstViewModel.defaultTaskSortOrder
-        }
-
-        override fun getTaskSortOrderTimestamp(): LocalDateTime? {
-            return timestamp
-        }
     }
 }

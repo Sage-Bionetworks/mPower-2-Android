@@ -8,10 +8,12 @@ import static junit.framework.Assert.assertTrue;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.test.annotation.UiThreadTest;
+import android.support.test.filters.MediumTest;
 import android.support.test.runner.AndroidJUnit4;
 
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
@@ -32,6 +34,8 @@ import java.util.Map;
 import java.util.Set;
 
 @RunWith(AndroidJUnit4.class)
+@Ignore
+@MediumTest
 public class TrackingTaskViewModelTest {
     // Basic Implementation of a ViewModel.
     private class TestViewModel extends TrackingTaskViewModel<SimpleTrackingItemConfig, SimpleTrackingItemLog> {

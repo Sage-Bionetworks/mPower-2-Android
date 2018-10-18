@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,9 +64,21 @@ public class TrackingTabFragment extends Fragment {
     @Inject
     TrackingViewModelFactory trackingViewModelFactory;
 
+    @Inject
+    TodayScheduleViewModel.Factory todayScheduleViewModelFactory;
+
+    @Inject
+    StudyBurstViewModel.Factory studyBurstViewModelFactory;
+
+    @Inject
+    SurveyViewModel.Factory surveyViewModelFactory;
+
     private TrackingViewModel trackingViewModel;
+
     private TodayScheduleViewModel todayScheduleViewModel;
+
     private SurveyViewModel surveyViewModel;
+
     private StudyBurstViewModel studyBurstViewModel;
 
     private Unbinder unbinder;
@@ -89,8 +103,8 @@ public class TrackingTabFragment extends Fragment {
         ViewCompat.setOnApplyWindowInsetsListener(this.trackingStatusBar, listener);
 
         this.trackingStatusBar.setOnClickListener((View v) -> {
-                startActivity(new Intent(getActivity(), StudyBurstActivity.class));
-            });
+            startActivity(new Intent(getActivity(), StudyBurstActivity.class));
+        });
         return view;
     }
 
@@ -103,10 +117,8 @@ public class TrackingTabFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        trackingViewModel = ViewModelProviders.of(
-                this,
-                trackingViewModelFactory.create()).get(TrackingViewModel.class);
-
+        trackingViewModel = ViewModelProviders.of(this, trackingViewModelFactory.create())
+                .get(TrackingViewModel.class);
         trackingViewModel.getScheduledActivitiesLiveData()
                 .observe(this, this::updateScheduledActivities);
         trackingViewModel.getScheduledActivitiesLoadingErrorMessageLiveData()
@@ -114,18 +126,21 @@ public class TrackingTabFragment extends Fragment {
         trackingViewModel.getScheduledActivitiesLoadingLiveData()
                 .observe(this, this::updateScheduledActivitiesLoading);
 
-        if (getActivity() != null) {
-            todayScheduleViewModel = TodayScheduleViewModel.create(getActivity());
-            todayScheduleViewModel.liveData().observe(this, todayHistoryItems -> {
-                // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
-            });
-            surveyViewModel = SurveyViewModel.create(getActivity());
-            surveyViewModel.liveData().observe(this, scheduledActivityEntities -> {
-                // TODO: mdephillips 9/4/18 mimic what iOS does with these
-            });
-            studyBurstViewModel = StudyBurstViewModel.create(getActivity());
-            studyBurstViewModel.liveData().observe(this, this::setupActionBar);
-        }
+        todayScheduleViewModel = ViewModelProviders.of(this, todayScheduleViewModelFactory)
+                .get(TodayScheduleViewModel.class);
+        todayScheduleViewModel.liveData().observe(this, todayHistoryItems -> {
+            // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
+        });
+
+        studyBurstViewModel = ViewModelProviders.of(this, studyBurstViewModelFactory)
+                .get(StudyBurstViewModel.class);
+        studyBurstViewModel.liveData().observe(this, this::setupActionBar);
+
+        surveyViewModel = ViewModelProviders.of(this, surveyViewModelFactory)
+                .get(SurveyViewModel.class);
+        surveyViewModel.liveData().observe(this, scheduledActivityEntities -> {
+            // TODO: mdephillips 9/4/18 mimic what iOS does with these
+        });
     }
 
     @Override
@@ -166,7 +181,9 @@ public class TrackingTabFragment extends Fragment {
 
     /**
      * Sets up the action bar according to the current state of the study burst
-     * @param item most recent item from the StudyBurstViewModel
+     *
+     * @param item
+     *         most recent item from the StudyBurstViewModel
      */
     private void setupActionBar(@Nullable StudyBurstItem item) {
         if (item == null) {
@@ -181,7 +198,9 @@ public class TrackingTabFragment extends Fragment {
         trackingStatusBar.setMax(100);
         trackingStatusBar.setProgress(Math.round(100 * item.getProgress()));
 
-        if (getContext() == null) return;
+        if (getContext() == null) {
+            return;
+        }
         TodayActionBarItem actionBarItem = item.getActionBarItem(getContext());
         if (actionBarItem != null) {
             trackingStatusBar.setTitle(actionBarItem.getTitle());
