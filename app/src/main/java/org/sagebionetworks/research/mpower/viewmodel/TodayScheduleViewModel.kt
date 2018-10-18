@@ -1,28 +1,26 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
-import android.app.Application
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModelProviders
-import android.support.v4.app.FragmentActivity
-
-import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
-
 import android.arch.lifecycle.Transformations.map
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.support.annotation.VisibleForTesting
+import com.google.common.base.Preconditions.checkArgument
 import org.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.research.MpIdentifier
-import org.sagebionetworks.research.mpower.research.MpIdentifier.*
-
-import org.sagebionetworks.research.mpower.viewmodel.ItemType.*
-
+import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
+import org.sagebionetworks.research.mpower.viewmodel.ItemType.ACTIVITIES
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.extensions.startOfNextDay
-
+import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
+import javax.inject.Inject
 
 //
 //  Copyright © 2018 Sage Bionetworks. All rights reserved.
@@ -59,12 +57,17 @@ import org.threeten.bp.ZonedDateTime
  * and then consolidates them into history items.  History item live data will be updated when observed,
  * and when new schedules come down from bridge.
  */
-open class TodayScheduleViewModel(app: Application): ScheduleViewModel(app) {
+open class TodayScheduleViewModel(private val scheduleDao: ScheduledActivityEntityDao,
+        scheduleRepository: ScheduleRepository) : ScheduleViewModel(scheduleDao, scheduleRepository) {
 
-    companion object {
-        @JvmStatic
-        fun create(activity: FragmentActivity): TodayScheduleViewModel {
-            return ViewModelProviders.of(activity).get(TodayScheduleViewModel::class.java)
+    class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,
+            private val scheduleRepository: ScheduleRepository) : ViewModelProvider.Factory {
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            checkArgument(modelClass.isAssignableFrom(TodayScheduleViewModel::class.java))
+
+            return TodayScheduleViewModel(scheduledActivityEntityDao, scheduleRepository) as T
         }
     }
 
@@ -86,7 +89,7 @@ open class TodayScheduleViewModel(app: Application): ScheduleViewModel(app) {
      */
     fun liveData(): LiveData<List<TodayHistoryItem>> {
         val liveDataChecked = finishedTodayLiveData ?:
-            map(scheduleDao().excludeActivityGroupFinishedBetween(
+            map(scheduleDao.excludeActivityGroupFinishedBetween(
                 excludeTaskGroup, queryDateStart, queryDateEnd)) { consolidate(it) }
         finishedTodayLiveData = liveDataChecked
         return liveDataChecked

@@ -2,6 +2,8 @@ package org.sagebionetworks.research.mpower;
 
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -13,6 +15,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
+@Ignore
 public class AppCompletionStepTest extends UITestHelper {
     public static final String TREMOR_COMPLETION_TITLE = "Great job!";
     public static final String TREMOR_COMPLETION_TEXT = "You just completed your Tremor Test activity.";

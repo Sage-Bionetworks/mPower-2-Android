@@ -1,6 +1,8 @@
 package org.sagebionetworks.research.mpower.studyburst
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.support.v7.app.AppCompatActivity
@@ -8,18 +10,25 @@ import android.support.v7.widget.GridLayoutManager
 import android.view.View
 import android.widget.Toast
 import dagger.android.AndroidInjection
-import org.slf4j.LoggerFactory
-
-import org.sagebionetworks.research.mpower.R
-import kotlinx.android.synthetic.main.activity_study_burst.*
+import kotlinx.android.synthetic.main.activity_study_burst.expiresText
+import kotlinx.android.synthetic.main.activity_study_burst.expiresTextContainer
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstBack
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstMessage
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstRecycler
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstStatusWheel
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstTitle
+import kotlinx.android.synthetic.main.activity_study_burst.studyBurstTopProgressBar
+import kotlinx.android.synthetic.main.activity_study_burst.study_burst_next
 import org.researchstack.backbone.utils.ResUtils
+import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.TaskLauncher
 import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type.LAUNCH_ERROR
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
+import org.slf4j.LoggerFactory
 import javax.inject.Inject
-
+import javax.inject.Named
 
 class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
@@ -29,13 +38,15 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * @property studyBurstViewModel encapsulates all read/write data operations
      */
     private val studyBurstViewModel: StudyBurstViewModel by lazy {
-        StudyBurstViewModel.create(this)
+        ViewModelProviders.of(this, studyBurstViewModelFactory).get(StudyBurstViewModel::class.java)
     }
 
     /**
      * @property taskLauncher used to launch the study burst tasks
      */
     @Inject lateinit var taskLauncher: TaskLauncher
+
+    @Inject lateinit var studyBurstViewModelFactory: StudyBurstViewModel.Factory
 
     /**
      * @property studyBurstAdapter used in the RecyclerView
@@ -50,6 +61,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
+
         LOGGER.debug("StudyBurstActivity.onCreate()")
         setContentView(R.layout.activity_study_burst)
 

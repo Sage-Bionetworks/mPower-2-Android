@@ -9,10 +9,7 @@ android:
     - tools
     - build-tools-28.0.3
     - build-tools-28.0.2
-    - build-tools-27.0.3
     - android-28
-    - android-27
-    - android-26
 
 before_install:
   - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
@@ -34,7 +31,7 @@ before_script:
 stages:
   - name: test
     if: branch !~ /^stable-.*$/
-  - name: firebase-test
+  - name: Firebase-test
     if: env(encrypted_cafca427fc2f_iv) IS present
   - name: deploy
     if: branch =~ /^stable-.*$/
@@ -44,31 +41,33 @@ jobs:
     - stage: test
       script:
         - bundle exec fastlane test && bundle exec fastlane assemble
-#    - stage: firebase-test
-#      name: "Large androidTests"
-#      if: type != pull_request
-#      script:
-#        - ./git_crypt_unlock.sh || travis_terminate 1
-#        - ./firebase-test-setup.sh || travis_terminate 1
-#        - ./gradlew assembleInternalDebug
-#        - |
-#          echo "y" | gcloud firebase test android run \
-#          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
-#          --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk \
-#          --test-targets "size large" \
-#          --device model=NexusLowRes
-#    - stage: firebase-test
-#      name: "Small and Medium androidTests"
-#      script:
-#        - ./git_crypt_unlock.sh || travis_terminate 1
-#        - ./firebase-test-setup.sh || travis_terminate 1
-#        - ./gradlew :app:assembleInternalDebugAndroidTest
-#        - |
-#          echo "y" | gcloud firebase test android run \
-#          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
-#          --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk \
-#          --test-targets "size small","size medium" \
-#          --device model=NexusLowRes
+    - stage: Firebase-test
+      name: "Large androidTests"
+      if: branch =~ /^stable-.*$/
+      script:
+        - ./git_crypt_unlock.sh || travis_terminate 1
+        - ./firebase-test-setup.sh || travis_terminate 1
+        - ./gradlew :app:assembleInternalDebugAndroidTest :app:assembleInternalDebug
+        - |
+          echo "y" | gcloud firebase test android run \
+          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
+          --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk \
+          --test-targets "size large" \
+          --device model=NexusLowRes
+    - stage: Firebase-test
+      if: type != pull_request
+      name: "Small and Medium androidTests"
+      script:
+        - ./git_crypt_unlock.sh || travis_terminate 1
+        - ./firebase-test-setup.sh || travis_terminate 1
+        - ./gradlew :app:assembleInternalDebugAndroidTest :app:assembleInternalDebug
+#        - bundle exec fastlane assemble
+        - |
+          echo "y" | gcloud firebase test android run \
+          --app ./app/build/outputs/apk/internal/debug/app-internal-debug.apk \
+          --test ./app/build/outputs/apk/androidTest/internal/debug/app-internal-debug-androidTest.apk \
+          --test-targets "size small","size medium" \
+          --device model=NexusLowRes
     - stage: deploy
       script:
         - ./git_crypt_unlock.sh || travis_terminate 1
