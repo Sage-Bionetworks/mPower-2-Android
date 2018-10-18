@@ -67,6 +67,7 @@ import org.researchstack.backbone.utils.LogExt;
 import org.researchstack.backbone.utils.StepResultHelper;
 import org.sagebionetworks.bridge.rest.model.StudyParticipant;
 
+import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 
@@ -234,8 +235,14 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
 
     @VisibleForTesting
     protected void initDataGroups() {
-        // getLocalDataGroups returns an immutable list, so make sure to copy it
-        dataGroups = new ArrayList<>(MpDataProvider.getInstance().getLocalDataGroups());
+        UserSessionInfo userSessionInfo = MpDataProvider.getInstance().getUserSessionInfo();
+
+        if (userSessionInfo == null || userSessionInfo.getDataGroups() == null) {
+            dataGroups = new ArrayList<>();
+            return;
+        }
+
+        dataGroups = new ArrayList<>(userSessionInfo.getDataGroups());
     }
 
     @Override
