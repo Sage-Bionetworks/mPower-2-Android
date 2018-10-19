@@ -2,10 +2,8 @@ package org.sagebionetworks.research.mpower.tracking;
 
 import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
-import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 
 import android.content.Context;
@@ -21,21 +19,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import org.joda.time.DateTime;
-import org.researchstack.backbone.DataProvider;
 import org.researchstack.backbone.factory.IntentFactory;
 import org.researchstack.backbone.model.TaskModel;
 import org.researchstack.backbone.result.TaskResult;
-import org.researchstack.backbone.task.factory.TaskFactory;
 import org.researchstack.backbone.ui.ViewTaskActivity;
 import org.sagebionetworks.bridge.researchstack.BridgeDataProvider;
-import org.sagebionetworks.bridge.researchstack.survey.SurveyTaskScheduleModel;
 import org.sagebionetworks.bridge.rest.model.ScheduledActivity;
-import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
@@ -48,8 +40,6 @@ import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
 import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters;
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
 import org.threeten.bp.Instant;
-
-import java.util.ArrayList;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -152,6 +142,8 @@ public class TrackingTabFragment extends Fragment {
                 .get(StudyBurstViewModel.class);
         studyBurstViewModel.liveData().observe(this, this::setupActionBar);
         studyBurstViewModel.getScheduleSyncErrorMessageLiveData().observe(this, this::showErrorMessage);
+        // This is a single live event that will only be triggered once after a call to loadRsSurvey
+        studyBurstViewModel.getLoadRsSurveyLiveData().observe(this, this::rsSurveyLoaded);
 
         surveyViewModel = ViewModelProviders.of(this, surveyViewModelFactory)
                 .get(SurveyViewModel.class);
@@ -197,7 +189,12 @@ public class TrackingTabFragment extends Fragment {
         }
         TodayActionBarItem actionBarItem = item.getActionBarItem(getContext());
         if (actionBarItem != null) {
-            trackingStatusBar.setOnClickListener(view -> showActionBarFlow(item));
+            trackingStatusBar.setOnClickListener(view -> {
+                // Prevent multiple clicks if we are currently loading a survey and loading progress bar is showing
+                if (trackingStatusBar.progressBar.getVisibility() != View.VISIBLE) {
+                    showActionBarFlow(item);
+                }
+            });
             trackingStatusBar.setTitleTextBackgroundVisibility(View.VISIBLE);
             trackingStatusBar.setTitle(actionBarItem.getTitle());
             trackingStatusBar.setText(actionBarItem.getDetail());
@@ -235,15 +232,10 @@ public class TrackingTabFragment extends Fragment {
             return; // NPE guard statements
         }
         hasShownStudyBurst = true;
-        studyBurstViewModel.loadRsSurvey(surveySchedule).observe(this, task -> {
-            if (task != null && getActivity() != null) {
-                MpTaskFactory factory = new MpTaskFactory();
-                currentSurveyTask = factory.createMpSmartSurveyTask(getActivity(), task);
-                currentSurveySchedule = surveySchedule;
-                startActivityForResult(IntentFactory.INSTANCE.newTaskIntent(getActivity(),
-                        MpViewTaskActivity.class, currentSurveyTask), REQUEST_TASK);
-            }
-        });
+        trackingStatusBar.setProgressBarVisibility(View.VISIBLE);
+        currentSurveySchedule = surveySchedule;
+        // This triggers a SingleLiveEvent which only posts a success once
+        studyBurstViewModel.loadRsSurvey(surveySchedule);
     }
 
     @Override
@@ -288,10 +280,21 @@ public class TrackingTabFragment extends Fragment {
         currentSurveySchedule = null;
     }
 
+    private void rsSurveyLoaded(TaskModel task) {
+        trackingStatusBar.setProgressBarVisibility(View.GONE);
+        if (task != null && getActivity() != null) {
+            MpTaskFactory factory = new MpTaskFactory();
+            currentSurveyTask = factory.createMpSmartSurveyTask(getActivity(), task);
+            startActivityForResult(IntentFactory.INSTANCE.newTaskIntent(getActivity(),
+                    MpViewTaskActivity.class, currentSurveyTask), REQUEST_TASK);
+        }
+    }
+
     private void showErrorMessage(@Nullable String errorMessage) {
         if (errorMessage == null) {
             return;
         }
+        trackingStatusBar.setProgressBarVisibility(View.GONE);
         Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
     }
 

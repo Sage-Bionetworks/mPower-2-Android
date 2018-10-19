@@ -33,6 +33,7 @@
 package org.sagebionetworks.research.mpower.researchstack.framework;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.researchstack.backbone.StorageAccess;
 import org.researchstack.backbone.result.TaskResult;
 import org.researchstack.backbone.step.Step;
 import org.researchstack.backbone.ui.ViewTaskActivity;
@@ -62,6 +64,9 @@ import org.sagebionetworks.research.mpower.researchstack.framework.step.toolbar.
 
 public class MpViewTaskActivity extends ViewTaskActivity {
 
+    // We don't use a pin code for CRF, so just plug in a useless one the app remembers
+    public static final String PIN_CODE = "1234";
+
     protected ViewGroup toolbarContainer;
     protected TextView stepProgressTextView;
 
@@ -70,6 +75,25 @@ public class MpViewTaskActivity extends ViewTaskActivity {
             return (MpTaskToolbar)toolbar;
         }
         return null;
+    }
+
+    @Override
+    public void onDataAuth() {
+        storageAccessUnregister();
+        mockAuthenticate(this);
+        super.onDataReady();
+    }
+
+    /**
+     * Plugs in a fake pin-code to get around that feature
+     * @param context can be app or activity
+     */
+    public void mockAuthenticate(Context context) {
+        if (StorageAccess.getInstance().hasPinCode(context)) {
+            StorageAccess.getInstance().authenticate(context, PIN_CODE);
+        } else {
+            StorageAccess.getInstance().createPinCode(context, PIN_CODE);
+        }
     }
 
     @Override

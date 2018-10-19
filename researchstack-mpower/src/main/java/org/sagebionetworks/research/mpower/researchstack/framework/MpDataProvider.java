@@ -35,18 +35,19 @@ public class MpDataProvider extends BridgeDataProvider {
         // no op
     }
 
-    @Override
-    public TaskHelper createTaskHelper(
-            NotificationHelper notif,
-            StorageAccessWrapper wrapper,
-            BridgeManagerProvider provider) {
-
-        // Override to provide our own custom MpTaskHelper
-        return new MpTaskHelper(
-                wrapper,
-                ResourceManager.getInstance(),
-                AppPrefs.getInstance(),
-                notif,
-                provider);
-    }
+    // This enables answers all in one "answers.json" file, but that is not what we want for surveys
+//    @Override
+//    public TaskHelper createTaskHelper(
+//            NotificationHelper notif,
+//            StorageAccessWrapper wrapper,
+//            BridgeManagerProvider provider) {
+//
+//        // Override to provide our own custom MpTaskHelper
+//        return new MpTaskHelper(
+//                wrapper,
+//                ResourceManager.getInstance(),
+//                AppPrefs.getInstance(),
+//                notif,
+//                provider);
+//    }
 }

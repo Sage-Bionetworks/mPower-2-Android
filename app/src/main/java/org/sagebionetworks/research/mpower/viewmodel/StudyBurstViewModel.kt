@@ -50,6 +50,7 @@ import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
+import org.sagebionetworks.research.sageresearch.viewmodel.SingleLiveEvent
 import org.slf4j.LoggerFactory
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
@@ -81,14 +82,6 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
     }
 
     companion object {
-        fun getStudyBurst(config: StudyBurstConfiguration, today: LocalDateTime,
-                schedules: List<ScheduledActivityEntity>): ScheduledActivityEntity? {
-            return schedules.firstOrNull {
-                it.activityIdentifier() == config.identifier &&
-                        (it.scheduledOn?.inSameDayAs(today) ?: false)
-            }
-        }
-
         internal val defaultTaskSortOrder: List<String> get() {
             return DataSourceManager.measuringGroup.activityIdentifiers.toList()
         }
@@ -139,20 +132,23 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
                 now().startOfDay().plusDays(numberOfDays).minusNanos(1))
     }
 
-    protected var loadRsSurveyLiveData: MutableLiveData<TaskModel>? = null
-    fun loadRsSurvey(survey: ScheduledActivityEntity): LiveData<TaskModel> {
-        val liveData = loadRsSurveyLiveData ?: MutableLiveData()
-        loadRsSurveyLiveData = liveData
-        // Load task attempts to load a survey task based, based on the data provider.
+    val loadRsSurveyLiveData: SingleLiveEvent<TaskModel> = SingleLiveEvent()
+    /**
+     * Load a ResearchStack based survey from bridge
+     * For response, please see @property rsSurveyLoadedLiveData and scheduleSyncErrorMessageLiveData
+     * @param survey must be a survey, otherwise an error will be thrown
+     * @return a LiveData<TaskModel> for easier consumption, but it is based on the Survey bridge class type
+     */
+    fun loadRsSurvey(survey: ScheduledActivityEntity) {
         compositeDispose.add(scheduleRepo.loadRsSurvey(survey).toObservable()
                 .subscribeOn(Schedulers.io())
                 .subscribe({
                     val taskModel = RestUtils.toType(it, TaskModel::class.java)
-                    loadRsSurveyLiveData?.postValue(taskModel)
+                    loadRsSurveyLiveData.setValue(taskModel)
                 }, { t ->
                     scheduleSyncErrorMessageLiveData.postValue(t.localizedMessage)
+                    loadRsSurveyLiveData.setValue(null)
                 }))
-        return liveData
     }
 
     @VisibleForTesting
