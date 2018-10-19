@@ -255,7 +255,7 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
         // Fill in info about the finished tasks' guids and start/end dates
         item.finishedSchedules.forEach {
             it.activityIdentifier()?.let { identifier ->
-                it.finishedOn?.let { finishedOn ->
+                it.finishedOn?.let { _ ->
                     val startDate: Instant = it.startedOn ?: nowInstant
                     results.add(AnswerResultBase(
                             "tasks.$identifier.startDate", startDate, startDate, startDate, DATE))
