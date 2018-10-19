@@ -3,23 +3,18 @@ package org.sagebionetworks.research.mpower.viewmodel
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 
 import android.content.Context
 import android.support.annotation.DrawableRes
 import android.support.annotation.VisibleForTesting
-import android.widget.Toast
 import com.google.common.base.Preconditions.checkArgument
 import com.google.gson.reflect.TypeToken
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.researchstack.backbone.factory.IntentFactory
 import org.researchstack.backbone.model.TaskModel
-import org.sagebionetworks.bridge.researchstack.survey.SurveyTaskScheduleModel
 import org.sagebionetworks.bridge.rest.RestUtils
-import org.sagebionetworks.bridge.rest.model.Survey
 import org.sagebionetworks.research.domain.result.AnswerResultType.DATE
 import org.sagebionetworks.research.domain.result.AnswerResultType.STRING
 import org.sagebionetworks.research.domain.result.implementations.AnswerResultBase
@@ -35,9 +30,6 @@ import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
-import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider
-import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity
-import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.extensions.availableToday
@@ -52,6 +44,7 @@ import org.sagebionetworks.research.sageresearch.manager.TaskInfo
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.sagebionetworks.research.sageresearch.viewmodel.SingleLiveEvent
+import org.sagebionetworks.research.sageresearch_app_sdk.TaskResultUploader
 import org.slf4j.LoggerFactory
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
@@ -64,21 +57,23 @@ import java.util.Locale
 import javax.inject.Inject
 
 open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
-        scheduleRepo: ScheduleRepository, private val studyBurstSettingsDao: StudyBurstSettingsDao) :
+        scheduleRepo: ScheduleRepository, private val studyBurstSettingsDao: StudyBurstSettingsDao,
+        private val taskResultUploader: TaskResultUploader) :
         ScheduleViewModel(scheduleDao, scheduleRepo) {
 
     private val logger = LoggerFactory.getLogger(ScheduleRepository::class.java)
 
     class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,
             private val scheduleRepository: ScheduleRepository,
-            private val studyBurstSettingsDao: StudyBurstSettingsDao) : ViewModelProvider.Factory {
+            private val studyBurstSettingsDao: StudyBurstSettingsDao,
+            private val taskResultUploader: TaskResultUploader) : ViewModelProvider.Factory {
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             checkArgument(modelClass.isAssignableFrom(StudyBurstViewModel::class.java))
 
             return StudyBurstViewModel(scheduledActivityEntityDao, scheduleRepository,
-                    studyBurstSettingsDao) as T
+                    studyBurstSettingsDao, taskResultUploader) as T
         }
     }
 
@@ -272,10 +267,21 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
                 identifier, studyMarker.startedOn ?: nowInstant,
                 studyMarker.finishedOn, uuid, null, results, results)
 
-        scheduleRepo.updateSchedule(taskResult)
+        compositeDispose.add(
+                scheduleRepo.updateSchedule(taskResult).subscribe({
+                    scheduleSyncErrorMessageLiveData.postValue(null)
+                }, { t ->
+                    scheduleSyncErrorMessageLiveData.postValue(t.localizedMessage)
+                }))
 
-        // TODO: mdephillips 10/16/18 waiting for josh's injection code to be able to use a task result uploader
-        //scheduleRepo.uploadTaskResult(taskResult)
+        compositeDispose.add(
+                taskResultUploader.processTaskResult(taskResult)
+                        .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            scheduleSyncErrorMessageLiveData.postValue(null)
+                        }, { t ->
+                            scheduleSyncErrorMessageLiveData.postValue(t.localizedMessage)
+                        }))
     }
 
     /**

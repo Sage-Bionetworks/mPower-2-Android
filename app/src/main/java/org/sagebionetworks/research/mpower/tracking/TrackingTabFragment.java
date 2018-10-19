@@ -171,9 +171,6 @@ public class TrackingTabFragment extends Fragment {
         if (item == null) {
             return;
         }
-        if (!hasShownStudyBurst) {
-            showActionBarFlow(item);
-        }
         if (!hasShownStudyBurst &&
                 !item.hasCompletedMotivationSurvey() &&
                 item.getMotivationSurvey() != null) {
