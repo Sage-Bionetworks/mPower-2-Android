@@ -209,10 +209,6 @@ public class TrackingTabFragment extends Fragment {
      * or when the user has not done their motivation survey yet.
      */
     private void showActionBarFlow(@Nonnull StudyBurstItem item) {
-        if (item.getBackgroundSurvey() != null) {
-            launchRsSurvey(item.getBackgroundSurvey());
-            return;
-        }
         ScheduledActivityEntity nextCompletionTask = item.getNextCompletionActivityToShow();
         if (!item.hasCompletedMotivationSurvey() && item.getMotivationSurvey() != null) {
             launchRsSurvey(item.getMotivationSurvey());
