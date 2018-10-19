@@ -4,6 +4,7 @@ import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
 
 import android.app.Activity;
+
 import android.arch.lifecycle.ViewModelProviders;
 
 import android.content.Context;
@@ -25,6 +26,7 @@ import org.researchstack.backbone.result.TaskResult;
 import org.researchstack.backbone.ui.ViewTaskActivity;
 import org.sagebionetworks.bridge.researchstack.BridgeDataProvider;
 import org.sagebionetworks.bridge.rest.model.ScheduledActivity;
+
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
@@ -117,9 +119,8 @@ public class TrackingTabFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        ViewCompat.requestApplyInsets(this.getView());
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        ViewCompat.requestApplyInsets(view);
     }
 
     @Override
