@@ -77,6 +77,7 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
     val scheduleDao = database.scheduleDao()
     val scheduleRepo = ScheduleRepository(scheduleDao,
             ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()),
+            BridgeManagerProvider.getInstance().surveyManager,
             BridgeManagerProvider.getInstance().activityManager,
             BridgeManagerProvider.getInstance().participantManager)
 

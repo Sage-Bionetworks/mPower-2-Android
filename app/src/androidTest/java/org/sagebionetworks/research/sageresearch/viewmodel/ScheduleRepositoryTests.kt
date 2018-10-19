@@ -17,8 +17,8 @@ import org.junit.*
 import org.junit.runner.*
 import org.mockito.Mockito.`when`
 import org.sagebionetworks.bridge.android.manager.ActivityManager
-import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
-import org.sagebionetworks.bridge.android.manager.ParticipantRecordManager
+
+import org.sagebionetworks.bridge.android.manager.SurveyManager
 import org.sagebionetworks.bridge.rest.exceptions.EntityNotFoundException
 import org.sagebionetworks.bridge.rest.model.Message
 import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
@@ -187,9 +187,11 @@ class ScheduleRepositoryTests: RoomTestHelper() {
     }
 
     class MockScheduleRepository(scheduleDao: ScheduledActivityEntityDao,
-            syncStateDao: ScheduledRepositorySyncStateDao, val activityManager: ActivityManager = mock())
+            syncStateDao: ScheduledRepositorySyncStateDao,
+            val surveyManager: SurveyManager = mock(),
+            val activityManager: ActivityManager = mock())
         : ScheduleRepository(scheduleDao, syncStateDao,
-            activityManager,
+            surveyManager, activityManager,
             mock()) {
 
         companion object {
