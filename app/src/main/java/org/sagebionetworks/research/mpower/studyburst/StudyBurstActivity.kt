@@ -27,6 +27,7 @@ import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type.LAU
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -35,7 +36,9 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
     private val LOGGER = LoggerFactory.getLogger(StudyBurstActivity::class.java)
 
     companion object {
+        // Used with activity.startActivityForResult()
         val REQUEST_CODE_STUDY_BURST = 1483
+        // Used with activity.setResult()
         val EXTRA_GUID_OF_TASK_TO_RUN = "StudyBurstActivity.Guid.ToRun"
     }
 
@@ -51,6 +54,9 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      */
     @Inject lateinit var taskLauncher: TaskLauncher
 
+    /**
+     * @property studyBurstViewModelFactory used to create a StudyBurstViewModel instance injected through Dagger
+     */
     @Inject lateinit var studyBurstViewModelFactory: StudyBurstViewModel.Factory
 
     /**
@@ -80,9 +86,13 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
         study_burst_next.setOnClickListener { onNextClicked() }
         studyBurstBack.setOnClickListener {
-            setResult(Activity.RESULT_CANCELED)
-            finish()
+            finishActivity(null)
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        countdownTask?.cancel()
     }
 
     /**
@@ -90,33 +100,40 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * It will observer the study burst view model in all lifecycle scenarios.
      */
     private fun observeLiveData() {
+        // StudyBurstItem actually can't be null but appears Nullable because of the Observer @Nullable annotation
         viewModelObserver = Observer { item -> item?.let {
-
-            // StudyBurstItem actually can't be null but appears Nullable because of the Observer @Nullable annotation
-            if (!it.hasStudyBurst) {
-                // If we don't have a study burst, this means that we should send the user to a completion task
-                // Or, if we don't have any completion tasks, we should probably leave this Activity
-                if (item.studyBurstWasJustCompleted) {
-                    item.nextCompletionActivityToShow?.let { schedule ->
-                        val resultIntent = Intent()
-                        resultIntent.putExtra(EXTRA_GUID_OF_TASK_TO_RUN, schedule)
-                        setResult(RESULT_OK, resultIntent)
-                        finish()
-                        return@Observer
-                    }
-                }
-            }
-
             setupStudyBurstTitle(it)
             setupStudyBurstMessage(it)
             setupExpiresOnText(it)
             setupStatusBarWheel(it)
             setupStudyBurstTopProgress(it)
             setupStudyBurstAdapter(it)
+
+            // If there are no more items to run, the user has done all their study burst activities
+            if (studyBurstAdapter?.nextItem == null) {
+                // If we don't have a study burst, this means that we should send the user to a completion task
+                // Or, if we don't have any completion tasks, we should probably leave this Activity
+                finishActivity(item.nextCompletionActivityToShow)
+                return@Observer
+            }
         }}
         viewModelObserver?.let {
             studyBurstViewModel.liveData().observe(this, it)
         }
+    }
+
+    /**
+     * @param scheduleToRun upon returning to the previous screen, if null, none will be run
+     */
+    private fun finishActivity(scheduleToRun: ScheduledActivityEntity?) {
+        scheduleToRun?.let {
+            val resultIntent = Intent()
+            resultIntent.putExtra(EXTRA_GUID_OF_TASK_TO_RUN, it)
+            setResult(RESULT_OK, resultIntent)
+        } ?: run {
+            setResult(Activity.RESULT_CANCELED)
+        }
+        finish()
     }
 
     /**
@@ -128,11 +145,6 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         viewModelObserver?.let {
             studyBurstViewModel.refreshLiveData(this).observe(this, it)
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        countdownTask?.cancel()
     }
 
     /**
@@ -243,8 +255,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         studyBurstAdapter?.nextItem?.let {
             itemSelected(it)
         } ?: run {
-            setResult(Activity.RESULT_CANCELED)
-            finish()  // no more items to run, leave screen
+            finishActivity(null) // no more items to run, leave screen
         }
     }
 

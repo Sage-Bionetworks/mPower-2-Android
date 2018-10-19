@@ -3,15 +3,22 @@ package org.sagebionetworks.research.mpower.viewmodel
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 
 import android.content.Context
 import android.support.annotation.DrawableRes
 import android.support.annotation.VisibleForTesting
+import android.widget.Toast
 import com.google.common.base.Preconditions.checkArgument
 import com.google.gson.reflect.TypeToken
+import io.reactivex.schedulers.Schedulers
+import org.researchstack.backbone.factory.IntentFactory
+import org.researchstack.backbone.model.TaskModel
+import org.sagebionetworks.bridge.researchstack.survey.SurveyTaskScheduleModel
 import org.sagebionetworks.bridge.rest.RestUtils
+import org.sagebionetworks.bridge.rest.model.Survey
 import org.sagebionetworks.research.domain.result.AnswerResultType.DATE
 import org.sagebionetworks.research.domain.result.AnswerResultType.STRING
 import org.sagebionetworks.research.domain.result.implementations.AnswerResultBase
@@ -27,6 +34,9 @@ import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
+import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider
+import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity
+import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.extensions.availableToday
@@ -127,6 +137,22 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
         return Pair(
                 now().startOfDay().minusDays(numberOfDays),
                 now().startOfDay().plusDays(numberOfDays).minusNanos(1))
+    }
+
+    protected var loadRsSurveyLiveData: MutableLiveData<TaskModel>? = null
+    fun loadRsSurvey(survey: ScheduledActivityEntity): LiveData<TaskModel> {
+        val liveData = loadRsSurveyLiveData ?: MutableLiveData()
+        loadRsSurveyLiveData = liveData
+        // Load task attempts to load a survey task based, based on the data provider.
+        compositeDispose.add(scheduleRepo.loadRsSurvey(survey).toObservable()
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    val taskModel = RestUtils.toType(it, TaskModel::class.java)
+                    loadRsSurveyLiveData?.postValue(taskModel)
+                }, { t ->
+                    scheduleSyncErrorMessageLiveData.postValue(t.localizedMessage)
+                }))
+        return liveData
     }
 
     @VisibleForTesting
@@ -521,7 +547,9 @@ data class StudyBurstItem(
      */
     val nextCompletionActivityToShow: ScheduledActivityEntity? get() {
         pastUnfinishedCompletionActivity?.let { return it }
-        todayUnfinishedCompletionActivity?.let { return it }
+        if (isCompletedForToday) {
+            todayUnfinishedCompletionActivity?.let { return it }
+        }
         return null
     }
 
