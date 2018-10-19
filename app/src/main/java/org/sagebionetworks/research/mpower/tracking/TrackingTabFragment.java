@@ -171,6 +171,12 @@ public class TrackingTabFragment extends Fragment {
         if (item == null) {
             return;
         }
+        // DEBUGGING HELP:
+        // To immediately run a survey you can uncomment this and if you want change to any survey
+        // For example change both instances of getBackgroundSurvey() to getDemographicsSurvey()
+//        if (!hasShownStudyBurst && item.getBackgroundSurvey() != null) {
+//            launchRsSurvey(item.getBackgroundSurvey());
+//        }
         if (!hasShownStudyBurst &&
                 !item.hasCompletedMotivationSurvey() &&
                 item.getMotivationSurvey() != null) {
