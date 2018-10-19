@@ -13,6 +13,7 @@ import android.support.annotation.VisibleForTesting
 import android.widget.Toast
 import com.google.common.base.Preconditions.checkArgument
 import com.google.gson.reflect.TypeToken
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.researchstack.backbone.factory.IntentFactory
 import org.researchstack.backbone.model.TaskModel
@@ -142,12 +143,14 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
     fun loadRsSurvey(survey: ScheduledActivityEntity) {
         compositeDispose.add(scheduleRepo.loadRsSurvey(survey).toObservable()
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     val taskModel = RestUtils.toType(it, TaskModel::class.java)
-                    loadRsSurveyLiveData.setValue(taskModel)
+                    loadRsSurveyLiveData.value = taskModel
+                    scheduleSyncErrorMessageLiveData.postValue(null)
                 }, { t ->
                     scheduleSyncErrorMessageLiveData.postValue(t.localizedMessage)
-                    loadRsSurveyLiveData.setValue(null)
+                    loadRsSurveyLiveData.value = null
                 }))
     }
 

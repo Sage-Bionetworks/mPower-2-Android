@@ -112,6 +112,9 @@ public class MpTaskHelper extends TaskHelper {
     @Override
     protected void addFiles(Archive.Builder archiveBuilder, List<Result> flattenedResultList, String taskResultId) {
 
+        // We also upload each individual json answer result to support AppCore surveys
+        super.addFiles(archiveBuilder, flattenedResultList, taskResultId);
+
         // The other tasks group the question step results in a single "answers" file
         // This is behavior that the bridge server team has wanted for a long time
         // Once this is proven capable, its functionality should be moved into TaskHelper base class

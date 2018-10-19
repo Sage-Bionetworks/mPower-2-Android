@@ -170,6 +170,9 @@ public class TrackingTabFragment extends Fragment {
         if (item == null) {
             return;
         }
+        if (!hasShownStudyBurst) {
+            showActionBarFlow(item);
+        }
         if (!hasShownStudyBurst &&
                 !item.hasCompletedMotivationSurvey() &&
                 item.getMotivationSurvey() != null) {
@@ -189,16 +192,13 @@ public class TrackingTabFragment extends Fragment {
         }
         TodayActionBarItem actionBarItem = item.getActionBarItem(getContext());
         if (actionBarItem != null) {
-            trackingStatusBar.setOnClickListener(view -> {
-                // Prevent multiple clicks if we are currently loading a survey and loading progress bar is showing
-                if (trackingStatusBar.progressBar.getVisibility() != View.VISIBLE) {
-                    showActionBarFlow(item);
-                }
-            });
+            trackingStatusBar.setEnabled(true);
+            trackingStatusBar.setOnClickListener(view -> showActionBarFlow(item));
             trackingStatusBar.setTitleTextBackgroundVisibility(View.VISIBLE);
             trackingStatusBar.setTitle(actionBarItem.getTitle());
             trackingStatusBar.setText(actionBarItem.getDetail());
         } else {
+            trackingStatusBar.setEnabled(false);
             trackingStatusBar.setOnClickListener(null);
             trackingStatusBar.setTitleTextBackgroundVisibility(View.INVISIBLE);
             trackingStatusBar.setTitle(null);
@@ -211,6 +211,10 @@ public class TrackingTabFragment extends Fragment {
      * or when the user has not done their motivation survey yet.
      */
     private void showActionBarFlow(@Nonnull StudyBurstItem item) {
+        if (item.getBackgroundSurvey() != null) {
+            launchRsSurvey(item.getBackgroundSurvey());
+            return;
+        }
         ScheduledActivityEntity nextCompletionTask = item.getNextCompletionActivityToShow();
         if (!item.hasCompletedMotivationSurvey() && item.getMotivationSurvey() != null) {
             launchRsSurvey(item.getMotivationSurvey());
@@ -232,6 +236,7 @@ public class TrackingTabFragment extends Fragment {
             return; // NPE guard statements
         }
         hasShownStudyBurst = true;
+        trackingStatusBar.setEnabled(false);
         trackingStatusBar.setProgressBarVisibility(View.VISIBLE);
         currentSurveySchedule = surveySchedule;
         // This triggers a SingleLiveEvent which only posts a success once
@@ -281,6 +286,7 @@ public class TrackingTabFragment extends Fragment {
     }
 
     private void rsSurveyLoaded(TaskModel task) {
+        trackingStatusBar.setEnabled(true);
         trackingStatusBar.setProgressBarVisibility(View.GONE);
         if (task != null && getActivity() != null) {
             MpTaskFactory factory = new MpTaskFactory();
@@ -294,6 +300,7 @@ public class TrackingTabFragment extends Fragment {
         if (errorMessage == null) {
             return;
         }
+        trackingStatusBar.setEnabled(true);
         trackingStatusBar.setProgressBarVisibility(View.GONE);
         Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
     }
