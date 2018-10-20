@@ -50,10 +50,11 @@
                 android:layout_gravity="center_vertical"
                 android:indeterminate="false"
                 android:max="4"
-                android:progress="2"
                 android:scaleY="0.65"
                 android:progressDrawable="@drawable/progress_drawable"/>
+
         </LinearLayout>
+
         <TextView
             android:id="@+id/studyBurstTitle"
             android:layout_width="match_parent"
@@ -72,6 +73,7 @@
             android:fontFamily="@font/lato"
             android:layout_margin="20dp"
             android:gravity="center"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -114,14 +116,16 @@
         android:padding="@dimen/rsb_padding_small"
         app:layout_constraintTop_toBottomOf="@id/middle_container"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="@string/study_burst_progress_message"
             android:textStyle="italic"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black" />
         <TextView
             android:id="@+id/expiresText"
             android:layout_width="wrap_content"

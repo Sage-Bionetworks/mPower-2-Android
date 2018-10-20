@@ -79,7 +79,10 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
             ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()),
             BridgeManagerProvider.getInstance().surveyManager,
             BridgeManagerProvider.getInstance().activityManager,
-            BridgeManagerProvider.getInstance().participantManager)
+            BridgeManagerProvider.getInstance().participantManager,
+            BridgeManagerProvider.getInstance().authenticationManager,
+            BridgeManagerProvider.getInstance().uploadManager,
+            BridgeManagerProvider.getInstance().bridgeConfig)
 
     @Before
     fun setupForEachTest() {

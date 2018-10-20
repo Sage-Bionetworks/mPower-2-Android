@@ -143,7 +143,7 @@ public class TrackingTabFragment extends Fragment {
                 .get(StudyBurstViewModel.class);
         studyBurstViewModel.liveData().observe(this, this::setupActionBar);
         studyBurstViewModel.getScheduleSyncErrorMessageLiveData().observe(this, this::showErrorMessage);
-        // This is a single live event that will only be triggered once after a call to loadRsSurvey
+        // This is a single live event that will only be triggered once after a call to loadResearchStackSurvey
         studyBurstViewModel.getLoadRsSurveyLiveData().observe(this, this::rsSurveyLoaded);
 
         surveyViewModel = ViewModelProviders.of(this, surveyViewModelFactory)
@@ -172,7 +172,7 @@ public class TrackingTabFragment extends Fragment {
             return;
         }
         // DEBUGGING HELP:
-        // To immediately run a survey you can uncomment this and if you want change to any survey
+        // To immediately run a survey you can uncomment this. You can also change to any survey
         // For example change both instances of getBackgroundSurvey() to getDemographicsSurvey()
 //        if (!hasShownStudyBurst && item.getBackgroundSurvey() != null) {
 //            launchRsSurvey(item.getBackgroundSurvey());
@@ -258,22 +258,20 @@ public class TrackingTabFragment extends Fragment {
                 currentSurveySchedule.setFinishedOn(Instant.ofEpochMilli(taskResult.getEndDate().getTime()));
                 // This function updates the schedule on bridge and in the ScheduleRepository
                 studyBurstViewModel.updateScheduleToBridge(currentSurveySchedule);
-
-                // We only need to provide enough information in the ScheduledActivity
-                // for the BridgeDataProvider to create the metadata JSON file
-                ScheduledActivity bridgeSchedule = EntityTypeConverters.bridgeMetaDataSchedule(currentSurveySchedule);
-                // We give it the schedule for the metadata, but we specify not to update the schedule on bridge
-                // Because we do that ourselves through the ScheduleRepository
-                // on the line above studyBurstViewModel.updateSchedule(currentSurveySchedule)
-                BridgeDataProvider.getInstance().uploadTaskResult(
-                        getActivity(), taskResult, bridgeSchedule, false);
+                // This function uploads the result of the task to S3
+                studyBurstViewModel.uploadResearchStackTaskResultToS3(currentSurveySchedule, taskResult);
 
                 if (MOTIVATION.equals(currentSurveySchedule.activityIdentifier())) {
                     // send the user straight into the study burst
                     goToStudyBurst();
                 }
             }
-        } else if (resultCode == Activity.RESULT_OK &&
+        }
+        currentSurveyTask = null;
+        currentSurveySchedule = null;
+
+        // Check this at the end because it may set currentSurveyTask and currentSurveySchedule
+        if (resultCode == Activity.RESULT_OK &&
                 requestCode == StudyBurstActivity.Companion.getREQUEST_CODE_STUDY_BURST()) {
             ScheduledActivityEntity scheduleToRun = (ScheduledActivityEntity)
                     data.getSerializableExtra(StudyBurstActivity.Companion.getEXTRA_GUID_OF_TASK_TO_RUN());
@@ -281,10 +279,12 @@ public class TrackingTabFragment extends Fragment {
                 launchRsSurvey(scheduleToRun);
             }
         }
-        currentSurveyTask = null;
-        currentSurveySchedule = null;
     }
 
+    /**
+     * Called when the survey model is loaded from bridge, time to show it to the user
+     * @param task old research stack model object for creating surveys
+     */
     private void rsSurveyLoaded(TaskModel task) {
         trackingStatusBar.setEnabled(true);
         trackingStatusBar.setProgressBarVisibility(View.GONE);
@@ -296,6 +296,10 @@ public class TrackingTabFragment extends Fragment {
         }
     }
 
+    /**
+     * Called when there is a network or database error
+     * @param errorMessage to display to the user
+     */
     private void showErrorMessage(@Nullable String errorMessage) {
         if (errorMessage == null) {
             return;
@@ -305,6 +309,9 @@ public class TrackingTabFragment extends Fragment {
         Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Transitions to the study burst screen
+     */
     private void goToStudyBurst() {
         startActivityForResult(new Intent(getActivity(), StudyBurstActivity.class),
                 StudyBurstActivity.Companion.getREQUEST_CODE_STUDY_BURST());

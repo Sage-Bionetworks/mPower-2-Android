@@ -235,14 +235,7 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
 
     @VisibleForTesting
     protected void initDataGroups() {
-        UserSessionInfo userSessionInfo = MpDataProvider.getInstance().getUserSessionInfo();
-
-        if (userSessionInfo == null || userSessionInfo.getDataGroups() == null) {
-            dataGroups = new ArrayList<>();
-            return;
-        }
-
-        dataGroups = new ArrayList<>(userSessionInfo.getDataGroups());
+        dataGroups = MpDataProvider.getInstance().getUserDataGroups();
     }
 
     @Override

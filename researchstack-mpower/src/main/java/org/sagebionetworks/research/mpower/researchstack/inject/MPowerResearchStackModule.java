@@ -41,14 +41,20 @@ public abstract class MPowerResearchStackModule {
     static ResearchStack provideResearchStack(Context context) {
         MpResearchStack researchStack = new MpResearchStack(context);
         ResearchStack.init(context, researchStack);
+        mockAuthenticate(context);
+        return researchStack;
+    }
 
+    /**
+     * Call to mock authenticate to remove pin code auth screen for ResearchStack based activities
+     * @param context can be app or activity
+     */
+    public static void mockAuthenticate(Context context) {
         // We don't use a pin code for MPower, so just plug one in for the app to always use
         if (StorageAccess.getInstance().hasPinCode(context)) {
             StorageAccess.getInstance().authenticate(context, PIN_CODE);
         } else {
             StorageAccess.getInstance().createPinCode(context, PIN_CODE);
         }
-
-        return researchStack;
     }
 }

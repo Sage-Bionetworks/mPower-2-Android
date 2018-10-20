@@ -54,6 +54,7 @@ import org.sagebionetworks.research.mpower.researchstack.R;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.toolbar.MpTaskToolbar;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.toolbar.MpTaskToolbarActionManipulator;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.toolbar.MpTaskToolbarIconManipulator;
+import org.sagebionetworks.research.mpower.researchstack.inject.MPowerResearchStackModule;
 
 /**
  * Created by mdephillips on 12/11/17, edited to pull into the mPower RS framework on 10/14/18.
@@ -63,9 +64,6 @@ import org.sagebionetworks.research.mpower.researchstack.framework.step.toolbar.
  */
 
 public class MpViewTaskActivity extends ViewTaskActivity {
-
-    // We don't use a pin code for CRF, so just plug in a useless one the app remembers
-    public static final String PIN_CODE = "1234";
 
     protected ViewGroup toolbarContainer;
     protected TextView stepProgressTextView;
@@ -80,20 +78,8 @@ public class MpViewTaskActivity extends ViewTaskActivity {
     @Override
     public void onDataAuth() {
         storageAccessUnregister();
-        mockAuthenticate(this);
+        MPowerResearchStackModule.mockAuthenticate(this);
         super.onDataReady();
-    }
-
-    /**
-     * Plugs in a fake pin-code to get around that feature
-     * @param context can be app or activity
-     */
-    public void mockAuthenticate(Context context) {
-        if (StorageAccess.getInstance().hasPinCode(context)) {
-            StorageAccess.getInstance().authenticate(context, PIN_CODE);
-        } else {
-            StorageAccess.getInstance().createPinCode(context, PIN_CODE);
-        }
     }
 
     @Override

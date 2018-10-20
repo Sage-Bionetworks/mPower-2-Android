@@ -106,7 +106,10 @@ class StudyBurstViewModelTests: RoomTestHelper() {
             ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()),
             BridgeManagerProvider.getInstance().surveyManager,
             BridgeManagerProvider.getInstance().activityManager,
-            BridgeManagerProvider.getInstance().participantManager)
+            BridgeManagerProvider.getInstance().participantManager,
+            BridgeManagerProvider.getInstance().authenticationManager,
+            BridgeManagerProvider.getInstance().uploadManager,
+            BridgeManagerProvider.getInstance().bridgeConfig)
 
     @Before
     fun setupForEachTest() {
@@ -897,10 +900,9 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
     class MockStudyBurstViewModel(
             scheduleDao: ScheduledActivityEntityDao, scheduleRepo: ScheduleRepository,
-            val studyBurstSettingsDao: StudyBurstSettingsDao, val studySetup: StudySetup,
-            taskResultUploader: TaskResultUploader = mock(TaskResultUploader::class.java)):
+            val studyBurstSettingsDao: StudyBurstSettingsDao, val studySetup: StudySetup):
 
-            StudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao, taskResultUploader) {
+            StudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao) {
 
         override val config = studySetup.config
 

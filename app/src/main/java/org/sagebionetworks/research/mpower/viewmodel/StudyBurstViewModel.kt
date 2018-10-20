@@ -13,7 +13,14 @@ import com.google.common.base.Preconditions.checkArgument
 import com.google.gson.reflect.TypeToken
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import org.joda.time.DateTime
+import org.researchstack.backbone.answerformat.AnswerFormat
 import org.researchstack.backbone.model.TaskModel
+import org.researchstack.backbone.result.StepResult
+import org.researchstack.backbone.result.TaskResult
+import org.sagebionetworks.bridge.data.Archive
+import org.sagebionetworks.bridge.data.JsonArchiveFile
+import org.sagebionetworks.bridge.researchstack.survey.SurveyAnswer
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.research.domain.result.AnswerResultType.DATE
 import org.sagebionetworks.research.domain.result.AnswerResultType.STRING
@@ -26,10 +33,16 @@ import org.sagebionetworks.research.mpower.research.DataSourceManager
 import org.sagebionetworks.research.mpower.research.MpIdentifier.BACKGROUND
 import org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
+import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED_UPLOAD
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
+import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskHelper
+import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpBooleanAnswerFormat
+import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpChoiceAnswerFormat
+import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpIntegerAnswerFormat
+import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpTextQuestionBody
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.extensions.availableToday
@@ -41,6 +54,7 @@ import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo
+import org.sagebionetworks.research.sageresearch.viewmodel.ResearchStackUploadArchiveFactory
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.sagebionetworks.research.sageresearch.viewmodel.SingleLiveEvent
@@ -54,26 +68,24 @@ import java.lang.Integer.MAX_VALUE
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.Objects
 import javax.inject.Inject
 
 open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
-        scheduleRepo: ScheduleRepository, private val studyBurstSettingsDao: StudyBurstSettingsDao,
-        private val taskResultUploader: TaskResultUploader) :
+        scheduleRepo: ScheduleRepository, private val studyBurstSettingsDao: StudyBurstSettingsDao) :
         ScheduleViewModel(scheduleDao, scheduleRepo) {
 
     private val logger = LoggerFactory.getLogger(ScheduleRepository::class.java)
 
     class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,
             private val scheduleRepository: ScheduleRepository,
-            private val studyBurstSettingsDao: StudyBurstSettingsDao,
-            private val taskResultUploader: TaskResultUploader) : ViewModelProvider.Factory {
+            private val studyBurstSettingsDao: StudyBurstSettingsDao) : ViewModelProvider.Factory {
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             checkArgument(modelClass.isAssignableFrom(StudyBurstViewModel::class.java))
 
-            return StudyBurstViewModel(scheduledActivityEntityDao, scheduleRepository,
-                    studyBurstSettingsDao, taskResultUploader) as T
+            return StudyBurstViewModel(scheduledActivityEntityDao, scheduleRepository, studyBurstSettingsDao) as T
         }
     }
 
@@ -102,6 +114,12 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
      */
     private val totalActivitiesCount: Int get() {
         return activityGroup()?.activityIdentifiers?.size ?: 1
+    }
+
+    init {
+        // TODO: mdephillips 10/20/18 This should actually be set in a single place when
+        // all the dagger injections are done and we have access to the ScheduleRepository
+        scheduleRepo.researchStackUploadArchiveFactory = StudyBurstResearchStackArchiveFactory()
     }
 
     @VisibleForTesting
@@ -136,7 +154,7 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
      * @return a LiveData<TaskModel> for easier consumption, but it is based on the Survey bridge class type
      */
     fun loadRsSurvey(survey: ScheduledActivityEntity) {
-        compositeDispose.add(scheduleRepo.loadRsSurvey(survey).toObservable()
+        compositeDispose.add(scheduleRepo.loadResearchStackSurvey(survey).toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -190,6 +208,10 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
         return liveDataChecked
     }
 
+    init {
+
+    }
+
     /**
      * @param lifecycleOwner that previously was observing the return of the liveData() function
      * @return a new LiveData object that is refreshed based on the current time of day
@@ -233,49 +255,38 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
      * @param studyMarker to mark as complete on bridge and to upload the result info to s3
      */
     private fun markCompleted(item: StudyBurstItem, studyMarker: ScheduledActivityEntity) {
-        val identifier = studyMarker.activityIdentifier() ?: STUDY_BURST_COMPLETED
-        val nowInstant = now().toInstant(timezone)
 
-        // Creating the uuid through this function will make sure it's registered in the ScheduleRepository
-        val uuid = createScheduleTaskRunUuid(studyMarker)
+        // Use the upload identifier instead
+        val taskResult = org.researchstack.backbone.result.TaskResult(STUDY_BURST_COMPLETED_UPLOAD)
+        val stepId = "TaskStep" // can be anything, identifier not used in the upload
+        val stepResult = org.researchstack.backbone.result.StepResult<Any>(
+                org.researchstack.backbone.step.Step(stepId))
 
-        val results = ArrayList<Result>()
-
-        // Add task order result
-        results.add(AnswerResultBase(
-                "tasks.taskOrder", nowInstant, nowInstant,
-                getTaskSortOrder().joinToString(), STRING))
-
-        // json filename must be tasks, can I just prefix with "tasks." instead? TODO: mdephillips 10/9/18
-        // Fill in info about the finished tasks' guids and start/end dates
+        stepResult.results.put("taskOrder", getTaskSortOrder().joinToString())
+        // Fill in info about the finished tasks' guid
         item.finishedSchedules.forEach {
             it.activityIdentifier()?.let { identifier ->
                 it.finishedOn?.let { _ ->
-                    val startDate: Instant = it.startedOn ?: nowInstant
-                    results.add(AnswerResultBase(
-                            "tasks.$identifier.startDate", startDate, startDate, startDate, DATE))
-                    val endDate: Instant = it.finishedOn ?: nowInstant
-                    results.add(AnswerResultBase(
-                            "tasks.$identifier.endDate", endDate, endDate, endDate, DATE))
-                    results.add(AnswerResultBase(
-                            "tasks.$identifier.scheduleGuid", nowInstant, nowInstant, it.guid, STRING))
+                    stepResult.results.put("$identifier.scheduleGuid", it.guid)
                 }
             }
         }
 
-        val taskResult = TaskResultBase(
-                identifier, studyMarker.startedOn ?: nowInstant,
-                studyMarker.finishedOn, uuid, null, results, results)
+        taskResult.setStepResultForStepIdentifier(stepId, stepResult)
 
         compositeDispose.add(
-                scheduleRepo.updateSchedule(taskResult).subscribe({
+                scheduleRepo.updateScheduleToBridge(studyMarker)
+                        .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
                     scheduleSyncErrorMessageLiveData.postValue(null)
                 }, { t ->
                     scheduleSyncErrorMessageLiveData.postValue(t.localizedMessage)
                 }))
 
+        // The scheduleRepo is setup to use our custom StudyBurstResearchStackArchiveFactory
+        // which will correctly archive the entire TaskResult into a single file "tasks"
         compositeDispose.add(
-                taskResultUploader.processTaskResult(taskResult)
+                scheduleRepo.uploadResearchStackTaskResultToS3(studyMarker, taskResult)
                         .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
                             scheduleSyncErrorMessageLiveData.postValue(null)
@@ -782,5 +793,90 @@ open class StudyBurstSettingsDao @Inject constructor(context: Context) {
         prefs.getString(timestampKey, null)?.let {
             return LocalDateTime.parse(it)
         } ?: return null
+    }
+}
+
+open class StudyBurstResearchStackArchiveFactory: ResearchStackUploadArchiveFactory() {
+
+    private val logger = LoggerFactory.getLogger(StudyBurstResearchStackArchiveFactory::class.java)
+    private val studyBurstArchiveFileName = "tasks"
+
+    /**
+     * Can be overridden by sub-class for custom data archiving
+     * @param archiveBuilder fill this builder up with files from the flattenedResultList
+     * @param flattenedResultList read these and add them to the archiveBuilder
+     */
+    override fun addFiles(
+            archiveBuilder: Archive.Builder,
+            flattenedResultList: List<org.researchstack.backbone.result.Result>?,
+            taskIdentifier: String) {
+
+        if (STUDY_BURST_COMPLETED_UPLOAD == taskIdentifier) {
+            // Study burst completed marker has custom upload archive names "tasks"
+            // and all results are consolidated into that file with their result identifiers
+            archiveBuilder.addDataFile(fromResultList(studyBurstArchiveFileName, flattenedResultList))
+        } else {
+            super.addFiles(archiveBuilder, flattenedResultList, taskIdentifier)
+        }
+    }
+
+    /**
+     * Packages up all the results into a single json archive file
+     * @param filename for the json archive
+     * @param resultList to include all the results in a single json archive
+     */
+    protected fun fromResultList(
+            filename: String,
+            resultList: List<org.researchstack.backbone.result.Result>?): JsonArchiveFile {
+
+        val answerMap = HashMap<String, Any>()
+        resultList?.forEach {
+            MpTaskHelper.addToAnswerMap(this, answerMap, it)
+        }
+
+        // The answer group will not have a valid end date, if one is needed,
+        // consider adding key_endDate as a key/value in answer map above
+        return JsonArchiveFile(filename, DateTime.now(), answerMap)
+    }
+
+    /**
+     * Due to the nature of the AppCore survey UI being directly coupled to Result types,
+     * We need to override the custom survey answers to tell the archive factory
+     * which types of survey answers or custom result types should be archived as
+     * @param stepResult to transform into a survey answer
+     * @param format the answer format that should be analyzed to make a survey answer
+     * @return a valid SurveyAnswer, or null if conversion is unknown
+     */
+    override fun customSurveyAnswer(stepResult: StepResult<*>, format: AnswerFormat): SurveyAnswer? {
+        if (stepResult.results == null || stepResult.results.isEmpty()) {
+            return null  // question was skipped
+        }
+        if (format is MpBooleanAnswerFormat) {
+            val surveyAnswer = SurveyAnswer.BooleanSurveyAnswer(stepResult)
+            surveyAnswer.questionType = AnswerFormat.Type.Boolean.ordinal
+            surveyAnswer.questionTypeName = AnswerFormat.Type.Boolean.name
+            return surveyAnswer
+        } else if (format is MpTextQuestionBody.AnswerFormat) {
+            val surveyAnswer = SurveyAnswer.TextSurveyAnswer(stepResult)
+            surveyAnswer.questionType = AnswerFormat.Type.Text.ordinal
+            surveyAnswer.questionTypeName = AnswerFormat.Type.Text.name
+            return surveyAnswer
+        } else if (format is MpChoiceAnswerFormat) {
+            val surveyAnswer = SurveyAnswer.ChoiceSurveyAnswer(stepResult)
+            if (format.answerStyle == AnswerFormat.ChoiceAnswerStyle.SingleChoice) {
+                surveyAnswer.questionType = AnswerFormat.Type.SingleChoice.ordinal
+                surveyAnswer.questionTypeName = AnswerFormat.Type.SingleChoice.name
+            } else {
+                surveyAnswer.questionType = AnswerFormat.Type.MultipleChoice.ordinal
+                surveyAnswer.questionTypeName = AnswerFormat.Type.MultipleChoice.name
+            }
+            return surveyAnswer
+        } else if (format is MpIntegerAnswerFormat) {
+            val surveyAnswer = SurveyAnswer.NumericSurveyAnswer<Int>(stepResult)
+            surveyAnswer.questionType = AnswerFormat.Type.Integer.ordinal
+            surveyAnswer.questionTypeName = AnswerFormat.Type.Integer.name
+            return surveyAnswer
+        }
+        return null
     }
 }
