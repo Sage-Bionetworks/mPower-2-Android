@@ -62,7 +62,7 @@ class DataSourceManager {
 
         @JvmStatic
         fun randomDefaultEngagementGroups(): Set<String> {
-            return defaultEngagementGroups().mapNotNull { it.randomElement() }.toSet()
+            return defaultEngagementGroups().randomElement() ?: setOf()
         }
     }
 }
