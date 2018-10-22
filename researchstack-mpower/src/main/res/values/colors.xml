@@ -1,9 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transparent">#00FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="mp_orange">#F5B33C</color>
     <color name="black">#000000</color>
 
     <color name="mp_status_bar_purple">#47337D</color>
     <color name="mp_onboarding_purple">#5A478F</color>
+
+    <!-- Mark Royal Purple -->
+    <color name="sageResearchPrimaryLight">@color/royal300</color>
+    <color name="sageResearchPrimary">@color/royal500</color>
+    <color name="sageResearchPrimaryDark">@color/royal800</color>
+    <color name="sageResearchSecondary">@color/butterscotch500</color>
+
+    <color name="statusBarGray">#E6E6E6</color>
+
+    <color name="royal100A25">#80907FBA</color>
+    <color name="royal300">#B2A5D1</color>
+    <color name="royal500">#5A478F</color>
+    <color name="royal600">#47337D</color>
+    <color name="royal700">#332069</color>
+
+    <color name="royal800">#251454</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="appVeryLightGray">#EDEDED</color>
+    <color name="appLightGray">#8D93A1</color>
+    <color name="butterscotch_disabled">#59BD7900</color>
+    <color name="butterscotch500">#F5B33C</color>
+    <color name="butterscotch800">#BD7900</color>
+    <color name="appTextDark">#1A1C29</color>
+
 </resources>

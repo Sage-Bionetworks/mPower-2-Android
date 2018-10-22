@@ -17,6 +17,7 @@ import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.StudyParticipant
@@ -43,6 +44,7 @@ import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduledRepositorySyncStateDao
+import org.sagebionetworks.research.sageresearch_app_sdk.TaskResultUploader
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
@@ -102,8 +104,12 @@ class StudyBurstViewModelTests: RoomTestHelper() {
     val scheduleDao = database.scheduleDao()
     val scheduleRepo = ScheduleRepository(scheduleDao,
             ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()),
+            BridgeManagerProvider.getInstance().surveyManager,
             BridgeManagerProvider.getInstance().activityManager,
-            BridgeManagerProvider.getInstance().participantManager)
+            BridgeManagerProvider.getInstance().participantManager,
+            BridgeManagerProvider.getInstance().authenticationManager,
+            BridgeManagerProvider.getInstance().uploadManager,
+            BridgeManagerProvider.getInstance().bridgeConfig)
 
     @Before
     fun setupForEachTest() {
@@ -893,9 +899,10 @@ class StudyBurstViewModelTests: RoomTestHelper() {
     }
 
     class MockStudyBurstViewModel(
-            scheduleDao: ScheduledActivityEntityDao,
-            scheduleRepo: ScheduleRepository, private val studyBurstSettingsDao: StudyBurstSettingsDao,
-            val studySetup: StudySetup): StudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao) {
+            scheduleDao: ScheduledActivityEntityDao, scheduleRepo: ScheduleRepository,
+            val studyBurstSettingsDao: StudyBurstSettingsDao, val studySetup: StudySetup):
+
+            StudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao) {
 
         override val config = studySetup.config
 

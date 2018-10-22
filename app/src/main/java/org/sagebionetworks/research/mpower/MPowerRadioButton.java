@@ -59,10 +59,12 @@ public class MPowerRadioButton extends ConstraintLayout {
         return this.title.getText().toString();
     }
 
+    @Override
     public boolean isSelected() {
         return this.selected;
     }
 
+    @Override
     public void setSelected(boolean selected) {
         if (this.selected != selected) {
             this.selected = selected;

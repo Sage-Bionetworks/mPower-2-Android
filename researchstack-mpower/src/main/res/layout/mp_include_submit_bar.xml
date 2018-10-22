@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bp_submit_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:minHeight="@dimen/rsb_item_size_submit_bar">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/bp_submit_bar_back"
+            style="@style/MP.ButterScotch.RoundedCornerMaterialButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="16dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/rsb_AX_BUTTON_BACK"/>
+
+        <Button
+            android:id="@+id/bp_submit_bar_next"
+            style="@style/MP.ButterScotch.RoundedCornerMaterialButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="16dp"
+            android:text="@string/rsb_BUTTON_NEXT"/>
+
+    </LinearLayout>
+
+    <Button
+        style="@style/MP.ImageButton"
+        android:id="@+id/bp_submit_bar_skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/rsb_padding_small"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

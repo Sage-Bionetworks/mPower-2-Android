@@ -50,6 +50,20 @@ class DataSourceManager {
         fun installedGroup(forIdentifier: String): ActivityGroup? {
             return installedGroups.firstOrNull { it.identifier == forIdentifier }
         }
+
+        @JvmStatic
+        fun defaultEngagementGroups(): Set<Set<String>> {
+            return setOf(
+                    setOf("gr_SC_DB","gr_SC_CS"),
+                    setOf("gr_BR_AD","gr_BR_II"),
+                    setOf("gr_ST_T","gr_ST_F"),
+                    setOf("gr_DT_F","gr_DT_T"))
+        }
+
+        @JvmStatic
+        fun randomDefaultEngagementGroups(): Set<String> {
+            return defaultEngagementGroups().randomElement() ?: setOf()
+        }
     }
 }
 
@@ -109,17 +123,15 @@ data class StudyBurstConfiguration(
          * @property completionTasks for each day of the study burst.
          */
         val completionTasks: Set<CompletionTask> = setOf(
-                CompletionTask(linkedSetOf(STUDY_BURST_REMINDER, DEMOGRAPHICS), 1),
-                CompletionTask(linkedSetOf(BACKGROUND), 9),
-                CompletionTask(linkedSetOf(ENGAGEMENT), 14)),
+                // TODO: mdephillips 10/16/18 Add study burst reminder and engagement
+                // TODO: mdephillips 10/16/18 back in when development is done on those features
+                CompletionTask(linkedSetOf(/**STUDY_BURST_REMINDER, */DEMOGRAPHICS), 1),
+                CompletionTask(linkedSetOf(BACKGROUND), 9)/**,
+                CompletionTask(linkedSetOf(ENGAGEMENT), 14)*/),
         /**
          * @property engagementGroups set of the possible engagement data groups.
          */
-        val engagementGroups: Set<Set<String>>? = setOf(
-                setOf("gr_SC_DB", "gr_SC_CS"),
-                setOf("gr_BR_AD", "gr_BR_II"),
-                setOf("gr_ST_T", "gr_ST_F"),
-                setOf("gr_DT_F", "gr_DT_T"))
+        val engagementGroups: Set<Set<String>>? = DataSourceManager.defaultEngagementGroups()
 ) {
     /**
      * @return a set of the completion task's activity identifiers
@@ -141,17 +153,17 @@ data class StudyBurstConfiguration(
     fun startTimeWindow(now: LocalDateTime): LocalDateTime {
         return now.minusSeconds(expiresLimit)
     }
+}
 
-    /**
-     * @return a random element in the set if any exist
-     */
-    private fun <T> Set<T>?.randomElement(): T? {
-        if (this == null) {
-            return null
-        }
-        if (isEmpty()) {
-            return null
-        }
-        return elementAt(Random().nextInt(size))
+/**
+ * @return a random element in the set if any exist
+ */
+fun <T> Set<T>?.randomElement(): T? {
+    if (this == null) {
+        return null
     }
+    if (isEmpty()) {
+        return null
+    }
+    return elementAt(Random().nextInt(size))
 }

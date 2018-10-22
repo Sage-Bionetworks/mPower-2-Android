@@ -30,8 +30,7 @@
           "f_walking2",
           "f_walking3",
           "f_walking4",
-          "f_walking5",
-          "f_walking6"
+          "f_walking5"
         ],
         "placementType": "topMarginBackground",
         "animationDuration": 3
@@ -85,8 +84,7 @@
           "f_walking2",
           "f_walking3",
           "f_walking4",
-          "f_walking5",
-          "f_walking6"
+          "f_walking5"
         ],
         "placementType": "topMarginBackground",
         "animationDuration": 3

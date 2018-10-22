@@ -24,7 +24,6 @@
         android:textColor="@color/white"
         android:visibility="gone" />
 
-
     <LinearLayout
         android:id="@id/mp_text_container"
         android:layout_width="match_parent"
@@ -86,7 +85,7 @@
 
             <Button
                 android:id="@+id/button_go_back"
-                style="@style/MP.Orange.RoundedCornerMaterialButton"
+                style="@style/MP.ButterScotch.RoundedCornerMaterialButton"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/mp_rounded_button_height"
                 android:layout_margin="@dimen/rsb_padding_small"
@@ -98,7 +97,7 @@
 
             <Button
                 android:id="@+id/button_go_forward"
-                style="@style/MP.Orange.RoundedCornerMaterialButton"
+                style="@style/MP.ButterScotch.RoundedCornerMaterialButton"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/mp_rounded_button_height"
                 android:layout_margin="@dimen/rsb_padding_small"

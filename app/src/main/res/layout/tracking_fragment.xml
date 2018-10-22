@@ -5,6 +5,7 @@
     android:id="@+id/fragment_tracking"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     tools:context=".tracking.TrackingTabFragment">
 
     <org.sagebionetworks.research.mpower.tracking.TrackingStatusBar

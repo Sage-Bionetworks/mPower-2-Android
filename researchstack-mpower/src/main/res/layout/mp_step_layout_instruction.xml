@@ -1,6 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mp_root_instruction_layout"
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~    Copyright 2017 Sage Bionetworks
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  ~
+  -->
+
+<!-- Change to RelativeLayout for preview to work -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bp_root_instruction_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,63 +26,59 @@
         android:id="@+id/mp_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:paddingTop="?attr/actionBarSize"
         android:layout_above="@+id/mp_text_container"
-        android:layout_alignParentTop="true"
-        android:paddingTop="?attr/actionBarSize"
-        android:scaleType="centerInside" />
-
-    <TextView
-        android:id="@+id/mp_instruction_title"
-        style="@style/TextAppearance.MP.Header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:paddingTop="?attr/actionBarSize"
-        android:textColor="@color/white" />
+        android:scaleType="centerInside"/>
 
     <LinearLayout
         android:id="@id/mp_text_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/mp_entry_field"
         android:orientation="vertical"
-        android:paddingBottom="18dp"
+        android:layout_above="@+id/bp_next_button_container"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
-        android:paddingTop="24dp">
+        android:paddingTop="24dp"
+        android:paddingBottom="18dp">
 
         <TextView
-            android:id="@+id/mp_instruction_text"
+            style="@style/TextAppearance.MP.Header"
+            android:id="@+id/mp_instruction_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/appTextDark"
+            android:paddingBottom="@dimen/rsb_padding_medium"/>
+
+        <TextView
             style="@style/TextAppearance.MP.SubHeader"
+            android:id="@+id/mp_instruction_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="@color/white"
-            android:textColorLink="?attr/colorAccent" />
+            android:layout_gravity="center"
+            android:textColor="@color/appTextDark"
+            android:textColorLink="?attr/colorAccent"
+            android:paddingBottom="@dimen/rsb_padding_medium"/>
 
         <TextView
-            android:id="@+id/mp_instruction_more_detail_text"
             style="@style/TextAppearance.MP.Body"
+            android:id="@+id/mp_instruction_more_detail_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
             android:scrollbars="vertical"
-            android:textColor="@color/white"
-            android:textColorLink="?attr/colorAccent" />
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/appTextDark"
+            android:textColorLink="?attr/colorAccent"
+            android:layout_marginTop="16dp"/>
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/mp_entry_field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/mp_next_button_container"
-        android:visibility="gone" />
-
     <FrameLayout
-        android:id="@id/mp_next_button_container"
+        android:id="@id/bp_next_button_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
@@ -72,32 +86,51 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/rsb_padding_medium"
-            android:orientation="horizontal">
+            android:layout_margin="@dimen/rsb_padding_medium">
+
+            <ImageButton
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:id="@+id/mp_instruction_custom_button"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="centerInside"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/rsb_padding_small"/>
+
+            <TextView
+                style="@style/TextAppearance.MP.InstructionCustomButtonText"
+                android:id="@+id/mp_instruction_custom_button_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="23sp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/rsb_warm_gray"
+                android:visibility="gone"
+                android:padding="@dimen/rsb_padding_small"/>
 
             <Button
-                android:id="@+id/button_go_back"
-                style="@style/MP.Orange.RoundedCornerMaterialButton"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/mp_rounded_button_height"
-                android:layout_margin="@dimen/rsb_padding_small"
-                android:focusable="true"
-                android:text="@string/rsb_AX_BUTTON_BACK"
-                android:textAllCaps="false"
-                android:textColor="@color/rsb_black"
-                android:visibility="gone" />
-
-            <Button
+                style="@style/MP.ButterScotch.RoundedCornerMaterialButton"
                 android:id="@+id/button_go_forward"
-                style="@style/MP.Orange.RoundedCornerMaterialButton"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/mp_rounded_button_height"
                 android:layout_margin="@dimen/rsb_padding_small"
                 android:focusable="true"
                 android:text="@string/rsb_BUTTON_NEXT"
-                android:textAllCaps="false"
-                android:textColor="@color/rsb_black" />
+                android:textAllCaps="false"/>
+
+            <Button
+                style="@style/MP.ImageButton"
+                android:id="@+id/mp_remind_me_later_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:textColor="@color/royal500"/>
 
         </LinearLayout>
 
