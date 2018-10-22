@@ -71,7 +71,7 @@ class ScheduleRepositoryTests: RoomTestHelper() {
     companion object {
         val activityList = "test_scheduled_activities.json"
         val testResourceMap = TestResourceHelper.testResourceMap(setOf(activityList))
-        val syncStateDao = ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext())
+        val syncStateDao = MockScheduleRepositorySyncStateDao()
     }
 
     @Test
@@ -185,6 +185,18 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         assertEquals(DateTime.parse("2018-09-09T23:59:59.999-04:00"), requestMap[requestMap.keys.elementAt(0)])
         assertEquals(DateTime.parse("2018-08-17T00:00:00.000-04:00"), requestMap.keys.elementAt(1))
         assertEquals(DateTime.parse("2018-08-26T23:59:59.999-04:00"), requestMap[requestMap.keys.elementAt(1)])
+    }
+
+    class MockScheduleRepositorySyncStateDao:
+            ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()) {
+
+        private var lastQueryEndDateLocal: DateTime? = null
+
+        override var lastQueryEndDate: DateTime? get() {
+            return lastQueryEndDateLocal
+        } set(value) {
+            lastQueryEndDateLocal = value
+        }
     }
 
     class MockScheduleRepository(scheduleDao: ScheduledActivityEntityDao,

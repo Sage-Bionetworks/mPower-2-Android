@@ -17,7 +17,6 @@ import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.mock
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.StudyParticipant
@@ -44,7 +43,6 @@ import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduledRepositorySyncStateDao
-import org.sagebionetworks.research.sageresearch_app_sdk.TaskResultUploader
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
@@ -208,8 +206,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
         assertFalse(item.hasCompletedMotivationSurvey())
         val completionTask = item.nextCompletionActivityToShow
-        assertNotNull(completionTask)
-        assertEquals(STUDY_BURST_REMINDER, completionTask?.activityIdentifier())
+        assertNull(completionTask)
 
         assertNotNull(item.getActionBarItem(application))
         assertNotNull("Study Burst", item.getActionBarItem(application)?.title)
@@ -521,7 +518,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
             fun previousFinishedSurveys(studyBurstDay: Int): Map<String, Int> {
                 var surveyMap: MutableMap<String, Int> = mutableMapOf()
-                val config = StudyBurstConfiguration()
+                val config = StudyBurstConfiguration(completionTasks = MockStudyBurstViewModel.completionTasks)
                 config.completionTasks.forEach {
                     val day = it.day
                     if (studyBurstDay >= day) {
@@ -904,7 +901,15 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
             StudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao) {
 
-        override val config = studySetup.config
+        // TODO: mdephillips 10/22/18 remove this once study burst reminder and engagement surveys are added back in
+        companion object {
+            val completionTasks: Set<CompletionTask> = setOf(
+                    CompletionTask(linkedSetOf(STUDY_BURST_REMINDER, DEMOGRAPHICS), 1),
+                    CompletionTask(linkedSetOf(BACKGROUND), 9),
+                    CompletionTask(linkedSetOf(ENGAGEMENT), 14))
+        }
+
+        override val config = StudyBurstConfiguration(completionTasks = completionTasks)
 
         override fun activityGroup(): ActivityGroup? {
             return DataSourceManager.installedGroup(config.taskGroupIdentifier)
@@ -918,7 +923,6 @@ class StudyBurstViewModelTests: RoomTestHelper() {
             return studySetup.timezone
         }
 
-
         init {
             studySetup.populateDatabase(scheduleDao)
         }
@@ -929,6 +933,5 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         fun setOrderedTasks(sortOrder: List<String>, timestamp: LocalDateTime) {
             studyBurstSettingsDao.setOrderedTasks(sortOrder, timestamp)
         }
-
     }
 }
