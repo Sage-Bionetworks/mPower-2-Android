@@ -35,8 +35,6 @@ package org.sagebionetworks.research.mpower.inject;
 import org.sagebionetworks.research.domain.inject.StepModule.StepClassKey;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule;
-import org.sagebionetworks.research.motor_control_module.inject.OverviewStepModule;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment;
 import org.sagebionetworks.research.motor_control_module.step.OverviewStep;
 import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepView;
 import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule.StepViewClassKey;
@@ -51,7 +49,7 @@ import dagger.Provides;
 import dagger.multibindings.IntoMap;
 
 @Module
-public abstract class MpOverviewStepModule extends OverviewStepModule {
+public abstract class MpOverviewStepModule {
     /**
      * Returns the type key for OverviewStep.class.
      *
@@ -82,6 +80,6 @@ public abstract class MpOverviewStepModule extends OverviewStepModule {
     @IntoMap
     @ShowStepModule.StepViewKey(OverviewStepView.TYPE)
     static ShowStepModule.ShowStepFragmentFactory provideShowOverviewStepFragmentFactory() {
-        return MpShowOverviewStepFragment::newInstance;
+        return MpShowOverviewStepFragment.Companion::newInstance;
     }
 }
