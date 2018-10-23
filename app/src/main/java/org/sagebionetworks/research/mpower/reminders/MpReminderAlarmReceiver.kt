@@ -37,6 +37,7 @@ import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import org.sagebionetworks.research.mpower.MainActivity
+import org.sagebionetworks.research.mpower.R
 
 class MpReminderAlarmReceiver: ReminderAlarmReceiver() {
 
@@ -65,9 +66,9 @@ class MpReminderAlarmReceiver: ReminderAlarmReceiver() {
         }
 
     // TODO: mdephillips 10/23/18 get Woody to design a status bar notification icon
-//    protected open fun notificationIcon(code: Int, action: String): Int? {
-//        return R.mipmap.ic_launcher
-//    }
+    override fun notificationIcon(code: Int, action: String): Int? {
+        return R.drawable.ic_reminder
+    }
 
     /**
      * Overriding this allows for us to provide our own custom activity to launch when the notification is tapped

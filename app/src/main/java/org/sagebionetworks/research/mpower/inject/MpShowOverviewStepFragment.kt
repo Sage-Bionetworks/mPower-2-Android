@@ -93,19 +93,19 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
         sheetView.findViewById<Button>(R.id.remind_me_in_2_hours_button)?.setOnClickListener {
             setReminder(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(2)).toEpochMilli())
             dialog.dismiss()
-            performTaskViewModel.goBack()
+            performTaskFragment.cancelTask(false)
         }
         sheetView.findViewById<Button>(R.id.remind_me_in_1_hour_button)?.setOnClickListener {
             setReminder(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(1)).toEpochMilli())
             dialog.dismiss()
-            performTaskViewModel.goBack()
+            performTaskFragment.cancelTask(false)
         }
         sheetView.findViewById<Button>(R.id.remind_me_in_15_minutes_button)?.setOnClickListener {
             setReminder(Instant.now().plusMillis(TimeUnit.MINUTES.toMillis(15)).toEpochMilli())
             dialog.dismiss()
-            performTaskViewModel.goBack()
+            performTaskFragment.cancelTask(false)
         }
-        sheetView.findViewById<Button>(R.id.remind_me_in_15_minutes_button)?.setOnClickListener {
+        sheetView.findViewById<Button>(R.id.do_not_remind_me_button)?.setOnClickListener {
             dialog.dismiss()
         }
 

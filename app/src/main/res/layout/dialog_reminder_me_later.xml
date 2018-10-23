@@ -35,14 +35,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/rsb_padding_large">
 
     <TextView
         style="@style/TextAppearance.MP.Header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/when_do_you_want_a_reminder"
-        android:layout_margin="@dimen/margin_large"/>
+        android:gravity="center"
+        android:text="@string/when_do_you_want_a_reminder" />
 
     <Button
         style="@style/MPower.RoundedCornerMaterialButton"
@@ -50,16 +51,15 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/mp_rounded_button_height"
         android:text="@string/remind_me_in_2_hours"
-        android:layout_margin="@dimen/rsb_padding_large"/>
+        android:layout_marginTop="@dimen/rsb_padding_large"/>
 
     <Button
         style="@style/MPower.RoundedCornerMaterialButton"
         android:id="@+id/remind_me_in_1_hour_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mp_rounded_button_height"
-        android:background="?attr/selectableItemBackground"
         android:text="@string/remind_me_in_1_hour"
-        android:layout_margin="@dimen/rsb_padding_large"/>
+        android:layout_marginTop="@dimen/rsb_padding_large"/>
 
     <Button
         style="@style/MPower.RoundedCornerMaterialButton"
@@ -67,14 +67,16 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/mp_rounded_button_height"
         android:text="@string/remind_me_in_15_minutes"
-        android:layout_margin="@dimen/rsb_padding_large"/>
+        android:layout_marginTop="@dimen/rsb_padding_large"/>
 
     <Button
-        style="@style/MPower.RoundedCornerMaterialButton"
+        style="@style/MP.ImageButton"
         android:id="@+id/do_not_remind_me_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mp_rounded_button_height"
         android:text="@string/do_not_remind_me"
-        android:layout_margin="@dimen/rsb_padding_large"/>
+        android:textColor="@color/sageResearchPrimary"
+        android:background="?attr/selectableItemBackground"
+        android:layout_marginTop="@dimen/rsb_padding_large"/>
 
 </LinearLayout>

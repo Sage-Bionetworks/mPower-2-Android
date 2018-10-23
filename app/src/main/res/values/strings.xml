@@ -102,7 +102,7 @@
     <string name="set_reminder">Set reminder</string>
     <string name="do_not_send_me_reminders">Do not send me reminders</string>
     <string name="reminder_message">Let\'s set a Reminder for your Study Bursts</string>
-    <string name="do_not_remind_me">Do not remind me</string>
+    <string name="do_not_remind_me"><u>Do not remind me</u></string>
     <string name="when_do_you_want_a_reminder">When do you want a reminder?</string>
     <string name="remind_me_in_2_hours">Remind me in 2 hours</string>
     <string name="remind_me_in_1_hour">Remind me in 1 hour</string>

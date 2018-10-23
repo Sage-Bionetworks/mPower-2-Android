@@ -1,7 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking;
 
 import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
-import static org.sagebionetworks.research.mpower.reminders.ReminderActivityKt.REMINDER_REQUEST_CODE;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
 import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN;
@@ -226,7 +225,7 @@ public class TrackingTabFragment extends Fragment {
         } else if (nextCompletionTask != null) {
             if (STUDY_BURST_REMINDER.equals(nextCompletionTask.activityIdentifier())) {
                 currentSurveySchedule = nextCompletionTask;
-
+                runStudyBurstReminder();
             } else {
                 launchRsSurvey(nextCompletionTask);
             }

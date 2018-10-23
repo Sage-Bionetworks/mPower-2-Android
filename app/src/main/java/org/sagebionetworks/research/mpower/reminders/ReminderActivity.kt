@@ -71,7 +71,7 @@ class ReminderActivity: AppCompatActivity() {
                 viewModel.timeLiveData.value ?:
                 Pair(viewModel.defaultHour, viewModel.defaultMinute)
         val dialog = TimePickerDialog(this, TimePickerDialog.OnTimeSetListener {
-            timePicker, hour, minute ->
+            _, hour, minute ->
             viewModel.hourMinutePair = Pair(hour, minute)
         }, hourMinutePair.first, hourMinutePair.second, false)
         dialog
@@ -91,7 +91,7 @@ class ReminderActivity: AppCompatActivity() {
 
         reminder_done_button.setOnClickListener { onDoneButtonClicked() }
         reminder_time_button.setOnClickListener { timePickerDialog.show() }
-        reminder_checkbox.setOnCheckedChangeListener { compoundButton, isChecked ->
+        reminder_checkbox.setOnCheckedChangeListener { _, isChecked ->
             viewModel.doNotRemindMe = isChecked
         }
 
