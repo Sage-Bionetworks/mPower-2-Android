@@ -1,7 +1,11 @@
 package org.sagebionetworks.research.mpower.tracking;
 
 import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
+import static org.sagebionetworks.research.mpower.reminders.ReminderActivityKt.REMINDER_REQUEST_CODE;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
+import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN;
+import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_REQUEST_CODE;
 
 import android.app.Activity;
 
@@ -220,7 +224,12 @@ public class TrackingTabFragment extends Fragment {
         if (!item.hasCompletedMotivationSurvey() && item.getMotivationSurvey() != null) {
             launchRsSurvey(item.getMotivationSurvey());
         } else if (nextCompletionTask != null) {
-            launchRsSurvey(nextCompletionTask);
+            if (STUDY_BURST_REMINDER.equals(nextCompletionTask.activityIdentifier())) {
+                currentSurveySchedule = nextCompletionTask;
+
+            } else {
+                launchRsSurvey(nextCompletionTask);
+            }
         } else {
             goToStudyBurst();
         }
@@ -272,10 +281,9 @@ public class TrackingTabFragment extends Fragment {
         currentSurveySchedule = null;
 
         // Check this at the end because it may set currentSurveyTask and currentSurveySchedule
-        if (resultCode == Activity.RESULT_OK &&
-                requestCode == StudyBurstActivity.Companion.getREQUEST_CODE_STUDY_BURST()) {
+        if (resultCode == Activity.RESULT_OK && requestCode == STUDY_BURST_REQUEST_CODE) {
             ScheduledActivityEntity scheduleToRun = (ScheduledActivityEntity)
-                    data.getSerializableExtra(StudyBurstActivity.Companion.getEXTRA_GUID_OF_TASK_TO_RUN());
+                    data.getSerializableExtra(STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN);
             if (scheduleToRun != null) {
                 launchRsSurvey(scheduleToRun);
             }
@@ -310,12 +318,14 @@ public class TrackingTabFragment extends Fragment {
         Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
     }
 
+    private void runStudyBurstReminder() {
+        startActivityForResult(new Intent(getActivity(), ReminderActivity.class), REQUEST_TASK);
+    }
+
     /**
      * Transitions to the study burst screen
      */
     private void goToStudyBurst() {
-        startActivity(new Intent(getActivity(), ReminderActivity.class));
-//        startActivityForResult(new Intent(getActivity(), StudyBurstActivity.class),
-//                StudyBurstActivity.Companion.getREQUEST_CODE_STUDY_BURST());
+        startActivityForResult(new Intent(getActivity(), StudyBurstActivity.class), STUDY_BURST_REQUEST_CODE);
     }
 }

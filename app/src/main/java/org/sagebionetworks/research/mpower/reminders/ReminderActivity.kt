@@ -32,17 +32,23 @@
 
 package org.sagebionetworks.research.mpower.reminders
 
+import android.app.Activity
 import android.app.TimePickerDialog
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_reminder.reminder_checkbox
 import kotlinx.android.synthetic.main.activity_reminder.reminder_done_button
 import kotlinx.android.synthetic.main.activity_reminder.reminder_time_button
+import org.researchstack.backbone.result.StepResult
+import org.researchstack.backbone.result.TaskResult
+import org.researchstack.backbone.step.Step
+import org.researchstack.backbone.ui.ViewTaskActivity.EXTRA_TASK_RESULT
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.R.string
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER
@@ -54,6 +60,7 @@ import java.util.Calendar.HOUR_OF_DAY
 import java.util.Calendar.MILLISECOND
 import java.util.Calendar.MINUTE
 import java.util.Calendar.SECOND
+import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -105,14 +112,38 @@ class ReminderActivity: AppCompatActivity() {
      * This function is called when the bottom done button is clicked
      */
     protected fun onDoneButtonClicked() {
-        viewModel.timeLiveData.value?.let {
-            val currentTime = ZonedDateTime.now().withHour(it.first).withMinute(it.second)
-            val reminderTimeInMillis = TimeUnit.SECONDS.toMillis(currentTime.toEpochSecond())
-            val reminder = Reminder(
-                    STUDY_BURST_REMINDER, REMINDER_ACTION_STUDY_BURST,
-                    REMINDER_CODE_STUDY_BURST, reminderTimeInMillis,
-                    title = getString(string.reminder_title_study_burst))
-            //reminderManager.scheduleReminder(this, reminder)
+        viewModel.timeLiveData.value?.let { hourMinutePair ->
+            viewModel.doNotRemindMeLiveData.value?.let { doNotRemindMe ->
+                val currentTime = ZonedDateTime.now().withHour(hourMinutePair.first).withMinute(hourMinutePair.second)
+                val reminderTimeInMillis = TimeUnit.SECONDS.toMillis(currentTime.toEpochSecond())
+                val reminder = Reminder(
+                        STUDY_BURST_REMINDER, REMINDER_ACTION_STUDY_BURST,
+                        REMINDER_CODE_STUDY_BURST, reminderTimeInMillis,
+                        title = getString(string.reminder_title_study_burst))
+                if (doNotRemindMe) {
+                    reminderManager.cancelReminder(this, reminder)
+                } else {
+                    reminderManager.scheduleReminder(this, reminder)
+                }
+
+                val taskResult = TaskResult(STUDY_BURST_REMINDER)
+
+                val stepResultTime = StepResult<Any>(Step("ReminderTime"))
+                stepResultTime.results.put("reminderTime", viewModel.toResultString(hourMinutePair))
+                taskResult.results.put("ReminderTime", stepResultTime)
+
+                val stepResultNoReminder = StepResult<Any>(Step("NoReminder"))
+                stepResultNoReminder.results.put("noReminder", doNotRemindMe)
+                taskResult.results.put("NoReminder", stepResultNoReminder)
+
+                val resultIntent = Intent()
+                resultIntent.putExtra(EXTRA_TASK_RESULT, taskResult)
+                setResult(Activity.RESULT_OK, resultIntent)
+            } ?: run {
+                setResult(Activity.RESULT_CANCELED)
+            }
+        } ?: run {
+            setResult(Activity.RESULT_CANCELED)
         }
         finish()
     }
@@ -171,17 +202,28 @@ class ReminderActivityViewModel: ViewModel() {
             return doNotRemindMutableLiveData
         }
 
-    /**
-     * Converts a hour minute pair to a time string
-     */
-    fun toString(hourMinutePair: Pair<Int, Int>): String {
+    private fun dateForTime(hourMinutePair: Pair<Int, Int>): Date {
         val calendar = Calendar.getInstance()
         calendar.set(HOUR_OF_DAY, hourMinutePair.first)
         calendar.set(MINUTE, hourMinutePair.second)
         calendar.set(SECOND, 0)
         calendar.set(MILLISECOND, 0)
+        return calendar.time
+    }
 
-        val formatter = SimpleDateFormat("h:mm aaa", Locale.ENGLISH)
-        return formatter.format(calendar.time)
+    /**
+     * Converts a hour minute pair to a time string
+     */
+    fun toString(hourMinutePair: Pair<Int, Int>): String {
+        val formatter = SimpleDateFormat("h:mm aaa", Locale.getDefault())
+        return formatter.format(dateForTime(hourMinutePair))
+    }
+
+    /**
+     * Converts a hour minute pair to a time string for the task result
+     */
+    fun toResultString(hourMinutePair: Pair<Int, Int>): String {
+        val formatter = SimpleDateFormat("HH:mm:00.000", Locale.getDefault())
+        return formatter.format(dateForTime(hourMinutePair))
     }
 }
