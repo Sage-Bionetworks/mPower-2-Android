@@ -6,7 +6,6 @@ import org.sagebionetworks.bridge.android.di.BridgeApplicationScope;
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskFragmentScope;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
-import org.sagebionetworks.research.motor_control_module.inject.MotorControlShowStepFragmentsModule;
 import org.sagebionetworks.research.mpower.MainActivity;
 import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
 import org.sagebionetworks.research.mpower.history.HistoryFragment;
@@ -38,7 +37,7 @@ public abstract class MPowerUserModule {
     abstract InsightsFragment contributeInsightsFragmentInjector();
 
     // these modules contain an aggregate of ShowStepFragment subcomponents, so they are scoped under the PerformTaskFragment
-    @ContributesAndroidInjector(modules = {ShowStepFragmentModule.class, MotorControlShowStepFragmentsModule.class})
+    @ContributesAndroidInjector(modules = {ShowStepFragmentModule.class, MpMotorControlShowStepFragmentsModule.class})
     @PerformTaskFragmentScope
     abstract PerformTaskFragment contributePerformTaskFragmentInjector();
 
