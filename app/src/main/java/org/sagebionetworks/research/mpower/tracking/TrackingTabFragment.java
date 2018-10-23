@@ -30,6 +30,7 @@ import org.sagebionetworks.bridge.rest.model.ScheduledActivity;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.reminders.ReminderActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
@@ -313,7 +314,8 @@ public class TrackingTabFragment extends Fragment {
      * Transitions to the study burst screen
      */
     private void goToStudyBurst() {
-        startActivityForResult(new Intent(getActivity(), StudyBurstActivity.class),
-                StudyBurstActivity.Companion.getREQUEST_CODE_STUDY_BURST());
+        startActivity(new Intent(getActivity(), ReminderActivity.class));
+//        startActivityForResult(new Intent(getActivity(), StudyBurstActivity.class),
+//                StudyBurstActivity.Companion.getREQUEST_CODE_STUDY_BURST());
     }
 }
