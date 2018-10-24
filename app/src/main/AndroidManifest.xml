@@ -65,6 +65,9 @@
         <!-- These control local reminder notification scheduling and display -->
         <receiver android:name="org.sagebionetworks.research.sageresearch.reminders.MpReminderAlarmReceiver" />
         <receiver android:name=".reminders.MpReminderRescheduleReceiver">
+            <!-- These intent filters allow all our time-based alarms to be rescheduled when any of these occur
+                 The reason we need these filters is because the Android OS cancels ALL time-based alarms
+                 When the user reboots or changes anything in their settings related to time -->
             <intent-filter>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
