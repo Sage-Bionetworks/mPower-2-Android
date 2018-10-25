@@ -32,9 +32,18 @@
 
 package org.sagebionetworks.research.mpower.reminders
 
+import android.app.AlarmManager
 import android.content.Context
+import org.sagebionetworks.research.mpower.R.string
+import org.sagebionetworks.research.mpower.research.MpIdentifier
+import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
+import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.reminders.MpReminderAlarmReceiver
+import org.sagebionetworks.research.sageresearch.reminders.Reminder
 import org.sagebionetworks.research.sageresearch.reminders.ReminderManager
+import org.sagebionetworks.research.sageresearch.reminders.ReminderScheduleIgnoreRule
+import org.sagebionetworks.research.sageresearch.reminders.ReminderScheduleRules
+import org.threeten.bp.LocalDateTime
 
 val REMINDER_CODE_RUN_TASK = 1001
 val REMINDER_ACTION_RUN_TASK = "REMINDER_ACTION_RUN_TASK"
@@ -42,7 +51,7 @@ val REMINDER_ACTION_RUN_TASK = "REMINDER_ACTION_RUN_TASK"
 val REMINDER_CODE_STUDY_BURST = 1002
 val REMINDER_ACTION_STUDY_BURST = "REMINDER_ACTION_STUDY_BURST"
 
-class MpReminderManager: ReminderManager() {
+class MpReminderManager(context: Context): ReminderManager(context) {
     /**
      * @property reminderAlarmReceiver the receiver to associate with this manager
      */
@@ -60,5 +69,36 @@ class MpReminderManager: ReminderManager() {
         allActiveReminders(context).forEach {
             scheduleReminder(context, it)
         }
+    }
+
+    /**
+     *  Schedules the study burst reminders
+     *  @param context can be app or activity
+     *  @param firstStudyBurstScheduledOn the scheduledOn from the earliest study burst schedule
+     *  @param reminderTime the LocalDateTime representing the hour/minute of when the daily reminder happens
+     */
+    fun createStudyBurstReminder(
+            context: Context,
+            firstStudyBurstScheduledOn: LocalDateTime,
+            reminderTime: LocalDateTime): Reminder {
+
+        // TODO: mdephillips 10/25/18 this needs to be supported by bridge app config
+        val studyConfig = StudyBurstConfiguration()
+
+        val ignoreStart = firstStudyBurstScheduledOn.startOfDay()
+        val ignoreEnd = firstStudyBurstScheduledOn.plusDays(studyConfig.numberOfDays.toLong())
+        val ignoreRepeatInterval = studyConfig.repeatIntervalInDays
+        val ignoreAlarmRules = ReminderScheduleIgnoreRule(ignoreStart, ignoreEnd, ignoreRepeatInterval)
+
+        val reminderScheduleRules = ReminderScheduleRules(
+                reminderTime, AlarmManager.INTERVAL_DAY,
+                ignoreAlarmRules, true)
+
+        val reminder = Reminder(
+                MpIdentifier.STUDY_BURST_REMINDER, REMINDER_ACTION_STUDY_BURST,
+                REMINDER_CODE_STUDY_BURST, reminderScheduleRules,
+                title = context.getString(string.reminder_title_study_burst))
+
+        return reminder
     }
 }

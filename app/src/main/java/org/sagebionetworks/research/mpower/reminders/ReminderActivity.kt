@@ -50,10 +50,10 @@ import org.researchstack.backbone.result.TaskResult
 import org.researchstack.backbone.step.Step
 import org.researchstack.backbone.ui.ViewTaskActivity.EXTRA_TASK_RESULT
 import org.sagebionetworks.research.mpower.R
-import org.sagebionetworks.research.mpower.R.string
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER
-import org.sagebionetworks.research.sageresearch.reminders.Reminder
-import org.threeten.bp.ZonedDateTime
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
+import org.sagebionetworks.research.sageresearch.extensions.toThreeTenLocalDateTime
+import org.threeten.bp.LocalDateTime
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Calendar.HOUR_OF_DAY
@@ -62,7 +62,7 @@ import java.util.Calendar.MINUTE
 import java.util.Calendar.SECOND
 import java.util.Date
 import java.util.Locale
-import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class ReminderActivity: AppCompatActivity() {
 
@@ -78,12 +78,30 @@ class ReminderActivity: AppCompatActivity() {
     }
 
     private val reminderManager: MpReminderManager by lazy {
-        MpReminderManager()
+        MpReminderManager(this)
     }
 
     protected val viewModel: ReminderActivityViewModel by lazy {
         ViewModelProviders.of(this).get(ReminderActivityViewModel::class.java)
     }
+
+    /**
+     * @property studyBurstViewModel encapsulates all read/write data operations
+     */
+    private val studyBurstViewModel: StudyBurstViewModel by lazy {
+        ViewModelProviders.of(this, studyBurstViewModelFactory).get(StudyBurstViewModel::class.java)
+    }
+
+    /**
+     * @property firstStudyBurstScheduledOn the LocalDateTime of the first study burst schedule
+     */
+    private var firstStudyBurstScheduledOn: LocalDateTime? = null
+
+    /**
+     * @property studyBurstViewModelFactory used to create a StudyBurstViewModel instance injected through Dagger
+     */
+    @Inject
+    lateinit var studyBurstViewModelFactory: StudyBurstViewModel.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,45 +124,59 @@ class ReminderActivity: AppCompatActivity() {
                 reminder_checkbox.isChecked = it
             }
         })
+
+        studyBurstViewModel.liveData().observe(this, Observer {
+            firstStudyBurstScheduledOn = it?.earliestStudyBurstScheduledOn
+        })
     }
 
     /**
      * This function is called when the bottom done button is clicked
      */
     protected fun onDoneButtonClicked() {
-        viewModel.timeLiveData.value?.let { hourMinutePair ->
-            viewModel.doNotRemindMeLiveData.value?.let { doNotRemindMe ->
-                val currentTime = ZonedDateTime.now().withHour(hourMinutePair.first).withMinute(hourMinutePair.second)
-                val reminderTimeInMillis = TimeUnit.SECONDS.toMillis(currentTime.toEpochSecond())
-                val reminder = Reminder(
-                        STUDY_BURST_REMINDER, REMINDER_ACTION_STUDY_BURST,
-                        REMINDER_CODE_STUDY_BURST, reminderTimeInMillis,
-                        title = getString(string.reminder_title_study_burst))
-                if (doNotRemindMe) {
-                    reminderManager.cancelReminder(this, reminder)
-                } else {
-                    reminderManager.scheduleReminder(this, reminder)
-                }
-
-                val taskResult = TaskResult(STUDY_BURST_REMINDER)
-
-                val stepResultTime = StepResult<Any>(Step("ReminderTime"))
-                stepResultTime.results.put("reminderTime", viewModel.toResultString(hourMinutePair))
-                taskResult.results.put("ReminderTime", stepResultTime)
-
-                val stepResultNoReminder = StepResult<Any>(Step("NoReminder"))
-                stepResultNoReminder.results.put("noReminder", doNotRemindMe)
-                taskResult.results.put("NoReminder", stepResultNoReminder)
-
-                val resultIntent = Intent()
-                resultIntent.putExtra(EXTRA_TASK_RESULT, taskResult)
-                setResult(Activity.RESULT_OK, resultIntent)
-            } ?: run {
-                setResult(Activity.RESULT_CANCELED)
-            }
-        } ?: run {
+        val hourMinutePair = viewModel.timeLiveData.value ?: run {
             setResult(Activity.RESULT_CANCELED)
+            finish()
+            return
         }
+
+        val doNotRemindMe = viewModel.doNotRemindMeLiveData.value ?: run {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+            return
+        }
+
+        val scheduledOn = firstStudyBurstScheduledOn ?:
+            studyBurstViewModel.studyStartDate()?.toThreeTenLocalDateTime() ?:
+            LocalDateTime.now()
+
+        val initialReminderTime = LocalDateTime.now()
+                .withHour(hourMinutePair.first)
+                .withMinute(hourMinutePair.second)
+                .withSecond(0)
+
+        val reminder = reminderManager.createStudyBurstReminder(
+                this, scheduledOn, initialReminderTime)
+
+        if (doNotRemindMe) {
+            reminderManager.cancelReminder(this, reminder)
+        } else {
+            reminderManager.scheduleReminder(this, reminder)
+        }
+
+        val taskResult = TaskResult(STUDY_BURST_REMINDER)
+
+        val stepResultTime = StepResult<Any>(Step("ReminderTime"))
+        stepResultTime.results.put("reminderTime", viewModel.toResultString(hourMinutePair))
+        taskResult.results.put("ReminderTime", stepResultTime)
+
+        val stepResultNoReminder = StepResult<Any>(Step("NoReminder"))
+        stepResultNoReminder.results.put("noReminder", doNotRemindMe)
+        taskResult.results.put("NoReminder", stepResultNoReminder)
+
+        val resultIntent = Intent()
+        resultIntent.putExtra(EXTRA_TASK_RESULT, taskResult)
+        setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }
 }

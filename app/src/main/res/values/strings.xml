@@ -110,6 +110,11 @@
     <string name="reminder_title_run_task">Time to complete the %s task</string>
     <string name="reminder_title_study_burst">Time to complete your study burst</string>
 
+    <!-- Notification Channel Strings -->
+    <string name="reminder_notification_channel_id">mPower Channel</string>
+    <string name="reminder_notification_channel_title">mPower Reminders</string>
+    <string name="reminder_notification_channel_desc">mPower reminders help you remember to log your data</string>
+
     <string name="measuring_center_label">Walk And Balance</string>
     <string name="measuring_left_label">Finger Tapping</string>
     <string name="measuring_right_label">Tremor Test</string>

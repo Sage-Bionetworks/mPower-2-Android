@@ -130,7 +130,11 @@ data class StudyBurstConfiguration(
         /**
          * @property engagementGroups set of the possible engagement data groups.
          */
-        val engagementGroups: Set<Set<String>>? = DataSourceManager.defaultEngagementGroups()
+        val engagementGroups: Set<Set<String>>? = DataSourceManager.defaultEngagementGroups(),
+        /**
+         * @property repeatIntervalInDays the number of days before a new study burst is scheduled
+         */
+        val repeatIntervalInDays: Long = 13 * 7L // each study burst repeats after 13 weeks
 ) {
     /**
      * @return a set of the completion task's activity identifiers

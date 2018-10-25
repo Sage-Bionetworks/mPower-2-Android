@@ -41,32 +41,8 @@ import org.sagebionetworks.research.mpower.R
 
 class MpReminderAlarmReceiver: ReminderAlarmReceiver() {
 
-    /**
-     * @property notificationChannelId set on Android OS >= 26, uniquely identified your notifications
-     */
-    override val notificationChannelId: String
-        get() {
-            return "mPower Channel"
-        }
-
-    /**
-     * @property notificationChannelId set on Android OS >= 26, explains your notifications
-     */
-    override val notificationChannelTitle: String
-        get() {
-            return "mPower Reminders"
-        }
-
-    /**
-     * @property notificationChannelId set on Android OS >= 26, explains your notifications in more detail
-     */
-    override val notificationChannelDesc: String
-        get() {
-            return "mPower reminders help you remember to log your data."
-        }
-
     // TODO: mdephillips 10/23/18 get Woody to design a status bar notification icon
-    override fun notificationIcon(code: Int, action: String): Int? {
+    override fun notificationIcon(reminder: Reminder, action: String): Int? {
         return R.drawable.ic_reminder
     }
 

@@ -50,6 +50,6 @@ class MpReminderRescheduleReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         logger.info("Received reschedule intent with action: ${intent.action}")
-        MpReminderManager().rescheduleAllReminders(context)
+        MpReminderManager(context).rescheduleAllReminders(context)
     }
 }

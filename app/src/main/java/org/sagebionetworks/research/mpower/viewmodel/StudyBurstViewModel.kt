@@ -756,6 +756,25 @@ data class StudyBurstItem(
     fun isStudyBurstTaskFinished(taskIdentifier: String): Boolean {
         return null != finishedSchedules.firstOrNull { it.activityIdentifier() == taskIdentifier }
     }
+
+    /**
+     * @property earliestStudyBurstScheduledOn the earliest scheduledOn time for a study burst schedule
+     */
+    val earliestStudyBurstScheduledOn: LocalDateTime?
+        get() {
+            return schedules.filterByActivityId(STUDY_BURST_COMPLETED).sortedWith(Comparator { s1, s2 ->
+                if (s1.scheduledOn == null && s2.scheduledOn == null) {
+                    return@Comparator 0
+                }
+                val s1ScheduledOn = s1.scheduledOn ?: run {
+                    return@Comparator -1
+                }
+                val s2ScheduledOn = s2.scheduledOn ?: run {
+                    return@Comparator 1
+                }
+                return@Comparator s1ScheduledOn.compareTo(s2ScheduledOn)
+            }).firstOrNull()?.scheduledOn
+        }
 }
 
 data class TodayActionBarItem(

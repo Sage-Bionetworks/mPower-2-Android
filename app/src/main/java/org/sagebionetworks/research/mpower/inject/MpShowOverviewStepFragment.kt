@@ -43,8 +43,8 @@ import org.sagebionetworks.research.mpower.reminders.MpReminderManager
 import org.sagebionetworks.research.mpower.reminders.REMINDER_ACTION_RUN_TASK
 import org.sagebionetworks.research.mpower.reminders.REMINDER_CODE_RUN_TASK
 import org.sagebionetworks.research.sageresearch.reminders.Reminder
-import org.threeten.bp.Instant
-import java.util.concurrent.TimeUnit
+import org.sagebionetworks.research.sageresearch.reminders.ReminderScheduleRules
+import org.threeten.bp.LocalDateTime
 
 class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
 
@@ -58,13 +58,6 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
             fragment.arguments = arguments
             return fragment
         }
-    }
-
-    /**
-     * @property reminderManager used to schedule reminders
-     */
-    val reminderManager: MpReminderManager by lazy {
-        MpReminderManager()
     }
 
     /**
@@ -91,17 +84,17 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
         val sheetView = act.layoutInflater.inflate(R.layout.dialog_reminder_me_later, null)
 
         sheetView.findViewById<Button>(R.id.remind_me_in_2_hours_button)?.setOnClickListener {
-            setReminder(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(2)).toEpochMilli())
+            setReminder(LocalDateTime.now().plusHours(2))
             dialog.dismiss()
             performTaskFragment.cancelTask(false)
         }
         sheetView.findViewById<Button>(R.id.remind_me_in_1_hour_button)?.setOnClickListener {
-            setReminder(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(1)).toEpochMilli())
+            setReminder(LocalDateTime.now().plusHours(1))
             dialog.dismiss()
             performTaskFragment.cancelTask(false)
         }
         sheetView.findViewById<Button>(R.id.remind_me_in_15_minutes_button)?.setOnClickListener {
-            setReminder(Instant.now().plusMillis(TimeUnit.MINUTES.toMillis(15)).toEpochMilli())
+            setReminder(LocalDateTime.now().plusMinutes(15))
             dialog.dismiss()
             performTaskFragment.cancelTask(false)
         }
@@ -116,12 +109,14 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
     /**
      * @param reminderTime the time to schedule the reminder at
      */
-    protected fun setReminder(reminderTime: Long) {
+    protected fun setReminder(reminderTime: LocalDateTime) {
         val taskId = performTaskViewModel.taskView.identifier
         context?.let {
+            val reminderManager = MpReminderManager(it)
+            val reminderScheduleRules = ReminderScheduleRules(reminderTime)
             val reminder = Reminder(
                     taskId, REMINDER_ACTION_RUN_TASK,
-                    REMINDER_CODE_RUN_TASK, reminderTime,
+                    REMINDER_CODE_RUN_TASK, reminderScheduleRules,
                     title = it.getString(R.string.reminder_title_run_task).format(taskId))
             reminderManager.scheduleReminder(it, reminder)
         }
