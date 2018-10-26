@@ -168,14 +168,20 @@ class ReminderActivity: AppCompatActivity() {
         }
 
         val taskResult = TaskResult(STUDY_BURST_REMINDER)
+        taskResult.startDate = viewModel.startedOnTime
+        taskResult.endDate = Date()
 
-        val stepResultTime = StepResult<Any>(Step("ReminderTime"))
-        stepResultTime.results.put("reminderTime", viewModel.toResultString(hourMinutePair))
-        taskResult.results.put("ReminderTime", stepResultTime)
+        val formStepResultTime: StepResult<StepResult<String>> = StepResult(Step("ReminderTime"))
+        val stepResultTime = StepResult<String>(Step("reminderTime"))
+        stepResultTime.result = viewModel.toResultString(hourMinutePair)
+        formStepResultTime.result = stepResultTime
+        taskResult.results["ReminderTime"] = formStepResultTime
 
-        val stepResultNoReminder = StepResult<Any>(Step("NoReminder"))
-        stepResultNoReminder.results.put("noReminder", doNotRemindMe)
-        taskResult.results.put("NoReminder", stepResultNoReminder)
+        val formStepResultNoReminder: StepResult<StepResult<Boolean>> = StepResult(Step("NoReminder"))
+        val stepResultNoReminder = StepResult<Boolean>(Step("noReminder"))
+        stepResultNoReminder.result = doNotRemindMe
+        formStepResultNoReminder.result = stepResultNoReminder
+        taskResult.results["NoReminder"] = formStepResultNoReminder
 
         val resultIntent = Intent()
         resultIntent.putExtra(EXTRA_TASK_RESULT, taskResult)
@@ -188,6 +194,11 @@ class ReminderActivity: AppCompatActivity() {
  * ReminderActivityViewModel holds the data for the ReminderActivity across life cycle changes
  */
 class ReminderActivityViewModel: ViewModel() {
+
+    /**
+     * @property startedOnTime when the user landed on the screen
+     */
+    val startedOnTime = Date()
 
     /**
      * @property defaultHour of the time
