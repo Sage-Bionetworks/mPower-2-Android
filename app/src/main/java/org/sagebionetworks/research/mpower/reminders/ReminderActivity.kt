@@ -42,6 +42,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_reminder.reminder_checkbox
 import kotlinx.android.synthetic.main.activity_reminder.reminder_done_button
 import kotlinx.android.synthetic.main.activity_reminder.reminder_time_button
@@ -104,6 +105,7 @@ class ReminderActivity: AppCompatActivity() {
     lateinit var studyBurstViewModelFactory: StudyBurstViewModel.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reminder)
 
@@ -154,6 +156,7 @@ class ReminderActivity: AppCompatActivity() {
                 .withHour(hourMinutePair.first)
                 .withMinute(hourMinutePair.second)
                 .withSecond(0)
+                .withNano(0)
 
         val reminder = reminderManager.createStudyBurstReminder(
                 this, scheduledOn, initialReminderTime)

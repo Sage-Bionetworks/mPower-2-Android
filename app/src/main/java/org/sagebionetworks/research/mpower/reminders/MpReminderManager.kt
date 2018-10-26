@@ -65,8 +65,7 @@ class MpReminderManager(context: Context): ReminderManager(context) {
      * @param context can be app, activity, or server
      */
     fun rescheduleAllReminders(context: Context) {
-        cancelAllReminders(context)
-        allActiveReminders(context).forEach {
+        cancelAllReminders(context).forEach {
             scheduleReminder(context, it)
         }
     }
@@ -85,8 +84,8 @@ class MpReminderManager(context: Context): ReminderManager(context) {
         // TODO: mdephillips 10/25/18 this needs to be supported by bridge app config
         val studyConfig = StudyBurstConfiguration()
 
-        val ignoreStart = firstStudyBurstScheduledOn.startOfDay()
-        val ignoreEnd = firstStudyBurstScheduledOn.plusDays(studyConfig.numberOfDays.toLong())
+        val ignoreStart = firstStudyBurstScheduledOn.plusDays(studyConfig.numberOfDays.toLong() + 1)
+        val ignoreEnd = firstStudyBurstScheduledOn.plusDays(studyConfig.repeatIntervalInDays)
         val ignoreRepeatInterval = studyConfig.repeatIntervalInDays
         val ignoreAlarmRules = ReminderScheduleIgnoreRule(ignoreStart, ignoreEnd, ignoreRepeatInterval)
 

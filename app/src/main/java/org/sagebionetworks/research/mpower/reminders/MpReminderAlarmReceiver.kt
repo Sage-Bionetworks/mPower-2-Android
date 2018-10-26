@@ -49,14 +49,17 @@ class MpReminderAlarmReceiver: ReminderAlarmReceiver() {
     /**
      * Overriding this allows for us to provide our own custom activity to launch when the notification is tapped
      */
-    override fun pendingIntent(context: Context, code: Int, action: String): PendingIntent {
+    override fun pendingIntent(
+            context: Context, reminderManager: ReminderManager,
+            reminder: Reminder, action: String): PendingIntent {
+
         val notificationIntent = Intent(context, MainActivity::class.java)
         notificationIntent.action = action
         notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        notificationIntent.putExtra(REMINDER_JSON_KEY, reminderManager.jsonFromReminder(reminder))
         val stackBuilder = TaskStackBuilder.create(context)
         stackBuilder.addParentStack(MainActivity::class.java)
         stackBuilder.addNextIntent(notificationIntent)
-        return stackBuilder.getPendingIntent(
-                code, PendingIntent.FLAG_UPDATE_CURRENT)
+        return stackBuilder.getPendingIntent(reminder.code, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 }
