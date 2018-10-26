@@ -2,6 +2,9 @@ package org.sagebionetworks.research.mpower.tracking;
 
 import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
+import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN;
+import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_REQUEST_CODE;
 
 import android.app.Activity;
 
@@ -24,12 +27,11 @@ import org.researchstack.backbone.factory.IntentFactory;
 import org.researchstack.backbone.model.TaskModel;
 import org.researchstack.backbone.result.TaskResult;
 import org.researchstack.backbone.ui.ViewTaskActivity;
-import org.sagebionetworks.bridge.researchstack.BridgeDataProvider;
-import org.sagebionetworks.bridge.rest.model.ScheduledActivity;
 
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.reminders.ReminderActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
@@ -39,7 +41,6 @@ import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TodayActionBarItem;
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
-import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters;
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
 import org.threeten.bp.Instant;
 
@@ -230,11 +231,24 @@ public class TrackingTabFragment extends Fragment {
      * @param surveySchedule of the survey to launch
      */
     private void launchRsSurvey(@Nullable ScheduledActivityEntity surveySchedule) {
-        if (surveySchedule == null ||
-                surveySchedule.getActivity() == null ||
-                surveySchedule.getActivity().getSurvey() == null) {
-            return; // NPE guard statements
+        if (surveySchedule == null) {
+            return; // NPE guard statement
         }
+
+        // The study burst reminder is a special case survey that isn't an RS survey,
+        // but the task result is uploaded as one, so it needs special case logic here
+        if (STUDY_BURST_REMINDER.equals(surveySchedule.activityIdentifier())) {
+            hasShownStudyBurst = true;
+            currentSurveySchedule = surveySchedule;
+            runStudyBurstReminder();
+            return;
+        }
+
+        if (surveySchedule.getActivity() == null ||
+                surveySchedule.getActivity().getSurvey() == null) {
+            return; // More NPE guard statements
+        }
+
         hasShownStudyBurst = true;
         trackingStatusBar.setEnabled(false);
         trackingStatusBar.setProgressBarVisibility(View.VISIBLE);
@@ -245,6 +259,8 @@ public class TrackingTabFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Will be set if a survey was just successfully completed and uploaded
+        String successfulSurveyUploadTaskId = null;
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TASK) {
             TaskResult taskResult = (TaskResult)
                     data.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT);
@@ -265,18 +281,27 @@ public class TrackingTabFragment extends Fragment {
                     // send the user straight into the study burst
                     goToStudyBurst();
                 }
+                successfulSurveyUploadTaskId = currentSurveySchedule.activityIdentifier();
             }
         }
         currentSurveyTask = null;
         currentSurveySchedule = null;
 
         // Check this at the end because it may set currentSurveyTask and currentSurveySchedule
-        if (resultCode == Activity.RESULT_OK &&
-                requestCode == StudyBurstActivity.Companion.getREQUEST_CODE_STUDY_BURST()) {
+        if (resultCode == Activity.RESULT_OK && requestCode == STUDY_BURST_REQUEST_CODE) {
             ScheduledActivityEntity scheduleToRun = (ScheduledActivityEntity)
-                    data.getSerializableExtra(StudyBurstActivity.Companion.getEXTRA_GUID_OF_TASK_TO_RUN());
+                    data.getSerializableExtra(STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN);
             if (scheduleToRun != null) {
                 launchRsSurvey(scheduleToRun);
+            }
+        }
+
+        // Check this at the end because it may set currentSurveyTask and currentSurveySchedule
+        // Per logic of iOS flow, demographics survey should be run after a successful study burst reminder
+        if (STUDY_BURST_REMINDER.equals(successfulSurveyUploadTaskId)) {
+            StudyBurstItem currentItem = studyBurstViewModel.liveData().getValue();
+            if (currentItem != null && currentItem.getDemographicsSurvey() != null) {
+                launchRsSurvey(currentItem.getDemographicsSurvey());
             }
         }
     }
@@ -309,11 +334,14 @@ public class TrackingTabFragment extends Fragment {
         Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
     }
 
+    private void runStudyBurstReminder() {
+        startActivityForResult(new Intent(getActivity(), ReminderActivity.class), REQUEST_TASK);
+    }
+
     /**
      * Transitions to the study burst screen
      */
     private void goToStudyBurst() {
-        startActivityForResult(new Intent(getActivity(), StudyBurstActivity.class),
-                StudyBurstActivity.Companion.getREQUEST_CODE_STUDY_BURST());
+        startActivityForResult(new Intent(getActivity(), StudyBurstActivity.class), STUDY_BURST_REQUEST_CODE);
     }
 }

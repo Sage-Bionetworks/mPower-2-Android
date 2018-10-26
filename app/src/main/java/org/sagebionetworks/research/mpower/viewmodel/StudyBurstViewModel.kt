@@ -34,6 +34,7 @@ import org.sagebionetworks.research.mpower.research.MpIdentifier.BACKGROUND
 import org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED_UPLOAD
+import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
@@ -632,6 +633,10 @@ data class StudyBurstItem(
         return schedules.filterByActivityId(BACKGROUND).firstOrNull()
     }
 
+    val studyBurstReminderTask: ScheduledActivityEntity? get() {
+        return schedules.filterByActivityId(STUDY_BURST_REMINDER).firstOrNull()
+    }
+
     private fun hasReport(schedule: ScheduledActivityEntity?): Boolean {
         if (schedule == null) return false
         // TODO: mdephillips: ios code has this as the finished calculation
@@ -756,6 +761,25 @@ data class StudyBurstItem(
     fun isStudyBurstTaskFinished(taskIdentifier: String): Boolean {
         return null != finishedSchedules.firstOrNull { it.activityIdentifier() == taskIdentifier }
     }
+
+    /**
+     * @property earliestStudyBurstScheduledOn the earliest scheduledOn time for a study burst schedule
+     */
+    val earliestStudyBurstScheduledOn: LocalDateTime?
+        get() {
+            return schedules.filterByActivityId(STUDY_BURST_COMPLETED).sortedWith(Comparator { s1, s2 ->
+                if (s1.scheduledOn == null && s2.scheduledOn == null) {
+                    return@Comparator 0
+                }
+                val s1ScheduledOn = s1.scheduledOn ?: run {
+                    return@Comparator -1
+                }
+                val s2ScheduledOn = s2.scheduledOn ?: run {
+                    return@Comparator 1
+                }
+                return@Comparator s1ScheduledOn.compareTo(s2ScheduledOn)
+            }).firstOrNull()?.scheduledOn
+        }
 }
 
 data class TodayActionBarItem(
@@ -800,6 +824,7 @@ open class StudyBurstResearchStackArchiveFactory: ResearchStackUploadArchiveFact
 
     private val logger = LoggerFactory.getLogger(StudyBurstResearchStackArchiveFactory::class.java)
     private val studyBurstArchiveFileName = "tasks"
+    private val answersFilename = "answers"
 
     /**
      * Can be overridden by sub-class for custom data archiving
@@ -815,6 +840,10 @@ open class StudyBurstResearchStackArchiveFactory: ResearchStackUploadArchiveFact
             // Study burst completed marker has custom upload archive names "tasks"
             // and all results are consolidated into that file with their result identifiers
             archiveBuilder.addDataFile(fromResultList(studyBurstArchiveFileName, flattenedResultList))
+        } else if (STUDY_BURST_REMINDER == taskIdentifier) {
+            // Study burst completed marker has custom upload archive names "answers"
+            // and all results are consolidated into that file with their result identifiers
+            archiveBuilder.addDataFile(fromResultList(answersFilename, flattenedResultList))
         } else {
             super.addFiles(archiveBuilder, flattenedResultList, taskIdentifier)
         }
