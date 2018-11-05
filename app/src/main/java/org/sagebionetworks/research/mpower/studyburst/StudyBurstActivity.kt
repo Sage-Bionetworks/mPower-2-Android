@@ -261,7 +261,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * StudyBurstAdapterListener function, called when a task icon in the RecyclerView is selected.
      */
     override fun itemSelected(item: StudyBurstTaskInfo) {
-        val uuid = studyBurstViewModel.createScheduleTaskRunUuid(item.schedule)
+        val uuid = studyBurstViewModel.createScheduleTaskRunUuid(item.schedule?.guid)
         taskLauncher.launchTask(this, item.task.identifier, uuid)
                 .observe(this, Observer {
                     when(it?.state) {
