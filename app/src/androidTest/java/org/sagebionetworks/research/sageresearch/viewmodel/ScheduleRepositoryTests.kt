@@ -103,7 +103,7 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         assertNotNull(schedule1)
         assertTrue(schedule1?.needsSyncedToBridge == null || schedule1.needsSyncedToBridge == false)
         val repo = MockScheduleRepository(activityDao, syncStateDao)
-        val uuid = repo.createScheduleTaskRunUuid(schedule1!!)
+        val uuid = repo.createScheduleTaskRunUuid(schedule1?.guid!!)
         repo.throwableOnUpdate = Throwable("Unable to resolve host " +
                 "\"webservices.sagebase.org\", no address associated with hostname")
         repo.updateSchedule(TaskResultBase("id", uuid)).onErrorComplete().blockingAwait()
@@ -122,7 +122,7 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         assertNotNull(schedule1)
         assertTrue(schedule1?.needsSyncedToBridge == null || schedule1.needsSyncedToBridge == false)
         val repo = MockScheduleRepository(activityDao, syncStateDao)
-        val uuid = repo.createScheduleTaskRunUuid(schedule1!!)
+        val uuid = repo.createScheduleTaskRunUuid(schedule1?.guid!!)
         repo.throwableOnUpdate = EntityNotFoundException("Account not found.", "webservices.sagebase.org")
         repo.updateSchedule(TaskResultBase("id", uuid)).onErrorComplete().blockingAwait()
         // See BridgeExtensions.isUnrecoverableAccountNotFoundError for logic
@@ -142,7 +142,7 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         assertNotNull(schedule1)
         assertNull(schedule1?.needsSyncedToBridge)
         val repo = MockScheduleRepository(activityDao, syncStateDao)
-        val uuid = repo.createScheduleTaskRunUuid(schedule1!!)
+        val uuid = repo.createScheduleTaskRunUuid(schedule1?.guid!!)
         repo.throwableOnUpdate = Throwable("Client data too large, please consider a smaller payload")
         repo.updateSchedule(TaskResultBase("id", uuid)).onErrorComplete().blockingGet()
         // See BridgeExtensions.isUnrecoverableClientDataTooLargeError for logic

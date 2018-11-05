@@ -57,9 +57,9 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         var days : String? = null
         if (savedInstanceState == null) {
             if (arguments != null) {
-                schedId = arguments!!.getString(ARG_SCHED_ID)
-                name = arguments!!.getString(ARG_NAME)
-                time = arguments!!.getString(ARG_TIME)
+                schedId = arguments!!.getString(ARG_SCHED_ID)!!
+                name = arguments!!.getString(ARG_NAME)!!
+                time = arguments!!.getString(ARG_TIME)!!
                 days = arguments!!.getString(ARG_DAYS)
             } else {
                 LOGGER.warn("No arguments found")
@@ -67,9 +67,9 @@ class MedicationDayFragment : AppCompatDialogFragment() {
                 time = "9:15 PM"
             }
         } else {
-            schedId = savedInstanceState.getString(ARG_SCHED_ID)
-            name = savedInstanceState.getString(ARG_NAME)
-            time = savedInstanceState.getString(ARG_TIME)
+            schedId = savedInstanceState.getString(ARG_SCHED_ID)!!
+            name = savedInstanceState.getString(ARG_NAME)!!
+            time = savedInstanceState.getString(ARG_TIME)!!
             days = savedInstanceState.getString(ARG_DAYS)
         }
 
