@@ -20,8 +20,10 @@ import org.sagebionetworks.research.mpower.viewmodel.ItemType.TRIGGERS
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel
 import org.sagebionetworks.research.mpower.viewmodel.find
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
-import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
-import org.sagebionetworks.research.sageresearch.viewmodel.ScheduledRepositorySyncStateDao
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledRepositorySyncStateDao
+import org.sagebionetworks.research.sageresearch.viewmodel.RoomTestHelper
+import org.sagebionetworks.research.sageresearch.viewmodel.TestResourceHelper
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 
@@ -76,7 +78,8 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
     var instantExecutor = InstantTaskExecutorRule()
     val scheduleDao = database.scheduleDao()
     val scheduleRepo = ScheduleRepository(scheduleDao,
-            ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()),
+            ScheduledRepositorySyncStateDao(
+                    InstrumentationRegistry.getTargetContext()),
             BridgeManagerProvider.getInstance().surveyManager,
             BridgeManagerProvider.getInstance().activityManager,
             BridgeManagerProvider.getInstance().participantManager,

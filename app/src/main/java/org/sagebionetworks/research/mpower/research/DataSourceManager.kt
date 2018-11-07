@@ -88,7 +88,7 @@ data class CompletionTask(
 }
 
 /**
- * The study burst configuration is a data class that can be added to the `AppConfig.clientData`.
+ * The study burst configuration is a data class that can be added to the `AppConfig.data`.
  */
 data class StudyBurstConfiguration(
         /**

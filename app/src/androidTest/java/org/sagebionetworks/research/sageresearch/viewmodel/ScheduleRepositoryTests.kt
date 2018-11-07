@@ -23,10 +23,11 @@ import org.sagebionetworks.bridge.android.manager.UploadManager
 import org.sagebionetworks.bridge.rest.exceptions.EntityNotFoundException
 import org.sagebionetworks.bridge.rest.model.Message
 import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
-import org.sagebionetworks.research.mpower.RoomTestHelper
-import org.sagebionetworks.research.mpower.TestResourceHelper
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepositoryHelper
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledRepositorySyncStateDao
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepositoryTests.MockScheduleRepository.Companion.participantCreatedOn
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepositoryTests.MockScheduleRepository.Companion.syncDateFirst
 

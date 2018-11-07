@@ -17,16 +17,10 @@ import org.joda.time.DateTime
 import org.researchstack.backbone.answerformat.AnswerFormat
 import org.researchstack.backbone.model.TaskModel
 import org.researchstack.backbone.result.StepResult
-import org.researchstack.backbone.result.TaskResult
 import org.sagebionetworks.bridge.data.Archive
 import org.sagebionetworks.bridge.data.JsonArchiveFile
 import org.sagebionetworks.bridge.researchstack.survey.SurveyAnswer
 import org.sagebionetworks.bridge.rest.RestUtils
-import org.sagebionetworks.research.domain.result.AnswerResultType.DATE
-import org.sagebionetworks.research.domain.result.AnswerResultType.STRING
-import org.sagebionetworks.research.domain.result.implementations.AnswerResultBase
-import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
-import org.sagebionetworks.research.domain.result.interfaces.Result
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.research.CompletionTask
 import org.sagebionetworks.research.mpower.research.DataSourceManager
@@ -56,10 +50,9 @@ import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo
 import org.sagebionetworks.research.sageresearch.viewmodel.ResearchStackUploadArchiveFactory
-import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.sagebionetworks.research.sageresearch.viewmodel.SingleLiveEvent
-import org.sagebionetworks.research.sageresearch_app_sdk.TaskResultUploader
 import org.slf4j.LoggerFactory
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
@@ -69,14 +62,14 @@ import java.lang.Integer.MAX_VALUE
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.Objects
 import javax.inject.Inject
 
 open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
         scheduleRepo: ScheduleRepository, private val studyBurstSettingsDao: StudyBurstSettingsDao) :
         ScheduleViewModel(scheduleDao, scheduleRepo) {
 
-    private val logger = LoggerFactory.getLogger(ScheduleRepository::class.java)
+    private val logger = LoggerFactory.getLogger(
+            ScheduleRepository::class.java)
 
     class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,
             private val scheduleRepository: ScheduleRepository,
@@ -127,6 +120,11 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
     protected open fun now(): LocalDateTime {
         return LocalDateTime.now()
     }
+
+    /**
+     * @property studyBurstBeingMarkedAsCompleted kept track so it's not marked twice
+     */
+    private var studyBurstBeingMarkedAsCompleted: ScheduledActivityEntity? = null
 
     /**
      * Today's query will check for all of today's activity schedules that are unfinished or finished today
@@ -257,6 +255,10 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
      */
     private fun markCompleted(item: StudyBurstItem, studyMarker: ScheduledActivityEntity) {
 
+        if (studyBurstBeingMarkedAsCompleted != null) {
+            return
+        }
+
         // Use the upload identifier instead
         val taskResult = org.researchstack.backbone.result.TaskResult(STUDY_BURST_COMPLETED_UPLOAD)
         val stepId = "TaskStep" // can be anything, identifier not used in the upload
@@ -275,12 +277,16 @@ open class StudyBurstViewModel(scheduleDao: ScheduledActivityEntityDao,
 
         taskResult.setStepResultForStepIdentifier(stepId, stepResult)
 
+        studyBurstBeingMarkedAsCompleted = studyMarker
+
         compositeDispose.add(
                 scheduleRepo.updateScheduleToBridge(studyMarker)
                         .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
+                    studyBurstBeingMarkedAsCompleted = null
                     scheduleSyncErrorMessageLiveData.postValue(null)
                 }, { t ->
+                    studyBurstBeingMarkedAsCompleted = null
                     scheduleSyncErrorMessageLiveData.postValue(t.localizedMessage)
                 }))
 

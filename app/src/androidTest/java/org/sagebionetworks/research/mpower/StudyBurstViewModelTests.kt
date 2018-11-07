@@ -41,8 +41,10 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
-import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
-import org.sagebionetworks.research.sageresearch.viewmodel.ScheduledRepositorySyncStateDao
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledRepositorySyncStateDao
+import org.sagebionetworks.research.sageresearch.viewmodel.RoomTestHelper
+import org.sagebionetworks.research.sageresearch.viewmodel.TestResourceHelper
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
@@ -101,7 +103,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
     val studyBurstSettingsDao = StudyBurstSettingsDao(InstrumentationRegistry.getTargetContext())
     val scheduleDao = database.scheduleDao()
     val scheduleRepo = ScheduleRepository(scheduleDao,
-            ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()),
+            ScheduledRepositorySyncStateDao(
+                    InstrumentationRegistry.getTargetContext()),
             BridgeManagerProvider.getInstance().surveyManager,
             BridgeManagerProvider.getInstance().activityManager,
             BridgeManagerProvider.getInstance().participantManager,
@@ -532,7 +535,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
             val gson = EntityTypeConverters().bridgeGson
             val studyBurstList = "test_study_burst_schedules.json"
-            val templateSchedules = TestResourceHelper.testResource(studyBurstList) 
+            val templateSchedules = TestResourceHelper.testResource(studyBurstList)
 
             val day1_startupState =
                     StudySetup(templateSchedules = templateSchedules,
