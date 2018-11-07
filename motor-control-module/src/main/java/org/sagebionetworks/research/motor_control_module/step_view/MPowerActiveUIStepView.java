@@ -18,6 +18,8 @@ import org.sagebionetworks.research.presentation.model.implementations.ActiveUIS
 import org.sagebionetworks.research.presentation.model.interfaces.ActiveUIStepView;
 import org.threeten.bp.Duration;
 
+import java.util.HashMap;
+
 public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
     public static final String TYPE = AppStepType.MPOWER_ACTIVE;
 
@@ -25,8 +27,9 @@ public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
                                   @Nullable DisplayString title, @Nullable DisplayString text, @Nullable DisplayString detail,
                                   @Nullable DisplayString footnote, @Nullable ColorThemeView colorTheme, @Nullable ImageThemeView imageTheme,
                                   @NonNull Duration duration, boolean isBackgroundAudioRequired) {
+        // TODO: mdephillips 10/7/18 added a blank hashmap to get this to compile, this prob isn't correct
         super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme,
-                duration, isBackgroundAudioRequired);
+                duration, new HashMap<>(), isBackgroundAudioRequired);
     }
 
     public static MPowerActiveUIStepView fromMPowerActiveUIStep(Step step, DrawableMapper mapper) {

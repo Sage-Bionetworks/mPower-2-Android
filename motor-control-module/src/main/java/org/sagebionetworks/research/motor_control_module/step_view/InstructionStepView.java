@@ -51,6 +51,8 @@ import org.sagebionetworks.research.presentation.model.action.ActionView;
 import org.sagebionetworks.research.presentation.model.implementations.ActiveUIStepViewBase;
 import org.threeten.bp.Duration;
 
+import java.util.HashMap;
+
 public class InstructionStepView extends ActiveUIStepViewBase {
     public static final String TYPE = StepType.INSTRUCTION;
 
@@ -82,8 +84,9 @@ public class InstructionStepView extends ActiveUIStepViewBase {
             @NonNull final Duration duration,
             final boolean isBackgroundAudioRequired,
             final boolean isFirstRunOnly) {
+        // TODO: mdephillips 10/7/18 added a blank hashmap to get this to compile, this prob isn't correct
         super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme, duration,
-                isBackgroundAudioRequired);
+                new HashMap<>(), isBackgroundAudioRequired);
         this.isFirstRunOnly = isFirstRunOnly;
     }
 
