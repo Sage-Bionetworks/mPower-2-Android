@@ -47,17 +47,40 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="110dp">
 
-        <ImageButton
-            android:id="@+id/leftIconImageView"
+        <RelativeLayout
+            android:id="@+id/leftIconImageContainer"
             android:layout_width="@dimen/icon_width"
             android:layout_height="0dp"
-            android:background="@color/transparent"
-            android:scaleType="fitCenter"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/countdown_dial_background" />
+            android:adjustViewBounds="true">
+
+            <ImageView
+                android:id="@+id/leftIconImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/countdown_dial_background"/>
+
+            <Space
+                android:id="@+id/leftIconCheckmarkSpace"
+                android:layout_width="@dimen/margin_medium"
+                android:layout_height="1dp"
+                android:layout_centerHorizontal="true"/>
+
+            <ImageView
+                android:id="@+id/leftIconCheckmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/leftIconCheckmarkSpace"
+                app:srcCompat="@drawable/ic_complete"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/leftIconLabel"
@@ -66,12 +89,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_xxsmall"
             android:lines="2"
-            android:text="PANTS WITH POCKETS"
             android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/leftIconImageView" />
+            app:layout_constraintTop_toBottomOf="@id/leftIconImageContainer" />
+
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -85,17 +108,40 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="110dp">
 
-        <ImageButton
-            android:id="@+id/centerIconImageView"
+        <RelativeLayout
+            android:id="@+id/centerIconImageContainer"
             android:layout_width="@dimen/icon_width"
             android:layout_height="0dp"
-            android:background="@color/transparent"
-            android:scaleType="fitCenter"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/countdown_dial_background" />
+            android:adjustViewBounds="true">
+
+            <ImageView
+                android:id="@+id/centerIconImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/countdown_dial_background"/>
+
+            <Space
+                android:id="@+id/centerIconCheckmarkSpace"
+                android:layout_width="@dimen/margin_medium"
+                android:layout_height="1dp"
+                android:layout_centerHorizontal="true"/>
+
+            <ImageView
+                android:id="@+id/centerIconCheckmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/centerIconCheckmarkSpace"
+                app:srcCompat="@drawable/ic_complete"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/centerIconLabel"
@@ -103,13 +149,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_xxsmall"
-            android:text="PANTS WITH POCKETS"
             android:lines="2"
             android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/centerIconImageView" />
+            app:layout_constraintTop_toBottomOf="@+id/centerIconImageContainer" />
+
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -123,17 +169,40 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_max="110dp">
 
-        <ImageButton
-            android:id="@+id/rightIconImageView"
+        <RelativeLayout
+            android:id="@+id/rightIconImageContainer"
             android:layout_width="@dimen/icon_width"
             android:layout_height="0dp"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/countdown_dial_background" />
+            android:adjustViewBounds="true">
+
+            <ImageView
+                android:id="@+id/rightIconImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/countdown_dial_background"/>
+
+            <Space
+                android:id="@+id/rightIconCheckmarkSpace"
+                android:layout_width="@dimen/margin_medium"
+                android:layout_height="1dp"
+                android:layout_centerHorizontal="true"/>
+
+            <ImageView
+                android:id="@+id/rightIconCheckmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/rightIconCheckmarkSpace"
+                app:srcCompat="@drawable/ic_complete"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/rightIconLabel"
@@ -141,12 +210,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_xxsmall"
-            android:text="PANTS WITH POCKETS"
             android:lines="2"
             android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rightIconImageView" />
+            app:layout_constraintTop_toBottomOf="@+id/rightIconImageContainer" />
+
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>
