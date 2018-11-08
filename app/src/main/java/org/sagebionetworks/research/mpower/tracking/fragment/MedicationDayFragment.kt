@@ -56,11 +56,12 @@ class MedicationDayFragment : AppCompatDialogFragment() {
 
         var days: String? = null
         if (savedInstanceState == null) {
-            if (arguments != null) {
-                arguments!!.getString(ARG_SCHED_ID)?.let { schedId = "" }
-                arguments!!.getString(ARG_NAME)?.let { name = "" }
-                arguments!!.getString(ARG_TIME)?.let { time = "" }
-                days = arguments!!.getString(ARG_DAYS)
+            val args = arguments
+            if (args != null) {
+                schedId = args.getString(ARG_SCHED_ID) ?: ""
+                name = args.getString(ARG_NAME) ?: ""
+                time = args.getString(ARG_TIME) ?: ""
+                days = args.getString(ARG_DAYS)
             } else {
                 LOGGER.warn("No arguments found")
                 schedId = ""
@@ -68,9 +69,9 @@ class MedicationDayFragment : AppCompatDialogFragment() {
                 time = "9:15 PM"
             }
         } else {
-            savedInstanceState.getString(ARG_SCHED_ID)?.let { schedId = "" }
-            savedInstanceState.getString(ARG_NAME)?.let { name = "" }
-            savedInstanceState.getString(ARG_TIME)?.let { time = "" }
+            schedId = savedInstanceState.getString(ARG_SCHED_ID) ?: ""
+            name = savedInstanceState.getString(ARG_NAME) ?: ""
+            time = savedInstanceState.getString(ARG_TIME) ?: ""
             days = savedInstanceState.getString(ARG_DAYS)
         }
 
