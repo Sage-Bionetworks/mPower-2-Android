@@ -19,6 +19,7 @@ import org.sagebionetworks.research.presentation.model.interfaces.ActiveUIStepVi
 import org.threeten.bp.Duration;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
     public static final String TYPE = AppStepType.MPOWER_ACTIVE;
@@ -26,10 +27,9 @@ public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
     public MPowerActiveUIStepView(@NonNull String identifier, int navDirection, @NonNull ImmutableMap<String, ActionView> actions,
                                   @Nullable DisplayString title, @Nullable DisplayString text, @Nullable DisplayString detail,
                                   @Nullable DisplayString footnote, @Nullable ColorThemeView colorTheme, @Nullable ImageThemeView imageTheme,
-                                  @NonNull Duration duration, boolean isBackgroundAudioRequired) {
-        // TODO: mdephillips 10/7/18 added a blank hashmap to get this to compile, this prob isn't correct
+                                  @NonNull Duration duration, @NonNull final Map<String, String> spokenInstructions, boolean isBackgroundAudioRequired) {
         super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme,
-                duration, new HashMap<>(), isBackgroundAudioRequired);
+                duration, spokenInstructions, isBackgroundAudioRequired);
     }
 
     public static MPowerActiveUIStepView fromMPowerActiveUIStep(Step step, DrawableMapper mapper) {
@@ -41,7 +41,7 @@ public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
         return new MPowerActiveUIStepView(activeUIStepView.getIdentifier(), activeUIStepView.getNavDirection(),
                 activeUIStepView.getActions(), activeUIStepView.getTitle(), activeUIStepView.getText(),
                 activeUIStepView.getDetail(), activeUIStepView.getFootnote(), activeUIStepView.getColorTheme(),
-                activeUIStepView.getImageTheme(), activeUIStepView.getDuration(),
+                activeUIStepView.getImageTheme(), activeUIStepView.getDuration(), activeUIStepView.getSpokenInstructions(),
                 activeUIStepView.isBackgroundAudioRequired());
     }
 
