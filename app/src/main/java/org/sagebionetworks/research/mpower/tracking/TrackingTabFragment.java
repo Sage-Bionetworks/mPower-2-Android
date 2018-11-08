@@ -1,6 +1,7 @@
 package org.sagebionetworks.research.mpower.tracking;
 
 import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
 import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN;
@@ -42,6 +43,7 @@ import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TodayActionBarItem;
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
+import org.sagebionetworks.research.sageresearch.viewmodel.ReportViewModel;
 import org.threeten.bp.Instant;
 
 import javax.annotation.Nonnull;
@@ -74,11 +76,16 @@ public class TrackingTabFragment extends Fragment {
     @Inject
     SurveyViewModel.Factory surveyViewModelFactory;
 
+    @Inject
+    ReportViewModel.Factory reportViewModelFactory;
+
     private TodayScheduleViewModel todayScheduleViewModel;
 
     private SurveyViewModel surveyViewModel;
 
     private StudyBurstViewModel studyBurstViewModel;
+
+    private ReportViewModel reportViewModel;
 
     private Unbinder unbinder;
 
@@ -154,6 +161,8 @@ public class TrackingTabFragment extends Fragment {
             // TODO: mdephillips 9/4/18 we may want to hold off on implementing it
             // TODO: mdephillips 9/4/18 because not all survey types are currently supported with UI right now
         });
+
+        reportViewModel = ViewModelProviders.of(this, reportViewModelFactory).get(ReportViewModel.class);
     }
 
     @Override
@@ -276,6 +285,8 @@ public class TrackingTabFragment extends Fragment {
                 studyBurstViewModel.updateScheduleToBridge(currentSurveySchedule);
                 // This function uploads the result of the task to S3
                 studyBurstViewModel.uploadResearchStackTaskResultToS3(currentSurveySchedule, taskResult);
+                // This function will generate a client data report for the research stack task result
+                reportViewModel.saveResearchStackReports(taskResult);
 
                 if (MOTIVATION.equals(currentSurveySchedule.activityIdentifier())) {
                     // send the user straight into the study burst
