@@ -2,7 +2,6 @@ package org.sagebionetworks.research.motor_control_module.step_view;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -18,16 +17,16 @@ import org.sagebionetworks.research.presentation.model.implementations.ActiveUIS
 import org.sagebionetworks.research.presentation.model.interfaces.ActiveUIStepView;
 import org.threeten.bp.Duration;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
     public static final String TYPE = AppStepType.MPOWER_ACTIVE;
 
-    public MPowerActiveUIStepView(@NonNull String identifier, int navDirection, @NonNull ImmutableMap<String, ActionView> actions,
-                                  @Nullable DisplayString title, @Nullable DisplayString text, @Nullable DisplayString detail,
-                                  @Nullable DisplayString footnote, @Nullable ColorThemeView colorTheme, @Nullable ImageThemeView imageTheme,
-                                  @NonNull Duration duration, @NonNull final Map<String, String> spokenInstructions, boolean isBackgroundAudioRequired) {
+    public MPowerActiveUIStepView(@NonNull String identifier, int navDirection,
+            @NonNull ImmutableMap<String, ActionView> actions, @Nullable DisplayString title,
+            @Nullable DisplayString text, @Nullable DisplayString detail, @Nullable DisplayString footnote,
+            @Nullable ColorThemeView colorTheme, @Nullable ImageThemeView imageTheme, @NonNull Duration duration,
+            @NonNull final Map<String, String> spokenInstructions, boolean isBackgroundAudioRequired) {
         super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme,
                 duration, spokenInstructions, isBackgroundAudioRequired);
     }
@@ -41,8 +40,8 @@ public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
         return new MPowerActiveUIStepView(activeUIStepView.getIdentifier(), activeUIStepView.getNavDirection(),
                 activeUIStepView.getActions(), activeUIStepView.getTitle(), activeUIStepView.getText(),
                 activeUIStepView.getDetail(), activeUIStepView.getFootnote(), activeUIStepView.getColorTheme(),
-                activeUIStepView.getImageTheme(), activeUIStepView.getDuration(), activeUIStepView.getSpokenInstructions(),
-                activeUIStepView.isBackgroundAudioRequired());
+                activeUIStepView.getImageTheme(), activeUIStepView.getDuration(),
+                activeUIStepView.getSpokenInstructions(), activeUIStepView.isBackgroundAudioRequired());
     }
 
     @Override

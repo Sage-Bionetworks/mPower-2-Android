@@ -1,4 +1,4 @@
-package org.sagebionetworks.research.mpower.inject;
+package org.sagebionetworks.research.mpower.data;
 
 import static org.sagebionetworks.research.mpower.Tasks.MEDICATION;
 import static org.sagebionetworks.research.mpower.Tasks.SYMPTOMS;
