@@ -47,7 +47,7 @@ import javax.inject.Inject
 /**
  * SurveyViewModel contains a live data object that queries for all non-excluded surveys unfinished and available now.
  */
-open class SurveyViewModel(private var scheduleDao: ScheduledActivityEntityDao,
+open class SurveyViewModel(scheduleDao: ScheduledActivityEntityDao,
         scheduleRepo: ScheduleRepository) : ScheduleViewModel(scheduleDao, scheduleRepo) {
 
     class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,

@@ -1,7 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking;
 
 import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
-import static org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
 import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN;
@@ -9,6 +8,7 @@ import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityK
 
 import android.app.Activity;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 
 import android.content.Context;
@@ -32,12 +32,14 @@ import org.researchstack.backbone.ui.ViewTaskActivity;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.reminders.ReminderActivity;
+import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderState;
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TodayActionBarItem;
@@ -79,6 +81,9 @@ public class TrackingTabFragment extends Fragment {
     @Inject
     ReportViewModel.Factory reportViewModelFactory;
 
+    @Inject
+    StudyBurstReminderViewModel.Factory studyBurstReminderViewModelFactory;
+
     private TodayScheduleViewModel todayScheduleViewModel;
 
     private SurveyViewModel surveyViewModel;
@@ -86,6 +91,8 @@ public class TrackingTabFragment extends Fragment {
     private StudyBurstViewModel studyBurstViewModel;
 
     private ReportViewModel reportViewModel;
+
+    private StudyBurstReminderViewModel studyBurstReminderViewModel;
 
     private Unbinder unbinder;
 
@@ -150,7 +157,7 @@ public class TrackingTabFragment extends Fragment {
         studyBurstViewModel = ViewModelProviders.of(this, studyBurstViewModelFactory)
                 .get(StudyBurstViewModel.class);
         studyBurstViewModel.liveData().observe(this, this::setupActionBar);
-        studyBurstViewModel.getScheduleSyncErrorMessageLiveData().observe(this, this::showErrorMessage);
+        studyBurstViewModel.getScheduleErrorLiveData().observe(this, this::showErrorMessage);
         // This is a single live event that will only be triggered once after a call to loadResearchStackSurvey
         studyBurstViewModel.getLoadRsSurveyLiveData().observe(this, this::rsSurveyLoaded);
 
@@ -163,6 +170,12 @@ public class TrackingTabFragment extends Fragment {
         });
 
         reportViewModel = ViewModelProviders.of(this, reportViewModelFactory).get(ReportViewModel.class);
+
+        // This view model is used to ensure that the study burst reminders are kept up to date
+        // even if the user is using multiple devices, or has recently logged in/out
+        studyBurstReminderViewModel = ViewModelProviders.of(this,
+                studyBurstReminderViewModelFactory).get(StudyBurstReminderViewModel.class);
+        studyBurstReminderViewModel.reminderLiveData().observe(this, this::updateStudyBurstReminders);
     }
 
     @Override
@@ -346,7 +359,7 @@ public class TrackingTabFragment extends Fragment {
     }
 
     private void runStudyBurstReminder() {
-        startActivityForResult(new Intent(getActivity(), ReminderActivity.class), REQUEST_TASK);
+        startActivityForResult(new Intent(getActivity(), StudyBurstReminderActivity.class), REQUEST_TASK);
     }
 
     /**
@@ -354,5 +367,12 @@ public class TrackingTabFragment extends Fragment {
      */
     private void goToStudyBurst() {
         startActivityForResult(new Intent(getActivity(), StudyBurstActivity.class), STUDY_BURST_REQUEST_CODE);
+    }
+
+    private void updateStudyBurstReminders(@Nullable StudyBurstReminderState reminderState) {
+        if (reminderState == null || getActivity() == null) {
+            return;
+        }
+        studyBurstReminderViewModel.updateRemindersOnDevice(getActivity(), reminderState);
     }
 }

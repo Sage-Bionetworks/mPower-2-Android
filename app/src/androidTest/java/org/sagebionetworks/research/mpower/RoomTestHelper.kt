@@ -49,6 +49,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.support.test.runner.AndroidJUnit4
 import org.junit.runner.RunWith
+import org.sagebionetworks.research.sageresearch.dao.room.ReportEntityDao
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -58,6 +59,7 @@ abstract class RoomTestHelper {
     companion object {
         lateinit var database: ResearchDatabase
         lateinit var activityDao: ScheduledActivityEntityDao
+        lateinit var reportDao: ReportEntityDao
 
         @BeforeClass
         @JvmStatic fun setup() {
@@ -66,6 +68,7 @@ abstract class RoomTestHelper {
                     .allowMainThreadQueries().build()
 
             activityDao = database.scheduleDao()
+            reportDao = database.reportDao()
         }
 
         @AfterClass
@@ -103,7 +106,7 @@ object TestResourceHelper {
     internal fun testResource(filename: String): List<ScheduledActivityEntity> {
         var json: String? = null
         try {
-            val inputStream = RoomScheduledActivityTests::class.java
+            val inputStream = RoomTestHelper::class.java
                     .classLoader.getResourceAsStream(filename)
             val size = inputStream.available()
             val buffer = ByteArray(size)

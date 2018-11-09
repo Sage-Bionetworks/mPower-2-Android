@@ -146,7 +146,7 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
     }
 
     class MockTodayScheduleViewModel(
-            private val scheduleDao: ScheduledActivityEntityDao,
+            scheduleDao: ScheduledActivityEntityDao,
             scheduleRepository: ScheduleRepository,
             start: Instant,
             end: Instant): TodayScheduleViewModel(scheduleDao,scheduleRepository) {

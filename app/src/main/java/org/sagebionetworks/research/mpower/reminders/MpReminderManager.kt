@@ -100,4 +100,11 @@ class MpReminderManager(context: Context): ReminderManager(context) {
 
         return reminder
     }
+
+    /**
+     * @return true if the study burst reminder is scheduled, false otherwise
+     */
+    fun isStudyBurstReminderScheduled(): Boolean {
+        return isReminderScheduled(MpIdentifier.STUDY_BURST_REMINDER)
+    }
 }
