@@ -6,8 +6,7 @@ import com.google.gson.Gson;
 
 import org.sagebionetworks.bridge.android.di.BridgeApplicationScope;
 import org.sagebionetworks.research.domain.repository.TaskRepository;
-
-import javax.inject.Singleton;
+import org.sagebionetworks.research.mpower.data.AppResourceTaskRepository;
 
 import dagger.Module;
 import dagger.Provides;
