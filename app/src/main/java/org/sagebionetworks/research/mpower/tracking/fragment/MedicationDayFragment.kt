@@ -54,27 +54,28 @@ class MedicationDayFragment : AppCompatDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var days : String? = null
+        var days: String? = null
         if (savedInstanceState == null) {
-            if (arguments != null) {
-                schedId = arguments!!.getString(ARG_SCHED_ID)
-                name = arguments!!.getString(ARG_NAME)
-                time = arguments!!.getString(ARG_TIME)
-                days = arguments!!.getString(ARG_DAYS)
+            val args = arguments
+            if (args != null) {
+                schedId = args.getString(ARG_SCHED_ID) ?: ""
+                name = args.getString(ARG_NAME) ?: ""
+                time = args.getString(ARG_TIME) ?: ""
+                days = args.getString(ARG_DAYS)
             } else {
                 LOGGER.warn("No arguments found")
+                schedId = ""
                 name = "Default"
                 time = "9:15 PM"
             }
         } else {
-            schedId = savedInstanceState.getString(ARG_SCHED_ID)
-            name = savedInstanceState.getString(ARG_NAME)
-            time = savedInstanceState.getString(ARG_TIME)
+            schedId = savedInstanceState.getString(ARG_SCHED_ID) ?: ""
+            name = savedInstanceState.getString(ARG_NAME) ?: ""
+            time = savedInstanceState.getString(ARG_TIME) ?: ""
             days = savedInstanceState.getString(ARG_DAYS)
         }
 
-        selectedDays = if (days != null) days.split(",").toMutableList() else mutableListOf()
-
+        selectedDays = days?.split(",")?.toMutableList() ?: mutableListOf()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
