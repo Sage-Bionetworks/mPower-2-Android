@@ -121,14 +121,20 @@ public class TrackingMenuFragment extends Fragment {
     private @Nullable StudyBurstViewModel studyBurstViewModel;
 
     private @NonNull TrackingMenuFragmentViewModel trackingMenuViewModel;
+    private boolean showTracking;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidSupportInjection.inject(this);
-
+        showTracking = getResources().getBoolean(R.bool.show_data_tracking);
         trackingMenuViewModel =
                 ViewModelProviders.of(this).get(TrackingMenuFragmentViewModel.class);
+        if (showTracking) {
+            trackingMenuViewModel.setSelectedId(R.id.tracking_tab);
+        } else {
+            trackingMenuViewModel.setSelectedId(R.id.measuring_tab);
+        }
         studyBurstViewModel = ViewModelProviders.of(this,
                 studyBurstViewModelFactory).get(StudyBurstViewModel.class);
         studyBurstViewModel.liveData().observe(this, this::setupMeasuringTaskCompletionState);
@@ -139,8 +145,13 @@ public class TrackingMenuFragment extends Fragment {
         View result = inflater.inflate(R.layout.tracking_menu_fragment, group, false);
         this.unbinder = ButterKnife.bind(this, result);
         updateSelection(trackingMenuViewModel.getCurrentSelectedId(), true);
-        this.trackingButton.setOnClickListener(view -> updateSelection(R.id.tracking_tab, false));
         this.measuringButton.setOnClickListener(view -> updateSelection(R.id.measuring_tab, false));
+        if (showTracking) {
+            this.trackingButton.setOnClickListener(view -> updateSelection(R.id.tracking_tab, false));
+        } else {
+            trackingButton.setVisibility(View.GONE);
+            trackingSelectedImageView.setVisibility(View.GONE);
+        }
         this.setIconListeners();
         this.gestureDetector = new GestureDetectorCompat(this.getContext(), new FlingListener());
         result.setOnTouchListener((view, event) -> {
@@ -226,7 +237,6 @@ public class TrackingMenuFragment extends Fragment {
         this.unbinder.unbind();
     }
 
-
     private void updateSelection(int selectionId, boolean forceUpdate) {
         if (selectionId != 0 &&
                 (forceUpdate || selectionId != trackingMenuViewModel.getCurrentSelectedId())) {
@@ -250,14 +260,16 @@ public class TrackingMenuFragment extends Fragment {
         // It doesn't make sense for both to be selected.
         checkState(!(trackingSelected && measuringSelected));
         Resources resources = this.getResources();
-        int trackingButtonColor = trackingSelected ? resources.getColor(SELECTED_COLOR) : resources.getColor(UNSELECTED_COLOR);
         int measuringButtonColor = measuringSelected ? resources.getColor(SELECTED_COLOR) : resources.getColor(UNSELECTED_COLOR);
-        float trackingImageViewAlpha = trackingSelected ? 1f : 0f;
         float measuringImageViewAlpha = measuringSelected ? 1f : 0f;
-        this.trackingButton.setTextColor(trackingButtonColor);
         this.measuringButton.setTextColor(measuringButtonColor);
-        this.trackingSelectedImageView.setAlpha(trackingImageViewAlpha);
         this.measuringSelectedImageView.setAlpha(measuringImageViewAlpha);
+        if (showTracking) {
+            int trackingButtonColor = trackingSelected ? resources.getColor(SELECTED_COLOR) : resources.getColor(UNSELECTED_COLOR);
+            float trackingImageViewAlpha = trackingSelected ? 1f : 0f;
+            this.trackingButton.setTextColor(trackingButtonColor);
+            this.trackingSelectedImageView.setAlpha(trackingImageViewAlpha);
+        }
         refreshTabCompletionState();
     }
 
@@ -326,7 +338,7 @@ public class TrackingMenuFragment extends Fragment {
      * TrackingMenuFragmentViewModel contains data that should persist across the fragment life cycle state changes
      */
     public static class TrackingMenuFragmentViewModel extends ViewModel {
-        int selectedId = R.id.tracking_tab;
+        private int selectedId;
         void setSelectedId(int selectedId) {
             this.selectedId = selectedId;
         }
