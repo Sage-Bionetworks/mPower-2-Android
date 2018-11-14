@@ -58,7 +58,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".reminders.ReminderActivity"
+            android:name=".reminders.StudyBurstReminderActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"/>
 

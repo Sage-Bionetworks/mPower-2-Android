@@ -1,0 +1,8 @@
+{
+  "StudyBurstReminder": "singleton",
+  "Motivation": "singleton",
+  "Demographics": "singleton",
+  "Background": "singleton",
+  "Engagement": "singleton",
+  "Medication": "groupByDay"
+}

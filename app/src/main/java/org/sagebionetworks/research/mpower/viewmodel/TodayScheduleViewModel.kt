@@ -16,7 +16,7 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.extensions.startOfNextDay
-import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
@@ -57,7 +57,7 @@ import javax.inject.Inject
  * and then consolidates them into history items.  History item live data will be updated when observed,
  * and when new schedules come down from bridge.
  */
-open class TodayScheduleViewModel(private val scheduleDao: ScheduledActivityEntityDao,
+open class TodayScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
         scheduleRepository: ScheduleRepository) : ScheduleViewModel(scheduleDao, scheduleRepository) {
 
     class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,

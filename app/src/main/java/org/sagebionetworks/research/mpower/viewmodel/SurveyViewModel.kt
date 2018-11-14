@@ -9,7 +9,7 @@ import org.sagebionetworks.research.mpower.research.DataSourceManager
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
-import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleRepository
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.threeten.bp.LocalDateTime
 import javax.inject.Inject
@@ -47,7 +47,7 @@ import javax.inject.Inject
 /**
  * SurveyViewModel contains a live data object that queries for all non-excluded surveys unfinished and available now.
  */
-open class SurveyViewModel(private var scheduleDao: ScheduledActivityEntityDao,
+open class SurveyViewModel(scheduleDao: ScheduledActivityEntityDao,
         scheduleRepo: ScheduleRepository) : ScheduleViewModel(scheduleDao, scheduleRepo) {
 
     class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,
@@ -66,8 +66,6 @@ open class SurveyViewModel(private var scheduleDao: ScheduledActivityEntityDao,
             .map { it.activityIdentifiers }.flatMap { it }.toSet()
             .union(StudyBurstConfiguration().completionTaskIdentifiers())
 
-    // TODO: mdephillips 9/4/18 what happens if clock ticks past midnight during this ViewModel's lifetime?
-    // TODO: mdephillips 9/4/18 possible solution: have an observer wait x seconds that triggers a re-query
     @VisibleForTesting
     protected open val queryDate: LocalDateTime = LocalDateTime.now()
 
