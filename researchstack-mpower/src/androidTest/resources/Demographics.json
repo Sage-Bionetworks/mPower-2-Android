@@ -1,0 +1,162 @@
+{
+  "guid": "f2637b2a-b473-4f84-b645-1431a3b4418e",
+  "createdOn": "2018-07-26T00:40:57.836Z",
+  "modifiedOn": "2018-07-26T00:41:07.002Z",
+  "version": 3,
+  "name": "Demographics",
+  "identifier": "Demographics",
+  "published": true,
+  "deleted": false,
+  "schemaRevision": 1,
+  "elements": [
+    {
+      "surveyCompoundKey": "f2637b2a-b473-4f84-b645-1431a3b4418e:1532565657836",
+      "guid": "1d1d2eff-6d2a-4b7b-8943-83845e719617",
+      "identifier": "studyBurstCompletion",
+      "type": "SurveyInfoScreen",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+
+      ],
+      "prompt": "You just completed the first day of your Study Burst.\n",
+      "promptDetail": "The scientists are now starting to analyze your data. In order to complete their analysis, they have a short health survey for you to complete. Don’t worry, this shouldn’t take any more than  4 minutes.",
+      "title": "Congratulations!\n"
+    },
+    {
+      "surveyCompoundKey": "f2637b2a-b473-4f84-b645-1431a3b4418e:1532565657836",
+      "guid": "8eb104ce-7357-45bc-9391-2df358ec0779",
+      "identifier": "birthYear",
+      "type": "SurveyQuestion",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+
+      ],
+      "prompt": "What is your year of birth?",
+      "fireEvent": false,
+      "constraints": {
+        "rules": [
+
+        ],
+        "dataType": "integer",
+        "unit": "years",
+        "minValue": 1900.0,
+        "maxValue": 2018.0,
+        "step": 1.0,
+        "type": "IntegerConstraints"
+      },
+      "uiHint": "numberfield"
+    },
+    {
+      "surveyCompoundKey": "f2637b2a-b473-4f84-b645-1431a3b4418e:1532565657836",
+      "guid": "53ddcfe3-f6f8-488c-8063-726feb62dbc8",
+      "identifier": "sex",
+      "type": "SurveyQuestion",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+
+      ],
+      "prompt": "What is your sex?",
+      "fireEvent": false,
+      "constraints": {
+        "rules": [
+
+        ],
+        "dataType": "string",
+        "enumeration": [
+          {
+            "label": "Female",
+            "value": "Female",
+            "type": "SurveyQuestionOption"
+          },
+          {
+            "label": "Male",
+            "value": "Male",
+            "type": "SurveyQuestionOption"
+          },
+          {
+            "label": "Other",
+            "value": "Other",
+            "type": "SurveyQuestionOption"
+          }
+        ],
+        "allowOther": false,
+        "allowMultiple": false,
+        "type": "MultiValueConstraints"
+      },
+      "uiHint": "list"
+    },
+    {
+      "surveyCompoundKey": "f2637b2a-b473-4f84-b645-1431a3b4418e:1532565657836",
+      "guid": "be8da6e6-08a6-43ec-8a2b-fcaa02d72fee",
+      "identifier": "diagnosis",
+      "type": "SurveyQuestion",
+      "beforeRules": [
+
+      ],
+      "afterRules": [
+        {
+          "operator": "eq",
+          "value": "parkinsons",
+          "assignDataGroup": "parkinsons",
+          "type": "SurveyRule"
+        },
+        {
+          "operator": "eq",
+          "value": "control",
+          "assignDataGroup": "control",
+          "type": "SurveyRule"
+        }
+      ],
+      "prompt": "Have you been diagnosed with Parkinson's Disease by a medical professional?",
+      "fireEvent": false,
+      "constraints": {
+        "rules": [
+          {
+            "operator": "eq",
+            "value": "parkinsons",
+            "assignDataGroup": "parkinsons",
+            "type": "SurveyRule"
+          },
+          {
+            "operator": "eq",
+            "value": "control",
+            "assignDataGroup": "control",
+            "type": "SurveyRule"
+          }
+        ],
+        "dataType": "string",
+        "enumeration": [
+          {
+            "label": "Yes, I have PD",
+            "detail": "",
+            "value": "parkinsons",
+            "type": "SurveyQuestionOption"
+          },
+          {
+            "label": "No, I do not have PD",
+            "detail": "",
+            "value": "control",
+            "type": "SurveyQuestionOption"
+          },
+          {
+            "label": "Prefer not to answer",
+            "detail": "",
+            "value": "no_answer",
+            "type": "SurveyQuestionOption"
+          }
+        ],
+        "allowOther": false,
+        "allowMultiple": false,
+        "type": "MultiValueConstraints"
+      },
+      "uiHint": "list"
+    }
+  ],
+  "type": "Survey"
+}

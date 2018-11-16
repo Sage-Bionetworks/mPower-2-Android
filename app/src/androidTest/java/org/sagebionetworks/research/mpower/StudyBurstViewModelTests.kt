@@ -102,8 +102,12 @@ class StudyBurstViewModelTests: RoomTestHelper() {
     val scheduleDao = database.scheduleDao()
     val scheduleRepo = ScheduleRepository(scheduleDao,
             ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()),
+            BridgeManagerProvider.getInstance().surveyManager,
             BridgeManagerProvider.getInstance().activityManager,
-            BridgeManagerProvider.getInstance().participantManager)
+            BridgeManagerProvider.getInstance().participantManager,
+            BridgeManagerProvider.getInstance().authenticationManager,
+            BridgeManagerProvider.getInstance().uploadManager,
+            BridgeManagerProvider.getInstance().bridgeConfig)
 
     @Before
     fun setupForEachTest() {
@@ -202,8 +206,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
         assertFalse(item.hasCompletedMotivationSurvey())
         val completionTask = item.nextCompletionActivityToShow
-        assertNotNull(completionTask)
-        assertEquals(STUDY_BURST_REMINDER, completionTask?.activityIdentifier())
+        assertNull(completionTask)
 
         assertNotNull(item.getActionBarItem(application))
         assertNotNull("Study Burst", item.getActionBarItem(application)?.title)
@@ -515,7 +518,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
 
             fun previousFinishedSurveys(studyBurstDay: Int): Map<String, Int> {
                 var surveyMap: MutableMap<String, Int> = mutableMapOf()
-                val config = StudyBurstConfiguration()
+                val config = StudyBurstConfiguration(completionTasks = MockStudyBurstViewModel.completionTasks)
                 config.completionTasks.forEach {
                     val day = it.day
                     if (studyBurstDay >= day) {
@@ -893,11 +896,20 @@ class StudyBurstViewModelTests: RoomTestHelper() {
     }
 
     class MockStudyBurstViewModel(
-            scheduleDao: ScheduledActivityEntityDao,
-            scheduleRepo: ScheduleRepository, private val studyBurstSettingsDao: StudyBurstSettingsDao,
-            val studySetup: StudySetup): StudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao) {
+            scheduleDao: ScheduledActivityEntityDao, scheduleRepo: ScheduleRepository,
+            val studyBurstSettingsDao: StudyBurstSettingsDao, val studySetup: StudySetup):
 
-        override val config = studySetup.config
+            StudyBurstViewModel(scheduleDao, scheduleRepo, studyBurstSettingsDao) {
+
+        // TODO: mdephillips 10/22/18 remove this once study burst reminder and engagement surveys are added back in
+        companion object {
+            val completionTasks: Set<CompletionTask> = setOf(
+                    CompletionTask(linkedSetOf(STUDY_BURST_REMINDER, DEMOGRAPHICS), 1),
+                    CompletionTask(linkedSetOf(BACKGROUND), 9),
+                    CompletionTask(linkedSetOf(ENGAGEMENT), 14))
+        }
+
+        override val config = StudyBurstConfiguration(completionTasks = completionTasks)
 
         override fun activityGroup(): ActivityGroup? {
             return DataSourceManager.installedGroup(config.taskGroupIdentifier)
@@ -911,7 +923,6 @@ class StudyBurstViewModelTests: RoomTestHelper() {
             return studySetup.timezone
         }
 
-
         init {
             studySetup.populateDatabase(scheduleDao)
         }
@@ -922,6 +933,5 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         fun setOrderedTasks(sortOrder: List<String>, timestamp: LocalDateTime) {
             studyBurstSettingsDao.setOrderedTasks(sortOrder, timestamp)
         }
-
     }
 }

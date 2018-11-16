@@ -32,6 +32,7 @@
 
 <resources>
     <string name="app_name">Motor Control Module</string>
+    <string name="app_version_label">"%1$s version %2$s, build %3$d"</string>
     <string name="tap_count_label">Tap Count</string>
     <string name="tapping_continue_with_text">Continue with %@ hand</string>
     <string name="tapping_continue">Next</string>

@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:background="@drawable/study_burst_progress_bar_background"
         android:progressDrawable="@drawable/study_burst_progress_bar"
-        android:progress="2"
+        android:progress="0"
         android:max="4"
         app:layout_constraintDimensionRatio="H,1:1"/>
 
@@ -28,7 +28,7 @@
         android:layout_marginTop="@dimen/study_burst_status_wheel_margin"
         android:fontFamily="@font/lato"
         android:gravity="center"
-        android:text="Day"
+        android:text="@string/study_burst_day"
         style="@style/MPowerTextAppearance.StatusWheel.DayLabel"
         app:layout_constraintEnd_toEndOf="@+id/study_burst_progress_bar_dial"
         app:layout_constraintStart_toStartOf="@+id/study_burst_progress_bar_dial"
@@ -42,7 +42,6 @@
         android:layout_marginRight="@dimen/study_burst_status_wheel_margin"
         android:layout_marginTop="@dimen/study_burst_status_wheel_margin"
         android:gravity="center"
-        android:text="14"
         style="@style/MPowerTextAppearance.StatusWheel.DayCount"
         app:layout_constraintEnd_toEndOf="@+id/study_burst_progress_bar_dial"
         app:layout_constraintStart_toStartOf="@+id/study_burst_progress_bar_dial"

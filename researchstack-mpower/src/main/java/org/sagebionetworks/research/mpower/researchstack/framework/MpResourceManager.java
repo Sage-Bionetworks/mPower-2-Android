@@ -105,7 +105,10 @@ public class MpResourceManager extends ResourceManager {
         return new Resource(Resource.TYPE_HTML, BASE_PATH_HTML, "license");
     }
 
-    public Resource getLicense() { return new Resource(Resource.TYPE_HTML, BASE_PATH_HTML, "Licenses");}
+    @Override
+    public Resource getLicense() {
+        return new Resource(Resource.TYPE_HTML, BASE_PATH_HTML, "Licenses");
+    }
 
     @Override
     public Resource getSoftwareNotices() {

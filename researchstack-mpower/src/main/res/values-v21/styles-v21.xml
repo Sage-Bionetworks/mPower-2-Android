@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/royal500</item>
+        <item name="colorPrimaryDark">@color/royal600</item>
+        <item name="colorAccent">@color/butterscotch500</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="Widget.MP.Toolbar" parent="@style/Base.Widget.MP.Toolbar">
+        <item name="android:elevation">4dp</item>
+        <item name="android:outlineProvider">bounds</item>
+    </style>
+
+    <style name="Widget.MP.Toolbar.Transparent" parent="@style/Base.Widget.MP.Toolbar">
+        <item name="android:elevation">0dp</item>
+        <item name="android:outlineProvider">none</item>
+        <item name="titleTextAppearance">
+            @style/MpToolbarTitleTransparent
+        </item>
+    </style>
+
+</resources>

@@ -17,8 +17,9 @@ import org.junit.*
 import org.junit.runner.*
 import org.mockito.Mockito.`when`
 import org.sagebionetworks.bridge.android.manager.ActivityManager
-import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
-import org.sagebionetworks.bridge.android.manager.ParticipantRecordManager
+
+import org.sagebionetworks.bridge.android.manager.SurveyManager
+import org.sagebionetworks.bridge.android.manager.UploadManager
 import org.sagebionetworks.bridge.rest.exceptions.EntityNotFoundException
 import org.sagebionetworks.bridge.rest.model.Message
 import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
@@ -70,7 +71,7 @@ class ScheduleRepositoryTests: RoomTestHelper() {
     companion object {
         val activityList = "test_scheduled_activities.json"
         val testResourceMap = TestResourceHelper.testResourceMap(setOf(activityList))
-        val syncStateDao = ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext())
+        val syncStateDao = MockScheduleRepositorySyncStateDao()
     }
 
     @Test
@@ -186,11 +187,26 @@ class ScheduleRepositoryTests: RoomTestHelper() {
         assertEquals(DateTime.parse("2018-08-26T23:59:59.999-04:00"), requestMap[requestMap.keys.elementAt(1)])
     }
 
+    class MockScheduleRepositorySyncStateDao:
+            ScheduledRepositorySyncStateDao(InstrumentationRegistry.getTargetContext()) {
+
+        private var lastQueryEndDateLocal: DateTime? = null
+
+        override var lastQueryEndDate: DateTime? get() {
+            return lastQueryEndDateLocal
+        } set(value) {
+            lastQueryEndDateLocal = value
+        }
+    }
+
     class MockScheduleRepository(scheduleDao: ScheduledActivityEntityDao,
-            syncStateDao: ScheduledRepositorySyncStateDao, val activityManager: ActivityManager = mock())
+            syncStateDao: ScheduledRepositorySyncStateDao,
+            val surveyManager: SurveyManager = mock(),
+            val activityManager: ActivityManager = mock(),
+            val uploadManager: UploadManager = mock())
         : ScheduleRepository(scheduleDao, syncStateDao,
-            activityManager,
-            mock()) {
+            surveyManager, activityManager,
+            mock(), mock(), uploadManager, mock()) {
 
         companion object {
             val participantCreatedOn = DateTime.parse("2018-08-10T10:00:00.000-04:00")

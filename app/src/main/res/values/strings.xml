@@ -46,6 +46,8 @@
     <string name="measuring_tab_title">Measuring</string>
 
     <!--Study Burst titles-->
+    <string name="study_burst_day">Day</string>
+
     <string name="study_burst_action_bar_title">Study Burst</string>
     <string name="study_burst_title_day_1">This is your time!</string>
     <string name="study_burst_title_day_2">You are making a difference!</string>
