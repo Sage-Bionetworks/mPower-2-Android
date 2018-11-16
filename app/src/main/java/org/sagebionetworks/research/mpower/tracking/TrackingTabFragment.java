@@ -306,9 +306,6 @@ public class TrackingTabFragment extends Fragment {
                 if (MOTIVATION.equals(currentSurveySchedule.activityIdentifier())) {
                     // send the user straight into the study burst
                     goToStudyBurst();
-                } else if (BACKGROUND.equals(currentSurveySchedule.activityIdentifier())) {
-                    // Work-around for storing sensitive data from a survey in user attributes
-                    MpDataProvider.getInstance().addUserDataAttributesFromBackgroundSurvey(taskResult);
                 }
                 successfulSurveyUploadTaskId = currentSurveySchedule.activityIdentifier();
             }

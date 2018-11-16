@@ -29,7 +29,6 @@ public class MpDataProvider extends BridgeDataProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(MpDataProvider.class);
 
-    public static String RESULT_IDENTIFIER_MPOWER_1_EMAIL = "mPower1Email";
     protected MpTaskFactory taskFactory;
     protected CompositeSubscription compositeSubscription = new CompositeSubscription();
 
@@ -64,24 +63,14 @@ public class MpDataProvider extends BridgeDataProvider {
     }
 
     /**
-     * This is a work-around for storing the result of a survey's question in the user data attributes
-     * Instead of uploading it to synapse or including it in a report
-     * @param taskResult from running the background survey
+     * Adds user data attributes to the participant and uploads it to bridge
+     * @param attributes to add to the user
      */
-    public void addUserDataAttributesFromBackgroundSurvey(TaskResult taskResult) {
-        Map<String, String> attributes = new HashMap<>();
-        List<Result> flattenedResultList = TaskHelper.flattenResults(taskResult);
-        for (Result result : flattenedResultList) {
-            // Add the mPower1Email as a string to the user attributes map
-            if (RESULT_IDENTIFIER_MPOWER_1_EMAIL.equals(result.getIdentifier()) &&
-                    result instanceof StepResult &&
-                    ((StepResult)result).getResult() instanceof String) {
-                attributes.put(result.getIdentifier(), (String)((StepResult)result).getResult());
-            }
-        }
+    public void addUserDataAttributesFromBackgroundSurvey(Map<String, String> attributes) {
         if (!attributes.isEmpty()) {
+            StudyParticipant participant = buildParticipantUserDataAttributes(attributes);
             compositeSubscription.add(
-                    updateStudyParticipant(buildParticipantUserDataAttributes(attributes))
+                    updateStudyParticipant(participant)
                     .observeOn(Schedulers.io())
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe(userSessionInfo -> {

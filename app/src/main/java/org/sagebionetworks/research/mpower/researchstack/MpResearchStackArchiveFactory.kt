@@ -41,8 +41,6 @@ import org.sagebionetworks.bridge.data.ArchiveFile
 import org.sagebionetworks.bridge.data.JsonArchiveFile
 import org.sagebionetworks.bridge.researchstack.survey.SurveyAnswer
 import org.sagebionetworks.research.mpower.research.MpIdentifier
-import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider
-import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider.RESULT_IDENTIFIER_MPOWER_1_EMAIL
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskHelper
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpBooleanAnswerFormat
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpChoiceAnswerFormat
@@ -56,9 +54,9 @@ open class MpResearchStackArchiveFactory: ResearchStackUploadArchiveFactory() {
     companion object {
         const val studyBurstArchiveFileName = "tasks"
         const val answersFilename = "answers"
-        // We exclude the mPower1Email because it contains sensitive user information
-        // That should be stored in the user profile attributes instead
-        val resultExclusionList = listOf(RESULT_IDENTIFIER_MPOWER_1_EMAIL)
+        // List of result identifiers that will be excluded from bridge result archives
+        // This should include steps that contain sensitive information that should only be sent to user reports
+        val resultExclusionList = listOf<String>()
     }
 
     private val logger = LoggerFactory.getLogger(MpResearchStackArchiveFactory::class.java)

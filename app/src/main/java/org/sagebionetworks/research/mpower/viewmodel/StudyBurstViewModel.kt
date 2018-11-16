@@ -122,11 +122,6 @@ open class StudyBurstViewModel(
         // This could be improved by specifying the following lines of code globally after the dagger injections
         // However, that is done in SageResearchAppSDKModule which has many other dependencies
         // and I don't think we need to duplicate all these at this time -mdephillips 11/15/18
-        MpResearchStackArchiveFactory.resultExclusionList.forEach {
-            if (!reportRepo.resultExclusionList.contains(it)) {
-                reportRepo.resultExclusionList.add(it)
-            }
-        }
         val archiveFactory = MpResearchStackArchiveFactory()
         scheduleRepo.researchStackUploadArchiveFactory = archiveFactory
     }
