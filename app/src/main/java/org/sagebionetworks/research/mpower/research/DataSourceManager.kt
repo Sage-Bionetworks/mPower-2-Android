@@ -88,7 +88,7 @@ data class CompletionTask(
 }
 
 /**
- * The study burst configuration is a data class that can be added to the `AppConfig.clientData`.
+ * The study burst configuration is a data class that can be added to the `AppConfig.data`.
  */
 data class StudyBurstConfiguration(
         /**
@@ -123,16 +123,20 @@ data class StudyBurstConfiguration(
          * @property completionTasks for each day of the study burst.
          */
         val completionTasks: Set<CompletionTask> = setOf(
-                // TODO: mdephillips 10/16/18 Add study burst reminder and engagement
-                // TODO: mdephillips 10/16/18 back in when development is done on those features
-                CompletionTask(linkedSetOf(/**STUDY_BURST_REMINDER, */DEMOGRAPHICS), 1),
+                CompletionTask(linkedSetOf(STUDY_BURST_REMINDER, DEMOGRAPHICS), 1),
                 CompletionTask(linkedSetOf(BACKGROUND), 9)/**,
+                // TODO: mdephillips 10/16/18 Add engagement back in when development is done on those features
                 CompletionTask(linkedSetOf(ENGAGEMENT), 14)*/),
         /**
          * @property engagementGroups set of the possible engagement data groups.
          */
-        val engagementGroups: Set<Set<String>>? = DataSourceManager.defaultEngagementGroups()
-) {
+        val engagementGroups: Set<Set<String>>? = DataSourceManager.defaultEngagementGroups(),
+        /**
+         * Defaults to each study burst repeating after 13 weeks
+         * @property repeatIntervalInDays the number of days before a new study burst is scheduled
+         */
+        val repeatIntervalInDays: Long = 13 * 7L) {
+
     /**
      * @return a set of the completion task's activity identifiers
      */

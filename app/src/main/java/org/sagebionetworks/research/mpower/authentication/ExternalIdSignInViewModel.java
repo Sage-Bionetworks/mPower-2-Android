@@ -82,6 +82,13 @@ public class ExternalIdSignInViewModel extends ViewModel {
     public void doSignIn() {
         LOGGER.debug("doSignIn");
 
+        if (Strings.isNullOrEmpty(externalId)) {
+            LOGGER.warn("Cannot sign in with null or empty external Id");
+
+            isSignedInLiveData.postValue(false);
+            errorMessageMutableLiveData.postValue("Cannot sign in with null or empty external Id");
+        }
+
         SignUp signUp = new SignUp();
         signUp.firstName(firstName);
         signUp.externalId(externalId);

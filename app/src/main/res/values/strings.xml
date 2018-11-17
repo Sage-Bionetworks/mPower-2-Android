@@ -99,6 +99,22 @@
     <string name="study_burst_message_days_missed">In %1$d days you\'ve only missed %2$d Study Burst days!</string>
     <string name="study_burst_message_days_missed_one">In %1$d days you\'ve only missed 1 Study Burst day!</string>
 
+    <string name="set_reminder">Set reminder</string>
+    <string name="do_not_send_me_reminders">Do not send me reminders</string>
+    <string name="reminder_message">Let\'s set a Reminder for your Study Bursts</string>
+    <string name="do_not_remind_me"><u>Do not remind me</u></string>
+    <string name="when_do_you_want_a_reminder">When do you want a reminder?</string>
+    <string name="remind_me_in_2_hours">Remind me in 2 hours</string>
+    <string name="remind_me_in_1_hour">Remind me in 1 hour</string>
+    <string name="remind_me_in_15_minutes">Remind me in 15 minutes</string>
+    <string name="reminder_title_run_task">Time to complete the %s task</string>
+    <string name="reminder_title_study_burst">Time to complete your study burst</string>
+
+    <!-- Notification Channel Strings -->
+    <string name="reminder_notification_channel_id">mPower Channel</string>
+    <string name="reminder_notification_channel_title">mPower Reminders</string>
+    <string name="reminder_notification_channel_desc">mPower reminders help you remember to log your data</string>
+
     <string name="measuring_center_label">Walk And Balance</string>
     <string name="measuring_left_label">Finger Tapping</string>
     <string name="measuring_right_label">Tremor Test</string>

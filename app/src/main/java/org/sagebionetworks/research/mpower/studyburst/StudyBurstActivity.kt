@@ -31,16 +31,14 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
+// Used with activity.startActivityForResult()
+const val STUDY_BURST_REQUEST_CODE= 1483
+// Used with activity.setResult()
+const val STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN = "StudyBurstActivity.Guid.ToRun"
+
 class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
     private val LOGGER = LoggerFactory.getLogger(StudyBurstActivity::class.java)
-
-    companion object {
-        // Used with activity.startActivityForResult()
-        val REQUEST_CODE_STUDY_BURST = 1483
-        // Used with activity.setResult()
-        val EXTRA_GUID_OF_TASK_TO_RUN = "StudyBurstActivity.Guid.ToRun"
-    }
 
     /**
      * @property studyBurstViewModel encapsulates all read/write data operations
@@ -128,7 +126,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
     private fun finishActivity(scheduleToRun: ScheduledActivityEntity?) {
         scheduleToRun?.let {
             val resultIntent = Intent()
-            resultIntent.putExtra(EXTRA_GUID_OF_TASK_TO_RUN, it)
+            resultIntent.putExtra(STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN, it)
             setResult(RESULT_OK, resultIntent)
         } ?: run {
             setResult(Activity.RESULT_CANCELED)
@@ -263,7 +261,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * StudyBurstAdapterListener function, called when a task icon in the RecyclerView is selected.
      */
     override fun itemSelected(item: StudyBurstTaskInfo) {
-        val uuid = studyBurstViewModel.createScheduleTaskRunUuid(item.schedule)
+        val uuid = studyBurstViewModel.createScheduleTaskRunUuid(item.schedule?.guid)
         taskLauncher.launchTask(this, item.task.identifier, uuid)
                 .observe(this, Observer {
                     when(it?.state) {
