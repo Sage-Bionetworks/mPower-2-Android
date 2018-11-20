@@ -69,12 +69,12 @@ public class OverviewStepView extends UIStepViewBase {
             iconViews.add(IconView.fromIcon(icon, mapper));
         }
 
-        return new OverviewStepView(uiStepView.getIdentifier(), uiStepView.getNavDirection(), uiStepView.getActions(),
+        return new OverviewStepView(uiStepView.getIdentifier(), uiStepView.getActions(),
                 uiStepView.getTitle(), uiStepView.getText(), uiStepView.getDetail(), uiStepView.getFootnote(),
                 uiStepView.getColorTheme(), uiStepView.getImageTheme(), iconViews);
     }
 
-    public OverviewStepView(@NonNull final String identifier, final int navDirection,
+    public OverviewStepView(@NonNull final String identifier,
             @NonNull final ImmutableMap<String, ActionView> actions,
             @Nullable final DisplayString title,
             @Nullable final DisplayString text,
@@ -83,7 +83,7 @@ public class OverviewStepView extends UIStepViewBase {
             @Nullable final ColorThemeView colorTheme,
             @Nullable final ImageThemeView imageTheme,
             @NonNull final List<IconView> iconViews) {
-        super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme);
+        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme);
         this.iconViews = ImmutableList.copyOf(iconViews);
     }
 

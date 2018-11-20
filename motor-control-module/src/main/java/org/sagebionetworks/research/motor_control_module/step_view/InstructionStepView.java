@@ -64,14 +64,14 @@ public class InstructionStepView extends ActiveUIStepViewBase {
 
         InstructionStep instructionStep = (InstructionStep) step;
         ActiveUIStepViewBase activeUIStepView = ActiveUIStepViewBase.fromActiveUIStep(step, mapper);
-        return new InstructionStepView(activeUIStepView.getIdentifier(), activeUIStepView.getNavDirection(),
+        return new InstructionStepView(activeUIStepView.getIdentifier(),
                 activeUIStepView.getActions(), activeUIStepView.getTitle(), activeUIStepView.getText(),
                 activeUIStepView.getDetail(), activeUIStepView.getFootnote(), activeUIStepView.getColorTheme(),
                 activeUIStepView.getImageTheme(), activeUIStepView.getDuration(),
                 activeUIStepView.isBackgroundAudioRequired(), instructionStep.isFirstRunOnly());
     }
 
-    public InstructionStepView(@NonNull final String identifier, final int navDirection,
+    public InstructionStepView(@NonNull final String identifier,
             @NonNull final ImmutableMap<String, ActionView> actions,
             @Nullable final DisplayString title,
             @Nullable final DisplayString text,
@@ -82,7 +82,7 @@ public class InstructionStepView extends ActiveUIStepViewBase {
             @NonNull final Duration duration,
             final boolean isBackgroundAudioRequired,
             final boolean isFirstRunOnly) {
-        super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme, duration,
+        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme, duration,
                 isBackgroundAudioRequired);
         this.isFirstRunOnly = isFirstRunOnly;
     }

@@ -56,12 +56,12 @@ public class CompletionStepView extends UIStepViewBase {
         }
 
         UIStepViewBase uiStep = UIStepViewBase.fromUIStep(step, mapper);
-        return new CompletionStepView(uiStep.getIdentifier(), uiStep.getNavDirection(), uiStep.getActions(),
+        return new CompletionStepView(uiStep.getIdentifier(), uiStep.getActions(),
                 uiStep.getTitle(), uiStep.getText(), uiStep.getDetail(), uiStep.getFootnote(), uiStep.getColorTheme(),
                 uiStep.getImageTheme());
     }
 
-    public CompletionStepView(@NonNull final String identifier, final int navDirection,
+    public CompletionStepView(@NonNull final String identifier,
             @NonNull final ImmutableMap<String, ActionView> actions,
             @Nullable final DisplayString title,
             @Nullable final DisplayString text,
@@ -69,7 +69,7 @@ public class CompletionStepView extends UIStepViewBase {
             @Nullable final DisplayString footnote,
             @Nullable final ColorThemeView colorTheme,
             @Nullable final ImageThemeView imageTheme) {
-        super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme);
+        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme);
     }
 
     @Override

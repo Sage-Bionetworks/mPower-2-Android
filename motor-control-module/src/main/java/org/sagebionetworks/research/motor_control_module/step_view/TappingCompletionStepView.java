@@ -19,11 +19,11 @@ import org.sagebionetworks.research.presentation.model.interfaces.UIStepView;
 public class TappingCompletionStepView extends CompletionStepView {
     public static final String TYPE = AppStepType.TAPPING_COMPLETION;
 
-    public TappingCompletionStepView(@NonNull String identifier, int navDirection, @NonNull ImmutableMap<String, ActionView> actions,
+    public TappingCompletionStepView(@NonNull String identifier, @NonNull ImmutableMap<String, ActionView> actions,
                                      @Nullable DisplayString title, @Nullable DisplayString text, @Nullable DisplayString detail,
                                      @Nullable DisplayString footnote, @Nullable ColorThemeView colorTheme,
                                      @Nullable ImageThemeView imageTheme) {
-        super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme);
+        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme);
     }
 
     @NonNull
@@ -33,7 +33,7 @@ public class TappingCompletionStepView extends CompletionStepView {
         }
 
         UIStepView stepView = UIStepViewBase.fromUIStep(step, mapper);
-        return new TappingCompletionStepView(stepView.getIdentifier(), stepView.getNavDirection(),
+        return new TappingCompletionStepView(stepView.getIdentifier(),
                 stepView.getActions(), stepView.getTitle(), stepView.getText(), stepView.getDetail(),
                 stepView.getFootnote(), stepView.getColorTheme(), stepView.getImageTheme());
     }
