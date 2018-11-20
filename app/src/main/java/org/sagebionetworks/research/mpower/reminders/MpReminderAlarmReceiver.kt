@@ -38,6 +38,7 @@ import android.content.Context
 import android.content.Intent
 import org.sagebionetworks.research.mpower.MainActivity
 import org.sagebionetworks.research.mpower.R
+import org.sagebionetworks.research.mpower.reminders.MpReminderManager
 
 class MpReminderAlarmReceiver: ReminderAlarmReceiver() {
 
@@ -61,5 +62,9 @@ class MpReminderAlarmReceiver: ReminderAlarmReceiver() {
         stackBuilder.addParentStack(MainActivity::class.java)
         stackBuilder.addNextIntent(notificationIntent)
         return stackBuilder.getPendingIntent(reminder.code, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    override fun createReminderManager(context: Context): ReminderManager {
+        return MpReminderManager(context)
     }
 }

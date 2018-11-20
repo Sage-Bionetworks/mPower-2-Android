@@ -128,10 +128,10 @@ open class StudyBurstReminderViewModel(
      * @param hour to schedule the reminder, if doNotRemindMe is true, anything can be supplied
      * @param minute to schedule the reminder, if doNotRemindMe is true, anything can be supplied
      */
-    fun saveReminder(context: Context, doNotRemindMe: Boolean, hour: Int, minute: Int) {
-        val reportAndSchedules = reminderLiveData?.value ?: return
+    fun saveReminder(context: Context, doNotRemindMe: Boolean, hour: Int, minute: Int): TaskResult? {
+        val reportAndSchedules = reminderLiveData?.value ?: return null
         val reminderSchedule = reportAndSchedules.schedules
-                .filterByActivityId(STUDY_BURST_REMINDER).firstOrNull() ?: return
+                .filterByActivityId(STUDY_BURST_REMINDER).firstOrNull() ?: return null
 
         // This will schedule the reminder on the device at the correct interval
         updateRemindersOnDevice(context, StudyBurstReminderState(doNotRemindMe, hour, minute, doNotRemindMe))
@@ -155,10 +155,7 @@ open class StudyBurstReminderViewModel(
         formStepResult.results[reminderNoStepIdentifier] = stepResultNoReminder
 
         taskResult.results[reminderStepIdentifier] = formStepResult
-
-        updateScheduleToBridge(reminderSchedule)
-        saveResearchStackReports(taskResult)
-        uploadResearchStackTaskResultToS3(reminderSchedule, taskResult)
+        return taskResult
     }
 
     /**
