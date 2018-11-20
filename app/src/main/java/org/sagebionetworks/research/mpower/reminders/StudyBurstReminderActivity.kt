@@ -105,9 +105,11 @@ class StudyBurstReminderActivity: AppCompatActivity() {
     protected fun onDoneButtonClicked() {
         val taskResult = viewModel.saveReminder(this,
                 viewModel.localDoNotRemindMe, viewModel.localHour, viewModel.localMinute)
-        val resultIntent = Intent()
-        resultIntent.putExtra(EXTRA_TASK_RESULT, taskResult)
-        setResult(RESULT_OK, resultIntent)
+        taskResult?.let {
+            val resultIntent = Intent()
+            resultIntent.putExtra(EXTRA_TASK_RESULT, it)
+            setResult(RESULT_OK, resultIntent)
+        }
         finish()
     }
 }
