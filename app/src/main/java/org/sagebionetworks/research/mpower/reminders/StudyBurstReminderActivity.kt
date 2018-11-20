@@ -35,12 +35,14 @@ package org.sagebionetworks.research.mpower.reminders
 import android.app.TimePickerDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_reminder.reminder_checkbox
 import kotlinx.android.synthetic.main.activity_reminder.reminder_done_button
 import kotlinx.android.synthetic.main.activity_reminder.reminder_time_button
+import org.researchstack.backbone.ui.ViewTaskActivity.EXTRA_TASK_RESULT
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderViewModel
 import org.slf4j.LoggerFactory
@@ -101,8 +103,11 @@ class StudyBurstReminderActivity: AppCompatActivity() {
      * This function is called when the bottom done button is clicked
      */
     protected fun onDoneButtonClicked() {
-        viewModel.saveReminder(this,
+        val taskResult = viewModel.saveReminder(this,
                 viewModel.localDoNotRemindMe, viewModel.localHour, viewModel.localMinute)
+        val resultIntent = Intent()
+        resultIntent.putExtra(EXTRA_TASK_RESULT, taskResult)
+        setResult(RESULT_OK, resultIntent)
         finish()
     }
 }
