@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import com.google.common.base.Strings;
 
 import org.sagebionetworks.bridge.android.manager.AuthenticationManager;
+import org.sagebionetworks.bridge.rest.model.SharingScope;
 import org.sagebionetworks.bridge.rest.model.SignUp;
 import org.sagebionetworks.research.mpower.research.DataSourceManager;
 import org.slf4j.Logger;
@@ -96,6 +97,7 @@ public class ExternalIdSignInViewModel extends ViewModel {
         signUp.addDataGroupsItem("test_user");
         if (skipConsent) {
             signUp.addDataGroupsItem("test_no_consent");
+            signUp.setSharingScope(SharingScope.SPONSORS_AND_PARTNERS);
         }
         // Add the random engagement groups
         // TODO: mdephillips 10/15/18 DataSourceManager should be synced with bridge config
