@@ -34,7 +34,27 @@
         "buttonTitle": "Hold phone"
       }
     }
-  }, {
+  },
+  {
+    "identifier":"countdown",
+    "type":"countdown",
+    "text":"Begin in...",
+    "image":{
+      "type":"fetchable",
+      "imageName":"hold_phone_left",
+      "placementType":"fullsizeBackground"
+    },
+    "viewTheme":{
+      "viewIdentifier":"Countdown",
+      "storyboardIdentifier":"ActiveTaskSteps"
+    },
+    "colorTheme":{
+      "usesLightStyle":true
+    },
+    "duration":5,
+    "commands":["playSoundOnStart", "transitionAutomatically"]
+  },
+  {
     "identifier": "tremor",
     "type": "mpowerActive",
     "duration": 30,
