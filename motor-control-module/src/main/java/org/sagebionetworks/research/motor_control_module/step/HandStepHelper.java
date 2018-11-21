@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.sagebionetworks.research.domain.result.interfaces.AnswerResult;
+import org.sagebionetworks.research.domain.result.interfaces.NavigationResult;
 import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.interfaces.SectionStep;
@@ -153,11 +154,15 @@ public class HandStepHelper {
         String handRegex = REGEX_FORMAT.replaceAll(REGEX_PLACEHOLDER, handString);
         List<Result> resultMatches = taskResult.getResultsMatchingRegex(handRegex);
         for (Result result : resultMatches) {
-            String identifier = result.getIdentifier();
-            if (identifier.endsWith("_" + SECTION_ACTIVE_STEP_IDENTIFIER)
-                    || identifier.endsWith("_" + SECTION_TAPPING_STEP_IDENTIFIER)
-                    || identifier.equals("_" + SECTION_TREMOR_STEP_IDENTIFIER)) {
-                return true;
+            // A navigation result is used to restart an active task, so if it exists, we know that
+            // It wasn't actually completed for this hand
+            if (!(result instanceof NavigationResult)) {
+                String identifier = result.getIdentifier();
+                if (identifier.endsWith("_" + SECTION_ACTIVE_STEP_IDENTIFIER)
+                        || identifier.endsWith("_" + SECTION_TAPPING_STEP_IDENTIFIER)
+                        || identifier.endsWith("_" + SECTION_TREMOR_STEP_IDENTIFIER)) {
+                    return true;
+                }
             }
         }
 
