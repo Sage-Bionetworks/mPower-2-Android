@@ -200,7 +200,6 @@
       "identifier": "countdown.1",
       "type": "mtcCountdown",
       "text": "Begin in...",
-      "isFirstRunOnly": true,
       "image": {
         "type": "fetchable",
         "imageName": "f_walking1",
@@ -450,7 +449,7 @@
       "text": "You just completed your Walk and Balance activity.",
       "image": {
         "type": "fetchable",
-        "imageName": "completion_tremor",
+        "imageName": "completion_walk_and_balance",
         "placementType": "topBackground"
       },
       "viewTheme": {

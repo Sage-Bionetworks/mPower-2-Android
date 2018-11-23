@@ -34,13 +34,10 @@ package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.view.View;
-import android.widget.ImageView;
 
+import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowCountdownStepFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
-import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
-import org.sagebionetworks.research.motor_control_module.step.HandStepHelper.Hand;
 import org.sagebionetworks.research.presentation.model.interfaces.CountdownStepView;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
@@ -61,20 +58,7 @@ public class MtcCountdownStepFragment extends ShowCountdownStepFragment {
     @Override
     protected void update(CountdownStepView stepView) {
         super.update(stepView);
-        updateImage();
-    }
-
-    private void updateImage() {
-        // If we are testing the right hand, the image will be shown always as left,
-        // So we must flip it on the x-axis for it to appear as the right hand
-        Hand hand = HandStepHelper.whichHand(stepView.getIdentifier());
-        if (hand != null) {
-            ImageView imageView = this.stepViewBinding.getImageView();
-            if (imageView != null) {
-                if (hand == Hand.RIGHT) {
-                    imageView.setScaleX(-1);
-                }
-            }
-        }
+        TaskResult taskResult = this.performTaskViewModel.getTaskResult();
+        HandStepUIHelper.update(taskResult, stepView, this.stepViewBinding);
     }
 }
