@@ -48,6 +48,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface AppStepType {
     String HAND_SELECTION = "handSelection";
     String MPOWER_ACTIVE = "mpowerActive";
+    String MTC_COUNTDOWN = "mtcCountdown";
     String TAPPING = "tapping";
     String TAPPING_COMPLETION = "tappingCompletion";
 }

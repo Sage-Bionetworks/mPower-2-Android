@@ -43,9 +43,7 @@ import com.google.gson.TypeAdapter;
 
 import org.sagebionetworks.research.domain.async.AsyncActionConfiguration;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
-import org.sagebionetworks.research.domain.step.StepType;
-import org.sagebionetworks.research.domain.step.interfaces.ActiveUIStep;
-import org.sagebionetworks.research.domain.step.interfaces.Step;
+import org.sagebionetworks.research.domain.step.interfaces.CountdownStep;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
@@ -56,15 +54,15 @@ import java.util.Map;
 import java.util.Set;
 
 @AutoValue
-public abstract class InstructionStep implements ActiveUIStep, StepNavigationStrategy.SkipStepStrategy,
-    StepNavigationStrategy.NextStepStrategy {
+public abstract class MtcCountdownStep implements CountdownStep, StepNavigationStrategy.SkipStepStrategy {
+    public static final String TYPE = AppStepType.MTC_COUNTDOWN;
+
     @AutoValue.Builder
     public abstract static class Builder {
-        @NonNull
-        public abstract InstructionStep build();
+        public abstract MtcCountdownStep build();
 
         @NonNull
-        public abstract Builder setActions(@NonNull ImmutableMap<String, Action> actions);
+        public abstract Builder setActions(@NonNull Map<String, Action> actions);
 
         @NonNull
         public abstract Builder setAsyncActions(@NonNull Set<AsyncActionConfiguration> asyncActions);
@@ -76,7 +74,7 @@ public abstract class InstructionStep implements ActiveUIStep, StepNavigationStr
         public abstract Builder setColorTheme(@Nullable ColorTheme colorTheme);
 
         @NonNull
-        public abstract Builder setCommands(@NonNull ImmutableSet<String> commands);
+        public abstract Builder setCommands(@NonNull Set<String> commands);
 
         @NonNull
         public abstract Builder setDetail(@Nullable String detail);
@@ -91,7 +89,7 @@ public abstract class InstructionStep implements ActiveUIStep, StepNavigationStr
         public abstract Builder setFootnote(@Nullable String footnote);
 
         @NonNull
-        public abstract Builder setHiddenActions(@NonNull ImmutableSet<String> hiddenActions);
+        public abstract Builder setHiddenActions(@NonNull Set<String> hiddenActions);
 
         @NonNull
         public abstract Builder setIdentifier(@NonNull String identifier);
@@ -100,8 +98,7 @@ public abstract class InstructionStep implements ActiveUIStep, StepNavigationStr
         public abstract Builder setImageTheme(@Nullable ImageTheme imageTheme);
 
         @NonNull
-        public abstract Builder setSpokenInstructions(
-                @NonNull Map<String, String> spokenInstructions);
+        public abstract Builder setSpokenInstructions(@NonNull Map<String, String> spokenInstructions);
 
         @NonNull
         public abstract Builder setText(@Nullable String text);
@@ -110,10 +107,17 @@ public abstract class InstructionStep implements ActiveUIStep, StepNavigationStr
         public abstract Builder setTitle(@Nullable String title);
     }
 
-    public static final String TYPE_KEY = StepType.INSTRUCTION;
+    public static TypeAdapter<MtcCountdownStep> typeAdapter(Gson gson) {
+        return new AutoValue_MtcCountdownStep.GsonTypeAdapter(gson)
+                .setDefaultActions(ImmutableMap.of())
+                .setDefaultAsyncActions(ImmutableSet.of())
+                .setDefaultCommands(ImmutableSet.of())
+                .setDefaultHiddenActions(ImmutableSet.of())
+                .setDefaultSpokenInstructions(ImmutableMap.of());
+    }
 
     public static Builder builder() {
-        return new AutoValue_InstructionStep.Builder()
+        return new AutoValue_MtcCountdownStep.Builder()
                 .setActions(ImmutableMap.of())
                 .setAsyncActions(ImmutableSet.of())
                 .setCommands(ImmutableSet.of())
@@ -123,39 +127,24 @@ public abstract class InstructionStep implements ActiveUIStep, StepNavigationStr
                 .setBackgroundAudioRequired(false);
     }
 
-    public static TypeAdapter<InstructionStep> typeAdapter(Gson gson) {
-        return new AutoValue_InstructionStep.GsonTypeAdapter(gson)
-                .setDefaultActions(ImmutableMap.of())
-                .setDefaultAsyncActions(ImmutableSet.of())
-                .setDefaultCommands(ImmutableSet.of())
-                .setDefaultHiddenActions(ImmutableSet.of())
-                .setDefaultSpokenInstructions(ImmutableMap.of());
-    }
+    public abstract boolean getIsFirstRunOnly();
 
-    @Override
-    public String getNextStepIdentifier(@NonNull TaskResult taskResult) {
-        String nextStepIdentifier = HandStepNavigationRuleHelper.getNextStepIdentifier(this.getIdentifier(), taskResult);
-        return nextStepIdentifier;
-    }
+    public abstract Builder toBuilder();
 
     @Override
     public boolean shouldSkip(@NonNull TaskResult taskResult) {
-        boolean shouldSkip = HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), taskResult) ||
-                (this.getIsFirstRunOnly() && !FirstRunHelper.isFirstRun(taskResult));
-        return shouldSkip;
+        return getIsFirstRunOnly() && !FirstRunHelper.isFirstRun(taskResult);
+    }
+
+    @Override
+    @NonNull
+    public MtcCountdownStep copyWithIdentifier(@NonNull String identifier) {
+        return this.toBuilder().setIdentifier(identifier).build();
     }
 
     @NonNull
     @Override
-    public Step copyWithIdentifier(@NonNull final String identifier) {
-        return toBuilder().setIdentifier(identifier).build();
-    }
-
     public String getType() {
-        return TYPE_KEY;
+        return TYPE;
     }
-
-    public abstract boolean getIsFirstRunOnly();
-
-    public abstract Builder toBuilder();
 }

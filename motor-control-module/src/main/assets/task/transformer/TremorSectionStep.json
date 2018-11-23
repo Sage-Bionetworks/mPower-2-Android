@@ -37,8 +37,9 @@
   },
   {
     "identifier":"countdown",
-    "type":"countdown",
+    "type":"mtcCountdown",
     "text":"Begin in...",
+    "isFirstRunOnly": false,
     "image":{
       "type":"fetchable",
       "imageName":"hold_phone_left",

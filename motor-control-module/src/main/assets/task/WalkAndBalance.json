@@ -198,8 +198,9 @@
     },
     {
       "identifier": "countdown.1",
-      "type": "countdown",
+      "type": "mtcCountdown",
       "text": "Begin in...",
+      "isFirstRunOnly": true,
       "image": {
         "type": "fetchable",
         "imageName": "f_walking1",
@@ -360,7 +361,7 @@
     },
     {
       "identifier": "countdown.2",
-      "type": "countdown",
+      "type": "mtcCountdown",
       "text": "Begin in...",
       "isFirstRunOnly": true,
       "image": {
