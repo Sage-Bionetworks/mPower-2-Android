@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ BSD 3-Clause License
   ~
   ~ Copyright 2018  Sage Bionetworks. All rights reserved.
@@ -30,31 +30,23 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<resources>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@id/rs2_step_fragment_root_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
+    <include layout="@layout/rs2_form_step"/>
 
-    <style name="Widget.ResearchStack.NavigationActionBar.TappingActive" parent="Widget.ResearchStack.NavigationActionBar.Active">
-        <item name="isSkipHidden">true</item>
-    </style>
+    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        style="@style/MotorControl.CancelButton"
+        android:id="@id/rs2_step_navigation_action_cancel"
+        android:layout_width="@dimen/cancel_button_width"
+        android:layout_height="0dp"
+        android:paddingTop="@dimen/margin_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintDimensionRatio="H,1:1"/>
 
-    <style name="Widget.ResearchStack.NavigationActionBar.Countdown" parent="Widget.ResearchStack.NavigationActionBar.Active">
-        <item name="isSkipHidden">true</item>
-    </style>
-
-    <style name="MotorControl"/>
-    <style name="MotorControl.CancelButton">
-        <item name="android:layout_marginTop">@dimen/margin_xlarge</item>
-        <item name="android:layout_marginStart">@dimen/margin_medium</item>
-        <item name="android:layout_marginEnd">@dimen/margin_medium</item>
-        <item name="android:layout_marginBottom">@dimen/margin_medium</item>
-        <item name="android:background">@drawable/rs2_cancel_icon</item>
-    </style>
-
-</resources>
+</android.support.constraint.ConstraintLayout>
