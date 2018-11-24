@@ -40,7 +40,9 @@ public class ShowMPowerActiveUIStepFragment extends ShowActiveUIStepFragmentBase
     @Override
     public void onStart() {
         super.onStart();
-        this.showStepViewModel.startCountdown();
+        if (!showStepViewModel.isCountdownRunning() && !showStepViewModel.isCountdownPaused()) {
+            showStepViewModel.startCountdown();
+        }
     }
 
     @NonNull
