@@ -62,7 +62,9 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        // Should target '1.8', but there is currently a bug on Android SDK < 24 that was crashing login
+        // See https://stackoverflow.com/questions/45935788/nosuchmethoderror-java-lang-long-hashcode
+        jvmTarget = '1.6'
     }
 }
 
