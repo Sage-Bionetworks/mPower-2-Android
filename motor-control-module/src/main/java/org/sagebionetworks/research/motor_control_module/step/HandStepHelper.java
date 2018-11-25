@@ -3,13 +3,12 @@ package org.sagebionetworks.research.motor_control_module.step;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.sagebionetworks.research.domain.result.interfaces.AnswerResult;
 import org.sagebionetworks.research.domain.result.interfaces.NavigationResult;
 import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.interfaces.SectionStep;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
-import org.sagebionetworks.research.domain.task.Task;
+import org.sagebionetworks.research.motor_control_module.result.HandSelectionResult;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
 import org.sagebionetworks.research.presentation.DisplayString;
 
@@ -86,12 +85,10 @@ public class HandStepHelper {
      */
     @Nullable
     public static List<String> getHandOrder(@NonNull TaskResult result) {
-        AnswerResult<List<String>> handOrderResult =
-                result.getAnswerResult(ShowHandSelectionStepFragment.HAND_ORDER_KEY);
-        if (handOrderResult != null) {
-            return handOrderResult.getAnswer();
+        Result stepResult = result.getResult(ShowHandSelectionStepFragment.HAND_SELECTION_KEY);
+        if (stepResult instanceof HandSelectionResult) {
+            return ((HandSelectionResult)stepResult).getHandOrder();
         }
-
         return null;
     }
 

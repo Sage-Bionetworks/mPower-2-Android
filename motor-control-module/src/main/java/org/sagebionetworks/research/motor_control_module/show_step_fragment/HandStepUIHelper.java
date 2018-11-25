@@ -45,6 +45,9 @@ public class HandStepUIHelper {
         // when the next hand is the right.
         ImageView imageView = stepViewBinding.getImageView();
         Hand whichHand = HandStepHelper.whichHand(stepView.getIdentifier());
+        if (whichHand == null) {
+            whichHand = nextHand;  // If we haven't reached a current hand, use the next one
+        }
         if (imageView != null) {
             if (whichHand != null) {
                 // If it is the right hand we reverse the image view, otherwise we revert it back to normal

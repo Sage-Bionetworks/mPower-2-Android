@@ -37,6 +37,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +53,7 @@ import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowFormUIStepFragment;
 import org.sagebionetworks.research.motor_control_module.R;
+import org.sagebionetworks.research.motor_control_module.result.HandSelectionResult;
 import org.sagebionetworks.research.presentation.model.form.ChoiceInputFieldViewBase;
 import org.sagebionetworks.research.presentation.model.form.InputFieldView;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
@@ -65,7 +67,6 @@ import java.util.List;
 public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowHandSelectionStepFragment.class);
     public static final String HAND_SELECTION_KEY = "handSelection";
-    public static final String HAND_ORDER_KEY = "handOrder";
 
     @NonNull
     public static ShowHandSelectionStepFragment newInstance(@NonNull StepView stepView) {
@@ -75,32 +76,10 @@ public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
         return fragment;
     }
 
-
-    // TODO rkolmos 08/16/2018 move this code to the view model.
     public void writeHandSelectionResult(@HandSelection String handSelection) {
-        List<String> result = new ArrayList<>();
-        switch (handSelection) {
-            case HandSelection.LEFT:
-                result.add(HandSelection.LEFT);
-                break;
-            case HandSelection.RIGHT:
-                result.add(HandSelection.RIGHT);
-                break;
-            case HandSelection.BOTH:
-                // If the user selected both we randomize the hand order.
-                if (Math.random() < .5) {
-                    result.add(HandSelection.LEFT);
-                    result.add(HandSelection.RIGHT);
-                } else {
-                    result.add(HandSelection.RIGHT);
-                    result.add(HandSelection.LEFT);
-                }
-                break;
-        }
-
-        AnswerResult<List<String>> answerResult = new AnswerResultBase<>(HAND_ORDER_KEY, Instant.now(),
-                Instant.now(), result, AnswerResultType.DATA);
-        this.performTaskViewModel.addStepResult(answerResult);
+        HandSelectionResult result = new HandSelectionResult(
+                HAND_SELECTION_KEY, Instant.now(), Instant.now(), handSelection);
+        this.performTaskViewModel.addStepResult(result);
     }
 
     @Override
