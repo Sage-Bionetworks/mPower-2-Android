@@ -19,6 +19,7 @@ import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AbstractResultArchiveFactory.ResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerResultArchiveFactory;
+import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerMapResultListArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.BaseResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.FileResultArchiveFactory;
 
@@ -67,9 +68,11 @@ public abstract class MPowerUserModule {
     @BridgeApplicationScope
     static ImmutableList<ResultArchiveFactory> provideAbstractResultArchiveFactory(
             TappingResultArchiveFactory tappingResultArchiveFactory,
-            FileResultArchiveFactory fileResultArchiveFactory, AnswerResultArchiveFactory answerResultArchiveFactory,
-            BaseResultArchiveFactory baseResultArchiveFactory) {
-        return ImmutableList.of(tappingResultArchiveFactory, fileResultArchiveFactory, answerResultArchiveFactory,
-                baseResultArchiveFactory);
+            FileResultArchiveFactory fileResultArchiveFactory,
+            AnswerResultArchiveFactory answerResultArchiveFactory,
+            BaseResultArchiveFactory baseResultArchiveFactory,
+            AnswerMapResultListArchiveFactory answerMapResultListArchiveFactory) {
+        return ImmutableList.of(tappingResultArchiveFactory, fileResultArchiveFactory,
+                answerResultArchiveFactory, baseResultArchiveFactory, answerMapResultListArchiveFactory);
     }
 }
