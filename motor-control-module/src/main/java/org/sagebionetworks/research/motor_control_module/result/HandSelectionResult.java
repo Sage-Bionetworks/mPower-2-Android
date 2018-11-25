@@ -61,7 +61,7 @@ public class HandSelectionResult extends AnswerResultBase<String> {
 
     public HandSelectionResult(@NonNull final String identifier, @NonNull final Instant startTime,
             @NonNull final Instant endTime, final @HandSelection String handSelection) {
-        super(identifier, startTime, endTime, handSelection, AnswerResultType.DATA);
+        super(identifier, startTime, endTime, handSelection, AnswerResultType.STRING);
         if (HandSelection.BOTH.equals(handSelection)) {
             // If the user selected both we randomize the hand order.
             if (Math.random() < .5) {
