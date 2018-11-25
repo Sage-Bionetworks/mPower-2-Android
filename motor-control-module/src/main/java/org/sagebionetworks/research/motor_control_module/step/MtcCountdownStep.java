@@ -133,7 +133,9 @@ public abstract class MtcCountdownStep implements CountdownStep, StepNavigationS
 
     @Override
     public boolean shouldSkip(@NonNull TaskResult taskResult) {
-        return getIsFirstRunOnly() && !FirstRunHelper.isFirstRun(taskResult);
+        boolean shouldSkip = HandStepNavigationRuleHelper.shouldSkip(this.getIdentifier(), taskResult) ||
+                (this.getIsFirstRunOnly() && !FirstRunHelper.isFirstRun(taskResult));
+        return shouldSkip;
     }
 
     @Override
