@@ -29,6 +29,8 @@ import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
+import org.sagebionetworks.research.mpower.researchstack.MpResearchStackArchiveFactory
+import org.sagebionetworks.research.mpower.researchstack.MpResearchStackArchiveFactory.Companion
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskHelper
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpBooleanAnswerFormat
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpChoiceAnswerFormat
@@ -117,9 +119,11 @@ open class StudyBurstViewModel(
     }
 
     init {
-        // TODO: mdephillips 10/20/18 This should actually be set in a single place when
-        // all the dagger injections are done and we have access to the ScheduleRepository
-        scheduleRepo.researchStackUploadArchiveFactory = StudyBurstResearchStackArchiveFactory()
+        // This could be improved by specifying the following lines of code globally after the dagger injections
+        // However, that is done in SageResearchAppSDKModule which has many other dependencies
+        // and I don't think we need to duplicate all these at this time -mdephillips 11/15/18
+        val archiveFactory = MpResearchStackArchiveFactory()
+        scheduleRepo.researchStackUploadArchiveFactory = archiveFactory
     }
 
     @VisibleForTesting
@@ -788,95 +792,5 @@ open class StudyBurstSettingsDao @Inject constructor(context: Context) {
         prefs.getString(timestampKey, null)?.let {
             return LocalDateTime.parse(it)
         } ?: return null
-    }
-}
-
-open class StudyBurstResearchStackArchiveFactory: ResearchStackUploadArchiveFactory() {
-
-    private val logger = LoggerFactory.getLogger(StudyBurstResearchStackArchiveFactory::class.java)
-    private val studyBurstArchiveFileName = "tasks"
-    private val answersFilename = "answers"
-
-    /**
-     * Can be overridden by sub-class for custom data archiving
-     * @param archiveBuilder fill this builder up with files from the flattenedResultList
-     * @param flattenedResultList read these and add them to the archiveBuilder
-     */
-    override fun addFiles(
-            archiveBuilder: Archive.Builder,
-            flattenedResultList: List<org.researchstack.backbone.result.Result>?,
-            taskIdentifier: String) {
-
-        if (STUDY_BURST_COMPLETED_UPLOAD == taskIdentifier) {
-            // Study burst completed marker has custom upload archive names "tasks"
-            // and all results are consolidated into that file with their result identifiers
-            archiveBuilder.addDataFile(fromResultList(studyBurstArchiveFileName, flattenedResultList))
-        } else if (STUDY_BURST_REMINDER == taskIdentifier) {
-            // Study burst completed marker has custom upload archive names "answers"
-            // and all results are consolidated into that file with their result identifiers
-            archiveBuilder.addDataFile(fromResultList(answersFilename, flattenedResultList))
-        } else {
-            super.addFiles(archiveBuilder, flattenedResultList, taskIdentifier)
-        }
-    }
-
-    /**
-     * Packages up all the results into a single json archive file
-     * @param filename for the json archive
-     * @param resultList to include all the results in a single json archive
-     */
-    protected fun fromResultList(
-            filename: String,
-            resultList: List<org.researchstack.backbone.result.Result>?): JsonArchiveFile {
-
-        val answerMap = HashMap<String, Any>()
-        resultList?.forEach {
-            MpTaskHelper.addToAnswerMap(this, answerMap, it)
-        }
-
-        // The answer group will not have a valid end date, if one is needed,
-        // consider adding key_endDate as a key/value in answer map above
-        return JsonArchiveFile(filename, DateTime.now(), answerMap)
-    }
-
-    /**
-     * Due to the nature of the AppCore survey UI being directly coupled to Result types,
-     * We need to override the custom survey answers to tell the archive factory
-     * which types of survey answers or custom result types should be archived as
-     * @param stepResult to transform into a survey answer
-     * @param format the answer format that should be analyzed to make a survey answer
-     * @return a valid SurveyAnswer, or null if conversion is unknown
-     */
-    override fun customSurveyAnswer(stepResult: StepResult<*>, format: AnswerFormat): SurveyAnswer? {
-        if (stepResult.results == null || stepResult.results.isEmpty()) {
-            return null  // question was skipped
-        }
-        if (format is MpBooleanAnswerFormat) {
-            val surveyAnswer = SurveyAnswer.BooleanSurveyAnswer(stepResult)
-            surveyAnswer.questionType = AnswerFormat.Type.Boolean.ordinal
-            surveyAnswer.questionTypeName = AnswerFormat.Type.Boolean.name
-            return surveyAnswer
-        } else if (format is MpTextQuestionBody.AnswerFormat) {
-            val surveyAnswer = SurveyAnswer.TextSurveyAnswer(stepResult)
-            surveyAnswer.questionType = AnswerFormat.Type.Text.ordinal
-            surveyAnswer.questionTypeName = AnswerFormat.Type.Text.name
-            return surveyAnswer
-        } else if (format is MpChoiceAnswerFormat) {
-            val surveyAnswer = SurveyAnswer.ChoiceSurveyAnswer(stepResult)
-            if (format.answerStyle == AnswerFormat.ChoiceAnswerStyle.SingleChoice) {
-                surveyAnswer.questionType = AnswerFormat.Type.SingleChoice.ordinal
-                surveyAnswer.questionTypeName = AnswerFormat.Type.SingleChoice.name
-            } else {
-                surveyAnswer.questionType = AnswerFormat.Type.MultipleChoice.ordinal
-                surveyAnswer.questionTypeName = AnswerFormat.Type.MultipleChoice.name
-            }
-            return surveyAnswer
-        } else if (format is MpIntegerAnswerFormat) {
-            val surveyAnswer = SurveyAnswer.NumericSurveyAnswer<Int>(stepResult)
-            surveyAnswer.questionType = AnswerFormat.Type.Integer.ordinal
-            surveyAnswer.questionTypeName = AnswerFormat.Type.Integer.name
-            return surveyAnswer
-        }
-        return null
     }
 }

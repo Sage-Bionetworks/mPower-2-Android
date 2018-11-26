@@ -30,25 +30,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.motor_control_module.step;
+package org.sagebionetworks.research.motor_control_module.show_step_fragment;
 
-import android.support.annotation.StringDef;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 
-import org.sagebionetworks.research.domain.step.StepType;
+import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
+import org.sagebionetworks.research.mobile_ui.show_step.view.ShowCountdownStepFragment;
+import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
+import org.sagebionetworks.research.presentation.model.interfaces.CountdownStepView;
+import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+public class MtcCountdownStepFragment extends ShowCountdownStepFragment {
 
-// Adds the app specific steps to the StepType annotation
-@Retention(RetentionPolicy.SOURCE)
-@StringDef({StepType.COMPLETION, StepType.OVERVIEW, StepType.INSTRUCTION, StepType.UI, StepType.FORM,
-        StepType.ACTIVE, StepType.BASE, StepType.COUNTDOWN, StepType.IMAGE_PICKER, StepType.IMAGE_PICKER,
-        StepType.LOGGING, StepType.REVIEW, StepType.SECTION, StepType.SELECTION, StepType.TASK_INFO,
-        StepType.TRANSFORM, AppStepType.HAND_SELECTION, AppStepType.MPOWER_ACTIVE, AppStepType.TAPPING})
-public @interface AppStepType {
-    String HAND_SELECTION = "handSelection";
-    String MPOWER_ACTIVE = "mpowerActive";
-    String MTC_COUNTDOWN = "mtcCountdown";
-    String TAPPING = "tapping";
-    String TAPPING_COMPLETION = "tappingCompletion";
+    @NonNull
+    public static MtcCountdownStepFragment newInstance(@NonNull StepView stepView) {
+        if (!(stepView instanceof CountdownStepView)) {
+            throw new IllegalArgumentException("Step view: " + stepView + " is not a CountdownStepView.");
+        }
+
+        MtcCountdownStepFragment fragment = new MtcCountdownStepFragment();
+        Bundle arguments = ShowStepFragmentBase.createArguments(stepView);
+        fragment.setArguments(arguments);
+        return fragment;
+    }
+
+    @Override
+    protected void update(CountdownStepView stepView) {
+        super.update(stepView);
+        TaskResult taskResult = this.performTaskViewModel.getTaskResult();
+        HandStepUIHelper.update(taskResult, stepView, this.stepViewBinding);
+    }
 }

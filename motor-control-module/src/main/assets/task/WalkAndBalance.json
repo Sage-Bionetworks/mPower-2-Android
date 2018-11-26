@@ -198,7 +198,7 @@
     },
     {
       "identifier": "countdown.1",
-      "type": "countdown",
+      "type": "mtcCountdown",
       "text": "Begin in...",
       "image": {
         "type": "fetchable",
@@ -360,7 +360,7 @@
     },
     {
       "identifier": "countdown.2",
-      "type": "countdown",
+      "type": "mtcCountdown",
       "text": "Begin in...",
       "isFirstRunOnly": true,
       "image": {
@@ -449,7 +449,7 @@
       "text": "You just completed your Walk and Balance activity.",
       "image": {
         "type": "fetchable",
-        "imageName": "completion_tremor",
+        "imageName": "completion_walk_and_balance",
         "placementType": "topBackground"
       },
       "viewTheme": {
