@@ -10,6 +10,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItem
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModelFactory;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
+import org.sagebionetworks.research.presentation.perform_task.PerformTaskViewModel;
 
 import javax.inject.Inject;
 
@@ -40,9 +42,10 @@ public abstract class TrackingFragment
         extends Fragment  {
     public static final String ARGUMENT_STEP_VIEW = "stepView";
 
+    protected PerformTaskViewModel performTaskViewModel;
+    protected PerformTaskFragment performTaskFragment;
     protected TrackingStepView stepView;
     protected ViewModelType viewModel;
-    protected PerformTaskFragment performTaskFragment;
     protected Unbinder unbinder;
 
     @Inject
@@ -60,6 +63,20 @@ public abstract class TrackingFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Find PerformTaskFragment
+        Fragment parentFragment = getParentFragment();
+        while (parentFragment != null) {
+            if (parentFragment instanceof PerformTaskFragment) {
+                performTaskFragment = (PerformTaskFragment)parentFragment;
+                this.performTaskViewModel = ViewModelProviders
+                        .of(performTaskFragment).get(PerformTaskViewModel.class);
+                parentFragment = null;  // break out of the loop
+            } else {
+                parentFragment = parentFragment.getParentFragment();
+            }
+        }
+
         TrackingStepView stepView = null;
         if (savedInstanceState == null) {
             Bundle arguments = getArguments();

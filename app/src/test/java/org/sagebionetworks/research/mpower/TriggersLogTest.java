@@ -12,8 +12,6 @@ import org.junit.Test;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
 import org.threeten.bp.Instant;
 
-import java.net.URL;
-
 public class TriggersLogTest {
     private static final Gson GSON = DaggerTrackingTestComponent.builder().build().gson();
 
@@ -26,7 +24,7 @@ public class TriggersLogTest {
         RECORDED_JSON = new JsonObject();
         RECORDED_JSON.addProperty("identifier", RECORDED_ITEM);
         RECORDED_JSON.addProperty("text", RECORDED_ITEM);
-        RECORDED_JSON.addProperty("loggedDate", RECORDED_TIMESTAMP.toString());
+        RECORDED_JSON.addProperty("getLoggedDate", RECORDED_TIMESTAMP.toString());
     }
 
     private static final JsonObject UNRECORDED_JSON;
@@ -52,7 +50,7 @@ public class TriggersLogTest {
         SimpleTrackingItemLog log = SimpleTrackingItemLog.builder()
                 .setIdentifier(RECORDED_ITEM)
                 .setText(RECORDED_ITEM)
-                .setTimestamp(RECORDED_TIMESTAMP)
+                .setLoggedDate(RECORDED_TIMESTAMP)
                 .build();
         JsonElement serialized = GSON.toJsonTree(log);
         assertNotNull("Log serialization failed", serialized);
@@ -65,7 +63,7 @@ public class TriggersLogTest {
         assertNotNull(log);
         assertEquals("Log had unexpected identifier", UNRECORDED_ITEM, log.getIdentifier());
         assertEquals("Log had unexpected text", UNRECORDED_ITEM, log.getText());
-        assertNull("Log had non-null timestamp", log.getTimestamp());
+        assertNull("Log had non-null timestamp", log.getLoggedDate());
     }
 
     @Test
@@ -74,6 +72,6 @@ public class TriggersLogTest {
         assertNotNull(log);
         assertEquals("Log had unexpected identifier", RECORDED_ITEM, log.getIdentifier());
         assertEquals("Log had unexpected text", RECORDED_ITEM, log.getText());
-        assertEquals("Log had unexpected timestamp", RECORDED_TIMESTAMP, log.getTimestamp());
+        assertEquals("Log had unexpected timestamp", RECORDED_TIMESTAMP, log.getLoggedDate());
     }
 }

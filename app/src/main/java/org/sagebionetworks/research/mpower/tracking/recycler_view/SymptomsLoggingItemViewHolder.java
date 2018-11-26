@@ -1,10 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -20,8 +16,6 @@ import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.sagebionetworks.research.mpower.tracking.widget.SymptomsLoggingUIFormItemWidget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
@@ -102,7 +96,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
             severity = newLog.getSeverity();
             medicationTiming = newLog.getMedicationTiming();
             duration = newLog.getDuration();
-            time = newLog.getTimestamp();
+            time = newLog.getLoggedDate();
         }
 
         // update the UI if the values have changed.
@@ -118,7 +112,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
             updateDurationUI(duration);
         }
 
-        if (log == null || !Objects.equal(log.getTimestamp(), time)) {
+        if (log == null || !Objects.equal(log.getLoggedDate(), time)) {
             updateTimestampUI(time);
         }
 

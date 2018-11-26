@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 
+import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.threeten.bp.Instant;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.Set;
  * @param <E> The type of TrackingItemLog stored in the collection.
  */
 @AutoValue
-public abstract class LoggingCollection<E extends TrackingItemLog> {
+public abstract class LoggingCollection<E extends TrackingItemLog> implements Result {
     public static final String DEFAULT_TYPE = "loggingCollection";
 
     @AutoValue.Builder
@@ -33,7 +34,7 @@ public abstract class LoggingCollection<E extends TrackingItemLog> {
         public abstract Builder<E> setStartDate(@Nullable Instant startDate);
 
         @NonNull
-        public abstract Builder<E> setEndDate(@Nullable Instant endDate);
+        public abstract Builder<E> setEndDate(@Nullable Instant endTime);
 
         @NonNull
         public abstract Builder<E> setIdentifier(@NonNull String identifier);
@@ -43,6 +44,16 @@ public abstract class LoggingCollection<E extends TrackingItemLog> {
 
         @NonNull
         public abstract Builder<E> setType(@Nullable String type);
+    }
+
+    @Nullable
+    public Instant getStartTime() {
+        return getStartDate();
+    }
+
+    @Nullable
+    public Instant getEndTime() {
+        return getEndDate();
     }
 
     @Nullable

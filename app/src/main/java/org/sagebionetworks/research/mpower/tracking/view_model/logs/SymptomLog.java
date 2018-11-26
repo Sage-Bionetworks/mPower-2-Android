@@ -29,7 +29,7 @@ public abstract class SymptomLog implements TrackingItemLog {
         public abstract Builder setText(@NonNull String text);
 
         @NonNull
-        public abstract Builder setTimestamp(@Nullable Instant timestamp);
+        public abstract Builder setLoggedDate(@Nullable Instant loggedDate);
 
         @NonNull
         public abstract Builder setSeverity(@Nullable Integer severity);
@@ -43,6 +43,9 @@ public abstract class SymptomLog implements TrackingItemLog {
         @NonNull
         public abstract Builder setMedicationTiming(@Nullable String medicationTiming);
     }
+
+    @Nullable
+    public abstract Instant getLoggedDate();
 
     @Nullable
     public abstract Integer getSeverity();

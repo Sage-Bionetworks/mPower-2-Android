@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.sagebionetworks.research.domain.step.ui.action.Action;
+import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
@@ -32,6 +33,7 @@ public abstract class LoggingFragment
         <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog,
         ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>, AdapterType extends Adapter<?>>
         extends RecyclerViewTrackingFragment<ConfigType, LogType, ViewModelType, AdapterType> {
+
     @Override
     @NonNull
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,7 +57,33 @@ public abstract class LoggingFragment
             });
         }
 
+        setupSubmitButton();
+
         return result;
+    }
+
+    /**
+     * Called when the submit button is clicked.
+     * @param view that was clicked.
+     */
+    protected void onSubmitButtonClicked(View view) {
+        performTaskFragment.goForward();
+    }
+
+    /**
+     * Sub-classes can override to provide custom submit button setup.
+     */
+    protected void setupSubmitButton() {
+        setSubmitButtonEnabled(false);
+        navigationActionBar.getForwardButton().setText(R.string.button_submit);
+        navigationActionBar.getForwardButton().setOnClickListener(this::onSubmitButtonClicked);
+    }
+
+    /**
+     * @param enabled when true, submit button will be enabled, when false it will be disabled.
+     */
+    protected void setSubmitButtonEnabled(boolean enabled) {
+        navigationActionBar.setForwardButtonEnabled(enabled);
     }
 
     @Override

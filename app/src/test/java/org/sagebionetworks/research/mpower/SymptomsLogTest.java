@@ -9,12 +9,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.junit.Test;
-import org.researchstack.backbone.onboarding.ReConsentInstructionStep;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
 import org.threeten.bp.Instant;
-
-import java.lang.reflect.ParameterizedType;
-import java.net.URL;
 
 public class SymptomsLogTest {
     private static final Gson GSON = DaggerTrackingTestComponent.builder().build().gson();
@@ -31,7 +27,7 @@ public class SymptomsLogTest {
         RECORDED_JSON.addProperty("identifier", RECORDED_ITEM);
         RECORDED_JSON.addProperty("text", RECORDED_ITEM);
         RECORDED_JSON.addProperty("severity", RECORDED_SEVERITY);
-        RECORDED_JSON.addProperty("loggedDate",  RECORDED_TIMESTAMP.toString());
+        RECORDED_JSON.addProperty("getLoggedDate",  RECORDED_TIMESTAMP.toString());
         RECORDED_JSON.addProperty("duration", RECORDED_DURATION);
         RECORDED_JSON.addProperty("medicationTiming", RECORDED_MEDICATION_TIMING);
     }
@@ -59,7 +55,7 @@ public class SymptomsLogTest {
         SymptomLog log = SymptomLog.builder()
                 .setIdentifier(RECORDED_ITEM)
                 .setText(RECORDED_ITEM)
-                .setTimestamp(RECORDED_TIMESTAMP)
+                .setLoggedDate(RECORDED_TIMESTAMP)
                 .setMedicationTiming(RECORDED_MEDICATION_TIMING)
                 .setDuration(RECORDED_DURATION)
                 .setSeverity(RECORDED_SEVERITY)
@@ -78,7 +74,7 @@ public class SymptomsLogTest {
         assertNull("Log had non-null severity", log.getSeverity());
         assertNull("Log had non-null duration", log.getDuration());
         assertNull("Log had non-null medication timing", log.getMedicationTiming());
-        assertNull("Log had non-null timestamp", log.getTimestamp());
+        assertNull("Log had non-null timestamp", log.getLoggedDate());
     }
 
     @Test
@@ -88,7 +84,7 @@ public class SymptomsLogTest {
         assertEquals("Log had unexpected identifier", RECORDED_ITEM, log.getIdentifier());
         assertEquals("Log had unexpected text", RECORDED_ITEM, log.getText());
         assertEquals("Log had unexpected severity", RECORDED_SEVERITY, log.getSeverity());
-        assertEquals("Log had unexpected timestamp", RECORDED_TIMESTAMP, log.getTimestamp());
+        assertEquals("Log had unexpected timestamp", RECORDED_TIMESTAMP, log.getLoggedDate());
         assertEquals("Log had unexpected duration", RECORDED_DURATION, log.getDuration());
         assertEquals("Log had unexpected medication timing", RECORDED_MEDICATION_TIMING, log.getMedicationTiming());
     }

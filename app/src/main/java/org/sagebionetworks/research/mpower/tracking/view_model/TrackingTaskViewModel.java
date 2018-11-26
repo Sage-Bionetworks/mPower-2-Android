@@ -22,7 +22,6 @@ import org.threeten.bp.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * The ViewModel for a TrackingTask. Manages: - The TrackingItems which are available to the user to log. -

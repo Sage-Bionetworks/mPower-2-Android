@@ -2,10 +2,8 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
-import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.SortUtil;
@@ -24,7 +22,6 @@ import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
 import org.threeten.bp.zone.ZoneRulesException;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -109,7 +106,7 @@ public class SymptomLoggingFragment extends
 
                     SymptomLog log = getPreviousLogOrInstantiate(trackingItem);
                     log = log.toBuilder()
-                            .setTimestamp(selectedInstant)
+                            .setLoggedDate(selectedInstant)
                             .build();
                     adapter.updateLog(position, log);
                     adapter.notifyItemChanged(position);
@@ -163,7 +160,7 @@ public class SymptomLoggingFragment extends
                 return SymptomLog.builder()
                         .setIdentifier(trackingItem.getIdentifier())
                         .setText(trackingItem.getIdentifier())
-                        .setTimestamp(Instant.now())
+                        .setLoggedDate(Instant.now())
                         .build();
 
             }

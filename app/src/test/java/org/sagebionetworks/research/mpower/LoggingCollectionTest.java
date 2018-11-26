@@ -4,7 +4,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -15,12 +14,9 @@ import org.junit.Test;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
 import org.threeten.bp.Instant;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URL;
 
 
 public class LoggingCollectionTest {
@@ -46,7 +42,7 @@ public class LoggingCollectionTest {
             .setSeverity(0)
             .setDuration("DURATION_CHOICE_AFTERNOON")
             .setMedicationTiming("post-medication")
-            .setTimestamp(Instant.parse("2018-08-29T12:23:58.435Z"))
+            .setLoggedDate(Instant.parse("2018-08-29T12:23:58.435Z"))
             .build();
 
     private static final SimpleTrackingItemLog TRIGGER_LOG_1 = SimpleTrackingItemLog.builder()
@@ -62,7 +58,7 @@ public class LoggingCollectionTest {
     private static final SimpleTrackingItemLog TRIGGER_LOG_3 = SimpleTrackingItemLog.builder()
             .setIdentifier("Bedtime, late")
             .setText("Bedtime, late")
-            .setTimestamp(Instant.parse("2018-08-29T12:24:26.552Z"))
+            .setLoggedDate(Instant.parse("2018-08-29T12:24:26.552Z"))
             .build();
 
     private static final JsonObject TRIGGERS_JSON;

@@ -183,7 +183,7 @@ public class TrackingTaskViewModelTest {
         SimpleTrackingItemLog log1 = SimpleTrackingItemLog.builder()
                 .setIdentifier(item1.getIdentifier())
                 .setText(item1.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         // log2 has previously not been logged by the user.
         SimpleTrackingItemLog log2 = SimpleTrackingItemLog.builder()
@@ -295,7 +295,7 @@ public class TrackingTaskViewModelTest {
         SimpleTrackingItemLog log = SimpleTrackingItemLog.builder()
                 .setIdentifier(item.getIdentifier())
                 .setText(item.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         this.viewModel.addLoggedElement(log);
         Map<String, SimpleTrackingItemLog> loggedElements = this.viewModel.getLoggedElementsById().getValue();
@@ -315,12 +315,12 @@ public class TrackingTaskViewModelTest {
         SimpleTrackingItemLog log1 = SimpleTrackingItemLog.builder()
                 .setIdentifier(item1.getIdentifier())
                 .setText(item1.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         SimpleTrackingItemLog log2 = SimpleTrackingItemLog.builder()
                 .setIdentifier(item2.getIdentifier())
                 .setText(item2.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         this.viewModel.addLoggedElement(log1);
         this.viewModel.addLoggedElement(log2);
@@ -341,7 +341,7 @@ public class TrackingTaskViewModelTest {
         SimpleTrackingItemLog log = SimpleTrackingItemLog.builder()
                 .setIdentifier(item.getIdentifier())
                 .setText(item.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         this.viewModel.addLoggedElement(log);
         this.viewModel.removeLoggedElement(item.getIdentifier());
@@ -358,12 +358,12 @@ public class TrackingTaskViewModelTest {
         SimpleTrackingItemLog log1 = SimpleTrackingItemLog.builder()
                 .setIdentifier(item1.getIdentifier())
                 .setText(item1.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         SimpleTrackingItemLog log2 = SimpleTrackingItemLog.builder()
                 .setIdentifier(item2.getIdentifier())
                 .setText(item2.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         this.viewModel.addLoggedElement(log1);
         this.viewModel.addLoggedElement(log2);
@@ -386,12 +386,12 @@ public class TrackingTaskViewModelTest {
         SimpleTrackingItemLog log1 = SimpleTrackingItemLog.builder()
                 .setIdentifier(item1.getIdentifier())
                 .setText(item1.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         SimpleTrackingItemLog log2 = SimpleTrackingItemLog.builder()
                 .setIdentifier(item2.getIdentifier())
                 .setText(item2.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         this.viewModel.addLoggedElement(log1);
         this.viewModel.addLoggedElement(log2);
@@ -415,12 +415,12 @@ public class TrackingTaskViewModelTest {
         SimpleTrackingItemLog log1 = SimpleTrackingItemLog.builder()
                 .setIdentifier(item1.getIdentifier())
                 .setText(item1.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         SimpleTrackingItemLog log2 = SimpleTrackingItemLog.builder()
                 .setIdentifier(item2.getIdentifier())
                 .setText(item2.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         this.viewModel.itemSelected(item1);
         this.viewModel.itemSelected(item2);
@@ -446,7 +446,7 @@ public class TrackingTaskViewModelTest {
         SimpleTrackingItemLog log1 = SimpleTrackingItemLog.builder()
                 .setIdentifier(item1.getIdentifier())
                 .setText(item1.getIdentifier())
-                .setTimestamp(Instant.now())
+                .setLoggedDate(Instant.now())
                 .build();
         this.viewModel.itemSelected(item1);
         this.viewModel.itemSelected(item2);

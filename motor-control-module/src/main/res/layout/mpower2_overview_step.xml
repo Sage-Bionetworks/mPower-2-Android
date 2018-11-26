@@ -106,6 +106,7 @@
         </android.support.constraint.ConstraintLayout>
     </org.sagebionetworks.research.motor_control_module.widget.DisablableScrollView>
     <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+            style="@style/Widget.ResearchStack.StepHeader.CancelButton"
             android:id="@id/rs2_step_navigation_action_cancel"
             android:layout_width="32dp"
             android:layout_height="0dp"

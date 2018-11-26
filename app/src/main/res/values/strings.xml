@@ -35,6 +35,7 @@
     <string name="osb_study_name" translatable="false">mPower 2.0</string>
 
     <string name="app_name">mPower</string>
+    <string name="button_submit">Submit</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_tracking">Tracking</string>
     <string name="title_history">History</string>
@@ -189,4 +190,9 @@
     <string name="medication_schedule_everyday">Everyday</string>
     <string name="medication_schedule_anytime">Anytime</string>
     <string name="medication_review_title">Medication list</string>
+
+    <string name="button_record">Record</string>
+    <string name="button_recorded">Recorded</string>
+    <string name="button_undo">Undo</string>
+    <string name="triggers_button_edit">Edit Triggers</string>
 </resources>
