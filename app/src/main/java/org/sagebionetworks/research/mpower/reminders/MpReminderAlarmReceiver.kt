@@ -36,7 +36,7 @@ import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
-import org.sagebionetworks.research.mpower.MainActivity
+import org.sagebionetworks.research.mpower.EntryActivity
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.reminders.MpReminderManager
 
@@ -54,12 +54,12 @@ class MpReminderAlarmReceiver: ReminderAlarmReceiver() {
             context: Context, reminderManager: ReminderManager,
             reminder: Reminder, action: String): PendingIntent {
 
-        val notificationIntent = Intent(context, MainActivity::class.java)
+        val notificationIntent = Intent(context, EntryActivity::class.java)
         notificationIntent.action = action
         notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         notificationIntent.putExtra(REMINDER_JSON_KEY, reminderManager.jsonFromReminder(reminder))
         val stackBuilder = TaskStackBuilder.create(context)
-        stackBuilder.addParentStack(MainActivity::class.java)
+        stackBuilder.addParentStack(EntryActivity::class.java)
         stackBuilder.addNextIntent(notificationIntent)
         return stackBuilder.getPendingIntent(reminder.code, PendingIntent.FLAG_UPDATE_CURRENT)
     }

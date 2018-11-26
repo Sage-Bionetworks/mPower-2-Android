@@ -9,11 +9,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Backbone" />
         <activity
-            android:name=".MpSignupActivity"
+            android:name=".MpMainActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".MpMainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.AppBarOverlay"
+            android:theme="@style/Theme.AppCompat"
             android:windowSoftInputMode="adjustPan">
 
             <!-- To open app using link -->

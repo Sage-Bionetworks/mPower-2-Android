@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply from: '../config/quality/quality.gradle'
 
 android {
@@ -41,8 +42,8 @@ dependencies {
 
     implementation 'com.google.dagger:dagger-android:2.16'
     implementation 'com.google.dagger:dagger-android-support:2.16'
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.16'
-    annotationProcessor "com.google.dagger:dagger-compiler:2.16"
+    kapt 'com.google.dagger:dagger-android-processor:2.16'
+    kapt "com.google.dagger:dagger-compiler:2.16"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

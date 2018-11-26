@@ -7,11 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
-@StringDef({ MpIdentifier.TRIGGERS, MpIdentifier.SYMPTOMS, MpIdentifier.MEDICATION,
+@StringDef({MpIdentifier.TRIGGERS, MpIdentifier.SYMPTOMS, MpIdentifier.MEDICATION,
         MpIdentifier.STUDY_BURST_COMPLETED, MpIdentifier.STUDY_BURST_COMPLETED_UPLOAD,
         MpIdentifier.TAPPING, MpIdentifier.WALK_AND_BALANCE, MpIdentifier.TREMOR, MpIdentifier.DEMOGRAPHICS,
         MpIdentifier.BACKGROUND, MpIdentifier.ENGAGEMENT, MpIdentifier.MOTIVATION, MpIdentifier.STUDY_BURST_REMINDER,
-        MpIdentifier.MEASURING, MpIdentifier.TRACKING, MpIdentifier.HEALTH_SURVEYS })
+        MpIdentifier.MEASURING, MpIdentifier.TRACKING, MpIdentifier.HEALTH_SURVEYS})
 public @interface MpIdentifier {
     String TRIGGERS = "Triggers";
     String SYMPTOMS = "Symptoms";

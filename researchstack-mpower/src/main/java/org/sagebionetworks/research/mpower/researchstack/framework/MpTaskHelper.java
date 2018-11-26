@@ -70,9 +70,7 @@ public class MpTaskHelper extends TaskHelper {
     /**
      * The RESULT_CONVERSION_MAP allows you to map any step identifier result to whatever you want
      */
-    static HashMap<String, String> RESULT_CONVERSION_MAP = new HashMap<String, String>() {{
-
-    }};
+    static HashMap<String, String> RESULT_CONVERSION_MAP = new HashMap<>();
 
     public MpTaskHelper(final StorageAccessWrapper storageAccess,
             final ResourceManager resourceManager, final AppPrefs appPrefs,

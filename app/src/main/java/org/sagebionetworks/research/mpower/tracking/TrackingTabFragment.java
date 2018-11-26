@@ -48,6 +48,8 @@ import org.sagebionetworks.research.mpower.viewmodel.TodayActionBarItem;
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
 import org.sagebionetworks.research.sageresearch.viewmodel.ReportViewModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.threeten.bp.Instant;
 
 import javax.annotation.Nonnull;
@@ -67,6 +69,7 @@ import rx.subscriptions.CompositeSubscription;
  * https://medium.com/@rohitsingh14101992/lets-keep-activity-dumb-using-livedata-53468ed0dc1f
  */
 public class TrackingTabFragment extends Fragment {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrackingTabFragment.class);
 
     @BindView(R.id.tracking_status_bar)
     TrackingStatusBar trackingStatusBar;
@@ -153,6 +156,8 @@ public class TrackingTabFragment extends Fragment {
         todayScheduleViewModel = ViewModelProviders.of(this, todayScheduleViewModelFactory)
                 .get(TodayScheduleViewModel.class);
         todayScheduleViewModel.liveData().observe(this, todayHistoryItems -> {
+            // do something so compiler doesn't reuse lambda as observer across LiveDatas
+            LOGGER.debug("Observed todayHistoryItems");
             // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
         });
 
@@ -168,6 +173,8 @@ public class TrackingTabFragment extends Fragment {
         surveyViewModel.liveData().observe(this, scheduledActivityEntities -> {
             // TODO: mdephillips 9/4/18 mimic On iOS, this runs any survey that managers may add
             // TODO: mdephillips 9/4/18 we may want to hold off on implementing it
+            // do something so compiler doesn't reuse lambda as observer across LiveDatas
+            LOGGER.debug("Observed scheduledActivityEntities");
             // TODO: mdephillips 9/4/18 because not all survey types are currently supported with UI right now
         });
 
