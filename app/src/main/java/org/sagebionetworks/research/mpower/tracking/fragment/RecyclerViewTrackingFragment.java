@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView.ItemDecoration;
 import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -84,6 +85,7 @@ public abstract class RecyclerViewTrackingFragment
                 .getOnApplyWindowInsetsListener(Direction.TOP);
         if (this.cancelButton != null) {
             ViewCompat.setOnApplyWindowInsetsListener(this.cancelButton, topInsetListener);
+            cancelButton.setOnClickListener(this::onCancelButtonClicked);
         }
 
         if (this.backButton != null) {
@@ -146,4 +148,16 @@ public abstract class RecyclerViewTrackingFragment
      */
     @NonNull
     public abstract AdapterType initializeAdapter();
+
+    /**
+     * Called when the cancel button is clicked.
+     * @param view the cancel button view.
+     */
+    protected void onCancelButtonClicked(View view) {
+        boolean showDialog = false;
+        if(this.performTaskViewModel.hasPreviousStep()) {
+            showDialog = true;
+        }
+        this.performTaskFragment.cancelTask(showDialog);
+    }
 }
