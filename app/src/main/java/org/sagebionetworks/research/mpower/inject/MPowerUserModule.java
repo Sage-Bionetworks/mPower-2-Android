@@ -22,6 +22,7 @@ import org.sagebionetworks.research.sageresearch_app_sdk.archive.AbstractResultA
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.BaseResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.FileResultArchiveFactory;
+import org.sagebionetworks.research.sageresearch_app_sdk.archive.TaskResultAnswerMapResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.TaskResultArchiveFactory;
 
 import dagger.Module;
