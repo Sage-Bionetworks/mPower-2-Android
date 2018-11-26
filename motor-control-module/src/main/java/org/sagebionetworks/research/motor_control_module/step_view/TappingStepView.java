@@ -22,11 +22,11 @@ import org.threeten.bp.Duration;
 public class TappingStepView extends MPowerActiveUIStepView {
     public static final String TYPE = AppStepType.TAPPING;
 
-    public TappingStepView(@NonNull String identifier, int navDirection, @NonNull ImmutableMap<String, ActionView> actions,
+    public TappingStepView(@NonNull String identifier, @NonNull ImmutableMap<String, ActionView> actions,
                            @Nullable DisplayString title, @Nullable DisplayString text, @Nullable DisplayString detail,
                            @Nullable DisplayString footnote, @Nullable ColorThemeView colorTheme, @Nullable ImageThemeView imageTheme,
                            @NonNull Duration duration, boolean isBackgroundAudioRequired) {
-        super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme,
+        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme,
                 duration, isBackgroundAudioRequired);
     }
 
@@ -37,7 +37,7 @@ public class TappingStepView extends MPowerActiveUIStepView {
         }
 
         ActiveUIStepView stepView = ActiveUIStepViewBase.fromActiveUIStep(step, mapper);
-        return new TappingStepView(stepView.getIdentifier(), stepView.getNavDirection(), stepView.getActions(),
+        return new TappingStepView(stepView.getIdentifier(), stepView.getActions(),
                 stepView.getTitle(), stepView.getText(), stepView.getDetail(), stepView.getFootnote(),
                 stepView.getColorTheme(), stepView.getImageTheme(), stepView.getDuration(), stepView.isBackgroundAudioRequired());
     }

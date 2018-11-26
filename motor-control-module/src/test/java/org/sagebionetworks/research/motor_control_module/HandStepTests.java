@@ -19,8 +19,11 @@ import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.domain.task.navigation.StepNavigator;
 import org.sagebionetworks.research.domain.task.navigation.strategy.StrategyBasedNavigator;
+import org.sagebionetworks.research.motor_control_module.result.HandSelectionResult;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.HandSelection;
 import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
+import org.sagebionetworks.research.motor_control_module.step.HandStepHelper.Hand;
 import org.sagebionetworks.research.motor_control_module.step.InstructionStep;
 import org.sagebionetworks.research.motor_control_module.step.MPowerActiveUIStep;
 import org.threeten.bp.Instant;
@@ -93,16 +96,32 @@ public class HandStepTests {
         return sectionStep;
     }
 
-    private AnswerResult<List<String>> mockHandOrderResult(HandStepHelper.Hand... handOrder) {
+    private HandSelectionResult mockHandOrderResult(HandStepHelper.Hand... handOrder) {
         @SuppressWarnings("unchecked")
-        AnswerResult<List<String>> result = (AnswerResult<List<String>>) mock(AnswerResult.class);
+        HandSelectionResult result = mock(HandSelectionResult.class);
         List<String> handOrderAnswer = new ArrayList<>();
         for (HandStepHelper.Hand hand : handOrder) {
             handOrderAnswer.add(hand.toString());
         }
+        
+        String answer;
+        if (handOrder.length == 2) {
+            answer = HandSelection.BOTH;
+        } else if (handOrder[0].equals(Hand.LEFT)) {
+            answer = HandSelection.LEFT;
+        } else {
+            answer = HandSelection.RIGHT;
+        }
 
-        when(result.getAnswer()).thenReturn(handOrderAnswer);
-        when(result.getIdentifier()).thenReturn(ShowHandSelectionStepFragment.HAND_ORDER_KEY);
+        String[] handOrderStrings = new String[handOrder.length];
+        for (int i = 0; i < handOrder.length; i++) {
+            handOrderStrings[i] = handOrder[i].toString();
+        }
+
+        when(result.getHandOrder()).thenReturn(ImmutableList.copyOf(handOrderStrings));
+        when(result.getAnswer()).thenReturn(answer);
+        when(result.getIdentifier()).thenReturn(ShowHandSelectionStepFragment.HAND_SELECTION_KEY);
+
         return result;
     }
 
