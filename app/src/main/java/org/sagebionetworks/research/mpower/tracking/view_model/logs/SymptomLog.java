@@ -45,6 +45,7 @@ public abstract class SymptomLog implements TrackingItemLog {
     }
 
     @Nullable
+    @Override
     public abstract Instant getLoggedDate();
 
     @Nullable

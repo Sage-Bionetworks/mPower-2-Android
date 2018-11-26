@@ -74,7 +74,7 @@
 
             <org.sagebionetworks.research.mobile_ui.widget.ActionButton
                 android:id="@+id/undo_button"
-                style="@style/Research.TextButton"
+                style="@style/Widget.MPower.TextView.UnderlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"

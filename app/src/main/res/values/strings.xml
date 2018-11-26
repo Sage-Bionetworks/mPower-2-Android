@@ -195,4 +195,8 @@
     <string name="button_recorded">Recorded</string>
     <string name="button_undo">Undo</string>
     <string name="triggers_button_edit">Edit Triggers</string>
+    <string name="symptom_severity_none">None</string>
+    <string name="symptom_severity_mild">Mild</string>
+    <string name="symptom_severity_moderate">Moderate</string>
+    <string name="symptom_severity_severe">Severe</string>
 </resources>

@@ -30,6 +30,7 @@ public abstract class SimpleTrackingItemLog implements TrackingItemLog {
     }
 
     @Nullable
+    @Override
     public abstract Instant getLoggedDate();
 
     public static Builder builder() {

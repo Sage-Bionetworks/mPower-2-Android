@@ -52,11 +52,13 @@ public abstract class LoggingCollection<E extends TrackingItemLog> implements Re
     }
 
     @Nullable
+    @Override
     public Instant getStartTime() {
         return getStartDate();
     }
 
     @Nullable
+    @Override
     public Instant getEndTime() {
         return getEndDate();
     }
@@ -68,6 +70,7 @@ public abstract class LoggingCollection<E extends TrackingItemLog> implements Re
     public abstract Instant getEndDate();
 
     @NonNull
+    @Override
     public abstract String getIdentifier();
 
     @NonNull
@@ -75,6 +78,7 @@ public abstract class LoggingCollection<E extends TrackingItemLog> implements Re
 
     // Type field included to mirror iOS.
     @Nullable
+    @Override
     public abstract String getType();
 
     public abstract Builder<E> toBuilder();

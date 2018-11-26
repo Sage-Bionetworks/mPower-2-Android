@@ -53,7 +53,10 @@ class TrackingResultArchiveFactory @Inject constructor(): AbstractResultArchiveF
     override fun toArchiveFiles(result: Result): ImmutableSet<JsonArchiveFile> {
         (result as? LoggingCollection<*>)?.let {
             val filename = TrackingTaskViewModel.LOGGING_COLLECTION_IDENTIFIER
-            val startDateTime = DateTime(it.startTime.toEpochMilli())
+            var startDateTime = DateTime.now()
+            it.startDate?.let { startTime ->
+                startDateTime = DateTime(startTime.toEpochMilli())
+            }
             val json = EntityTypeConverters().bridgeGson.toJson(it)
             return ImmutableSet.of(JsonArchiveFile(filename, startDateTime, json))
         }
