@@ -1,6 +1,7 @@
 package org.sagebionetworks.research.mpower.tracking;
 
 import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.BACKGROUND;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
 import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN;
@@ -8,7 +9,6 @@ import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityK
 
 import android.app.Activity;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 
 import android.content.Context;
@@ -33,6 +33,8 @@ import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity;
+import org.sagebionetworks.research.mpower.researchstack.MpResearchStackArchiveFactory;
+import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
