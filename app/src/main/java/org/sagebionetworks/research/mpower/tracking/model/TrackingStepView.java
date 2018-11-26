@@ -50,11 +50,6 @@ public abstract class TrackingStepView implements StepView {
         public abstract Builder setSections(@NonNull Set<TrackingSection> sections);
     }
 
-    @Override
-    public int getNavDirection() {
-        return NavDirection.SHIFT_LEFT;
-    }
-
     @NonNull
     public abstract ImmutableSet<TrackingItem> getItems();
 
