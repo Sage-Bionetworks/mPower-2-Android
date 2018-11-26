@@ -127,4 +127,9 @@ public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
         String taskId = this.performTaskViewModel.getTaskView().getIdentifier();
         return this.getContext().getSharedPreferences(taskId, Context.MODE_PRIVATE);
     }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.mpower2_form_step;
+    }
 }
