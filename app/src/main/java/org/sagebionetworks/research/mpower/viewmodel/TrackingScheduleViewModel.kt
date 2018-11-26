@@ -33,6 +33,8 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MediatorLiveData
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
@@ -40,23 +42,27 @@ import com.google.common.base.Preconditions
 import org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION
 import org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS
 import org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS
+import org.sagebionetworks.research.sageresearch.dao.room.ReportEntity
+import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
-import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
+import org.sagebionetworks.research.sageresearch.viewmodel.ReportAndScheduleViewModel
 import javax.inject.Inject
 
 class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
-        scheduleRepository: ScheduleRepository) : ScheduleViewModel(scheduleDao, scheduleRepository) {
+        scheduleRepository: ScheduleRepository, reportRepository: ReportRepository):
+            ReportAndScheduleViewModel(scheduleDao, scheduleRepository, reportRepository) {
 
     class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,
-            private val scheduleRepository: ScheduleRepository) : ViewModelProvider.Factory {
+            private val scheduleRepository: ScheduleRepository,
+            private val reportRepository: ReportRepository) : ViewModelProvider.Factory {
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             Preconditions.checkArgument(modelClass.isAssignableFrom(TrackingScheduleViewModel::class.java))
-            return TrackingScheduleViewModel(scheduledActivityEntityDao, scheduleRepository) as T
+            return TrackingScheduleViewModel(scheduledActivityEntityDao, scheduleRepository, reportRepository) as T
         }
     }
 
@@ -65,24 +71,52 @@ class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
      * Fetches the schedules for all tracking activities and consolidates them into a TrackingSchedules object.
      * @return the live data for tracking schedules updates, will always be the same live data object.
      */
-    fun liveData(): LiveData<TrackingSchedules> {
+    fun scheduleLiveData(): LiveData<TrackingSchedules> {
         val liveDataChecked = trackingSchedulesLiveData ?:
             Transformations.map(scheduleDao.activityGroup(setOf(TRIGGERS, SYMPTOMS, MEDICATION))) {
-                consolidate(it)
+                return@map TrackingSchedules(
+                        it.filterByActivityId(TRIGGERS).firstOrNull(),
+                        it.filterByActivityId(SYMPTOMS).firstOrNull(),
+                        it.filterByActivityId(MEDICATION).firstOrNull())
             }
         trackingSchedulesLiveData = liveDataChecked
         return liveDataChecked
     }
 
+    private var trackingReportsLiveData: MediatorLiveData<TrackingReports>? = null
     /**
-     * @param items schedule items from live data query
-     * @return a list of history items derived from today's finished schedules
+     * Fetches the most recent reports for all tracking activities.
+     * @return the live data for the most recent tracking report updates, will always be the same live data object.
      */
-    private fun consolidate(items: List<ScheduledActivityEntity>): TrackingSchedules  {
-        return TrackingSchedules(
-                items.filterByActivityId(TRIGGERS).firstOrNull(),
-                items.filterByActivityId(SYMPTOMS).firstOrNull(),
-                items.filterByActivityId(MEDICATION).firstOrNull())
+    fun reportLiveData(): LiveData<TrackingReports> {
+        val liveDataChecked = trackingReportsLiveData ?: {
+            val triggerReportLiveData = mostRecentReport(TRIGGERS)
+            val symptomReportLiveData = mostRecentReport(SYMPTOMS)
+            val medicationReportLiveData = mostRecentReport(MEDICATION)
+
+            val mediator = MediatorLiveData<TrackingReports>()
+            mediator.addSource(triggerReportLiveData) {
+                mediator.value = TrackingReports(
+                        it?.firstOrNull(),
+                        symptomReportLiveData.value?.firstOrNull(),
+                        medicationReportLiveData.value?.firstOrNull())
+            }
+            mediator.addSource(symptomReportLiveData) {
+                mediator.value = TrackingReports(
+                        triggerReportLiveData.value?.firstOrNull(),
+                        it?.firstOrNull(),
+                        medicationReportLiveData.value?.firstOrNull())
+            }
+            mediator.addSource(medicationReportLiveData) {
+                mediator.value = TrackingReports(
+                        triggerReportLiveData.value?.firstOrNull(),
+                        symptomReportLiveData.value?.firstOrNull(),
+                        it?.firstOrNull())
+            }
+            mediator
+        }.invoke()
+        trackingReportsLiveData = liveDataChecked
+        return liveDataChecked
     }
 }
 
@@ -99,6 +133,23 @@ data class TrackingSchedules(
          */
         val symptoms: ScheduledActivityEntity? = null,
         /**
-         * @medication triggers task most recent, null if none can be found.
+         * @medication medication task most recent, null if none can be found.
          */
         val medication: ScheduledActivityEntity? = null)
+
+/**
+ * TrackingReports holds the most recent Report for triggers, symptoms, and medication.
+ */
+data class TrackingReports(
+        /**
+         * @property triggers report most recent, null if none can be found.
+         */
+        val triggers: ReportEntity? = null,
+        /**
+         * @property symptoms report most recent, null if none can be found.
+         */
+        val symptoms: ReportEntity? = null,
+        /**
+         * @property medication report most recent, null if none can be found.
+         */
+        val medication: ReportEntity? = null)

@@ -9,8 +9,6 @@ import static org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
@@ -35,9 +33,9 @@ import org.sagebionetworks.research.mpower.Tasks;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
+import org.sagebionetworks.research.mpower.viewmodel.TrackingReports;
 import org.sagebionetworks.research.mpower.viewmodel.TrackingScheduleViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TrackingSchedules;
-import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,8 +151,11 @@ public class TrackingMenuFragment extends Fragment {
         studyBurstViewModel.liveData().observe(this, this::setupMeasuringTaskCompletionState);
         trackingViewModel = ViewModelProviders.of(this,
                 trackingViewModelFactory).get(TrackingScheduleViewModel.class);
-        trackingViewModel.liveData().observe(this, trackingSchedules -> {
+        trackingViewModel.scheduleLiveData().observe(this, trackingSchedules -> {
             // No-op needed, we use these schedules passively when the user taps a tracking task.
+        });
+        trackingViewModel.reportLiveData().observe(this, trackingReports -> {
+            // No-op needed, we use these reports passively when the user taps a tracking task.
         });
     }
 
@@ -327,7 +328,7 @@ public class TrackingMenuFragment extends Fragment {
         if (trackingViewModel == null) {
             return null; // Guard NPE exceptions
         }
-        TrackingSchedules schedules = trackingViewModel.liveData().getValue();
+        TrackingSchedules schedules = trackingViewModel.scheduleLiveData().getValue();
         if (schedules == null) {
             LOGGER.warn("Tracking task schedule could not be found for task id " + trackingTaskIdentifier);
             return null;
