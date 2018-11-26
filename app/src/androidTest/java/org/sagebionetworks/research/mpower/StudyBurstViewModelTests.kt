@@ -22,6 +22,7 @@ import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.StudyParticipant
 import org.sagebionetworks.research.mpower.research.CompletionTask
 import org.sagebionetworks.research.mpower.research.DataSourceManager
+import org.sagebionetworks.bridge.android.BridgeApplication
 import org.sagebionetworks.research.mpower.research.MpIdentifier.BACKGROUND
 import org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS
 import org.sagebionetworks.research.mpower.research.MpIdentifier.ENGAGEMENT
@@ -106,15 +107,15 @@ class StudyBurstViewModelTests: RoomTestHelper() {
     val scheduleRepo = ScheduleRepository(scheduleDao,
             ScheduledRepositorySyncStateDao(
                     InstrumentationRegistry.getTargetContext()),
-            BridgeManagerProvider.getInstance().surveyManager,
-            BridgeManagerProvider.getInstance().activityManager,
-            BridgeManagerProvider.getInstance().participantManager,
-            BridgeManagerProvider.getInstance().authenticationManager,
-            BridgeManagerProvider.getInstance().uploadManager,
-            BridgeManagerProvider.getInstance().bridgeConfig)
+            BridgeApplication.getBridgeManagerProvider().surveyManager,
+            BridgeApplication.getBridgeManagerProvider().activityManager,
+            BridgeApplication.getBridgeManagerProvider().participantManager,
+            BridgeApplication.getBridgeManagerProvider().authenticationManager,
+            BridgeApplication.getBridgeManagerProvider().uploadManager,
+            BridgeApplication.getBridgeManagerProvider().bridgeConfig)
     val reportRepo = ReportRepository(reportDao,
-            BridgeManagerProvider.getInstance().participantManager,
-            BridgeManagerProvider.getInstance().bridgeConfig)
+            BridgeApplication.getBridgeManagerProvider().participantManager,
+            BridgeApplication.getBridgeManagerProvider().bridgeConfig)
 
     @Before
     fun setupForEachTest() {

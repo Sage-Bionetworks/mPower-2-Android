@@ -5,14 +5,13 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.support.test.InstrumentationRegistry
 import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
+import org.sagebionetworks.bridge.android.BridgeApplication
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.ACTIVITIES
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.MEDICATION
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.SYMPTOMS
@@ -80,12 +79,12 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
     val scheduleRepo = ScheduleRepository(scheduleDao,
             ScheduledRepositorySyncStateDao(
                     InstrumentationRegistry.getTargetContext()),
-            BridgeManagerProvider.getInstance().surveyManager,
-            BridgeManagerProvider.getInstance().activityManager,
-            BridgeManagerProvider.getInstance().participantManager,
-            BridgeManagerProvider.getInstance().authenticationManager,
-            BridgeManagerProvider.getInstance().uploadManager,
-            BridgeManagerProvider.getInstance().bridgeConfig)
+            BridgeApplication.getBridgeManagerProvider().surveyManager,
+            BridgeApplication.getBridgeManagerProvider().activityManager,
+            BridgeApplication.getBridgeManagerProvider().participantManager,
+            BridgeApplication.getBridgeManagerProvider().authenticationManager,
+            BridgeApplication.getBridgeManagerProvider().uploadManager,
+            BridgeApplication.getBridgeManagerProvider().bridgeConfig)
 
     @Before
     fun setupForEachTest() {
