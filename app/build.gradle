@@ -145,6 +145,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.4'
     // Crashlytics
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+
+    testImplementation 'com.dampcake:gson-immutable:1.2'
+    testImplementation 'org.aaronhe:threetenbp-gson-adapter:1.0.2'
 }
 tasks.withType(JavaCompile) {
     options.compilerArgs += [
