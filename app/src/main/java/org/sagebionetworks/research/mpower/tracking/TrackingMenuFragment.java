@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -29,7 +30,7 @@ import android.widget.TextView;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
-import org.sagebionetworks.research.mpower.Tasks;
+import org.sagebionetworks.research.mpower.research.MpIdentifier;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
@@ -221,20 +222,21 @@ public class TrackingMenuFragment extends Fragment {
         }
     }
 
+    @MpIdentifier
     @Nullable
-    private String getTaskIdentifierFromLabel(int label) {
+    private String getTaskIdentifierFromLabel(@StringRes int label) {
         if (label == R.string.measuring_walk_and_balance_label) {
-            return Tasks.WALK_AND_BALANCE;
+            return MpIdentifier.WALK_AND_BALANCE;
         } else if (label == R.string.measuring_finger_tapping_label) {
-            return Tasks.TAPPING;
+            return MpIdentifier.TAPPING;
         } else if (label == R.string.measuring_tremor_test_label) {
-            return Tasks.TREMOR;
+            return MpIdentifier.TREMOR;
         } else if (label == R.string.tracking_medication_label) {
-            return Tasks.MEDICATION;
+            return MpIdentifier.MEDICATION;
         } else if (label == R.string.tracking_symptom_label) {
-            return Tasks.SYMPTOMS;
+            return MpIdentifier.SYMPTOMS;
         } else if (label == R.string.tracking_trigger_label) {
-            return Tasks.TRIGGERS;
+            return MpIdentifier.TRIGGERS;
         }
 
         return null;

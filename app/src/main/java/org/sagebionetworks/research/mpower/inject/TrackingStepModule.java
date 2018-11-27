@@ -7,7 +7,7 @@ import org.sagebionetworks.research.domain.inject.GsonModule;
 import org.sagebionetworks.research.domain.inject.StepModule.StepClassKey;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule.ShowStepFragmentFactory;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule.StepViewKey;
-import org.sagebionetworks.research.mpower.Tasks;
+import org.sagebionetworks.research.mpower.research.MpIdentifier;
 import org.sagebionetworks.research.mpower.tracking.fragment.MedicationSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TriggersSelectionFragment;
@@ -56,11 +56,11 @@ public abstract class TrackingStepModule {
             String whichTask = trackingStepView.whichTask();
             if (whichTask != null) {
                 switch (whichTask) {
-                    case Tasks.TRIGGERS:
+                    case MpIdentifier.TRIGGERS:
                         return TriggersSelectionFragment.newInstance(trackingStepView);
-                    case Tasks.MEDICATION:
+                    case MpIdentifier.MEDICATION:
                         return MedicationSelectionFragment.newInstance(trackingStepView);
-                    case Tasks.SYMPTOMS:
+                    case MpIdentifier.SYMPTOMS:
                         return SymptomSelectionFragment.newInstance(trackingStepView);
                 }
             }
