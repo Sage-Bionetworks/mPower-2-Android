@@ -8,7 +8,7 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableSet;
 
 import org.sagebionetworks.research.domain.step.interfaces.Step;
-import org.sagebionetworks.research.mpower.Tasks;
+import org.sagebionetworks.research.mpower.research.MpIdentifier;
 import org.sagebionetworks.research.presentation.mapper.DrawableMapper;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
@@ -121,11 +121,11 @@ public abstract class TrackingStepView implements StepView {
         }
 
         if (selectionType == null && loggingType == null && reminderType == null) {
-            return Tasks.TRIGGERS;
+            return MpIdentifier.TRIGGERS;
         } else if (selectionType == null && loggingType == null && reminderType.equals(MEDICATION_REMINDERS_TYPE_KEY)) {
-            return Tasks.MEDICATION;
+            return MpIdentifier.MEDICATION;
         } else if (selectionType == null && loggingType.equals(SYMPTOM_LOGGING_TYPE_KEY) && reminderType == null) {
-            return Tasks.SYMPTOMS;
+            return MpIdentifier.SYMPTOMS;
         }
 
         return null;

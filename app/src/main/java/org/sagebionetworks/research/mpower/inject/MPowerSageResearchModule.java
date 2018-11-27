@@ -43,10 +43,9 @@ import org.sagebionetworks.research.motor_control_module.inject.HandSelectionSte
 import org.sagebionetworks.research.motor_control_module.inject.InstructionStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.MPowerActiveStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.MtcCountdownStepModule;
-import org.sagebionetworks.research.motor_control_module.inject.OverviewStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.TappingCompletionStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.TappingStepModule;
-import org.sagebionetworks.research.mpower.inject.MpOverviewStepModule;
+import org.sagebionetworks.research.mpower.sageresearch.ui.WebConsentFragment;
 
 import dagger.Module;
 import dagger.android.AndroidInjectionModule;
@@ -60,4 +59,7 @@ import dagger.android.ContributesAndroidInjector;
 public abstract class MPowerSageResearchModule {
     @ContributesAndroidInjector
     abstract PerformTaskActivity contributePerformTaskActivityInjector();
+
+    @ContributesAndroidInjector
+    abstract WebConsentFragment contributeWebConsentFragmentInjector();
 }
