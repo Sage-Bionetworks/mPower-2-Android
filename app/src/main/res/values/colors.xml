@@ -40,4 +40,15 @@
     <color name="black_overlay">#66000000</color>
 
     <color name="butterscotch_disabled">#59BD7900</color>
+
+    <color name="severity_none">#E8FAE8</color>
+    <color name="severity_mild">#FFF0D4</color>
+    <color name="severity_moderate">#FFE8D6</color>
+    <color name="severity_severe">#FCE9E6</color>
+
+    <color name="severity_none_stroke">#C0EBC0</color>
+    <color name="severity_mild_stroke">#FFE2AD</color>
+    <color name="severity_moderate_stroke">#FACFAF</color>
+    <color name="severity_severe_stroke">#FFC5BD</color>
+
 </resources>

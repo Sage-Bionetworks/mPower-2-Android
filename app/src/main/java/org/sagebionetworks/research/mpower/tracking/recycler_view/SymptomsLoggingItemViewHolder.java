@@ -40,14 +40,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
         void onNoteButtonPressed(@NonNull TrackingItem trackingItem, int position);
     }
 
-    private static final float FULL_ALPHA = 1.0f;
-
-    private static final float FADED_ALPHA = .35f;
-
     private SymptomsLoggingUIFormItemWidget widget;
-
-    private RadioButton previousSelectedSeverityButton;
-
     private SymptomLog log;
 
     @NonNull
@@ -173,7 +166,8 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     private void updateDurationUI(String duration) {
         // TODO display user selected duration instead of boolean selected or not
-        @StringRes int durationStringRes = duration != null ? R.string.symptoms_logging_duration_button_logged :
+        @StringRes int durationStringRes = duration != null ?
+                R.string.symptoms_logging_duration_button_logged :
                 R.string.symptoms_logging_duration_button_default;
         widget.getDurationButton().setText(durationStringRes);
     }
@@ -198,29 +192,17 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     private void updateSeverityUI(Integer severity) {
         List<RadioButton> severityButtons = widget.getSeverityButtons();
-        if (severity == null) {
-            for (RadioButton severityButton : severityButtons) {
+        RadioButton selectedSeverityButton = null;
+        if (severity != null) {
+            selectedSeverityButton = severityButtons.get(severity);
+        }
+        for (RadioButton severityButton : severityButtons) {
+            if (selectedSeverityButton != null &&
+                    selectedSeverityButton.equals(severityButton)) {
+                severityButton.setChecked(true);
+            } else {
                 severityButton.setChecked(false);
-                severityButton.setAlpha(FULL_ALPHA);
             }
-
-            previousSelectedSeverityButton = null;
-        } else {
-            if (previousSelectedSeverityButton != null) {
-                previousSelectedSeverityButton.setChecked(false);
-                previousSelectedSeverityButton.setAlpha(FADED_ALPHA);
-            }
-            if (previousSelectedSeverityButton == null) {
-                // When the first selection is made the buttons all need to be faded.
-                for (RadioButton severityButton : severityButtons) {
-                    severityButton.setAlpha(FADED_ALPHA);
-                }
-            }
-
-            RadioButton newlySelectedSeverityButton = severityButtons.get(severity);
-            newlySelectedSeverityButton.setAlpha(FULL_ALPHA);
-            newlySelectedSeverityButton.setChecked(true);
-            previousSelectedSeverityButton = newlySelectedSeverityButton;
         }
     }
 }

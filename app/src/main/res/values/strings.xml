@@ -194,9 +194,17 @@
     <string name="button_record">Record</string>
     <string name="button_recorded">Recorded</string>
     <string name="button_undo">Undo</string>
+
+    <!-- Triggers -->
     <string name="triggers_button_edit">Edit Triggers</string>
-    <string name="symptom_severity_none">None</string>
-    <string name="symptom_severity_mild">Mild</string>
-    <string name="symptom_severity_moderate">Moderate</string>
-    <string name="symptom_severity_severe">Severe</string>
+
+    <!-- Symptoms -->
+    <string name="severity">Severity</string>
+    <string name="severity_none">None</string>
+    <string name="severity_mild">Mild</string>
+    <string name="severity_moderate">Moderate</string>
+    <string name="severity_severe">Severe</string>
+    <string name="start_time">Start time</string>
+    <string name="add_note">Add note</string>
+
 </resources>
