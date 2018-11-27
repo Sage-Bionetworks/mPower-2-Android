@@ -19,15 +19,18 @@ import org.sagebionetworks.research.presentation.model.implementations.ActiveUIS
 import org.sagebionetworks.research.presentation.model.interfaces.ActiveUIStepView;
 import org.threeten.bp.Duration;
 
+import java.util.Map;
+
 public class TappingStepView extends MPowerActiveUIStepView {
     public static final String TYPE = AppStepType.TAPPING;
 
     public TappingStepView(@NonNull String identifier, @NonNull ImmutableMap<String, ActionView> actions,
                            @Nullable DisplayString title, @Nullable DisplayString text, @Nullable DisplayString detail,
                            @Nullable DisplayString footnote, @Nullable ColorThemeView colorTheme, @Nullable ImageThemeView imageTheme,
-                           @NonNull Duration duration, boolean isBackgroundAudioRequired) {
+                           @NonNull Duration duration, @NonNull final Map<String, String> spokenInstructions,
+                           boolean isBackgroundAudioRequired) {
         super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme,
-                duration, isBackgroundAudioRequired);
+                duration, spokenInstructions, isBackgroundAudioRequired);
     }
 
     @NonNull
@@ -39,7 +42,8 @@ public class TappingStepView extends MPowerActiveUIStepView {
         ActiveUIStepView stepView = ActiveUIStepViewBase.fromActiveUIStep(step, mapper);
         return new TappingStepView(stepView.getIdentifier(), stepView.getActions(),
                 stepView.getTitle(), stepView.getText(), stepView.getDetail(), stepView.getFootnote(),
-                stepView.getColorTheme(), stepView.getImageTheme(), stepView.getDuration(), stepView.isBackgroundAudioRequired());
+                stepView.getColorTheme(), stepView.getImageTheme(), stepView.getDuration(),
+                stepView.getSpokenInstructions(), stepView.isBackgroundAudioRequired());
     }
 
     @Override
