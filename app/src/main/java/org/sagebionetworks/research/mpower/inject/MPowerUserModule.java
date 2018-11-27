@@ -18,13 +18,12 @@ import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment;
 import org.sagebionetworks.research.mpower.tracking.TrackingResultArchiveFactory;
 import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.TriggersLoggingFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.TriggersSelectionFragment;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AbstractResultArchiveFactory.ResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.BaseResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.FileResultArchiveFactory;
+import org.sagebionetworks.research.sageresearch_app_sdk.archive.TaskResultAnswerMapResultArchiveFactory;
+import org.sagebionetworks.research.sageresearch_app_sdk.archive.TaskResultArchiveFactory;
 
 import dagger.Module;
 import dagger.Provides;
@@ -69,13 +68,19 @@ public abstract class MPowerUserModule {
 
     @Provides
     @BridgeApplicationScope
+    static TaskResultArchiveFactory provideTaskResultArchiveFactory() {
+        return new TaskResultAnswerMapResultArchiveFactory();
+    }
+
+    @Provides
+    @BridgeApplicationScope
     static ImmutableList<ResultArchiveFactory> provideAbstractResultArchiveFactory(
             TappingResultArchiveFactory tappingResultArchiveFactory,
             FileResultArchiveFactory fileResultArchiveFactory,
             AnswerResultArchiveFactory answerResultArchiveFactory,
             TrackingResultArchiveFactory trackingResultArchiveFactory,
             BaseResultArchiveFactory baseResultArchiveFactory) {
-        return ImmutableList.of(tappingResultArchiveFactory, fileResultArchiveFactory, answerResultArchiveFactory,
-                trackingResultArchiveFactory, baseResultArchiveFactory);
+        return ImmutableList.of(trackingResultArchiveFactory, tappingResultArchiveFactory,
+                fileResultArchiveFactory, answerResultArchiveFactory, baseResultArchiveFactory);
     }
 }

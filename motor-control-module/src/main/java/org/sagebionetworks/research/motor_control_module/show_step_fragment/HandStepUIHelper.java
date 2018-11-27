@@ -10,6 +10,7 @@ import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowUIStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.view_binding.UIStepViewBinding;
 import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
+import org.sagebionetworks.research.motor_control_module.step.HandStepHelper.Hand;
 import org.sagebionetworks.research.presentation.DisplayString;
 import org.sagebionetworks.research.presentation.model.interfaces.UIStepView;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowUIStepViewModel;
@@ -23,11 +24,9 @@ public class HandStepUIHelper {
         // First we figure out which hand will go next.
         HandStepHelper.Hand nextHand = HandStepHelper.nextHand(taskResult);
         // Contains placeholder will be true if any of the strings contains the formatting placeholder %@.
-        boolean containsPlaceholder = false;
         // Formatting the title.
         TextView titleTextView = stepViewBinding.getTitle();
         String title = stepView.getTitle().getDisplayString();
-        containsPlaceholder |= title != null && title.contains(HandStepHelper.JSON_PLACEHOLDER);
         title = getFormattedStringFor(nextHand, title);
         if (titleTextView != null) {
             titleTextView.setText(title);
@@ -36,7 +35,6 @@ public class HandStepUIHelper {
         // Formatting the text.
         TextView textTextView = stepViewBinding.getText();
         String text = stepView.getText().getDisplayString();
-        containsPlaceholder |= text != null && text.contains(HandStepHelper.JSON_PLACEHOLDER);
         text = getFormattedStringFor(nextHand, text);
         if (textTextView != null) {
             textTextView.setText(text);
@@ -46,13 +44,18 @@ public class HandStepUIHelper {
         // of the strings contained the placeholder. This is necessary to avoid flipping all image views
         // when the next hand is the right.
         ImageView imageView = stepViewBinding.getImageView();
+        Hand whichHand = HandStepHelper.whichHand(stepView.getIdentifier());
+        if (whichHand == null) {
+            whichHand = nextHand;  // If we haven't reached a current hand, use the next one
+        }
         if (imageView != null) {
-            Matrix matrix = new Matrix();
-            // If it is the right hand we reverse the image view, otherwise we revert it back to normal
-            if (nextHand == HandStepHelper.Hand.RIGHT && containsPlaceholder) {
-                imageView.setScaleX(-1f);
-            } else {
-                imageView.setScaleX(1f);
+            if (whichHand != null) {
+                // If it is the right hand we reverse the image view, otherwise we revert it back to normal
+                if (whichHand == HandStepHelper.Hand.RIGHT) {
+                    imageView.setScaleX(-1f);
+                } else {
+                    imageView.setScaleX(1f);
+                }
             }
 
             imageView.invalidate();

@@ -17,14 +17,14 @@ public class TriggersLogTest {
 
     private static final String UNRECORDED_ITEM = "Hot";
     private static final String RECORDED_ITEM = "Bedtime, late";
-    private static final Instant RECORDED_TIMESTAMP = Instant.parse("2018-08-29T12:24:26.552Z");
+    private static final Instant RECORDED_LOGGED_DATE = Instant.parse("2018-08-29T12:24:26.552Z");
 
     private static final JsonObject RECORDED_JSON;
     static {
         RECORDED_JSON = new JsonObject();
         RECORDED_JSON.addProperty("identifier", RECORDED_ITEM);
         RECORDED_JSON.addProperty("text", RECORDED_ITEM);
-        RECORDED_JSON.addProperty("getLoggedDate", RECORDED_TIMESTAMP.toString());
+        RECORDED_JSON.addProperty("loggedDate", RECORDED_LOGGED_DATE.toString());
     }
 
     private static final JsonObject UNRECORDED_JSON;
@@ -50,7 +50,7 @@ public class TriggersLogTest {
         SimpleTrackingItemLog log = SimpleTrackingItemLog.builder()
                 .setIdentifier(RECORDED_ITEM)
                 .setText(RECORDED_ITEM)
-                .setLoggedDate(RECORDED_TIMESTAMP)
+                .setLoggedDate(RECORDED_LOGGED_DATE)
                 .build();
         JsonElement serialized = GSON.toJsonTree(log);
         assertNotNull("Log serialization failed", serialized);
@@ -72,6 +72,6 @@ public class TriggersLogTest {
         assertNotNull(log);
         assertEquals("Log had unexpected identifier", RECORDED_ITEM, log.getIdentifier());
         assertEquals("Log had unexpected text", RECORDED_ITEM, log.getText());
-        assertEquals("Log had unexpected timestamp", RECORDED_TIMESTAMP, log.getLoggedDate());
+        assertEquals("Log had unexpected timestamp", RECORDED_LOGGED_DATE, log.getLoggedDate());
     }
 }
