@@ -31,7 +31,7 @@ public abstract class StepTestHelper {
                                              @NonNull Step currentStep,
                                              @Nullable Step expectedNextStep,
                                              @NonNull TaskResult taskResult) {
-        Step stepAfterCurrentStep = stepNavigator.getNextStep(currentStep, taskResult);
+        Step stepAfterCurrentStep = stepNavigator.getNextStep(currentStep, taskResult).getStep();
         if (expectedNextStep == null) {
             assertNull(stepAfterCurrentStep);
             return taskResult;

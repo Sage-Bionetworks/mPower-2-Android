@@ -34,8 +34,29 @@
         "buttonTitle": "Hold phone"
       }
     }
-  }, {
-    "identifier": "active",
+  },
+  {
+    "identifier":"countdown",
+    "type":"mtcCountdown",
+    "text":"Begin in...",
+    "isFirstRunOnly": false,
+    "image":{
+      "type":"fetchable",
+      "imageName":"hold_phone_left",
+      "placementType":"fullsizeBackground"
+    },
+    "viewTheme":{
+      "viewIdentifier":"Countdown",
+      "storyboardIdentifier":"ActiveTaskSteps"
+    },
+    "colorTheme":{
+      "usesLightStyle":true
+    },
+    "duration":5,
+    "commands":["playSoundOnStart", "transitionAutomatically"]
+  },
+  {
+    "identifier": "tremor",
     "type": "mpowerActive",
     "duration": 30,
     "image": {
@@ -52,16 +73,16 @@
     },
     "commands": ["transitionAutomatically", "shouldDisableIdleTimer", "vibrate", "playSound"],
     "actions": {
-      "goForward": {
-        "type": "navigation",
-        "skipToIdentifier": "tremor",
-        "buttonTitle": "Restart test"
-      },
-      "skip": {
-        "type": "navigation",
-        "skipToIdentifier": "holdPhoneInstructions",
-        "buttonTitle": "Review instructions"
-      }
+        "skip":{
+            "type":"navigation",
+            "skipToIdentifier":"tremor",
+            "buttonTitle": "Restart test"
+        },
+        "learnMore":{
+            "type":"navigation",
+            "skipToIdentifier": "holdPhoneInstructions",
+            "buttonTitle": "Review instructions"
+        }
     },
     "title": "Hold the phone still in your %@ hand.",
     "spokenInstructions": {

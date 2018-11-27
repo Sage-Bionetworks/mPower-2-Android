@@ -37,11 +37,8 @@ import android.support.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 
-import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.FirstRunHelper;
-import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
 import org.sagebionetworks.research.motor_control_module.step.InstructionStep;
 import org.sagebionetworks.research.presentation.DisplayString;
 import org.sagebionetworks.research.presentation.mapper.DrawableMapper;
@@ -50,6 +47,8 @@ import org.sagebionetworks.research.presentation.model.ImageThemeView;
 import org.sagebionetworks.research.presentation.model.action.ActionView;
 import org.sagebionetworks.research.presentation.model.implementations.ActiveUIStepViewBase;
 import org.threeten.bp.Duration;
+
+import java.util.Map;
 
 public class InstructionStepView extends ActiveUIStepViewBase {
     public static final String TYPE = StepType.INSTRUCTION;
@@ -64,14 +63,15 @@ public class InstructionStepView extends ActiveUIStepViewBase {
 
         InstructionStep instructionStep = (InstructionStep) step;
         ActiveUIStepViewBase activeUIStepView = ActiveUIStepViewBase.fromActiveUIStep(step, mapper);
-        return new InstructionStepView(activeUIStepView.getIdentifier(), activeUIStepView.getNavDirection(),
+        return new InstructionStepView(activeUIStepView.getIdentifier(),
                 activeUIStepView.getActions(), activeUIStepView.getTitle(), activeUIStepView.getText(),
                 activeUIStepView.getDetail(), activeUIStepView.getFootnote(), activeUIStepView.getColorTheme(),
                 activeUIStepView.getImageTheme(), activeUIStepView.getDuration(),
-                activeUIStepView.isBackgroundAudioRequired(), instructionStep.isFirstRunOnly());
+                activeUIStepView.getSpokenInstructions(), activeUIStepView.isBackgroundAudioRequired(),
+                instructionStep.getIsFirstRunOnly());
     }
 
-    public InstructionStepView(@NonNull final String identifier, final int navDirection,
+    public InstructionStepView(@NonNull final String identifier,
             @NonNull final ImmutableMap<String, ActionView> actions,
             @Nullable final DisplayString title,
             @Nullable final DisplayString text,
@@ -80,10 +80,11 @@ public class InstructionStepView extends ActiveUIStepViewBase {
             @Nullable final ColorThemeView colorTheme,
             @Nullable final ImageThemeView imageTheme,
             @NonNull final Duration duration,
+            @NonNull final Map<String, String> spokenInstructions,
             final boolean isBackgroundAudioRequired,
             final boolean isFirstRunOnly) {
-        super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme, duration,
-                isBackgroundAudioRequired);
+        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme, duration,
+                spokenInstructions, isBackgroundAudioRequired);
         this.isFirstRunOnly = isFirstRunOnly;
     }
 

@@ -1,6 +1,8 @@
 package org.sagebionetworks.research.motor_control_module.inject;
 
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentScope;
+import org.sagebionetworks.research.mobile_ui.show_step.view.ShowFormUIStepFragment;
+import org.sagebionetworks.research.motor_control_module.show_step_fragment.MtcCountdownStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowCompletionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowInstructionStepFragment;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowMPowerActiveUIStepFragment;
@@ -41,4 +43,8 @@ public abstract class MotorControlShowStepFragmentsModule {
     @ContributesAndroidInjector
     @ShowStepFragmentScope
     abstract ShowCompletionStepFragment contributeShowCompletionStepFragmentInjector();
+
+    @ContributesAndroidInjector
+    @ShowStepFragmentScope
+    abstract MtcCountdownStepFragment contributeShowMtcCountdownStepFragmentInjector();
 }

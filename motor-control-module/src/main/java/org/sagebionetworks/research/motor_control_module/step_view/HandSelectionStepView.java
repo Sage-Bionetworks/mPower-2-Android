@@ -52,7 +52,7 @@ import java.util.List;
 public class HandSelectionStepView extends FormUIStepViewBase {
     public static final String TYPE = AppStepType.HAND_SELECTION;
 
-    public HandSelectionStepView(@NonNull final String identifier, final int navDirection,
+    public HandSelectionStepView(@NonNull final String identifier,
                                  @NonNull final ImmutableMap<String, ActionView> actions,
                                  @Nullable final DisplayString title,
                                  @Nullable final DisplayString text,
@@ -61,7 +61,7 @@ public class HandSelectionStepView extends FormUIStepViewBase {
                                  @Nullable final ColorThemeView colorTheme,
                                  @Nullable final ImageThemeView imageTheme,
                                  final List<InputFieldView> inputFields) {
-        super(identifier, navDirection, actions, title, text, detail, footnote, colorTheme, imageTheme, inputFields);
+        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme, inputFields);
     }
 
     @NonNull
@@ -71,7 +71,7 @@ public class HandSelectionStepView extends FormUIStepViewBase {
         }
 
         FormUIStepView formUIStepView = FormUIStepViewBase.fromFormUIStep(step, mapper);
-        return new HandSelectionStepView(formUIStepView.getIdentifier(), formUIStepView.getNavDirection(),
+        return new HandSelectionStepView(formUIStepView.getIdentifier(),
                 formUIStepView.getActions(), formUIStepView.getTitle(), formUIStepView.getText(),
                 formUIStepView.getDetail(), formUIStepView.getFootnote(), formUIStepView.getColorTheme(),
                 formUIStepView.getImageTheme(), formUIStepView.getInputFields());

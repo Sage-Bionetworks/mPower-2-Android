@@ -12,10 +12,7 @@ import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.domain.task.Task;
 import org.sagebionetworks.research.domain.task.navigation.StepNavigator;
-import org.sagebionetworks.research.domain.task.navigation.strategy.StrategyBasedNavigator;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment;
 import org.sagebionetworks.research.motor_control_module.step.InstructionStep;
-import org.sagebionetworks.research.motor_control_module.step.MPowerActiveUIStep;
 import org.sagebionetworks.research.presentation.perform_task.PerformTaskViewModel;
 import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
@@ -56,13 +53,13 @@ public class FirstRunOnlyStepTests {
         InstructionStep instructionFirstRunOnly = InstructionStep.builder()
                 .setActions(ImmutableMap.of())
                 .setIdentifier("instructionStepFirstRunOnly")
-                .setFirstRunOnly(true)
+                .setIsFirstRunOnly(true)
                 .build();
         steps.add(instructionFirstRunOnly);
         InstructionStep instructionNotFirstRunOnly = InstructionStep.builder()
                 .setActions(ImmutableMap.of())
                 .setIdentifier("instructionStepNonFirstRunOnly")
-                .setFirstRunOnly(false)
+                .setIsFirstRunOnly(false)
                 .build();
         steps.add(instructionNotFirstRunOnly);
         steps.add(mockStepWithIdentifier("completion"));

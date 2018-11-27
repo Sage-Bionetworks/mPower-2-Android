@@ -23,6 +23,8 @@ import org.sagebionetworks.research.sageresearch_app_sdk.archive.AbstractResultA
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.BaseResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.FileResultArchiveFactory;
+import org.sagebionetworks.research.sageresearch_app_sdk.archive.TaskResultAnswerMapResultArchiveFactory;
+import org.sagebionetworks.research.sageresearch_app_sdk.archive.TaskResultArchiveFactory;
 
 import dagger.Module;
 import dagger.Provides;
@@ -73,11 +75,18 @@ public abstract class MPowerUserModule {
 
     @Provides
     @BridgeApplicationScope
+    static TaskResultArchiveFactory provideTaskResultArchiveFactory() {
+        return new TaskResultAnswerMapResultArchiveFactory();
+    }
+
+    @Provides
+    @BridgeApplicationScope
     static ImmutableList<ResultArchiveFactory> provideAbstractResultArchiveFactory(
             TappingResultArchiveFactory tappingResultArchiveFactory,
-            FileResultArchiveFactory fileResultArchiveFactory, AnswerResultArchiveFactory answerResultArchiveFactory,
+            FileResultArchiveFactory fileResultArchiveFactory,
+            AnswerResultArchiveFactory answerResultArchiveFactory,
             BaseResultArchiveFactory baseResultArchiveFactory) {
-        return ImmutableList.of(tappingResultArchiveFactory, fileResultArchiveFactory, answerResultArchiveFactory,
-                baseResultArchiveFactory);
+        return ImmutableList.of(tappingResultArchiveFactory, fileResultArchiveFactory,
+                answerResultArchiveFactory, baseResultArchiveFactory);
     }
 }
