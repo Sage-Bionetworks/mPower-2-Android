@@ -35,7 +35,6 @@ package org.sagebionetworks.research.mpower;
 import android.content.Intent;
 
 import org.sagebionetworks.bridge.android.access.BridgeAccessFragment;
-import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
 import org.sagebionetworks.research.mpower.sageresearch.ui.WebConsentFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +44,9 @@ public class EntryFragment extends BridgeAccessFragment {
 
     @Override
     public void onRequireAuthentication() {
-        LOGGER.debug("Showing ExternalIdSignInActivity");
+        LOGGER.debug("Showing MpPhoneAuthActivity");
 
-        startActivity(new Intent(getContext(), ExternalIdSignInActivity.class));
+        startActivity(new Intent(getContext(), MpPhoneAuthActivity.class));
     }
 
     @Override

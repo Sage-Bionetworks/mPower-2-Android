@@ -3,6 +3,7 @@ package org.sagebionetworks.research.mpower;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.AUTHENTICATE;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING;
@@ -67,7 +68,7 @@ public class TaskLauncher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskLauncher.class);
 
-    private static final ImmutableSet<String> RS_TASKS = ImmutableSet.of();
+    private static final ImmutableSet<String> RS_TASKS = ImmutableSet.of(AUTHENTICATE);
 
     private static final ImmutableSet<String> SR_TASKS = ImmutableSet
             .of(TAPPING, WALK_AND_BALANCE, TRIGGERS, TREMOR, SYMPTOMS, MEDICATION);

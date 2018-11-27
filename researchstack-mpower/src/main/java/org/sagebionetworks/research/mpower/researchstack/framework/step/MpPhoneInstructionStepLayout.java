@@ -1,6 +1,7 @@
 package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -60,7 +61,21 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
     @Override
     public void initialize(Step step, StepResult result) {
         validateAndSetMpStartTaskStep(step);
+
+        // for internal builds
+        View v = findViewById(R.id.internal_sign_in_link);
+        if (v != null) {
+            v.setOnClickListener(this::onInternalSignInClick);
+        }
+
         super.initialize(step, result);
+    }
+
+    void onInternalSignInClick(View v) {
+        Intent i = new Intent();
+        // Fragile String-based reference, but this is used for internal builds (testing) only
+        i.setClassName(getContext(), "org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity");
+        getContext().startActivity(i);
     }
 
     @Override

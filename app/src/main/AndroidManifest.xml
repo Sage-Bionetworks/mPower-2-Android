@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="org.sagebionetworks.research.mpower">
 
     <application
@@ -16,7 +17,8 @@
 
         <activity
             android:name=".EntryActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
@@ -26,6 +28,33 @@
         </activity>
 
         <activity
+            android:name=".MpPhoneAuthActivity"
+            android:label="@string/app_name"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
+            <!--android:launchMode="singleInstance"-->
+            <!--android:theme="@style/Theme.AppCompat"-->
+
+            <!-- To open app using link -->
+            <tools:validation testUrl="https://parkinsonmpower.org/sage-mpower-2/phoneSignIn/TOKEN " />
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="parkinsonmpower.org"
+                    android:pathPrefix="/sage-mpower-2/phoneSignIn"
+                    android:scheme="https" />
+
+            </intent-filter>
+        </activity>
+
+
+        <activity
             android:name=".authentication.ExternalIdSignInActivity"
             android:label="@string/title_activity_external_id_sign_in"
             android:theme="@style/MPowerTheme"
@@ -33,30 +62,27 @@
         <activity
             android:name=".studyburst.StudyBurstActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".researchstack.MpMainActivity"
-            android:parentActivityName=".EntryActivity" />
 
         <activity
             android:name="org.researchstack.backbone.ui.ViewTaskActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".researchstack.framework.MpViewTaskActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MP.Survey"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name="org.researchstack.backbone.ui.ViewWebDocumentActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".reminders.StudyBurstReminderActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <!-- These control local reminder notification scheduling and display -->
         <receiver android:name="org.sagebionetworks.research.sageresearch.reminders.MpReminderAlarmReceiver" />
@@ -66,11 +92,11 @@
                  When the user reboots or changes anything in their settings related to time -->
             <intent-filter>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-                <action android:name="android.intent.action.REBOOT"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.TIME_SET"/>
-                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.REBOOT" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
     </application>
