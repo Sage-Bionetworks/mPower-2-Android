@@ -76,13 +76,6 @@ public class TriggersLoggingFragment extends LoggingFragment<SimpleTrackingItemC
         return new TriggersLoggingItemAdapter(activeElements, triggersLoggingListener, recordedIndices);
     }
 
-    @Override
-    protected void onSubmitButtonClicked(View view) {
-        Result loggingResult = viewModel.getLoggingCollection();
-        performTaskViewModel.addStepResult(loggingResult);
-        super.onSubmitButtonClicked(view);
-    }
-
     /**
      * @return true if any logging is active, false if no logging has occurred yet.
      */

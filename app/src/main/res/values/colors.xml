@@ -51,4 +51,7 @@
     <color name="severity_moderate_stroke">#FACFAF</color>
     <color name="severity_severe_stroke">#FFC5BD</color>
 
+    <color name="severity_selected_text">@color/appDarkGrey</color>
+    <color name="severity_unselected_text">@color/appLightGray</color>
+
 </resources>

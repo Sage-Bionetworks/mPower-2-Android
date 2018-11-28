@@ -196,20 +196,22 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_large"
         android:layout_marginTop="@dimen/margin_medium"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider3"
-        app:text="Pre-meds" />
+        app:text="@string/pre_meds" />
 
     <org.sagebionetworks.research.mpower.MPowerRadioButton
         android:id="@+id/post_meds_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin_large"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="@+id/pre_meds_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/pre_meds_button"
         app:layout_constraintTop_toTopOf="@+id/pre_meds_button"
-        app:text="Post-meds" />
+        app:text="@string/post_meds" />
 
     <org.sagebionetworks.research.mobile_ui.widget.ActionButton
         android:id="@+id/add_note_button"

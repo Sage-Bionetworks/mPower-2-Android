@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.R;
@@ -67,6 +68,8 @@ public abstract class LoggingFragment
      * @param view that was clicked.
      */
     protected void onSubmitButtonClicked(View view) {
+        Result loggingResult = viewModel.getLoggingCollection();
+        performTaskViewModel.addStepResult(loggingResult);
         performTaskFragment.goForward();
     }
 
@@ -74,6 +77,9 @@ public abstract class LoggingFragment
      * Sub-classes can override to provide custom submit button setup.
      */
     protected void setupSubmitButton() {
+        if (navigationActionBar == null) {
+            return;
+        }
         setSubmitButtonEnabled(false);
         navigationActionBar.getForwardButton().setText(R.string.button_submit);
         navigationActionBar.getForwardButton().setOnClickListener(this::onSubmitButtonClicked);
@@ -83,6 +89,9 @@ public abstract class LoggingFragment
      * @param enabled when true, submit button will be enabled, when false it will be disabled.
      */
     protected void setSubmitButtonEnabled(boolean enabled) {
+        if (navigationActionBar == null) {
+            return;
+        }
         navigationActionBar.setForwardButtonEnabled(enabled);
     }
 
