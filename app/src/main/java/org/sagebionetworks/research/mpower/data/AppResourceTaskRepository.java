@@ -1,8 +1,10 @@
 package org.sagebionetworks.research.mpower.data;
 
-import static org.sagebionetworks.research.mpower.Tasks.MEDICATION;
-import static org.sagebionetworks.research.mpower.Tasks.SYMPTOMS;
-import static org.sagebionetworks.research.mpower.Tasks.TRIGGERS;
+
+
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

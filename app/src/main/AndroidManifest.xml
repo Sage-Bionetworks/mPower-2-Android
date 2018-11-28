@@ -15,7 +15,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".EntryActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -30,16 +30,12 @@
             android:label="@string/title_activity_external_id_sign_in"
             android:theme="@style/MPowerTheme"
             android:windowSoftInputMode="adjustResize" />
-
-        <activity android:name=".studyburst.StudyBurstActivity"
-                  android:screenOrientation="portrait">
-
-        </activity>
-        <!--<activity android:name=".tracking.fragment.MedicationSchedulingFragment"-->
-            <!--android:screenOrientation="portrait"-->
-            <!--android:windowSoftInputMode="stateHidden">-->
-
-        <!--</activity>-->
+        <activity
+            android:name=".studyburst.StudyBurstActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".researchstack.MpMainActivity"
+            android:parentActivityName=".EntryActivity" />
 
         <activity
             android:name="org.researchstack.backbone.ui.ViewTaskActivity"
@@ -77,7 +73,6 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

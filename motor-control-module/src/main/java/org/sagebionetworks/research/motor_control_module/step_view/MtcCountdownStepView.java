@@ -49,6 +49,8 @@ import org.sagebionetworks.research.presentation.model.implementations.ActiveUIS
 import org.sagebionetworks.research.presentation.model.interfaces.CountdownStepView;
 import org.threeten.bp.Duration;
 
+import java.util.Map;
+
 public class MtcCountdownStepView extends ActiveUIStepViewBase implements CountdownStepView {
     public static final String TYPE = AppStepType.MTC_COUNTDOWN;
 
@@ -57,8 +59,10 @@ public class MtcCountdownStepView extends ActiveUIStepViewBase implements Countd
             @Nullable DisplayString title, @Nullable DisplayString text,
             @Nullable DisplayString detail, @Nullable DisplayString footnote,
             @Nullable ColorThemeView colorTheme, @Nullable ImageThemeView imageTheme,
-            @NonNull Duration duration, boolean isBackgroundAudioRequired) {
-        super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme, duration, isBackgroundAudioRequired);
+            @NonNull Duration duration, @NonNull final Map<String, String> spokenInstructions,
+            boolean isBackgroundAudioRequired) {
+        super(identifier, actions, title, text, detail, footnote,
+                colorTheme, imageTheme, duration, spokenInstructions, isBackgroundAudioRequired);
     }
 
     public static MtcCountdownStepView fromMtcCountdownStep(Step step, DrawableMapper mapper) {
@@ -70,7 +74,8 @@ public class MtcCountdownStepView extends ActiveUIStepViewBase implements Countd
         return new MtcCountdownStepView(activeStep.getIdentifier(),
                 activeStep.getActions(), activeStep.getTitle(), activeStep.getText(),
                 activeStep.getDetail(), activeStep.getFootnote(), activeStep.getColorTheme(),
-                activeStep.getImageTheme(), activeStep.getDuration(), activeStep.isBackgroundAudioRequired());
+                activeStep.getImageTheme(), activeStep.getDuration(), activeStep.getSpokenInstructions(),
+                activeStep.isBackgroundAudioRequired());
     }
 
     @NonNull

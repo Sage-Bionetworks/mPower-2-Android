@@ -2,14 +2,13 @@ package org.sagebionetworks.research.mpower;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
-import static org.sagebionetworks.research.mpower.Tasks.MEDICATION;
-import static org.sagebionetworks.research.mpower.Tasks.SYMPTOMS;
-import static org.sagebionetworks.research.mpower.Tasks.TAPPING;
-import static org.sagebionetworks.research.mpower.Tasks.TREMOR;
-import static org.sagebionetworks.research.mpower.Tasks.TRIGGERS;
-import static org.sagebionetworks.research.mpower.Tasks.WALK_AND_BALANCE;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE;
 
 import android.app.Activity;
 import android.arch.lifecycle.LiveData;

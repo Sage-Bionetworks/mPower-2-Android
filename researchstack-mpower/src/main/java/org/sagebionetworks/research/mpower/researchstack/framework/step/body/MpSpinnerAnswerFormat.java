@@ -17,7 +17,6 @@
 
 package org.sagebionetworks.research.mpower.researchstack.framework.step.body;
 
-import org.researchstack.backbone.answerformat.ChoiceAnswerFormat;
 import org.researchstack.backbone.model.Choice;
 
 
