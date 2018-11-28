@@ -15,21 +15,29 @@ import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.sagebionetworks.bridge.android.SingleFragmentActivity;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 @Ignore
-public class MainActivityTest {
+public class MainFragmentTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<SingleFragmentActivity> mActivityTestRule = new ActivityTestRule<>(SingleFragmentActivity.class);
+
+    @Before
+    public void setupTest() {
+        SingleFragmentActivity activity = mActivityTestRule.getActivity();
+        activity.setFragment(new MainFragment());
+    }
 
     @Test
-    public void mainActivityTest() {
+    public void mainFragmentTest() {
 
         // check initial layout, showing tracking tab
         onView(allOf(
