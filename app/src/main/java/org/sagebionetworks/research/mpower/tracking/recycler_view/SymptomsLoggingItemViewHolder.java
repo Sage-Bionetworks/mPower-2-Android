@@ -1,13 +1,11 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RadioButton;
@@ -46,14 +44,9 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
         void onNoteButtonPressed(@NonNull TrackingItem trackingItem, int position);
     }
 
-    private static final float FULL_ALPHA = 1.0f;
-
-    private static final float FADED_ALPHA = .35f;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SymptomsLoggingItemViewHolder.class);
 
     private SymptomsLoggingUIFormItemWidget widget;
-
-    private RadioButton previousSelectedSeverityButton;
-
     private SymptomLog log;
 
     @NonNull
@@ -102,14 +95,12 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
             severity = newLog.getSeverity();
             medicationTiming = newLog.getMedicationTiming();
             duration = newLog.getDuration();
-            time = newLog.getTimestamp();
+            time = newLog.getLoggedDate();
         }
+
+        updateSeverityUI(severity);
 
         // update the UI if the values have changed.
-        if (log == null || !Objects.equal(log.getSeverity(), severity)) {
-            updateSeverityUI(severity);
-        }
-
         if (log == null || !Objects.equal(log.getMedicationTiming(), medicationTiming)) {
             updateMedicationTimingUI(medicationTiming);
         }
@@ -118,7 +109,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
             updateDurationUI(duration);
         }
 
-        if (log == null || !Objects.equal(log.getTimestamp(), time)) {
+        if (log == null || !Objects.equal(log.getLoggedDate(), time)) {
             updateTimestampUI(time);
         }
 
@@ -147,7 +138,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
     private void setPreMedsButtonListener(@NonNull TrackingItem trackingItem, int position) {
         MPowerRadioButton preMedsButton = widget.getPreMedsButton();
         preMedsButton.setOnClickListener(view -> {
-            String medicationTiming = preMedsButton.getTitle();
+            String medicationTiming = MedicationTiming.PRE_MEDS.stringValue;
             symptomLoggingListener.onMedicationTimingChanged(trackingItem, position, medicationTiming);
         });
     }
@@ -155,7 +146,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
     private void setPostMedsButtonListener(@NonNull TrackingItem trackingItem, int position) {
         MPowerRadioButton postMedsButton = widget.getPostMedsButton();
         postMedsButton.setOnClickListener(view -> {
-            String medicationTiming = postMedsButton.getTitle();
+            String medicationTiming = MedicationTiming.POST_MEDS.stringValue;
             symptomLoggingListener.onMedicationTimingChanged(trackingItem, position, medicationTiming);
         });
     }
@@ -171,7 +162,7 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
             preMedsButton.setSelected(false);
             postMedsButton.setSelected(false);
         } else {
-            boolean preMedsSelected = medicationTiming.equals(preMedsButton.getTitle());
+            boolean preMedsSelected = medicationTiming.equals(MedicationTiming.PRE_MEDS.stringValue);
             preMedsButton.setSelected(preMedsSelected);
             postMedsButton.setSelected(!preMedsSelected);
         }
@@ -179,7 +170,8 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     private void updateDurationUI(String duration) {
         // TODO display user selected duration instead of boolean selected or not
-        @StringRes int durationStringRes = duration != null ? R.string.symptoms_logging_duration_button_logged :
+        @StringRes int durationStringRes = duration != null ?
+                R.string.symptoms_logging_duration_button_logged :
                 R.string.symptoms_logging_duration_button_default;
         widget.getDurationButton().setText(durationStringRes);
     }
@@ -204,29 +196,37 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
 
     private void updateSeverityUI(Integer severity) {
         List<RadioButton> severityButtons = widget.getSeverityButtons();
-        if (severity == null) {
-            for (RadioButton severityButton : severityButtons) {
-                severityButton.setChecked(false);
-                severityButton.setAlpha(FULL_ALPHA);
-            }
-
-            previousSelectedSeverityButton = null;
-        } else {
-            if (previousSelectedSeverityButton != null) {
-                previousSelectedSeverityButton.setChecked(false);
-                previousSelectedSeverityButton.setAlpha(FADED_ALPHA);
-            }
-            if (previousSelectedSeverityButton == null) {
-                // When the first selection is made the buttons all need to be faded.
-                for (RadioButton severityButton : severityButtons) {
-                    severityButton.setAlpha(FADED_ALPHA);
-                }
-            }
-
-            RadioButton newlySelectedSeverityButton = severityButtons.get(severity);
-            newlySelectedSeverityButton.setAlpha(FULL_ALPHA);
-            newlySelectedSeverityButton.setChecked(true);
-            previousSelectedSeverityButton = newlySelectedSeverityButton;
+        RadioButton selectedSeverityButton = null;
+        if (severity != null) {
+            selectedSeverityButton = severityButtons.get(severity);
         }
+        LOGGER.info("Update severity to " + severity);
+        int i = 0;
+        for (RadioButton severityButton : severityButtons) {
+            if (selectedSeverityButton != null &&
+                    selectedSeverityButton.equals(severityButton)) {
+                LOGGER.info("Updating severity button " + i + " to checked");
+                severityButton.setChecked(true);
+                severityButton.setTextColor(ResourcesCompat.getColor(
+                        widget.getResources(), widget.getSeveritySelectedTextColorRes(), null));
+            } else {
+                LOGGER.info("Updating severity button " + i + " to un-checked");
+                severityButton.setChecked(false);
+                severityButton.setTextColor(ResourcesCompat.getColor(
+                        widget.getResources(), widget.getSeverityUnselectedTextColorRes(), null));
+            }
+            i++;
+        }
+    }
+
+    public enum MedicationTiming {
+        PRE_MEDS("pre-medication"),
+        POST_MEDS("post-medication");
+
+        MedicationTiming(String value) {
+            stringValue = value;
+        }
+
+        public String stringValue;
     }
 }

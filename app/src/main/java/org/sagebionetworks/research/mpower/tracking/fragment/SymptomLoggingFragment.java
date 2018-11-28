@@ -2,10 +2,8 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
-import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.SortUtil;
@@ -24,7 +22,6 @@ import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
 import org.threeten.bp.zone.ZoneRulesException;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -61,12 +58,21 @@ public class SymptomLoggingFragment extends
             public void onSeverityChanged(@NonNull final TrackingItem trackingItem, final int position,
                     final int severity) {
                 SymptomLog log = getPreviousLogOrInstantiate(trackingItem);
-                log = log.toBuilder()
-                        .setSeverity(severity)
-                        .build();
+
+                SymptomLog.Builder newLogBuilder = log.toBuilder();
+                // If the user taps the same severity button that is already logged, we un-select it
+                if (log.getSeverity() != null && log.getSeverity() == severity) {
+                    newLogBuilder.setSeverity(null);
+                } else { // otherwise, select the new severity
+                    newLogBuilder.setSeverity(severity);
+                }
+                log = newLogBuilder.build();
+
                 adapter.updateLog(position, log);
                 adapter.notifyItemChanged(position);
                 viewModel.addLoggedElement(log);
+
+                setSubmitButtonEnabled(true);
             }
 
             @Override
@@ -83,6 +89,7 @@ public class SymptomLoggingFragment extends
                     adapter.updateLog(position, log);
                     adapter.notifyItemChanged(position);
                     viewModel.addLoggedElement(log);
+                    setSubmitButtonEnabled(true);
                 });
 
                 addChildFragmentOnTop(durationFragment, SymptomLoggingFragment.SYMPTOM_LOGGING_FRAGMENT_TAG);
@@ -109,11 +116,12 @@ public class SymptomLoggingFragment extends
 
                     SymptomLog log = getPreviousLogOrInstantiate(trackingItem);
                     log = log.toBuilder()
-                            .setTimestamp(selectedInstant)
+                            .setLoggedDate(selectedInstant)
                             .build();
                     adapter.updateLog(position, log);
                     adapter.notifyItemChanged(position);
                     viewModel.addLoggedElement(log);
+                    setSubmitButtonEnabled(true);
                 };
 
                 new TimePickerDialog(getContext(), onTimeSetListener,
@@ -131,6 +139,7 @@ public class SymptomLoggingFragment extends
                 adapter.updateLog(position, log);
                 adapter.notifyItemChanged(position);
                 viewModel.addLoggedElement(log);
+                setSubmitButtonEnabled(true);
             }
 
             @Override
@@ -147,6 +156,7 @@ public class SymptomLoggingFragment extends
                     adapter.updateLog(position, log);
                     adapter.notifyItemChanged(position);
                     viewModel.addLoggedElement(log);
+                    setSubmitButtonEnabled(true);
                 });
 
                 addChildFragmentOnTop(addNoteFragment,
@@ -163,7 +173,7 @@ public class SymptomLoggingFragment extends
                 return SymptomLog.builder()
                         .setIdentifier(trackingItem.getIdentifier())
                         .setText(trackingItem.getIdentifier())
-                        .setTimestamp(Instant.now())
+                        .setLoggedDate(Instant.now())
                         .build();
 
             }
@@ -186,5 +196,35 @@ public class SymptomLoggingFragment extends
         }
 
         return result;
+    }
+
+    @Override
+    protected void setupSubmitButton() {
+        super.setupSubmitButton();
+        setSubmitButtonEnabled(shouldSubmitButtonBeEnabled());
+    }
+
+    /**
+     * @return if the user has interacted with any logging ui yet, false if they just arrived on the screen.
+     */
+    private boolean shouldSubmitButtonBeEnabled() {
+        if (viewModel.getLoggedElementsById().getValue() == null) {
+            return false;
+        }
+        for (SymptomLog symptomLog: viewModel.getLoggedElementsById().getValue().values()) {
+            if (symptomLog.getSeverity() != null) {
+                return true;
+            }
+            if (symptomLog.getDuration() != null) {
+                return true;
+            }
+            if (symptomLog.getNote() != null) {
+                return true;
+            }
+            if (symptomLog.getMedicationTiming() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -12,7 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
+import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
@@ -32,6 +34,7 @@ public abstract class LoggingFragment
         <ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog,
         ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>, AdapterType extends Adapter<?>>
         extends RecyclerViewTrackingFragment<ConfigType, LogType, ViewModelType, AdapterType> {
+
     @Override
     @NonNull
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,7 +58,41 @@ public abstract class LoggingFragment
             });
         }
 
+        setupSubmitButton();
+
         return result;
+    }
+
+    /**
+     * Called when the submit button is clicked.
+     * @param view that was clicked.
+     */
+    protected void onSubmitButtonClicked(View view) {
+        Result loggingResult = viewModel.getLoggingCollection();
+        performTaskViewModel.addStepResult(loggingResult);
+        performTaskFragment.goForward();
+    }
+
+    /**
+     * Sub-classes can override to provide custom submit button setup.
+     */
+    protected void setupSubmitButton() {
+        if (navigationActionBar == null) {
+            return;
+        }
+        setSubmitButtonEnabled(false);
+        navigationActionBar.getForwardButton().setText(R.string.button_submit);
+        navigationActionBar.getForwardButton().setOnClickListener(this::onSubmitButtonClicked);
+    }
+
+    /**
+     * @param enabled when true, submit button will be enabled, when false it will be disabled.
+     */
+    protected void setSubmitButtonEnabled(boolean enabled) {
+        if (navigationActionBar == null) {
+            return;
+        }
+        navigationActionBar.setForwardButtonEnabled(enabled);
     }
 
     @Override

@@ -13,6 +13,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
  * Subclass of TrackingTaskViewModel which uses LogTypes specific to the Symptoms task.
  */
 public class SymptomTrackingTaskViewModel extends TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> {
+
     protected SymptomTrackingTaskViewModel(
             @NonNull final TrackingStepView stepView,
             @Nullable final LoggingCollection<SymptomLog> previousLoggingCollection) {

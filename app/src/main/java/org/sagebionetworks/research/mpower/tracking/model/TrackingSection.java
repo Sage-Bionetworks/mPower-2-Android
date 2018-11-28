@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking.model;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -11,7 +12,7 @@ import com.google.gson.TypeAdapter;
  * A TrackingSection represents a grouping of TrackingItems used by the UI to display the items in a logical way.
  */
 @AutoValue
-public abstract class TrackingSection implements SelectionUIFormItem {
+public abstract class TrackingSection implements SelectionUIFormItem, Parcelable {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract TrackingSection build();
