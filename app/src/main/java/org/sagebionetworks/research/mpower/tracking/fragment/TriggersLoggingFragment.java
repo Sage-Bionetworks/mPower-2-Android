@@ -10,6 +10,7 @@ import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.TriggersLoggingItemAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.TriggersLoggingItemViewHolder.TriggersLoggingListener;
 import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingTaskViewModel;
+import org.sagebionetworks.research.mpower.tracking.view_model.TriggersTrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
@@ -24,7 +25,7 @@ import java.util.Set;
  * A subclass of LoggingFragment specific to the Triggers Task.
  */
 public class TriggersLoggingFragment extends LoggingFragment<SimpleTrackingItemConfig, SimpleTrackingItemLog,
-        SimpleTrackingTaskViewModel, TriggersLoggingItemAdapter> {
+        TriggersTrackingTaskViewModel, TriggersLoggingItemAdapter> {
     @NonNull
     public static TriggersLoggingFragment newInstance(@NonNull StepView step) {
         TriggersLoggingFragment fragment = new TriggersLoggingFragment();

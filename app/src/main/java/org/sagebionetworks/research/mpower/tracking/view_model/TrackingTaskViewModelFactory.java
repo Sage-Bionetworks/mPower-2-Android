@@ -4,9 +4,17 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProvider.Factory;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import org.sagebionetworks.research.domain.repository.TaskRepository;
+import org.sagebionetworks.research.domain.result.interfaces.Result;
+import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mpower.research.MpIdentifier;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection;
+
+import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -18,25 +26,40 @@ public class TrackingTaskViewModelFactory {
 
     @Inject
     public TrackingTaskViewModelFactory() {
-
     }
 
-    public ViewModelProvider.Factory create(@NonNull final TrackingStepView trackingStepView) {
+    public ViewModelProvider.Factory create(
+            @NonNull final TrackingStepView trackingStepView, @Nullable TaskResult taskResult) {
+
         return new Factory() {
             @NonNull
             @Override
             @SuppressWarnings("unchecked")
             public <T extends ViewModel> T create(@NonNull final Class<T> modelClass) {
-                // TODO rkolmos 09/07/2018 get the previous logging collection and pass it to the view model constructor.
+
+                // Attempt to read the previous task result from the task repository
+                // and check to see if there is an async result that contains the last logging collection
+                LoggingCollection previousLoggingCollection = null;
+                if (taskResult != null) {
+                    List<Result> asyncResults = taskResult.getAsyncResults();
+                    if (asyncResults != null) {
+                        for (Result result : asyncResults) {
+                            if (result instanceof LoggingCollection) {
+                                previousLoggingCollection = (LoggingCollection)result;
+                            }
+                        }
+                    }
+                }
+
                 String whichTask = trackingStepView.whichTask();
                 if (whichTask != null) {
                     switch (whichTask) {
                         case MpIdentifier.TRIGGERS:
-                            return (T) new SimpleTrackingTaskViewModel(trackingStepView, null);
+                            return (T) new TriggersTrackingTaskViewModel(trackingStepView, previousLoggingCollection);
                         case MpIdentifier.MEDICATION:
-                            return (T) new MedicationTrackingTaskViewModel(trackingStepView, null);
+                            return (T) new MedicationTrackingTaskViewModel(trackingStepView, previousLoggingCollection);
                         case MpIdentifier.SYMPTOMS:
-                            return (T) new SymptomTrackingTaskViewModel(trackingStepView, null);
+                            return (T) new SymptomTrackingTaskViewModel(trackingStepView, previousLoggingCollection);
                     }
                 }
 

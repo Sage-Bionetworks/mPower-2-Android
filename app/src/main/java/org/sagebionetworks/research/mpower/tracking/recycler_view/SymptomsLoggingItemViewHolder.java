@@ -227,6 +227,6 @@ public class SymptomsLoggingItemViewHolder extends RecyclerView.ViewHolder {
             stringValue = value;
         }
 
-        public String stringValue;
+        public final String stringValue;
     }
 }

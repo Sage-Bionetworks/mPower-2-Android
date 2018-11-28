@@ -38,10 +38,22 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
+import com.dampcake.gson.immutable.ImmutableAdapterFactory
+import com.dampcake.gson.immutable.ImmutableListAdapter
 import com.google.common.base.Preconditions
+import com.google.common.collect.ImmutableList
+import com.google.common.reflect.TypeToken
+import org.sagebionetworks.research.domain.inject.GsonModule_ProvideGuavaImmutableTypeAdapterFactory
+import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
+import org.sagebionetworks.research.domain.result.interfaces.TaskResult
+import org.sagebionetworks.research.mpower.inject.AutoValueGson_AppAutoValueTypeAdapterFactory
 import org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION
 import org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS
 import org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog
+import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters
 import org.sagebionetworks.research.sageresearch.dao.room.ReportEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
@@ -49,6 +61,7 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.viewmodel.ReportAndScheduleViewModel
+import java.util.UUID
 import javax.inject.Inject
 
 class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
@@ -117,6 +130,36 @@ class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
         }.invoke()
         trackingReportsLiveData = liveDataChecked
         return liveDataChecked
+    }
+
+    /**
+     * Creates a new TaskResult that contains the result of a previous run of the task by
+     * de-serializing the report data into a LoggingCollection result and adding it to the TaskResult
+     * @param report most recent for this taskId
+     * @param taskId the identifier of the task to create the task result for
+     * @param taskRunUuid the uuid of that will be attached to the task
+     * @return a new TaskResult that contains the result of a previous run of the task by,
+     *         null if it cannot be created for any reason.
+     */
+    fun createTaskResult(report: ReportEntity, taskId: String, taskRunUuid: UUID): TaskResult? {
+        report.data?.data?.let { reportData ->
+            when(taskId) {
+                TRIGGERS -> object : TypeToken<LoggingCollection<SimpleTrackingItemLog>>(){}.type
+                SYMPTOMS -> object : TypeToken<LoggingCollection<SymptomLog>>(){}.type
+                MEDICATION -> null // TODO: deserialize MedLog
+                else -> null
+            }?.let { type ->
+                val gson = EntityTypeConverters().bridgeGsonBuilder
+                        .registerTypeAdapterFactory(AutoValueGson_AppAutoValueTypeAdapterFactory())
+                        .registerTypeAdapterFactory(ImmutableAdapterFactory.forGuava())
+                        .create()
+                val json = gson.toJson(reportData)
+                val loggingCollection: LoggingCollection<*> = gson.fromJson(json, type)
+                val taskResult = TaskResultBase(taskId, taskRunUuid)
+                return taskResult.addAsyncResult(loggingCollection)
+            }
+        }
+        return null
     }
 }
 

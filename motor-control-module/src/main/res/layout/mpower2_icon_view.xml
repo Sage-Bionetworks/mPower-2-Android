@@ -45,7 +45,8 @@
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_max="110dp">
+            app:layout_constraintWidth_max="110dp"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
 
         <RelativeLayout
             android:id="@+id/leftIconImageContainer"
@@ -106,7 +107,8 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/left"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_max="110dp">
+            app:layout_constraintWidth_max="110dp"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
 
         <RelativeLayout
             android:id="@+id/centerIconImageContainer"
@@ -167,7 +169,8 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/center"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="110dp">
+        app:layout_constraintWidth_max="110dp"
+        android:foreground="?attr/selectableItemBackgroundBorderless">
 
         <RelativeLayout
             android:id="@+id/rightIconImageContainer"

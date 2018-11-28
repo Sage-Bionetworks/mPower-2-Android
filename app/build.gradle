@@ -129,6 +129,8 @@ dependencies {
 
     implementation 'nl.littlerobots.rxlint:rxlint:1.6.1'
 
+    implementation 'com.dampcake:gson-immutable:1.2'
+
     androidTestImplementation 'com.google.code.findbugs:jsr305:2.0.1'
 
     testImplementation 'junit:junit:4.12'
