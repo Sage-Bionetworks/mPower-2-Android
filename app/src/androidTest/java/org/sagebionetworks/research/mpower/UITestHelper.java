@@ -6,7 +6,9 @@ import android.content.SharedPreferences;
 import android.support.test.rule.ActivityTestRule;
 import org.hamcrest.core.AllOf;
 import org.hamcrest.core.AnyOf;
+import org.junit.Before;
 import org.junit.Rule;
+import org.sagebionetworks.bridge.android.SingleFragmentActivity;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.threeten.bp.Instant;
 
@@ -21,7 +23,7 @@ public abstract class UITestHelper {
     public static final String TREMOR_SHARED_PREFS_KEY = "Tremor";
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class,
+    public ActivityTestRule<SingleFragmentActivity> mActivityRule = new ActivityTestRule<>(SingleFragmentActivity.class,
             true, false);
 
     /**
