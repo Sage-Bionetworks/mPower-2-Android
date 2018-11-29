@@ -60,7 +60,6 @@ class EntryFragment : BridgeAccessFragment() {
     override fun onAccessGranted() {
         LOGGER.debug("Showing MainFragment")
 
-
         if (isMissingClinicalConsent()) {
             LOGGER.info("clinical_consent data group required, even for consented users")
             onRequireConsent()
