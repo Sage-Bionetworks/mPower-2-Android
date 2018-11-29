@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.SerializedName;
 
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.AutoValue_SymptomLog.GsonTypeAdapter;
@@ -43,6 +44,14 @@ public abstract class SymptomLog implements TrackingItemLog {
         @NonNull
         public abstract Builder setMedicationTiming(@Nullable String medicationTiming);
     }
+
+    /**
+     * Returns the text of this log.
+     * @return the text of this log.
+     */
+    @NonNull
+    @Override
+    public abstract String getText();
 
     @Nullable
     @Override

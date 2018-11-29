@@ -3,6 +3,7 @@ package org.sagebionetworks.research.mpower.tracking.widget;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
@@ -19,7 +20,7 @@ public class MedicationAddDetailsWidget extends ConstraintLayout {
     TextView title;
 
     @BindView(R.id.chevron)
-    ActionButton chevron;
+    ImageView chevron;
 
     public MedicationAddDetailsWidget(final Context context) {
         super(context);
@@ -45,7 +46,7 @@ public class MedicationAddDetailsWidget extends ConstraintLayout {
         return title;
     }
 
-    public ActionButton getChevron() {
+    public ImageView getChevron() {
         return chevron;
     }
 }

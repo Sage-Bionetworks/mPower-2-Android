@@ -24,9 +24,6 @@ public abstract class MedicationConfig implements TrackingItemConfig {
         public abstract Builder setIdentifier(@NonNull String identifier);
 
         @NonNull
-        public abstract Builder setTrackingItem(@NonNull TrackingItem trackingItem);
-
-        @NonNull
         public abstract Builder setDosage(@Nullable String dosage);
 
         @NonNull
@@ -50,6 +47,7 @@ public abstract class MedicationConfig implements TrackingItemConfig {
 
     @Override
     public boolean isConfigured() {
-        return getDosage() != null && !getSchedules().isEmpty();
+        return getDosage() != null && getDosage().length() > 0 &&
+                !getSchedules().isEmpty();
     }
 }

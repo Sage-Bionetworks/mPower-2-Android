@@ -1,10 +1,17 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
+import static org.sagebionetworks.research.motor_control_module.R2.attr.selectableItemBackgroundBorderless;
+
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
+import android.content.res.Resources.Theme;
+import android.os.Build;
+import android.os.Build.VERSION;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -50,6 +57,14 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
         setLabels(trackingItem.getIdentifier(), trackingItem.getDetail());
         updateSelected(selected);
         widget.setOnClickListener(view -> selectionListener.itemTapped(trackingItem, position));
+        if (VERSION.SDK_INT >= 23) {
+            // Use theme's selectableItemBackgroundBorderless to ensure that the View has a pressed state
+            TypedValue attrBorderlessValue = new TypedValue();
+            Theme theme = widget.getContext().getTheme();
+            theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, attrBorderlessValue, true);
+            widget.getBackgroundView().setForeground(ResourcesCompat
+                    .getDrawable(widget.getResources(), attrBorderlessValue.resourceId, theme));
+        }
     }
 
     public void setContent(@NonNull TrackingSection trackingSection) {
@@ -60,6 +75,9 @@ public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
         setLabels(trackingSection.getIdentifier(), trackingSection.getDetail());
         // When a section is tapped nothing should happen.
         widget.setOnClickListener(null);
+        if (VERSION.SDK_INT >= 23) {
+            widget.getBackgroundView().setForeground(null);
+        }
     }
 
     public void updateSelected(boolean selected) {

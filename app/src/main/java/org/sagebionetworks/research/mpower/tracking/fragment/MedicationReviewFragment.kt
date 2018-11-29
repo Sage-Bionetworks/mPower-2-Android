@@ -10,10 +10,10 @@ import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationRevi
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationReviewListener
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
-import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
 
-class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationConfig, SimpleTrackingItemLog,
+class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationConfig, MedicationLog,
         MedicationTrackingTaskViewModel, MedicationReviewAdapter>() {
 
     companion object {
@@ -35,8 +35,14 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationConfig, 
             replaceWithFragment(fragment)
         }
 
-        return result
+        navigationActionBar.setActionButtonClickListener{ actionButton ->
+            if (actionButton.id == R.id.rs2_step_navigation_action_forward) {
+                val fragment = MedicationLoggingFragment.newInstance(stepView)
+                replaceWithFragment(fragment)
+            }
+        }
 
+        return result
     }
 
     override fun initializeAdapter(): MedicationReviewAdapter {

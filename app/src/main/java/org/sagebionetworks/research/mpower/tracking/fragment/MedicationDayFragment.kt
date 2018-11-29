@@ -87,10 +87,10 @@ class MedicationDayFragment : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         LOGGER.debug("onCreateDialog()")
 
-        var inflater: LayoutInflater = activity!!.layoutInflater
-        customView = inflater.inflate(R.layout.dialog_medication_day, null)
+        customView = LayoutInflater.from(activity)
+                .inflate(R.layout.dialog_medication_remove, null)
 
-        return AlertDialog.Builder(context!!)
+        return AlertDialog.Builder(context)
                 .setView(customView)
                 .create()
     }
@@ -100,10 +100,6 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         LOGGER.debug("onViewCreated()")
 
         day_selection_title.text = getString(R.string.medication_day_selection_title, name, time)
-        var recycler = medication_day_recycler
-        recycler.layoutManager = LinearLayoutManager(context)
-        recycler.adapter = DayAdapter(getDays(), context!!)
-        recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         day_selection_back.setOnClickListener { _ ->
             dismiss()

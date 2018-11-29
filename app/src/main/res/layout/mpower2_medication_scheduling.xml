@@ -41,7 +41,6 @@
                 android:layout_marginTop="@dimen/margin_small"
                 android:fontFamily="@font/lato_bold"
                 android:gravity="center"
-                android:text="Title"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -49,6 +48,7 @@
                 app:layout_constraintTop_toBottomOf="@id/rs2_step_navigation_action_backward" />
 
             <TextView
+                style="@style/Research.TextButton"
                 android:id="@+id/rs2_detail"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -57,7 +57,6 @@
                 android:layout_marginTop="@dimen/margin_xsmall"
                 android:fontFamily="@font/lato"
                 android:gravity="center"
-                android:text="Text"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -86,7 +85,7 @@
 
             <org.sagebionetworks.research.mobile_ui.widget.ActionButton
                 android:id="@+id/rs2_step_navigation_action_add_more"
-                style="@style/MPower.RoundedCornerMaterialButton.Gray"
+                style="@style/Research.Gray.RoundedCornerMaterialButton"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/mp_rounded_button_height"
                 android:layout_marginBottom="@dimen/margin_medium"

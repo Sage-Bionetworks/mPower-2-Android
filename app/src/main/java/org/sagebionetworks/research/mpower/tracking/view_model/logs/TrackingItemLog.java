@@ -3,8 +3,6 @@ package org.sagebionetworks.research.mpower.tracking.view_model.logs;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.gson.annotations.SerializedName;
-
 import org.threeten.bp.Instant;
 
 /**
