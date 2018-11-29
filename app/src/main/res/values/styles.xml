@@ -45,6 +45,7 @@
     </style>
 
     <style name="Widget.MPower.TextView.TrackingMenu" parent="">
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">@font/lato</item>
         <item name="android:textColor">@color/royal400</item>

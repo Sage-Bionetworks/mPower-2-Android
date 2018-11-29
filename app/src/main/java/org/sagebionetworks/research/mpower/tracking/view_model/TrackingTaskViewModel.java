@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
@@ -58,6 +59,8 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
 
     protected Instant endDate;
 
+    protected boolean hasProceededToInitialFragment = false;
+
     @NonNull
     protected TrackingStepView stepView;
 
@@ -74,7 +77,6 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
         // initialize the active elements to contain either the user's previous selection or nothing depending on if
         // we have a previous logging collection.
         if (previousLoggingCollection == null) {
-            // TODO rkolmos 09/11/2018 get previous logging collection from records either in view model or before view model is created
             activeElementsById.setValue(new HashMap<>());
         } else {
             Map<String, ConfigType> activeElements = new HashMap<>();
@@ -85,6 +87,24 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
 
             activeElementsById.setValue(activeElements);
         }
+    }
+
+    public void proceedToInitialFragment(TrackingFragment trackingFragment) {
+        if (hasProceededToInitialFragment) {
+            return; // do nothing, we have already proceeded to the initial fragment
+        }
+        if (activeElementsById.getValue() == null ||
+                activeElementsById.getValue().isEmpty()) {
+            // Do nothing, we should start at the default initial step
+        } else {
+            // Proceed to the initial fragment when we have already selected items and added details
+            proceedToInitialFragmentOnSecondRun(trackingFragment);
+        }
+        hasProceededToInitialFragment = true;
+    }
+
+    protected void proceedToInitialFragmentOnSecondRun(TrackingFragment trackingFragment) {
+        // to be implemented by sub-classes
     }
 
     protected static Map<String, TrackingItem> getTrackingItemsById(

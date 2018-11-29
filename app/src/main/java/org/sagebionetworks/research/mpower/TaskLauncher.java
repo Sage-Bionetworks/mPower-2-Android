@@ -22,6 +22,8 @@ import android.support.annotation.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
+import org.sagebionetworks.research.domain.repository.TaskRepository;
+import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type;
 import org.sagebionetworks.research.mpower.researchstack.ResearchStackTaskLauncher;
 import org.sagebionetworks.research.mpower.sageresearch.SageResearchTaskLauncher;
@@ -73,14 +75,16 @@ public class TaskLauncher {
             .of(TAPPING, WALK_AND_BALANCE, TRIGGERS, TREMOR, SYMPTOMS, MEDICATION);
 
     private final ResearchStackTaskLauncher researchStackTaskLauncher;
-
     private final SageResearchTaskLauncher sageResearchTaskLauncher;
+    private final TaskRepository taskRepository;
 
     @Inject
     public TaskLauncher(@NonNull SageResearchTaskLauncher sageResearchTaskLauncher,
-            @NonNull ResearchStackTaskLauncher researchStackTaskLauncher) {
+            @NonNull ResearchStackTaskLauncher researchStackTaskLauncher,
+            @NonNull TaskRepository taskRepository) {
         this.sageResearchTaskLauncher = checkNotNull(sageResearchTaskLauncher);
         this.researchStackTaskLauncher = checkNotNull(researchStackTaskLauncher);
+        this.taskRepository = checkNotNull(taskRepository);
     }
 
     @VisibleForTesting
@@ -108,8 +112,26 @@ public class TaskLauncher {
     @NonNull
     public LiveData<TaskLaunchState> launchTask(@NonNull Context context, @NonNull String taskIdentifier,
             @Nullable UUID taskRunUUID) {
+        return launchTask(context, taskIdentifier, taskRunUUID, null);
+    }
+
+    /**
+     * @param context used to launch the task, if this function ends up launching a ResearchTask task,
+     *                context must be an instance of Activity
+     * @param taskIdentifier identifier of task to launch
+     * @param taskRunUUID optional uuid of previous task run to continue from
+     * @param taskResult if not null, it will be used as the initial value of the TaskResult for the task.
+     * @return state of the task launch, some tasks, like surveys, may require an additional network call
+     */
+    @NonNull
+    public LiveData<TaskLaunchState> launchTask(@NonNull Context context, @NonNull String taskIdentifier,
+            @Nullable UUID taskRunUUID, @Nullable TaskResult taskResult) {
         checkNotNull(context);
         checkArgument(!Strings.isNullOrEmpty(taskIdentifier), "taskIdentifier cannot be null or empty");
+
+        if (taskResult != null) {
+            taskRepository.setTaskResult(taskResult).blockingAwait();
+        }
 
         // TODO: figure out what type of return values are appropriate @liujoshua 2018/08/06
         MutableLiveData<TaskLaunchState> tls;

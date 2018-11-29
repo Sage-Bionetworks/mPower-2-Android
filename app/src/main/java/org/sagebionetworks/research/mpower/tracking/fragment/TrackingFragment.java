@@ -93,7 +93,8 @@ public abstract class TrackingFragment
         this.stepView = stepView;
         // noinspection unchecked
         this.viewModel =
-                (ViewModelType) ViewModelProviders.of(this.getParentFragment(), this.trackingActiveTaskViewModelFactory.create(this.stepView))
+                (ViewModelType) ViewModelProviders.of(this.getParentFragment(),
+                        this.trackingActiveTaskViewModelFactory.create(this.stepView, performTaskViewModel.getTaskResult()))
                         .get(TrackingTaskViewModel.class);
     }
 
@@ -108,6 +109,15 @@ public abstract class TrackingFragment
     public void onAttach(Context context) {
         AndroidSupportInjection.inject(this);
         super.onAttach(context);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // This call will only transition to another fragment on initial load of the view model
+        // It must be in onStart(), so that if we do transition fragment, everything will be loaded
+        // and ready to do an add child or replace fragment transition.
+        this.viewModel.proceedToInitialFragment(this);
     }
 
     @Override
