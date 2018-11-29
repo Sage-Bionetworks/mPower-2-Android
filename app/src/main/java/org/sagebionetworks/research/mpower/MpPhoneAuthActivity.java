@@ -3,21 +3,16 @@ package org.sagebionetworks.research.mpower;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.AUTHENTICATE;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
 import android.widget.TextView;
 
-import com.google.common.base.Strings;
-
-import org.researchstack.backbone.ResearchStack;
-import org.sagebionetworks.bridge.android.manager.AuthenticationManager;
-import org.sagebionetworks.bridge.android.manager.dao.AccountDAO;
-import org.sagebionetworks.bridge.rest.model.Phone;
-import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
-import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
-import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
+import org.sagebionetworks.bridge.android.access.Resource;
+import org.sagebionetworks.bridge.android.access.Resource.Status;
+import org.sagebionetworks.bridge.android.viewmodel.PhoneAuthViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,22 +24,13 @@ import rx.subscriptions.CompositeSubscription;
 public class MpPhoneAuthActivity extends DaggerAppCompatActivity {
     private static final Logger LOGGER = LoggerFactory.getLogger(MpPhoneAuthActivity.class);
 
-    protected MpTaskFactory taskFactory = new MpTaskFactory();
-
     @Inject
     TaskLauncher taskLauncher;
 
     @Inject
-    ResearchStack researchStack;
+    PhoneAuthViewModel.Factory phoneAuthViewModelFactory;
 
-    @Inject
-    MpDataProvider provider;
-
-    @Inject
-    AccountDAO accountDAO;
-
-    @Inject
-    AuthenticationManager authenticationManager;
+    private PhoneAuthViewModel phoneAuthViewModel;
 
     private final CompositeSubscription compositeSubscription = new CompositeSubscription();
 
@@ -56,8 +42,13 @@ public class MpPhoneAuthActivity extends DaggerAppCompatActivity {
 
         setContentView(R.layout.mp_activity_phone_auth);
 
+        phoneAuthViewModel = ViewModelProviders.of(this, phoneAuthViewModelFactory)
+                .get(PhoneAuthViewModel.class);
+
+        phoneAuthViewModel.getSignInStateLiveData().observe(this, this::onSignInStateReceived);
         handleIntent(getIntent());
     }
+
 
     @Override
     public void onNewIntent(Intent intent) {
@@ -72,74 +63,28 @@ public class MpPhoneAuthActivity extends DaggerAppCompatActivity {
         compositeSubscription.clear();
     }
 
-    protected void startSignupTask() {
-        taskLauncher.launchTask(this, AUTHENTICATE, null);
-    }
-
-    private void handleIntent(Intent intent) {
+    @VisibleForTesting
+    void handleIntent(Intent intent) {
         String appLinkAction = intent.getAction();
         Uri appLinkData = intent.getData();
         if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null) {
             // We came in via a link! Let's do something with it
             final String token = appLinkData.getLastPathSegment();
 
-            String phoneRegion = accountDAO.getPhoneRegion();
-            String phoneNumber = accountDAO.getPhoneNumber();
-
-            boolean newSignIn = false;
-            UserSessionInfo currentSession = authenticationManager.getUserSessionInfo();
-            if (currentSession == null) {
-                newSignIn = true;
-            } else {
-                Phone phone = currentSession.getPhone();
-                newSignIn = !isSamePhone(phone, phoneRegion, phoneNumber);
-            }
-
-            // either we have no current session, or current session is for a different phone number
-            if (newSignIn) {
-                doPhoneSignIn(token, phoneRegion, phoneNumber);
-            } else {
-                compositeSubscription.add(
-                        authenticationManager.getLatestUserSessionInfo()
-                                .subscribe(session -> {
-                                    LOGGER.debug("Session renewal succeeded.");
-                                    // current session is still useable
-                                    returnToEntryActivity();
-                                }, t -> {
-                                    LOGGER.debug("Session renewal failed, signing in.");
-                                    doPhoneSignIn(token, phoneRegion, phoneNumber);
-                                }));
-            }
+            phoneAuthViewModel.signInWithToken(token);
         } else {
             startSignupTask();
         }
     }
 
     @VisibleForTesting
-    boolean isSamePhone(Phone expected, String phoneRegion, String phoneNumber) {
-        return expected.getRegionCode().equals(phoneRegion)
-                && expected.getNumber().endsWith(phoneNumber);
-    }
-
-    private void doPhoneSignIn(String token, String phoneRegion, String phoneNumber) {
-        if (Strings.isNullOrEmpty(phoneRegion) || Strings.isNullOrEmpty(phoneNumber)) {
-            LOGGER.error("Phone number and region are required and were not found in accountDAO");
+    void onSignInStateReceived(Resource<Object> signInState) {
+        if (signInState.status == Status.SUCCESS) {
+            returnToEntryActivity();
+        } else if (signInState.status == Status.ERROR) {
             ((TextView) findViewById(R.id.textView))
-                    .setText("Phone number unknown. Please sign in again to get a new link by SMS");
-
-            return;
+                    .setText(signInState.message);
         }
-
-        compositeSubscription.add(provider.signInWithPhoneAndToken(phoneRegion, phoneNumber, token)
-                .subscribe(session -> {
-                    LOGGER.debug("TokenLoginSubscribe: Authenticated Login Complete");
-                    returnToEntryActivity();
-                }, throwable -> {
-                    LOGGER.error("Sign up failed", throwable);
-
-                    ((TextView) findViewById(R.id.textView))
-                            .setText("Error signing in: \n" + throwable.getMessage());
-                }));
     }
 
     @VisibleForTesting
@@ -148,5 +93,10 @@ public class MpPhoneAuthActivity extends DaggerAppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
+    }
+
+    @VisibleForTesting
+    void startSignupTask() {
+        taskLauncher.launchTask(this, AUTHENTICATE, null);
     }
 }

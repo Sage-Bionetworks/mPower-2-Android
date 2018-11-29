@@ -26,6 +26,8 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MpPhoneInstructionStepLayout.class);
 
+    public static final String US_REGION_CODE = "US";
+
     protected EditText phoneEntryField;
 
     // no destroy hook available to clean this up
@@ -62,12 +64,12 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
         // check whether we should create new accounts
         if (getResources().getBoolean(R.bool.should_sign_up_phone)) {
             LOGGER.debug("Doing phone sign up and sign in");
-            Phone phone = new Phone().regionCode("US").number(phoneNumber);
+            Phone phone = new Phone().regionCode(US_REGION_CODE).number(phoneNumber);
             phoneAuthObservable = provider.signUp(phone);
         } else {
             // only existing accounts can sign in
             LOGGER.debug("Doing phone sign in only");
-            phoneAuthObservable = provider.requestPhoneSignIn("US", phoneNumber);
+            phoneAuthObservable = provider.requestPhoneSignIn(US_REGION_CODE, phoneNumber);
         }
 
         compositeSubscription.add(phoneAuthObservable
@@ -114,7 +116,7 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
 
             @Override
             public void afterTextChanged(final Editable s) {
-                if (phoneEntryField.getText().length() == 10) {
+                if (phoneEntryField.getText().length() >= 10) {
                     findViewById(R.id.button_go_forward)
                             .setEnabled(true);
                 } else {
