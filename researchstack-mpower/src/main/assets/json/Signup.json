@@ -52,7 +52,8 @@
       "hideProgress": true,
       "statusBarColor": "mp_status_bar_purple",
       "behindToolbar": true,
-      "hideToolbar": true
+      "hideToolbar": true,
+      "actionEndOnNext": true
     }
   ]
 }
