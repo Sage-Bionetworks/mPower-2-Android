@@ -5,23 +5,24 @@ import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
 import org.researchstack.backbone.result.StepResult;
 import org.researchstack.backbone.step.Step;
 import org.researchstack.backbone.utils.ObservableUtils;
-import org.researchstack.backbone.utils.TextUtils.NumericFilter;
+import org.sagebionetworks.bridge.rest.exceptions.InvalidEntityException;
 import org.sagebionetworks.bridge.rest.model.Phone;
 import org.sagebionetworks.research.mpower.researchstack.R;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rx.Subscription;
 
 public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
 
-    private static final String LOG_TAG = MpPhoneInstructionStepLayout.class.getCanonicalName();
+    private static final Logger LOGGER = LoggerFactory.getLogger(MpPhoneInstructionStepLayout.class);
 
     protected EditText phoneEntryField;
 
@@ -49,16 +50,27 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
         String phoneNumber = phoneEntryField.getText().toString();
         Phone phone = new Phone().number(phoneNumber).regionCode("US");
 
+        findViewById(R.id.button_go_forward)
+                .setEnabled(false);
+
         Subscription response = provider.signUp(phone)
                 .compose(ObservableUtils.applyDefault())
                 .subscribe(dataResponse -> {
-                    if (dataResponse.isSuccess()) {
-                        Log.d("Sign Up", "Successfully signed up!");
+                    LOGGER.debug("Successfully signed up!");
+                    super.goForwardClicked(v);
+                }, throwable -> {
+                    LOGGER.warn("Sign Up error ", throwable);
+
+                    // 400 is the response for an invalid phone number
+                    if (throwable instanceof InvalidEntityException) {
+                        showOkAlertDialog(
+                                "The phone number you entered is not valid. Please enter a valid U.S. phone number.");
                     } else {
-                        Log.d("Sign Up", "Error, message: " + dataResponse.getMessage());
+                        findViewById(R.id.button_go_forward)
+                                .setEnabled(true);
+                        showOkAlertDialog("The server returned an error: \n" + throwable.getMessage());
                     }
-                }, throwable -> Log.e("Sign Up", "Throwable " + throwable.getMessage()));
-        super.goForwardClicked(v);
+                });
     }
 
     @Override
