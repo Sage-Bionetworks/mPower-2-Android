@@ -20,7 +20,7 @@
     android:shape="rectangle"   >
 
     <solid
-        android:color="@color/butterscotch_disabled" >
+        android:color="@color/butterscotch_disabled">
     </solid>
 
     <corners

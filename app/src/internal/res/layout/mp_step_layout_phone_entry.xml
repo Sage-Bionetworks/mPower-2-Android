@@ -6,23 +6,23 @@
 
     <ImageView
         android:id="@+id/mp_image_view"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_above="@+id/mp_text_container"
-        android:layout_alignParentTop="true"
-        android:paddingTop="?attr/actionBarSize"
-        android:scaleType="centerInside" />
-
-    <TextView
-        android:id="@+id/mp_instruction_title"
-        style="@style/TextAppearance.MP.Header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:paddingTop="?attr/actionBarSize"
-        android:textColor="@color/white"
-        android:visibility="gone" />
+        android:scaleType="fitCenter" />
+
+    <TextView
+        style="@style/TextAppearance.MP.Header"
+        android:id="@+id/mp_instruction_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="@color/appTextDark"
+        android:paddingBottom="@dimen/rsb_padding_medium"/>
 
     <LinearLayout
         android:id="@id/mp_text_container"
@@ -36,34 +36,37 @@
         android:paddingTop="24dp">
 
         <TextView
-            android:id="@+id/mp_instruction_text"
             style="@style/TextAppearance.MP.SubHeader"
+            android:id="@+id/mp_instruction_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
-            android:textColor="@color/white"
-            android:textColorLink="?attr/colorAccent" />
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textColor="@color/appTextDark"
+            android:textColorLink="?attr/colorAccent"
+            android:paddingBottom="@dimen/rsb_padding_medium"/>
 
         <TextView
-            android:id="@+id/mp_instruction_more_detail_text"
             style="@style/TextAppearance.MP.Body"
+            android:id="@+id/mp_instruction_more_detail_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="left"
             android:scrollbars="vertical"
-            android:textColor="@color/white"
-            android:textColorLink="?attr/colorAccent" />
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/appTextDark"
+            android:textColorLink="?attr/colorAccent"
+            android:layout_marginTop="16dp"/>
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/internal_sign_in"
+        android:id="@+id/internal_sign_in_link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/mp_entry_field"
         android:gravity="center"
-        android:text="@string/rsb_external_id_placeholder"
+        android:text="Click to sign in with External ID instead (this is only visible to internal testers)"
         android:textColor="@color/rsb_red" />
 
     <EditText

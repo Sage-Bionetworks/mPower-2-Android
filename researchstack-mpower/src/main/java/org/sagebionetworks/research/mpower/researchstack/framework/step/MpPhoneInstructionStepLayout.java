@@ -2,6 +2,8 @@ package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.EditText;
 import org.researchstack.backbone.result.StepResult;
 import org.researchstack.backbone.step.Step;
 import org.researchstack.backbone.utils.ObservableUtils;
+import org.researchstack.backbone.utils.TextUtils.NumericFilter;
 import org.sagebionetworks.bridge.rest.model.Phone;
 import org.sagebionetworks.research.mpower.researchstack.R;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
@@ -61,6 +64,7 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
     @Override
     public void initialize(Step step, StepResult result) {
         validateAndSetMpStartTaskStep(step);
+        super.initialize(step, result);
 
         // for internal builds
         View v = findViewById(R.id.internal_sign_in_link);
@@ -68,7 +72,28 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
             v.setOnClickListener(this::onInternalSignInClick);
         }
 
-        super.initialize(step, result);
+        phoneEntryField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
+                // no-op
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+                //no-op
+            }
+
+            @Override
+            public void afterTextChanged(final Editable s) {
+                if (phoneEntryField.getText().length() == 10) {
+                    findViewById(R.id.button_go_forward)
+                            .setEnabled(true);
+                } else {
+                    findViewById(R.id.button_go_forward)
+                            .setEnabled(false);
+                }
+            }
+        });
     }
 
     void onInternalSignInClick(View v) {
@@ -86,6 +111,8 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
     @Override
     public void connectStepUi(int titleRId, int textRId, int imageRId, int detailRId) {
         super.connectStepUi(titleRId, textRId, imageRId, detailRId);
+        findViewById(R.id.button_go_forward)
+                .setEnabled(false);
         phoneEntryField = findViewById(R.id.mp_entry_field);
     }
 
