@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
 
+import org.researchstack.backbone.DataResponse;
 import org.researchstack.backbone.result.StepResult;
 import org.researchstack.backbone.step.Step;
 import org.researchstack.backbone.utils.ObservableUtils;
@@ -18,13 +19,17 @@ import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvide
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Subscription;
+import rx.Observable;
+import rx.subscriptions.CompositeSubscription;
 
 public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MpPhoneInstructionStepLayout.class);
 
     protected EditText phoneEntryField;
+
+    // no destroy hook available to clean this up
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     private MpPhoneInstructionStep mpPhoneInstructionStep;
 
@@ -48,18 +53,30 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
     public void goForwardClicked(View v) {
         MpDataProvider provider = MpDataProvider.getInstance();
         String phoneNumber = phoneEntryField.getText().toString();
-        Phone phone = new Phone().number(phoneNumber).regionCode("US");
 
         findViewById(R.id.button_go_forward)
                 .setEnabled(false);
 
-        Subscription response = provider.signUp(phone)
+        Observable<DataResponse> phoneAuthObservable;
+
+        // check whether we should create new accounts
+        if (getResources().getBoolean(R.bool.should_sign_up_phone)) {
+            LOGGER.debug("Doing phone sign up and sign in");
+            Phone phone = new Phone().regionCode("US").number(phoneNumber);
+            phoneAuthObservable = provider.signUp(phone);
+        } else {
+            // only existing accounts can sign in
+            LOGGER.debug("Doing phone sign in only");
+            phoneAuthObservable = provider.requestPhoneSignIn("US", phoneNumber);
+        }
+
+        compositeSubscription.add(phoneAuthObservable
                 .compose(ObservableUtils.applyDefault())
                 .subscribe(dataResponse -> {
-                    LOGGER.debug("Successfully signed up!");
+                    LOGGER.debug("Successfully signed up or in!");
                     super.goForwardClicked(v);
                 }, throwable -> {
-                    LOGGER.warn("Sign Up error ", throwable);
+                    LOGGER.warn("Sign up or in error ", throwable);
 
                     // 400 is the response for an invalid phone number
                     if (throwable instanceof InvalidEntityException) {
@@ -70,7 +87,7 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
                                 .setEnabled(true);
                         showOkAlertDialog("The server returned an error: \n" + throwable.getMessage());
                     }
-                });
+                }));
     }
 
     @Override
@@ -78,7 +95,7 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
         validateAndSetMpStartTaskStep(step);
         super.initialize(step, result);
 
-        // for internal builds
+        // for internal builds, enable external id sign in
         View v = findViewById(R.id.internal_sign_in_link);
         if (v != null) {
             v.setOnClickListener(this::onInternalSignInClick);

@@ -23,7 +23,7 @@
       "identifier": "signup_enter_phone",
       "type": "mpPhoneInstruction",
       "text": "Let's get started",
-      "detailText": "Please enter your phone number so we can see if you have an existing account. \n\nWe will not store your phone number until you have completed the Consent step of this study.\n",
+      "detailText": "Please enter your phone number so we can see if you have an existing account.\n\nWe will not use your phone number for anything else until you have completed the Consent step of this study",
       "textColor": "white",
       "backgroundColor": "mp_onboarding_purple",
       "image": "ic_phonebook",

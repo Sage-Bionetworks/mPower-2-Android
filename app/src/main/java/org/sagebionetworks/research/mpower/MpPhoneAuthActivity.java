@@ -7,20 +7,17 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
+import android.widget.TextView;
 
 import com.google.common.base.Strings;
 
 import org.researchstack.backbone.ResearchStack;
-import org.researchstack.backbone.factory.IntentFactory;
-import org.researchstack.backbone.task.Task;
 import org.sagebionetworks.bridge.android.manager.AuthenticationManager;
 import org.sagebionetworks.bridge.android.manager.dao.AccountDAO;
 import org.sagebionetworks.bridge.rest.model.Phone;
 import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
-import org.sagebionetworks.research.mpower.researchstack.framework.MpResourceManager;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
-import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +54,7 @@ public class MpPhoneAuthActivity extends DaggerAppCompatActivity {
         super.onCreate(savedInstanceState);
         LOGGER.debug("onCreate called");
 
-        setContentView(org.sagebionetworks.research.mpower.researchstack.R.layout.mp_activity_main);
+        setContentView(R.layout.mp_activity_phone_auth);
 
         handleIntent(getIntent());
     }
@@ -127,6 +124,9 @@ public class MpPhoneAuthActivity extends DaggerAppCompatActivity {
     private void doPhoneSignIn(String token, String phoneRegion, String phoneNumber) {
         if (Strings.isNullOrEmpty(phoneRegion) || Strings.isNullOrEmpty(phoneNumber)) {
             LOGGER.error("Phone number and region are required and were not found in accountDAO");
+            ((TextView) findViewById(R.id.textView))
+                    .setText("Phone number unknown. Please sign in again to get a new link by SMS");
+
             return;
         }
 
@@ -137,8 +137,8 @@ public class MpPhoneAuthActivity extends DaggerAppCompatActivity {
                 }, throwable -> {
                     LOGGER.error("Sign up failed", throwable);
 
-                    // TODO: handle errors here instead of relying on parent activity
-                    returnToEntryActivity();
+                    ((TextView) findViewById(R.id.textView))
+                            .setText("Error signing in: \n" + throwable.getMessage());
                 }));
     }
 

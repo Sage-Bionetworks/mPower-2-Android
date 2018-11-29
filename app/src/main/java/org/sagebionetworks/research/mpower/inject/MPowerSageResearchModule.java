@@ -45,7 +45,7 @@ import org.sagebionetworks.research.motor_control_module.inject.MPowerActiveStep
 import org.sagebionetworks.research.motor_control_module.inject.MtcCountdownStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.TappingCompletionStepModule;
 import org.sagebionetworks.research.motor_control_module.inject.TappingStepModule;
-import org.sagebionetworks.research.mpower.sageresearch.ui.WebConsentFragment;
+import org.sagebionetworks.research.mpower.WebConsentFragment;
 
 import dagger.Module;
 import dagger.android.AndroidInjectionModule;

@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.mpower.sageresearch.ui
+package org.sagebionetworks.research.mpower
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
@@ -66,8 +66,6 @@ import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class WebConsentFragment : DaggerFragment() {
-    private val WEB_CONSENT_URL = "https://parkinsonmpower.org/study/intro?android=true"
-
     private val LOGGER = LoggerFactory.getLogger(WebConsentFragment::class.java)
 
     companion object {
@@ -122,7 +120,10 @@ class WebConsentFragment : DaggerFragment() {
 
         fragmentLayout.consent_webview.settings.javaScriptEnabled = true
         fragmentLayout.consent_webview.addJavascriptInterface(this, "AndroidJsBridge")
-        fragmentLayout.consent_webview.loadUrl(WEB_CONSENT_URL)
+
+        val consentUrl = resources.getString(R.string.web_consent_url)
+        LOGGER.debug("Using consent url {}", consentUrl)
+        fragmentLayout.consent_webview.loadUrl(consentUrl)
 
         return fragmentLayout
     }
