@@ -75,22 +75,20 @@
                 app:layout_constraintTop_toBottomOf="@id/rs2_detail" />
 
             <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+                style="@style/Research.Gray.RoundedCornerMaterialButton"
                 android:id="@+id/rs2_step_navigation_action_add_more"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/mp_rounded_button_height"
                 android:layout_marginBottom="@dimen/margin_medium"
                 android:layout_marginEnd="@dimen/margin_large"
                 android:layout_marginStart="@dimen/margin_large"
-                android:background="@drawable/mp_round_button_white"
-                android:gravity="center"
-                android:text="Edit Triggers"
-                android:textColor="@color/appTextDark"
-                android:textSize="24sp"
+                android:text="@string/triggers_button_edit"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+                style="@style/Widget.ResearchStack.StepHeader.CancelButton"
                 android:id="@id/rs2_step_navigation_action_cancel"
                 android:layout_width="@dimen/cancel_button_width"
                 android:layout_height="0dp"

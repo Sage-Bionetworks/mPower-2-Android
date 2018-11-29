@@ -17,6 +17,7 @@ import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity;
 import org.sagebionetworks.research.mpower.sageresearch.archive.TappingResultArchiveFactory;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
 import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment;
+import org.sagebionetworks.research.mpower.tracking.TrackingResultArchiveFactory;
 import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.DurationFragment;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AbstractResultArchiveFactory.ResultArchiveFactory;
@@ -85,8 +86,9 @@ public abstract class MPowerUserModule {
             TappingResultArchiveFactory tappingResultArchiveFactory,
             FileResultArchiveFactory fileResultArchiveFactory,
             AnswerResultArchiveFactory answerResultArchiveFactory,
+            TrackingResultArchiveFactory trackingResultArchiveFactory,
             BaseResultArchiveFactory baseResultArchiveFactory) {
-        return ImmutableList.of(tappingResultArchiveFactory, fileResultArchiveFactory,
-                answerResultArchiveFactory, baseResultArchiveFactory);
+        return ImmutableList.of(trackingResultArchiveFactory, tappingResultArchiveFactory,
+                fileResultArchiveFactory, answerResultArchiveFactory, baseResultArchiveFactory);
     }
 }

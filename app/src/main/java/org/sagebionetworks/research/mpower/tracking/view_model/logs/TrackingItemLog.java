@@ -31,6 +31,5 @@ public interface TrackingItemLog {
      * @return the Instant that is the timestamp for when this log was created.
      */
     @Nullable
-    @SerializedName("loggedDate")
-    Instant getTimestamp();
+    Instant getLoggedDate();
 }

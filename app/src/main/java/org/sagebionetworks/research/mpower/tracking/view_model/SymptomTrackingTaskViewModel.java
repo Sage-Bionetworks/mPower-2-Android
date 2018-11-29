@@ -3,6 +3,8 @@ package org.sagebionetworks.research.mpower.tracking.view_model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
@@ -13,6 +15,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog;
  * Subclass of TrackingTaskViewModel which uses LogTypes specific to the Symptoms task.
  */
 public class SymptomTrackingTaskViewModel extends TrackingTaskViewModel<SimpleTrackingItemConfig, SymptomLog> {
+
     protected SymptomTrackingTaskViewModel(
             @NonNull final TrackingStepView stepView,
             @Nullable final LoggingCollection<SymptomLog> previousLoggingCollection) {
@@ -37,5 +40,10 @@ public class SymptomTrackingTaskViewModel extends TrackingTaskViewModel<SimpleTr
     @Override
     protected SimpleTrackingItemConfig instantiateConfigFromSelection(@NonNull final TrackingItem item) {
         return SimpleTrackingItemConfig.builder().setIdentifier(item.getIdentifier()).setTrackingItem(item).build();
+    }
+
+    @Override
+    protected void proceedToInitialFragmentOnSecondRun(TrackingFragment trackingFragment) {
+        trackingFragment.replaceWithFragment(SymptomLoggingFragment.newInstance(this.stepView));
     }
 }

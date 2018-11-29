@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.tracking.widget;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
@@ -37,6 +38,20 @@ public class SymptomsLoggingUIFormItemWidget extends ConstraintLayout {
     MPowerRadioButton preMedsButton;
     @BindView(R.id.post_meds_button)
     MPowerRadioButton postMedsButton;
+
+    /**
+     * @return the color of the text when the severity radio button is selected
+     */
+    public @ColorRes int getSeveritySelectedTextColorRes() {
+        return R.color.severity_selected_text;
+    }
+
+    /**
+     * @return the color of the text when the severity radio button is not selected
+     */
+    public @ColorRes int getSeverityUnselectedTextColorRes() {
+        return R.color.severity_unselected_text;
+    }
 
     public SymptomsLoggingUIFormItemWidget(final Context context) {
         super(context);

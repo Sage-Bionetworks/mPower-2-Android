@@ -1,30 +1,31 @@
 package org.sagebionetworks.research.mpower.tracking.fragment;
 
-import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.view.View;
 
+import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.TriggersLoggingItemAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.TriggersLoggingItemViewHolder.TriggersLoggingListener;
 import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingTaskViewModel;
+import org.sagebionetworks.research.mpower.tracking.view_model.TriggersTrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import org.threeten.bp.Instant;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * A subclass of LoggingFragment specific to the Triggers Task.
  */
 public class TriggersLoggingFragment extends LoggingFragment<SimpleTrackingItemConfig, SimpleTrackingItemLog,
-        SimpleTrackingTaskViewModel, TriggersLoggingItemAdapter> {
+        TriggersTrackingTaskViewModel, TriggersLoggingItemAdapter> {
     @NonNull
     public static TriggersLoggingFragment newInstance(@NonNull StepView step) {
         TriggersLoggingFragment fragment = new TriggersLoggingFragment();
@@ -58,8 +59,9 @@ public class TriggersLoggingFragment extends LoggingFragment<SimpleTrackingItemC
                 viewModel.addLoggedElement(SimpleTrackingItemLog.builder()
                         .setIdentifier(config.getIdentifier())
                         .setText(config.getIdentifier())
-                        .setTimestamp(Instant.now())
+                        .setLoggedDate(Instant.now())
                         .build());
+                setSubmitButtonEnabled(true);
             }
 
             @Override
@@ -67,11 +69,23 @@ public class TriggersLoggingFragment extends LoggingFragment<SimpleTrackingItemC
                 adapter.setRecorded(position, false);
                 adapter.notifyItemChanged(position);
                 viewModel.removeLoggedElement(config.getIdentifier());
+                setSubmitButtonEnabled(isAnythingRecorded());
             }
         };
 
         Set<Integer> recordedIndices = getRecordedIndices(activeElements);
         return new TriggersLoggingItemAdapter(activeElements, triggersLoggingListener, recordedIndices);
+    }
+
+    /**
+     * @return true if any logging is active, false if no logging has occurred yet.
+     */
+    private boolean isAnythingRecorded() {
+        Map<String, SimpleTrackingItemConfig> activeElementsMap = viewModel.getActiveElementsById().getValue();
+        if (activeElementsMap == null) {
+            return false; // NPE guard
+        }
+        return !getRecordedIndices(SortUtil.getActiveElementsSorted(activeElementsMap)).isEmpty();
     }
 
     private Set<Integer> getRecordedIndices(List<SimpleTrackingItemConfig> activeElements) {

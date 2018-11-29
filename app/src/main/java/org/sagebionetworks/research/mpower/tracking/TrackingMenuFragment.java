@@ -2,10 +2,14 @@ package org.sagebionetworks.research.mpower.tracking;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Resources;
@@ -24,12 +28,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
 import org.sagebionetworks.research.mpower.research.MpIdentifier;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
+import org.sagebionetworks.research.mpower.viewmodel.TrackingReports;
+import org.sagebionetworks.research.mpower.viewmodel.TrackingScheduleViewModel;
+import org.sagebionetworks.research.mpower.viewmodel.TrackingSchedules;
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,6 +117,9 @@ public class TrackingMenuFragment extends Fragment {
     @BindViews({R.id.centerIconImageView, R.id.leftIconImageView, R.id.rightIconImageView})
     protected List<ImageView> imageViews;
 
+    @BindViews({R.id.center, R.id.left, R.id.right})
+    protected List<View> taskContainers;
+
     @BindViews({R.id.centerIconCheckmark, R.id.leftIconCheckmark, R.id.rightIconCheckmark})
     protected List<ImageView> checkMarkImageViews;
 
@@ -117,7 +128,13 @@ public class TrackingMenuFragment extends Fragment {
 
     @Inject
     StudyBurstViewModel.Factory studyBurstViewModelFactory;
-    private @Nullable StudyBurstViewModel studyBurstViewModel;
+    @Nullable
+    private StudyBurstViewModel studyBurstViewModel;
+
+    @Inject
+    TrackingScheduleViewModel.Factory trackingViewModelFactory;
+    @Nullable
+    private TrackingScheduleViewModel trackingViewModel;
 
     private @NonNull TrackingMenuFragmentViewModel trackingMenuViewModel;
     private boolean showTracking;
@@ -137,6 +154,14 @@ public class TrackingMenuFragment extends Fragment {
         studyBurstViewModel = ViewModelProviders.of(this,
                 studyBurstViewModelFactory).get(StudyBurstViewModel.class);
         studyBurstViewModel.liveData().observe(this, this::setupMeasuringTaskCompletionState);
+        trackingViewModel = ViewModelProviders.of(this,
+                trackingViewModelFactory).get(TrackingScheduleViewModel.class);
+        trackingViewModel.scheduleLiveData().observe(this, trackingSchedules -> {
+            // No-op needed, we use these schedules passively when the user taps a tracking task.
+        });
+        trackingViewModel.reportLiveData().observe(this, trackingReports -> {
+            // No-op needed, we use these reports passively when the user taps a tracking task.
+        });
     }
 
     @Override
@@ -161,9 +186,9 @@ public class TrackingMenuFragment extends Fragment {
     }
 
     private void setIconListeners() {
-        for (int i = 0; i < this.imageViews.size(); i++) {
+        for (int i = 0; i < this.taskContainers.size(); i++) {
             final int copy = i;
-            this.imageViews.get(i).setOnClickListener(view -> {
+            taskContainers.get(i).setOnClickListener(view -> {
 
                 if (getContext() == null) {
                     return;  // Guard NPE exceptions
@@ -178,12 +203,25 @@ public class TrackingMenuFragment extends Fragment {
 
                 String taskIdentifier = this.getTaskIdentifierFromLabel(selection);
                 if (taskIdentifier != null) {
-                    @Nullable String taskGuid = findScheduleGuidForMeasuringTask(taskIdentifier);
-                    @Nullable UUID uuid = null;
+
+                    @Nullable String taskGuid = null;
+                    if (trackingMenuViewModel.getCurrentSelectedId() == R.id.tracking_tab) {
+                        taskGuid = findScheduleGuidForTrackingTask(taskIdentifier);
+                    } else if (trackingMenuViewModel.getCurrentSelectedId() == R.id.measuring_tab) {
+                        taskGuid = findScheduleGuidForMeasuringTask(taskIdentifier);
+                    }
+
+                    @NonNull UUID uuid = UUID.randomUUID();
                     if (studyBurstViewModel != null) {
                         uuid = studyBurstViewModel.createScheduleTaskRunUuid(taskGuid);
                     }
-                    launcher.launchTask(getContext(), taskIdentifier, uuid);
+
+                    @Nullable TaskResult taskResult = null;
+                    if (trackingMenuViewModel.getCurrentSelectedId() == R.id.tracking_tab) {
+                        taskResult = findPreviousTaskResultForTrackingTask(taskIdentifier, uuid);
+                    }
+
+                    launcher.launchTask(getContext(), taskIdentifier, uuid, taskResult);
                 } else {
                     LOGGER.warn("Selected Icon " + selection + " doesn't map to a task identifier");
                 }
@@ -274,8 +312,8 @@ public class TrackingMenuFragment extends Fragment {
     }
 
     /**
-     * @param measuringTaskIdentifier of the schedule guid to find
-     * @return the guid of the measuring task schedule if one can be found, null otheriwse
+     * @param measuringTaskIdentifier of the schedule guid to find.
+     * @return the guid of the measuring task schedule if one can be found, null otherwise.
      */
     private @Nullable String findScheduleGuidForMeasuringTask(@NonNull String measuringTaskIdentifier) {
         if (studyBurstViewModel == null) {
@@ -293,6 +331,78 @@ public class TrackingMenuFragment extends Fragment {
             }
         }
         LOGGER.warn("Measuring task schedule could not be found for task id " + measuringTaskIdentifier);
+        return null;
+    }
+
+    /**
+     * @param trackingTaskIdentifier of the schedule guid to find.
+     * @return the guid of the tracking task schedule if one can be found, null otherwise.
+     */
+    private @Nullable String findScheduleGuidForTrackingTask(@NonNull String trackingTaskIdentifier) {
+        if (trackingViewModel == null) {
+            return null; // Guard NPE exceptions
+        }
+        TrackingSchedules schedules = trackingViewModel.scheduleLiveData().getValue();
+        if (schedules == null) {
+            LOGGER.warn("Tracking task schedule could not be found for task id " + trackingTaskIdentifier);
+            return null;
+        }
+        switch (trackingTaskIdentifier) {
+            case TRIGGERS:
+                if (schedules.getTriggers() != null) {
+                    return schedules.getTriggers().getGuid();
+                }
+                break;
+            case SYMPTOMS:
+                if (schedules.getSymptoms() != null) {
+                    return schedules.getSymptoms().getGuid();
+                }
+                break;
+            case MEDICATION:
+                if (schedules.getMedication() != null) {
+                    return schedules.getMedication().getGuid();
+                }
+                break;
+        }
+        LOGGER.warn("Tracking task schedule could not be found for task id " + trackingTaskIdentifier);
+        return null;
+    }
+
+    /**
+     * @param trackingTaskIdentifier of the schedule guid to find.
+     * @return the guid of the tracking task schedule if one can be found, null otherwise.
+     */
+    private @Nullable TaskResult findPreviousTaskResultForTrackingTask(
+            @NonNull String trackingTaskIdentifier, @NonNull UUID taskRunUuid) {
+        if (trackingViewModel == null) {
+            return null; // Guard NPE exceptions
+        }
+        TrackingReports reports = trackingViewModel.reportLiveData().getValue();
+        if (reports == null) {
+            LOGGER.warn("Tracking task report could not be found for task id " + trackingTaskIdentifier);
+            return null;
+        }
+        switch (trackingTaskIdentifier) {
+            case TRIGGERS:
+                if (reports.getTriggers() != null) {
+                    return trackingViewModel.createTaskResult(
+                            reports.getTriggers(), TRIGGERS, taskRunUuid);
+                }
+                break;
+            case SYMPTOMS:
+                if (reports.getSymptoms() != null) {
+                    return trackingViewModel.createTaskResult(
+                            reports.getSymptoms(), SYMPTOMS, taskRunUuid);
+                }
+                break;
+            case MEDICATION:
+                if (reports.getMedication() != null) {
+                    return trackingViewModel.createTaskResult(
+                            reports.getMedication(), MEDICATION, taskRunUuid);
+                }
+                break;
+        }
+        LOGGER.warn("Previous tracking task result could not be found for task id " + trackingTaskIdentifier);
         return null;
     }
 

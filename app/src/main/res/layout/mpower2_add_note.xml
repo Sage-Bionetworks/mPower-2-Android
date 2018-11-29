@@ -23,6 +23,7 @@
         app:layout_constraintTop_toBottomOf="@+id/rs2_step_navigation_action_backward" />
 
     <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+        style="@style/Research.ImageButton"
         android:id="@+id/rs2_step_navigation_action_backward"
         android:layout_width="@dimen/back_button_width"
         android:layout_height="0dp"
