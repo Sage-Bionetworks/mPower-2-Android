@@ -79,7 +79,6 @@ class WebConsentFragment : DaggerFragment() {
 
     override fun onAttach(context: Context?) {
         AndroidSupportInjection.inject(this)
-
         super.onAttach(context)
 
         // same scope as BridgeAccessFragment to get same instance
@@ -90,7 +89,6 @@ class WebConsentFragment : DaggerFragment() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
-
         val fragmentLayout = inflater.inflate(R.layout.web_consent_fragment, container, false)
         fragmentLayout.consent_webview.webViewClient = object : WebViewClient() {
 
@@ -144,11 +142,11 @@ class WebConsentFragment : DaggerFragment() {
     }
 
     fun onWebViewLoading() {
-        consent_webview.visibility = INVISIBLE
+        consent_webview?.visibility = INVISIBLE
     }
 
     fun onWebViewLoadingFinished() {
-        consent_webview.visibility = VISIBLE
+        consent_webview?.visibility = VISIBLE
     }
 
     fun onWebViewReceiveError(url: String?, errorCode: Int, description: String?) {
