@@ -10,9 +10,9 @@
       "detailText": "A Parkinson's Disease Research Study",
       "textColor": "white",
       "backgroundColor": "mp_onboarding_purple",
-      "image": "placeholder_image",
+      "image": "ic_welcome",
       "imageColor": "bpBlue",
-      "scaleType": "FIT",
+      "scaleType": "FIT_CENTER",
       "buttonText": "Next",
       "hideProgress": true,
       "statusBarColor": "mp_status_bar_purple",
@@ -22,8 +22,8 @@
     {
       "identifier": "signup_enter_phone",
       "type": "mpPhoneInstruction",
-      "text": "Enter your mobile phone number",
-      "detailText": "To receive a link to login into the mPower app, enter your mobile phone number.",
+      "text": "Let's get started",
+      "detailText": "Please enter your phone number so we can see if you have an existing account.\n\nWe will not use your phone number for anything else until you have completed the Consent step of this study",
       "textColor": "white",
       "backgroundColor": "mp_onboarding_purple",
       "image": "ic_phonebook",
@@ -41,17 +41,19 @@
       "identifier": "message_sent",
       "type": "mpInstruction",
       "text": "Your link is on its way!",
-      "detailText": "We sent you a link vs SMS text to",
+      "detailText": "We sent you a link to verify your identity via SMS text message to",
+      "footnote": "This link will expire in 24 hours, so be sure to tap on the link in your messages soon!",
       "textColor": "white",
       "backgroundColor": "mp_onboarding_purple",
-      "image": "placeholder_image",
-      "imageColor": "bpBlue",
+      "image": "ic_sms_mobile",
+      "imageColor": "mpCompleteBg",
       "scaleType": "FIT",
       "buttonText": "Next",
       "hideProgress": true,
       "statusBarColor": "mp_status_bar_purple",
       "behindToolbar": true,
-      "hideToolbar": true
+      "hideToolbar": true,
+      "actionEndOnNext": true
     }
   ]
 }

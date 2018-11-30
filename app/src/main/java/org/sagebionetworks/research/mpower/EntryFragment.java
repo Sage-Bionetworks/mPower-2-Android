@@ -35,19 +35,23 @@ package org.sagebionetworks.research.mpower;
 import android.content.Intent;
 
 import org.sagebionetworks.bridge.android.access.BridgeAccessFragment;
-import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
-import org.sagebionetworks.research.mpower.sageresearch.ui.WebConsentFragment;
+import org.sagebionetworks.bridge.android.manager.AuthenticationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 public class EntryFragment extends BridgeAccessFragment {
     private static final Logger LOGGER = LoggerFactory.getLogger(EntryFragment.class);
 
+    @Inject
+    AuthenticationManager authenticationManager;
+
     @Override
     public void onRequireAuthentication() {
-        LOGGER.debug("Showing ExternalIdSignInActivity");
+        LOGGER.debug("Showing MpPhoneAuthActivity");
 
-        startActivity(new Intent(getContext(), ExternalIdSignInActivity.class));
+        startActivity(new Intent(getContext(), MpPhoneAuthActivity.class));
     }
 
     @Override
@@ -62,6 +66,16 @@ public class EntryFragment extends BridgeAccessFragment {
     @Override
     public void onAccessGranted() {
         LOGGER.debug("Showing MainFragment");
+
+        // requires participants to have clinical_consent data group
+        // web consent fragment itself uses a feature flag to determine where participants are sent
+        if (getResources().getBoolean(R.bool.require_clinical_consent)
+                && !authenticationManager.getUserSessionInfo()
+                .getDataGroups().contains("clinical_consent")) {
+            LOGGER.info("clinical_consent data group required, even for consented users");
+            onRequireConsent();
+            return;
+        }
 
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.container, new MainFragment())

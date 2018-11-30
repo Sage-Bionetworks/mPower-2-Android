@@ -30,18 +30,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.mpower.sageresearch.ui
+package org.sagebionetworks.research.mpower
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.support.annotation.AnyThread
 import android.support.annotation.RequiresApi
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
@@ -50,18 +53,19 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.web_consent_fragment.consent_webview
+import kotlinx.android.synthetic.main.web_consent_fragment.view.consent_webview
 import org.json.JSONObject
 import org.sagebionetworks.bridge.android.access.BridgeAccessState
 import org.sagebionetworks.bridge.android.access.BridgeAccessViewModel
 import org.sagebionetworks.bridge.android.access.Resource
 import org.sagebionetworks.bridge.android.access.Resource.Status
 import org.sagebionetworks.bridge.rest.model.SharingScope
+import org.sagebionetworks.research.mpower.sageresearch.R
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class WebConsentFragment : DaggerFragment() {
-    private val WEB_CONSENT_URL = "https://parkinsonmpower.org/study/intro?android=true"
-
     private val LOGGER = LoggerFactory.getLogger(WebConsentFragment::class.java)
 
     companion object {
@@ -87,10 +91,18 @@ class WebConsentFragment : DaggerFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
 
-        val myWebView = WebView(context)
+        val fragmentLayout = inflater.inflate(R.layout.web_consent_fragment, container, false)
+        fragmentLayout.consent_webview.webViewClient = object : WebViewClient() {
 
-        // used only for debugging
-        myWebView.webViewClient = object : WebViewClient() {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                super.onPageStarted(view, url, favicon)
+                onWebViewLoading()
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                onWebViewLoadingFinished()
+            }
 
             override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
                 super.onReceivedError(view, errorCode, description, failingUrl)
@@ -106,13 +118,14 @@ class WebConsentFragment : DaggerFragment() {
             }
         }
 
-        val webSettings = myWebView.settings
-        webSettings.javaScriptEnabled = true
-        myWebView.addJavascriptInterface(this, "AndroidJsBridge")
+        fragmentLayout.consent_webview.settings.javaScriptEnabled = true
+        fragmentLayout.consent_webview.addJavascriptInterface(this, "AndroidJsBridge")
 
-        myWebView.loadUrl(WEB_CONSENT_URL)
+        val consentUrl = resources.getString(R.string.web_consent_url)
+        LOGGER.debug("Using consent url {}", consentUrl)
+        fragmentLayout.consent_webview.loadUrl(consentUrl)
 
-        return myWebView
+        return fragmentLayout
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -130,8 +143,22 @@ class WebConsentFragment : DaggerFragment() {
                 SharingScope.fromValue(jsonObject.getString("scope")))
     }
 
+    fun onWebViewLoading() {
+        consent_webview.visibility = INVISIBLE
+    }
+
+    fun onWebViewLoadingFinished() {
+        consent_webview.visibility = VISIBLE
+    }
+
     fun onWebViewReceiveError(url: String?, errorCode: Int, description: String?) {
         LOGGER.warn("WebView received error: {} with code: {} for request: {}", description, errorCode, url)
+    }
+
+    fun onConsentLoading() {
+    }
+
+    fun onConsentError() {
     }
 
     fun onConsentUploadState(state: Resource<BridgeAccessState>?) {
