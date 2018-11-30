@@ -62,7 +62,7 @@ class DataSourceManager {
 
         @JvmStatic
         fun randomDefaultEngagementGroups(): Set<String> {
-            return defaultEngagementGroups().randomElement() ?: setOf()
+            return defaultEngagementGroups().randomElements() ?: setOf()
         }
     }
 }
@@ -148,7 +148,7 @@ data class StudyBurstConfiguration(
      * @return a randomized set of possible combinations of engagement groups.
      */
     fun randomEngagementGroups(): Set<String>? {
-        return engagementGroups?.mapNotNull { it.randomElement() }?.toSet()
+        return engagementGroups.randomElements()
     }
 
     /**
@@ -160,14 +160,21 @@ data class StudyBurstConfiguration(
 }
 
 /**
- * @return a random element in the set if any exist
+ * @return a new set from combining a random element of each of the subsets if any exist
  */
-fun <T> Set<T>?.randomElement(): T? {
+fun <T> Set<Set<T>>?.randomElements(): Set<T>? {
     if (this == null) {
         return null
     }
     if (isEmpty()) {
         return null
     }
-    return elementAt(Random().nextInt(size))
+    val random = Random()
+    return this.flatMap { subSet->
+        if (subSet.isEmpty()) {
+            return@flatMap setOf<T>()
+        }
+        val randomIndex= random.nextInt(subSet.size)
+        setOf(subSet.elementAt(randomIndex))
+    }.toSet()
 }
