@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.sagebionetworks.research.mpower.researchstack">
 
-    <application android:allowBackup="true">
+    <application>
         <activity
             android:name="org.researchstack.backbone.ui.ActiveTaskActivity"
             android:parentActivityName="org.sagebionetworks.research.mpower.MpPhoneAuthActivity"
