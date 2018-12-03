@@ -1,0 +1,41 @@
+{
+  "identifier": "ActivityTracking",
+  "type": "activityTracking",
+  "shouldHideActions": [
+    "goBackward",
+    "skip"
+  ],
+  "progressMarkers": [],
+  "steps":[
+    {
+      "identifier": "medicationTiming",
+      "type": "medicationTiming",
+      "title":"When are you performing this activity?",
+      "text":"We would like to understand how your performance on this activity could be affected by the timing of your medication.",
+      "inputFields": [
+        {
+          "uiHint": "list",
+          "dataType": "singleChoice.string",
+          "choices": [
+            {
+              "text":"Immediately before taking Parkinson’s medication",
+              "value":"Immediately before"},
+            {
+              "text":"Just after taking Parkinson’s medication",
+              "value":"Just after"},
+            {
+              "text":"Another time",
+              "value":"Another time"
+            }
+          ]
+        }
+      ],
+      "actions": {
+        "goForward": {
+          "type": "base",
+          "buttonTitle": "Next"
+        }
+      }
+    }
+  ]
+}

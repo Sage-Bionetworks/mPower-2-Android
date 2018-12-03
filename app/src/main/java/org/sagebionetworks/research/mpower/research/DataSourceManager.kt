@@ -47,6 +47,11 @@ class DataSourceManager {
                 return arrayOf(studyBurstGroup, measuringGroup, trackingGroup)
             }
 
+        /**
+         * @property parkinsonsDataGroup the data group that is given to users who have been diagnosed with parksions
+         */
+        val parkinsonsDataGroup = "parkinsons"
+
         fun installedGroup(forIdentifier: String): ActivityGroup? {
             return installedGroups.firstOrNull { it.identifier == forIdentifier }
         }
