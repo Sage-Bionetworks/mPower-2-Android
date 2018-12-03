@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="icon_width">68dp</dimen>
-    <dimen name="margin_xxlarge">68dp</dimen>
-    <dimen name="margin_xlarge">42dp</dimen>
-    <dimen name="margin_large">28dp</dimen>
-    <dimen name="margin_medium">20dp</dimen>
-    <dimen name="margin_small">12dp</dimen>
-    <dimen name="margin_xsmall">8dp</dimen>
-    <dimen name="margin_xxsmall">4dp</dimen>
-
     <dimen name="back_button_width">32dp</dimen>
     <dimen name="cancel_button_width">32dp</dimen>
     <dimen name="info_button_width">32dp</dimen>
