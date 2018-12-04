@@ -44,6 +44,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.sagebionetworks.research.mobile_ui.show_step.view.FormUIStepFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.motor_control_module.R;
 import org.sagebionetworks.research.motor_control_module.result.HandSelectionResult;
@@ -56,7 +57,7 @@ import org.threeten.bp.Instant;
 
 import java.util.List;
 
-public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
+public class ShowHandSelectionStepFragment extends FormUIStepFragment {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowHandSelectionStepFragment.class);
     public static final String HAND_SELECTION_KEY = "handSelection";
 
