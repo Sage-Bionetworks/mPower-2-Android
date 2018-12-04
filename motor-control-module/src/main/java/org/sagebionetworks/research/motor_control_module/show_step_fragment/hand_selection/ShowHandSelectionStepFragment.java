@@ -76,6 +76,11 @@ public class ShowHandSelectionStepFragment extends FormUIStepFragment {
     }
 
     @Override
+    protected void initializeRecyclerView() {
+        // no-op, we do completely custom view
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
 
