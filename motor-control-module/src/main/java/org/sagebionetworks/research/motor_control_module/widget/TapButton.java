@@ -35,7 +35,8 @@ package org.sagebionetworks.research.motor_control_module.widget;
 import android.content.Context;
 import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
-import org.sagebionetworks.research.mobile_ui.R;
+
+import org.sagebionetworks.research.motor_control_module.R;
 
 public class TapButton extends AppCompatButton {
     public TapButton(final Context context) {
