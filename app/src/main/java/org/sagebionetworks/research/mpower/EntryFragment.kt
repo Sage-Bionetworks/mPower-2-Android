@@ -80,6 +80,16 @@ class EntryFragment : BridgeAccessFragment() {
                 && !(authenticationManager.userSessionInfo?.dataGroups ?: listOf()).contains("clinical_consent")
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // Due to a behavior issue in nested child fragments
+        // We must call the onActivityResult on all the children
+        for (fragment in childFragmentManager.fragments) {
+            LOGGER.info("Calling onActivityResult for fragment " + fragment.id)
+            fragment.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
     companion object {
         private val LOGGER = LoggerFactory.getLogger(EntryFragment::class.java)
     }

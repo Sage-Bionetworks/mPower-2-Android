@@ -2,14 +2,7 @@ package org.sagebionetworks.research.mpower.tracking;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION;
-import static org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS;
-import static org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING;
-import static org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR;
-import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS;
-import static org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE;
-
-import android.arch.lifecycle.Observer;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.*;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Resources;
@@ -145,16 +138,14 @@ public class TrackingMenuFragment extends Fragment {
         AndroidSupportInjection.inject(this);
         showTracking = getResources().getBoolean(R.bool.show_data_tracking);
         trackingMenuViewModel =
-                ViewModelProviders.of(this).get(TrackingMenuFragmentViewModel.class);
-        if (showTracking) {
-            trackingMenuViewModel.setSelectedId(R.id.tracking_tab);
-        } else {
+                ViewModelProviders.of(getActivity()).get(TrackingMenuFragmentViewModel.class);
+        if (!showTracking) {
             trackingMenuViewModel.setSelectedId(R.id.measuring_tab);
         }
-        studyBurstViewModel = ViewModelProviders.of(this,
+        studyBurstViewModel = ViewModelProviders.of(getActivity(),
                 studyBurstViewModelFactory).get(StudyBurstViewModel.class);
         studyBurstViewModel.liveData().observe(this, this::setupMeasuringTaskCompletionState);
-        trackingViewModel = ViewModelProviders.of(this,
+        trackingViewModel = ViewModelProviders.of(getActivity(),
                 trackingViewModelFactory).get(TrackingScheduleViewModel.class);
         trackingViewModel.scheduleLiveData().observe(this, trackingSchedules -> {
             // No-op needed, we use these schedules passively when the user taps a tracking task.
@@ -448,7 +439,7 @@ public class TrackingMenuFragment extends Fragment {
      * TrackingMenuFragmentViewModel contains data that should persist across the fragment life cycle state changes
      */
     public static class TrackingMenuFragmentViewModel extends ViewModel {
-        private int selectedId;
+        private int selectedId = R.id.tracking_tab;
         void setSelectedId(int selectedId) {
             this.selectedId = selectedId;
         }
