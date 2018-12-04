@@ -36,6 +36,8 @@
 
 package org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping;
 
+import static org.sagebionetworks.research.motor_control_module.step.HandStepHelper.JSON_PLACEHOLDER;
+
 import android.animation.Animator;
 import android.arch.lifecycle.Observer;
 import android.graphics.Paint;
@@ -56,8 +58,13 @@ import org.sagebionetworks.research.motor_control_module.R;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.HandStepUIHelper;
 import org.sagebionetworks.research.motor_control_module.show_step_view_model.ShowTappingStepViewModel;
 import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
+import org.sagebionetworks.research.motor_control_module.step.HandStepHelper.Hand;
 import org.sagebionetworks.research.motor_control_module.step_view.TappingStepView;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class ShowTappingStepFragment extends
         ShowActiveUIStepFragmentBase<TappingStepView, ShowTappingStepViewModel, TappingStepViewBinding> {
@@ -277,4 +284,21 @@ public class ShowTappingStepFragment extends
                 new int[]{topLeft[0], topLeft[1], actionButton.getWidth(), actionButton.getHeight()});
     }
     // endregion
+
+    /**
+     * @return the formatted spoken instructions with any occurrence of "%@" replaced with the hand in the step.
+     */
+    @Override
+    protected Map<String, String> formattedSpokenInstructions() {
+        Map<String, String> formatted = new HashMap<>();
+        for (Entry<String, String> entry: super.formattedSpokenInstructions().entrySet()) {
+            String entryValue = entry.getValue();
+            Hand hand = HandStepHelper.whichHand(stepView.getIdentifier());
+            if (hand != null) {
+                entryValue = entryValue.replaceAll(JSON_PLACEHOLDER, hand.toString());
+            }
+            formatted.put(entry.getKey(), entryValue);
+        }
+        return formatted;
+    }
 }
