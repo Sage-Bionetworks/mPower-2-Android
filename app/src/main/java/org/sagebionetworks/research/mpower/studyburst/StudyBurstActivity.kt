@@ -38,7 +38,7 @@ const val STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN = "StudyBurstActivity.Guid.ToRun
 
 class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
-    private val LOGGER = LoggerFactory.getLogger(StudyBurstActivity::class.java)
+    private val logger = LoggerFactory.getLogger(StudyBurstActivity::class.java)
 
     /**
      * @property studyBurstViewModel encapsulates all read/write data operations
@@ -76,7 +76,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
-        LOGGER.debug("StudyBurstActivity.onCreate()")
+        logger.debug("StudyBurstActivity.onCreate()")
         setContentView(R.layout.activity_study_burst)
 
         studyBurstRecycler.layoutManager = GridLayoutManager(this, 2)
@@ -109,10 +109,12 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
             // If there are no more items to run, the user has done all their study burst activities
             if (studyBurstAdapter?.nextItem == null) {
-                // If we don't have a study burst, this means that we should send the user to a completion task
-                // Or, if we don't have any completion tasks, we should probably leave this Activity
-                finishActivity(item.nextCompletionActivityToShow)
-                return@Observer
+                item.nextCompletionActivityToShow?.let { nextCompletionActivityToShow ->
+                    // If we don't have a study burst, and we have the next completion activity to show,
+                    // we should send the user back to the tracking tab fragment to do the completion task
+                    finishActivity(nextCompletionActivityToShow)
+                    return@Observer
+                }
             }
         }}
         viewModelObserver?.let {
@@ -124,6 +126,11 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * @param scheduleToRun upon returning to the previous screen, if null, none will be run
      */
     private fun finishActivity(scheduleToRun: ScheduledActivityEntity?) {
+        logger.info("finishActivity with $scheduleToRun")
+        // LiveData updates happen so quickly, we can sometimes get duplicate finish requests
+        if (isFinishing) {
+            return
+        }
         scheduleToRun?.let {
             val resultIntent = Intent()
             resultIntent.putExtra(STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN, it)
