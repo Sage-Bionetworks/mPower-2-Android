@@ -30,41 +30,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.mpower;
+package org.sagebionetworks.research.mpower
 
-import android.content.Intent;
+import android.content.Intent
+import org.sagebionetworks.bridge.android.access.BridgeAccessFragment
+import org.sagebionetworks.bridge.android.manager.AuthenticationManager
+import org.slf4j.LoggerFactory
+import javax.inject.Inject
 
-import org.sagebionetworks.bridge.android.access.BridgeAccessFragment;
-import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
-import org.sagebionetworks.research.mpower.sageresearch.ui.WebConsentFragment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+class EntryFragment : BridgeAccessFragment() {
 
-public class EntryFragment extends BridgeAccessFragment {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EntryFragment.class);
+    @Inject
+    lateinit var authenticationManager: AuthenticationManager
 
-    @Override
-    public void onRequireAuthentication() {
-        LOGGER.debug("Showing ExternalIdSignInActivity");
+    override fun onRequireAuthentication() {
+        LOGGER.debug("Showing MpPhoneAuthActivity")
 
-        startActivity(new Intent(getContext(), ExternalIdSignInActivity.class));
+        startActivity(Intent(context, MpPhoneAuthActivity::class.java))
     }
 
-    @Override
-    public void onRequireConsent() {
-        LOGGER.debug("Showing WebConsentFragment");
+    override fun onRequireConsent() {
+        LOGGER.debug("Showing WebConsentFragment")
 
-        getChildFragmentManager().beginTransaction()
-                .replace(R.id.container, new WebConsentFragment())
-                .commit();
+        childFragmentManager.beginTransaction()
+                .replace(R.id.container, WebConsentFragment())
+                .commit()
     }
 
-    @Override
-    public void onAccessGranted() {
-        LOGGER.debug("Showing MainFragment");
+    override fun onAccessGranted() {
+        LOGGER.debug("Showing MainFragment")
 
-        getChildFragmentManager().beginTransaction()
-                .replace(R.id.container, new MainFragment())
-                .commit();
+        if (isMissingClinicalConsent()) {
+            LOGGER.info("clinical_consent data group required, even for consented users")
+            onRequireConsent()
+            return
+        }
+
+        childFragmentManager.beginTransaction()
+                .replace(R.id.container, MainFragment())
+                .commit()
+    }
+
+    /**
+     * Requires participants to have clinical_consent data group
+     * Web consent fragment itself uses a feature flag to determine where participants are sent
+     */
+    fun isMissingClinicalConsent(): Boolean {
+        return resources.getBoolean(R.bool.require_clinical_consent)
+                && !(authenticationManager.userSessionInfo?.dataGroups ?: listOf()).contains("clinical_consent")
+    }
+
+    companion object {
+        private val LOGGER = LoggerFactory.getLogger(EntryFragment::class.java)
     }
 }

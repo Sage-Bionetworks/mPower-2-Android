@@ -31,17 +31,6 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/rsb_activity_purple"
-    tools:context=".ui.WebConsentFragment">
-
-    <WebView
-        android:id="@+id/consent_webview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></WebView>
-
-
-</FrameLayout>
+<resources>
+    <bool name="require_clinical_consent">true</bool>
+</resources>

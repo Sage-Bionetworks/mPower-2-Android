@@ -32,7 +32,10 @@
 
 package org.sagebionetworks.research.mpower.inject;
 
+import org.sagebionetworks.research.mpower.MpPhoneAuthActivity;
+
 import dagger.Module;
+import dagger.android.ContributesAndroidInjector;
 
 @Module()
 public abstract class MPowerAppModule {
@@ -42,4 +45,6 @@ public abstract class MPowerAppModule {
 //    @ContributesAndroidInjector
 //    abstract MainActivity contributeMainActivityInjector();
 
+    @ContributesAndroidInjector
+    abstract MpPhoneAuthActivity contributeMpMainActivityInjector();
 }

@@ -7,14 +7,14 @@
         <item name="alertDialogTheme">@style/Theme.MP.Dialog</item>
         <item name="android:alertDialogTheme">@style/Theme.MP.Dialog</item>
 
-        <item name="android:textColor">@color/appTextDark</item>
-        <item name="android:textColorPrimary">@color/appTextDark</item>
+        <item name="android:textColor">@color/rsb_warm_gray</item>
+        <item name="android:textColorPrimary">@color/sageResearchPrimary</item>
         <item name="android:textColorSecondary">@color/rsb_warm_gray</item>
 
         <item name="colorControlActivated">@color/sageResearchPrimaryDark</item>
         <item name="colorControlNormal">@color/sageResearchPrimary</item>
         <item name="colorPrimary">@color/sageResearchPrimary</item>
-        <item name="colorAccent">@color/appTextDark</item>
+        <item name="colorAccent">@color/sageResearchPrimaryLight</item>
         <item name="colorPrimaryDark">@color/sageResearchPrimaryDark</item>
         <item name="android:listDivider">@color/rsb_list_divider</item>
 
@@ -29,6 +29,7 @@
 
     <style name="Theme.MP.Survey">
         <item name="toolbarTheme">@style/Theme.MP.Toolbar.Main</item>
+        <item name="colorButtonNormal">@color/sageResearchPrimary</item>
         <item name="colorPrimaryDark">@color/sageResearchPrimaryDark</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
@@ -50,7 +51,7 @@
     </style>
 
     <style name="Theme.MP.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/sageResearchPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/sageResearchSecondary</item>
         <item name="android:textColor">@color/sageResearchSecondary</item>
         <item name="android:background">@android:color/white</item>
@@ -59,7 +60,7 @@
     </style>
 
     <style name="MP.ButterScotch.RoundedCornerMaterialButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:background">@drawable/mp_rounded_button_butterscotch</item>
+        <item name="android:background">@drawable/mp_rounded_button_orange</item>
         <item name="android:textColor">@color/appTextDark</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:fontFamily">@font/lato_bold</item>

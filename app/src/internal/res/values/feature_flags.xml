@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ BSD 3-Clause License
   ~
   ~ Copyright 2018  Sage Bionetworks. All rights reserved.
@@ -31,17 +30,8 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/rsb_activity_purple"
-    tools:context=".ui.WebConsentFragment">
-
-    <WebView
-        android:id="@+id/consent_webview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></WebView>
-
-
-</FrameLayout>
+<resources>
+    <string name="web_consent_url" translatable="false">https://parkinsonmpower.org/study/intro?android=true</string>
+    <bool name="should_sign_up_phone">true</bool>
+    <bool name="require_clinical_consent">false</bool>
+</resources>
