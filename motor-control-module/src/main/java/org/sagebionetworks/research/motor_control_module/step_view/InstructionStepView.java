@@ -36,6 +36,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
@@ -67,8 +68,8 @@ public class InstructionStepView extends ActiveUIStepViewBase {
                 activeUIStepView.getActions(), activeUIStepView.getTitle(), activeUIStepView.getText(),
                 activeUIStepView.getDetail(), activeUIStepView.getFootnote(), activeUIStepView.getColorTheme(),
                 activeUIStepView.getImageTheme(), activeUIStepView.getDuration(),
-                activeUIStepView.getSpokenInstructions(), activeUIStepView.isBackgroundAudioRequired(),
-                instructionStep.getIsFirstRunOnly());
+                activeUIStepView.getSpokenInstructions(), activeUIStepView.getCommands(),
+                activeUIStepView.isBackgroundAudioRequired(), instructionStep.getIsFirstRunOnly());
     }
 
     public InstructionStepView(@NonNull final String identifier,
@@ -81,10 +82,11 @@ public class InstructionStepView extends ActiveUIStepViewBase {
             @Nullable final ImageThemeView imageTheme,
             @NonNull final Duration duration,
             @NonNull final Map<String, String> spokenInstructions,
+            @NonNull final ImmutableSet<String> commands,
             final boolean isBackgroundAudioRequired,
             final boolean isFirstRunOnly) {
         super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme, duration,
-                spokenInstructions, isBackgroundAudioRequired);
+                spokenInstructions, commands, isBackgroundAudioRequired);
         this.isFirstRunOnly = isFirstRunOnly;
     }
 
