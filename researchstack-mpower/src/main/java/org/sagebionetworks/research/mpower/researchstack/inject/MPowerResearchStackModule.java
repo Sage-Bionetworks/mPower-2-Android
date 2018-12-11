@@ -1,39 +1,32 @@
 package org.sagebionetworks.research.mpower.researchstack.inject;
 
-import android.app.Activity;
 import android.content.Context;
 
 import org.researchstack.backbone.ResearchStack;
 import org.researchstack.backbone.StorageAccess;
 import org.sagebionetworks.bridge.android.di.BridgeApplicationScope;
-import org.sagebionetworks.research.mpower.researchstack.MpMainActivity;
+import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpResearchStack;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 
-import javax.inject.Singleton;
-
-import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
-import dagger.android.ActivityKey;
-import dagger.android.AndroidInjector;
-import dagger.multibindings.IntoMap;
 
-@Module(subcomponents = {MpMainActivitySubcomponent.class})
+@Module
 public abstract class MPowerResearchStackModule {
 
     public static final String PIN_CODE = "1234";
-
-    @Binds
-    @IntoMap
-    @ActivityKey(MpMainActivity.class)
-    abstract AndroidInjector.Factory<? extends Activity> bindMpMainActivityInjectorFactory(
-            MpMainActivitySubcomponent.Builder builder);
 
     @Provides
     @BridgeApplicationScope
     static MpTaskFactory provideMpTaskFactory() {
         return new MpTaskFactory();
+    }
+
+    @Provides
+    @BridgeApplicationScope
+    static MpDataProvider provideMpDataProvider() {
+        return MpDataProvider.getInstance();
     }
 
     @Provides
@@ -47,7 +40,9 @@ public abstract class MPowerResearchStackModule {
 
     /**
      * Call to mock authenticate to remove pin code auth screen for ResearchStack based activities
-     * @param context can be app or activity
+     *
+     * @param context
+     *         can be app or activity
      */
     public static void mockAuthenticate(Context context) {
         // We don't use a pin code for MPower, so just plug one in for the app to always use

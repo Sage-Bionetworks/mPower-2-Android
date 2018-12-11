@@ -30,32 +30,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.motor_control_module.widget;
+package org.sagebionetworks.research.mpower.measuring;
 
-import android.content.Context;
-import android.support.v7.widget.AppCompatButton;
-import android.util.AttributeSet;
+import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentScope;
 
-import org.sagebionetworks.research.motor_control_module.R;
+import dagger.Module;
+import dagger.android.ContributesAndroidInjector;
 
-public class TapButton extends AppCompatButton {
-    public TapButton(final Context context) {
-        super(context);
-        this.commonInit();
-    }
-
-    public TapButton(final Context context, final AttributeSet attrs) {
-        super(context, attrs);
-        this.commonInit();
-    }
-
-    public TapButton(final Context context, final AttributeSet attrs, final int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        this.commonInit();
-    }
-
-    protected void commonInit() {
-        this.setBackgroundResource(R.drawable.mpower2_tap_button);
-        this.setText(R.string.tap_button_text);
-    }
+@Module
+public abstract class MedicationTimingFragmentModule {
+    @ContributesAndroidInjector
+    @ShowStepFragmentScope
+    abstract MedicationTimingStepFragment contributeMedicationTimingStepFragmentInjector();
 }

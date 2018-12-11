@@ -3,7 +3,9 @@ package org.sagebionetworks.research.mpower.authentication;
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
@@ -12,6 +14,7 @@ import android.widget.ProgressBar;
 
 import com.google.common.base.Strings;
 
+import org.sagebionetworks.research.mpower.EntryActivity;
 import org.sagebionetworks.research.mpower.R;
 
 import javax.inject.Inject;
@@ -47,7 +50,7 @@ public class ExternalIdSignInActivity extends AppCompatActivity {
 
         externalIdSignInViewModel.getIsSignedInLiveData().observe(this, isSignedIn -> {
             if (isSignedIn) {
-                finish();
+                returnToEntryActivity();
             }
         });
 
@@ -98,5 +101,13 @@ public class ExternalIdSignInActivity extends AppCompatActivity {
     @OnCheckedChanged(R.id.skipConsent)
     void onSkipConsent(CheckBox skipConsentCheckBox) {
         externalIdSignInViewModel.setSkipConsent(skipConsentCheckBox.isChecked());
+    }
+
+    @VisibleForTesting
+    void returnToEntryActivity() {
+        Intent intent = new Intent(this, EntryActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 }
