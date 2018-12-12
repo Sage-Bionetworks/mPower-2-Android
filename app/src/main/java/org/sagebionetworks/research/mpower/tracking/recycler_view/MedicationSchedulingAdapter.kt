@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.medication_schedule.view.day_text
 import kotlinx.android.synthetic.main.medication_schedule.view.schedule_anytime
 import kotlinx.android.synthetic.main.medication_schedule.view.time_container
 import kotlinx.android.synthetic.main.medication_schedule.view.time_text
+import org.sagebionetworks.research.mobile_ui.extensions.localizedAndJoin
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.SortUtil
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
@@ -68,11 +69,11 @@ class MedicationAdapter(var items: MutableList<Schedule>, val listener: Listener
             listener.onDaySelectionPressed(schedule, position)
         }
 
-        if (schedule.everday) {
-            scheduleViewHolder.dayText.setText(R.string.medication_schedule_everyday)
+        scheduleViewHolder.dayText.text = if (schedule.everday) {
+            scheduleViewHolder.dayText.context.getString(R.string.medication_schedule_everyday)
         } else {
-            val days = SortUtil.sortDaysList(schedule.days, scheduleViewHolder.checkbox.context)
-            scheduleViewHolder.dayText.text = days.joinToString(",")
+            val days = SortUtil.sortDaysList(schedule.days, scheduleViewHolder.dayText.context)
+            days.localizedAndJoin(scheduleViewHolder.dayText.context)
         }
     }
 }

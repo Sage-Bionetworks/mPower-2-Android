@@ -32,13 +32,13 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         val ARG_TIME = "ARG_TIME"
         val ARG_DAYS = "ARG_DAYS"
 
-        fun newInstance(id: String, name: String, time: String, days: String?): MedicationDayFragment {
+        fun newInstance(id: String, name: String, time: String, days: List<String>): MedicationDayFragment {
             val fragment = MedicationDayFragment()
             val args = Bundle()
             args.putString(ARG_SCHED_ID, id)
             args.putString(ARG_NAME, name)
             args.putString(ARG_TIME, time)
-            args.putString(ARG_DAYS, days)
+            args.putStringArrayList(ARG_DAYS, ArrayList(days))
             fragment.arguments = args
             return fragment
         }
@@ -54,14 +54,14 @@ class MedicationDayFragment : AppCompatDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var days: String? = null
+        var days: ArrayList<String>? = null
         if (savedInstanceState == null) {
             val args = arguments
             if (args != null) {
                 schedId = args.getString(ARG_SCHED_ID) ?: ""
                 name = args.getString(ARG_NAME) ?: ""
                 time = args.getString(ARG_TIME) ?: ""
-                days = args.getString(ARG_DAYS)
+                selectedDays = args.getStringArrayList(ARG_DAYS) ?: mutableListOf()
             } else {
                 LOGGER.warn("No arguments found")
                 schedId = ""
@@ -72,10 +72,8 @@ class MedicationDayFragment : AppCompatDialogFragment() {
             schedId = savedInstanceState.getString(ARG_SCHED_ID) ?: ""
             name = savedInstanceState.getString(ARG_NAME) ?: ""
             time = savedInstanceState.getString(ARG_TIME) ?: ""
-            days = savedInstanceState.getString(ARG_DAYS)
+            selectedDays = savedInstanceState.getStringArrayList(ARG_DAYS) ?: mutableListOf()
         }
-
-        selectedDays = days?.split(",")?.toMutableList() ?: mutableListOf()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -88,7 +86,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         LOGGER.debug("onCreateDialog()")
 
         customView = LayoutInflater.from(activity)
-                .inflate(R.layout.dialog_medication_remove, null)
+                .inflate(R.layout.dialog_medication_day, null)
 
         return AlertDialog.Builder(context)
                 .setView(customView)
@@ -100,13 +98,17 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         LOGGER.debug("onViewCreated()")
 
         day_selection_title.text = getString(R.string.medication_day_selection_title, name, time)
+        var recycler = medication_day_recycler
+        recycler.layoutManager = LinearLayoutManager(context)
+        recycler.adapter = DayAdapter(getDays(), context!!)
+        recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         day_selection_back.setOnClickListener { _ ->
             dismiss()
         }
 
         day_selection_save.setOnClickListener { _ ->
-            listener.onDaySelected(schedId, selectedDays.joinToString(","))
+            listener.onDaySelected(schedId, selectedDays)
             dismiss()
         }
     }
@@ -116,11 +118,11 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         outState.putString(ARG_SCHED_ID, schedId)
         outState.putString(ARG_NAME, name)
         outState.putString(ARG_TIME, time)
-        outState.putString(ARG_DAYS, selectedDays.joinToString(","))
+        outState.putStringArrayList(ARG_DAYS, ArrayList(selectedDays))
     }
 
     fun getDays(): ArrayList<String> {
-        return ArrayList<String>(Arrays.asList(*resources.getStringArray(R.array.days_of_the_week)))
+        return ArrayList(Arrays.asList(*resources.getStringArray(R.array.days_of_the_week)))
     }
 
     inner class DayAdapter(val items: ArrayList<String>, val context: Context) :
@@ -158,7 +160,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
 }
 
 interface DaySelectedListener {
-    fun onDaySelected(scheduleIdentifier: String, days: String)
+    fun onDaySelected(scheduleIdentifier: String, days: List<String>)
 }
 
 class DayViewHolder(view: View) : RecyclerView.ViewHolder(view) {

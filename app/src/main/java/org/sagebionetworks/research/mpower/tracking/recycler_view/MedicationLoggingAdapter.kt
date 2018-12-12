@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.vi
 import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.undo_button
 import kotlinx.android.synthetic.main.mpower2_symptoms_logging_item.view.item_title
 import kotlinx.android.synthetic.main.mpower2_triggers_logging_item.view.checkmark
+import org.sagebionetworks.research.mobile_ui.extensions.localizedAndJoin
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingItem.TYPE.SCHEDULE
@@ -55,6 +56,7 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
         }
     }
 
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (items[position].type) {
             TITLE -> {
@@ -76,7 +78,7 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
                     scheduleHolder.timeButton.text = timeText
                     val daysText = when {
                         scheduleItem.schedule.everday -> holder.itemView.resources.getString(R.string.medication_schedule_everyday)
-                        else -> scheduleItem.schedule.days.joinToString(",")
+                        else -> scheduleItem.schedule.days.localizedAndJoin(scheduleHolder.daysLabel.context)
                     }
 
                     scheduleHolder.daysLabel.text = daysText

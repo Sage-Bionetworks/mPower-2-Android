@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import org.sagebionetworks.research.mobile_ui.extensions.localizedAndJoin
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.SortUtil
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
@@ -49,7 +50,7 @@ class MedicationReviewViewHolder(val widget: MedicationReviewWidget, private val
                 widget.context.resources.getString(R.string.medication_schedule_everyday)
             } else {
                 val sortedDays = SortUtil.sortDaysList(days, widget.context)
-                sortedDays.joinToString("")
+                sortedDays.localizedAndJoin(widget.context)
             }
 
             widget.daysLabel.visibility = View.VISIBLE
@@ -66,7 +67,7 @@ class MedicationReviewViewHolder(val widget: MedicationReviewWidget, private val
                 timesStrings.add(formatter.format(time))
             }
 
-            widget.timeLabel.text = timesStrings.joinToString(",")
+            widget.timeLabel.text = timesStrings.localizedAndJoin(widget.context)
             widget.editButton.setOnClickListener { _ -> listener.editButtonPressed(config, position) }
         }
     }

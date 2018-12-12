@@ -160,15 +160,11 @@ class MedicationSchedulingFragment :
             override fun onDaySelectionPressed(schedule: Schedule, position: Int) {
                 val formatter = DateTimeFormatter.ofPattern("h:mm a")
                 LOGGER.debug("showDaySelection()")
-                var days: String? = schedule.days.joinToString(", ")
-                if (days == "") {
-                    days = null
-                }
-
-                val dialog = MedicationDayFragment.newInstance(schedule.id, identifier, formatter.format(schedule.time), days)
+                val dialog = MedicationDayFragment.newInstance(
+                        schedule.id, identifier, formatter.format(schedule.time), schedule.days)
                 dialog.listener = object : DaySelectedListener {
-                    override fun onDaySelected(scheduleIdentifier: String, days: String) {
-                        val daysList = days.split(", ").toMutableList()
+                    override fun onDaySelected(scheduleIdentifier: String, days: List<String>) {
+                        val daysList = days.toMutableList()
                         daysList.removeAll { str -> str == "" }
                         if (daysList.size < 7 && !daysList.isEmpty()) {
                             schedule.everday = false
