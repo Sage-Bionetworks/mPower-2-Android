@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.TappingButtonIdentifier;
@@ -28,9 +29,9 @@ public class TappingStepView extends MPowerActiveUIStepView {
                            @Nullable DisplayString title, @Nullable DisplayString text, @Nullable DisplayString detail,
                            @Nullable DisplayString footnote, @Nullable ColorThemeView colorTheme, @Nullable ImageThemeView imageTheme,
                            @NonNull Duration duration, @NonNull final Map<String, String> spokenInstructions,
-                           boolean isBackgroundAudioRequired) {
+                           @NonNull final ImmutableSet<String> commands, boolean isBackgroundAudioRequired) {
         super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme,
-                duration, spokenInstructions, isBackgroundAudioRequired);
+                duration, spokenInstructions, commands, isBackgroundAudioRequired);
     }
 
     @NonNull
@@ -43,7 +44,7 @@ public class TappingStepView extends MPowerActiveUIStepView {
         return new TappingStepView(stepView.getIdentifier(), stepView.getActions(),
                 stepView.getTitle(), stepView.getText(), stepView.getDetail(), stepView.getFootnote(),
                 stepView.getColorTheme(), stepView.getImageTheme(), stepView.getDuration(),
-                stepView.getSpokenInstructions(), stepView.isBackgroundAudioRequired());
+                stepView.getSpokenInstructions(), stepView.getCommands(), stepView.isBackgroundAudioRequired());
     }
 
     @Override
