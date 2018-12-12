@@ -10,12 +10,14 @@ import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
+import java.io.Serializable;
+
 /**
  * A TrackingItem is any item that the user may select during a Tracking Task. This could be an individual symptom,
  * trigger, or medication that the user wishes to log.
  */
 @AutoValue
-public abstract class TrackingItem implements SelectionUIFormItem, Parcelable {
+public abstract class TrackingItem implements SelectionUIFormItem, Parcelable, Serializable {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract TrackingItem build();

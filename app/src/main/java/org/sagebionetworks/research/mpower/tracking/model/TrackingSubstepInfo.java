@@ -14,6 +14,7 @@ import org.sagebionetworks.research.domain.async.AsyncActionConfiguration;
 import org.sagebionetworks.research.domain.step.interfaces.UIStep;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ import java.util.Set;
  * this substep should use.
  */
 @AutoValue
-public abstract class TrackingSubstepInfo {
+public abstract class TrackingSubstepInfo implements Serializable {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract TrackingSubstepInfo build();
