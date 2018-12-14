@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.motor_control_module.step.AppStepType;
@@ -18,6 +19,7 @@ import org.sagebionetworks.research.presentation.model.implementations.ActiveUIS
 import org.sagebionetworks.research.presentation.model.interfaces.ActiveUIStepView;
 import org.threeten.bp.Duration;
 
+import java.util.List;
 import java.util.Map;
 
 public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
@@ -27,9 +29,9 @@ public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
                                   @Nullable DisplayString title, @Nullable DisplayString text, @Nullable DisplayString detail,
                                   @Nullable DisplayString footnote, @Nullable ColorThemeView colorTheme, @Nullable ImageThemeView imageTheme,
                                   @NonNull Duration duration, @NonNull final Map<String, String> spokenInstructions,
-                                  boolean isBackgroundAudioRequired) {
+                                  @NonNull final ImmutableSet<String> commands, boolean isBackgroundAudioRequired) {
         super(identifier, actions, title, text, detail, footnote, colorTheme, imageTheme,
-                duration, spokenInstructions, isBackgroundAudioRequired);
+                duration, spokenInstructions, commands, isBackgroundAudioRequired);
     }
 
     public static MPowerActiveUIStepView fromMPowerActiveUIStep(Step step, DrawableMapper mapper) {
@@ -42,7 +44,8 @@ public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
                 activeUIStepView.getActions(), activeUIStepView.getTitle(), activeUIStepView.getText(),
                 activeUIStepView.getDetail(), activeUIStepView.getFootnote(), activeUIStepView.getColorTheme(),
                 activeUIStepView.getImageTheme(), activeUIStepView.getDuration(),
-                activeUIStepView.getSpokenInstructions(), activeUIStepView.isBackgroundAudioRequired());
+                activeUIStepView.getSpokenInstructions(), activeUIStepView.getCommands(),
+                activeUIStepView.isBackgroundAudioRequired());
     }
 
     @Override
