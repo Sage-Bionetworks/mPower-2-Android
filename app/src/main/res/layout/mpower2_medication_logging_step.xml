@@ -60,6 +60,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/medication_label" />
 
             <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+                style="@style/Research.Gray.RoundedCornerMaterialButton"
                 android:id="@+id/rs2_step_navigation_action_add_more"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/mp_rounded_button_height"
@@ -67,11 +68,7 @@
                 android:layout_marginEnd="@dimen/margin_large"
                 android:layout_marginStart="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_xlarge"
-                android:background="@drawable/mp_round_button_white"
-                android:gravity="center"
-                android:textColor="@color/appTextDark"
                 android:text="@string/medication_logging_add_more"
-                android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

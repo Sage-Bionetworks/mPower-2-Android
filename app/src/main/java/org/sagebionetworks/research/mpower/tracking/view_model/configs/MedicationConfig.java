@@ -8,6 +8,7 @@ import com.google.auto.value.AutoValue;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -39,7 +40,8 @@ public abstract class MedicationConfig implements TrackingItemConfig {
     @NonNull
     public static Builder builder() {
         return new AutoValue_MedicationConfig.Builder()
-                .setSchedules(Collections.singletonList(new Schedule("0")));
+                .setSchedules(Collections.singletonList(
+                        Schedule.Companion.defaultSchedule()));
     }
 
     @NonNull

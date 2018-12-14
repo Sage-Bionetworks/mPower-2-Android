@@ -47,10 +47,12 @@ class SelectiveItemDividerDecoration(private val divider: Drawable,
             }
         }
 
-        val view = parent.getChildAt(parent.childCount - 1)
-        val viewHolder = parent.getChildViewHolder(view)
-        if (selector.shouldDrawDivider(viewHolder, null)) {
-            drawDivider(c, parent, view)
+        parent.getChildAt(parent.childCount - 1)?.let { childView ->
+            parent.getChildViewHolder(childView)?.let {viewHolder ->
+                if (selector.shouldDrawDivider(viewHolder, null)) {
+                    drawDivider(c, parent, childView)
+                }
+            }
         }
     }
 

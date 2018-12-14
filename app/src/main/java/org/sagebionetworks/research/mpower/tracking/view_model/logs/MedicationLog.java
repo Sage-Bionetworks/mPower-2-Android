@@ -8,8 +8,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule;
 import org.threeten.bp.Instant;
 
+import java.util.List;
 import java.util.Set;
 
 @AutoValue
@@ -25,6 +27,12 @@ public abstract class MedicationLog implements TrackingItemLog {
         public abstract Builder setText(@NonNull String text);
 
         @NonNull
+        public abstract Builder setDosage(@NonNull String dosage);
+
+        @NonNull
+        public abstract Builder setScheduleItems(@NonNull List<Schedule> scheduleItems);
+
+        @NonNull
         public abstract Builder setLoggedDate(@Nullable Instant loggedDate);
 
         @NonNull
@@ -32,11 +40,26 @@ public abstract class MedicationLog implements TrackingItemLog {
     }
 
     @NonNull
-    public abstract Set<MedicationTimestamp> getTimestamps();
-
-    @NonNull
     @Override
     public abstract String getText();
+
+    /**
+     * @return The timestamps to use to mark the medication as "taken".
+     */
+    @NonNull
+    public abstract Set<MedicationTimestamp> getTimestamps();
+
+    /**
+     * @return The scheduled items associated with this medication log.
+     */
+    @NonNull
+    public abstract List<Schedule> getScheduleItems();
+
+    /**
+     * @return A string answer value for the dosage.
+     */
+    @NonNull
+    public abstract String getDosage();
 
     @Nullable
     @Override

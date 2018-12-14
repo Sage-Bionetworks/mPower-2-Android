@@ -2,19 +2,21 @@ package org.sagebionetworks.research.mpower.tracking.recycler_view
 
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import kotlinx.android.synthetic.main.mpower2_medication_review_widget.view.days_label
-import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.taken_at_label
+import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.logged_date_container
+import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.logged_date_container_button_container
+import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.medication_schedule_days_label
+import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.medication_schedule_time_label
+import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.not_logged_date_container
+import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.not_logged_date_container_button_container
 import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.taken_button
 import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.time_button
 import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.undo_button
 import kotlinx.android.synthetic.main.mpower2_symptoms_logging_item.view.item_title
-import kotlinx.android.synthetic.main.mpower2_triggers_logging_item.view.checkmark
-import org.sagebionetworks.research.mobile_ui.extensions.localizedAndJoin
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingItem.TYPE.SCHEDULE
@@ -23,7 +25,14 @@ import org.sagebionetworks.research.mpower.tracking.view_model.configs.Medicatio
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
 import org.sagebionetworks.research.mpower.tracking.widget.UnderlinedButton
+import org.threeten.bp.Instant
 import org.threeten.bp.format.DateTimeFormatter
+import android.text.format.DateFormat.is24HourFormat
+import org.sagebionetworks.research.mpower.tracking.fragment.MedicationDayFragment
+import org.sagebionetworks.research.sageresearch.extensions.localizedAndJoin
+import org.threeten.bp.ZoneId
+import org.threeten.bp.format.FormatStyle
+import java.util.Locale
 
 class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingItem>,
         val logs: Map<String, MedicationLog>,
@@ -69,36 +78,52 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
             SCHEDULE -> {
                 val scheduleItem = items[position] as MedicationLoggingSchedule
                 val scheduleHolder = holder as MedicationScheduleViewHolder
-                if (scheduleItem.schedule.anytime) {
-                    holder.daysLabel.setText(R.string.medication_schedule_anytime)
-                } else {
-                    val formatter = DateTimeFormatter.ofPattern("h:mm a")
-                    val timeText = formatter.format(scheduleItem.schedule.time) +
-                            holder.itemView.resources.getString(R.string.medication_logging_time_button_suffix)
-                    scheduleHolder.timeButton.text = timeText
-                    val daysText = when {
-                        scheduleItem.schedule.everday -> holder.itemView.resources.getString(R.string.medication_schedule_everyday)
-                        else -> scheduleItem.schedule.days.localizedAndJoin(scheduleHolder.daysLabel.context)
-                    }
 
-                    scheduleHolder.daysLabel.text = daysText
+                // Setup the labels for the not logged view
+                if (scheduleItem.schedule.isAnytime()) {
+                    holder.notLoggedDaysLabel.setText(R.string.medication_schedule_anytime)
+                    holder.notLoggedTimeLabel.visibility = View.GONE
+                } else {
+                    holder.notLoggedTimeLabel.visibility = View.VISIBLE
+                    val daysText = when {
+                        scheduleItem.schedule.isDaily() -> holder.itemView.resources.getString(R.string.medication_schedule_everyday)
+                        else -> MedicationDayFragment.getDayStringSet(
+                                scheduleHolder.notLoggedDaysLabel.resources, scheduleItem.schedule.daysOfWeek)
+                                .localizedAndJoin(scheduleHolder.notLoggedDaysLabel.context)
+                    }
+                    scheduleHolder.notLoggedDaysLabel.text = daysText
                 }
 
-                // update the view to contain the correct information.
+                // Setup the labels and buttons for the view when logged
+                scheduleItem.loggedDate?.let {
+                    val formatter  =
+                            DateTimeFormatter.ofPattern("h:mm a")
+                                .withLocale(Locale.getDefault())
+                                .withZone(ZoneId.systemDefault())
+                    val timeText = formatter.format(it) +
+                            holder.itemView.resources.getString(R.string.medication_logging_time_button_suffix)
+                    scheduleHolder.timeButton.text = timeText
+                }
+
                 val loggedViewVisibility = if (scheduleItem.isLogged) View.VISIBLE else View.GONE
-                val unloggedViewVisibility = if (scheduleItem.isLogged) View.GONE else View.VISIBLE
-                scheduleHolder.checkmark.visibility = loggedViewVisibility
-                scheduleHolder.takenAtLabel.visibility = loggedViewVisibility
-                scheduleHolder.undoButton.visibility = loggedViewVisibility
-                scheduleHolder.daysLabel.visibility = unloggedViewVisibility
-                scheduleHolder.takenButton.visibility = unloggedViewVisibility
+                val notLoggedViewVisibility = if (scheduleItem.isLogged) View.GONE else View.VISIBLE
+
+                scheduleHolder.loggedContainer.visibility = loggedViewVisibility
+                scheduleHolder.loggedButtonContainer.visibility = loggedViewVisibility
+                scheduleHolder.notLoggedContainer.visibility = notLoggedViewVisibility
+                scheduleHolder.notLoggedButtonContainer.visibility = notLoggedViewVisibility
+
                 // add click- listeners to the buttons
                 scheduleHolder.takenButton.setOnClickListener { _ ->
                     listener.onTakenPressed(scheduleItem.config.identifier, scheduleItem, position)
                 }
-
                 scheduleHolder.undoButton.setOnClickListener { _ ->
                     listener.onUndoPressed(scheduleItem.config.identifier, scheduleItem, position)
+                }
+                scheduleHolder.timeButton.setOnClickListener { _ ->
+                    scheduleItem.loggedDate?.let {
+                        listener.onTimePressed(it, scheduleItem.config.identifier, scheduleItem, position)
+                    }
                 }
             }
         }
@@ -121,9 +146,10 @@ class MedicationLoggingTitle(val title: String) : MedicationLoggingItem() {
     override val type: TYPE = TITLE
 }
 
-class MedicationLoggingSchedule(val config: MedicationConfig, val schedule: Schedule, val isLogged: Boolean)
+class MedicationLoggingSchedule(val config: MedicationConfig, val schedule: Schedule, val loggedDate: Instant?)
     : MedicationLoggingItem() {
     override val type: TYPE = SCHEDULE
+    val isLogged: Boolean = loggedDate != null
 }
 
 class MedicationTitleViewHolder(view: View) : ViewHolder(view) {
@@ -131,15 +157,22 @@ class MedicationTitleViewHolder(view: View) : ViewHolder(view) {
 }
 
 class MedicationScheduleViewHolder(view: View) : ViewHolder(view) {
-    val checkmark: ImageView = view.checkmark
     val takenButton: ActionButton = view.taken_button
     val undoButton: UnderlinedButton = view.undo_button
     val timeButton: UnderlinedButton = view.time_button
-    val takenAtLabel: TextView = view.taken_at_label
-    val daysLabel: TextView = view.days_label
+
+    val notLoggedTimeLabel: TextView = view.medication_schedule_time_label
+    val notLoggedDaysLabel: TextView = view.medication_schedule_days_label
+
+    val loggedContainer: View = view.logged_date_container
+    val notLoggedContainer: View = view.not_logged_date_container
+    val loggedButtonContainer: View = view.logged_date_container_button_container
+    val notLoggedButtonContainer: View = view.not_logged_date_container_button_container
 }
 
 interface MedicationLoggingListener {
     fun onTakenPressed(medicationIdentifier: String, scheduleItem: MedicationLoggingSchedule, position: Int)
     fun onUndoPressed(medicationIdentifier: String, scheduleItem: MedicationLoggingSchedule, position: Int)
+    fun onTimePressed(currentLoggedDate: Instant, medicationIdentifier: String,
+            scheduleItem: MedicationLoggingSchedule, position: Int)
 }

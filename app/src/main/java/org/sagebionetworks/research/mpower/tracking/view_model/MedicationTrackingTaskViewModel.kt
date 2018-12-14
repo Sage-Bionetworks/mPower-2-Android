@@ -1,11 +1,14 @@
 package org.sagebionetworks.research.mpower.tracking.view_model
 
 import android.content.Context
+import android.support.annotation.NonNull
 import com.google.common.collect.ImmutableRangeSet
 import com.google.common.collect.Range
 import com.google.common.collect.RangeSet
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.SortUtil
+import org.sagebionetworks.research.mpower.tracking.fragment.MedicationLoggingFragment
+import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingItem
@@ -16,10 +19,12 @@ import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
 import org.slf4j.LoggerFactory
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
+import java.util.HashMap
 
 typealias TimeBlock = Pair<String, RangeSet<LocalTime>>
 
@@ -31,6 +36,8 @@ class MedicationTrackingTaskViewModel(context: Context,
     private val LOGGER = LoggerFactory.getLogger(MedicationTrackingTaskViewModel::class.java)
 
     private val timeBlocks: Set<TimeBlock>
+
+    private var previousLoggingCollection: LoggingCollection<MedicationLog>? = null
 
     init {
         val fiveAM = LocalTime.MIDNIGHT.plusHours(5)
@@ -52,7 +59,7 @@ class MedicationTrackingTaskViewModel(context: Context,
 
     companion object {
 
-        val MILITARY_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
+        val MILITARY_TIME_FORMATTER = Schedule.timeOfDayFormatter
 
         /**
          * Returns 'true' if the given schedule should be logged on the given date, 'false' otherwise.
@@ -61,12 +68,12 @@ class MedicationTrackingTaskViewModel(context: Context,
          * @return 'true' if the given schedule should be logged on the given date, 'false' otherwise.
          */
         fun isForToday(schedule: Schedule, today: LocalDate): Boolean {
-            if (schedule.anytime || schedule.everday) {
+            if (schedule.isAnytime() || schedule.isDaily()) {
                 return true
             }
 
-            val todayString = today.dayOfWeek.name.toLowerCase()
-            return schedule.days.contains(todayString)
+            val todayString = today.dayOfWeek.value
+            return schedule.daysOfWeek.contains(todayString)
         }
     }
 
@@ -85,6 +92,15 @@ class MedicationTrackingTaskViewModel(context: Context,
     override fun instantiateConfigFromSelection(item: TrackingItem): MedicationConfig {
         return MedicationConfig.builder()
                 .setIdentifier(item.identifier)
+                .setSchedules(listOf(Schedule(Schedule.timeOfDayFormatter.format(LocalTime.MIDNIGHT))))
+                .build()
+    }
+
+    open protected fun instantiateConfigFromLog(log: MedicationLog): MedicationConfig {
+        return MedicationConfig.builder()
+                .setIdentifier(log.identifier)
+                .setSchedules(log.scheduleItems)
+                .setDosage(log.dosage)
                 .build()
     }
 
@@ -100,15 +116,16 @@ class MedicationTrackingTaskViewModel(context: Context,
         val sortedConfigs = SortUtil.getActiveElementsSorted(activeElementsById.value!!)
         for (config in sortedConfigs) {
             val schedules = config.schedules.filter { schedule ->
-                schedule.anytime
-                        || (isForToday(schedule, today) && timeBlock.second.contains(schedule.time))
+                schedule.isAnytime()
+                        || (isForToday(schedule, today) &&
+                        timeBlock.second.contains(schedule.getLocalTimeOfDay() ?: LocalTime.now()))
             }
 
             if (!schedules.isEmpty()) {
                 items.add(MedicationLoggingTitle(config.identifier + " " + config.dosage))
                 items.addAll(schedules.map { schedule ->
-                    val isLogged = isLogged(config, schedule, timeBlock.first)
-                    MedicationLoggingSchedule(config, schedule, isLogged)
+                    val logDate = applicableLoggedDate(config, schedule, timeBlock.first)
+                    MedicationLoggingSchedule(config, schedule, logDate)
                 })
             }
         }
@@ -131,15 +148,16 @@ class MedicationTrackingTaskViewModel(context: Context,
         val sortedConfigs = SortUtil.getActiveElementsSorted(activeElementsById.value!!)
         for (config in sortedConfigs) {
             val missedSchedules = config.schedules.filter { schedule ->
-                !schedule.anytime && isForToday(schedule, now.toLocalDate()) && missedRange.contains(
-                        schedule.time) && !isLogged(config, schedule, timeBlock.first)
+                !schedule.isAnytime() && isForToday(schedule, now.toLocalDate()) &&
+                        missedRange.contains(schedule.getLocalTimeOfDay() ?: LocalTime.now()) &&
+                        !isLogged(config, schedule, timeBlock.first)
             }
 
             if (!missedSchedules.isEmpty()) {
                 missedItems.add(MedicationLoggingTitle(config.identifier + " " + config.dosage))
                 missedItems.addAll(missedSchedules.map { schedule ->
-                    val isLogged = isLogged(config, schedule, timeBlock.first)
-                    MedicationLoggingSchedule(config, schedule, isLogged)
+                    val logDate = applicableLoggedDate(config, schedule, timeBlock.first)
+                    MedicationLoggingSchedule(config, schedule, logDate)
                 })
             }
         }
@@ -169,16 +187,43 @@ class MedicationTrackingTaskViewModel(context: Context,
      * 'false' otherwise
      */
     private fun isLogged(config: MedicationConfig, schedule: Schedule, timeBlockName: String): Boolean {
+        return applicableLoggedDate(config, schedule, timeBlockName) != null
+    }
+
+    /**
+     * Returns log date if there is a log representing the given MedicationConfig logged for the given Schedule.
+     * null otherwise
+     * @param config the MedicationConfig to check for logs for.
+     * @param schedule the Schedule to check for a log for.
+     * @param timeBlock the string representation of the timeblock the user is currently in
+     * (e.g. morning, afternoon, evening, night)
+     * @return 'true' if there is a log representing the given MedicationConfig logged for the given Schedule.
+     * 'false' otherwise
+     */
+    fun applicableLoggedDate(config: MedicationConfig, schedule: Schedule, timeBlockName: String): Instant? {
         val log = loggedElementsById.value!![config.identifier]
         val expectedTimeOfDay = when {
-            schedule.anytime -> timeBlockName
+            schedule.isAnytime() -> timeBlockName
             else -> {
-                MILITARY_TIME_FORMATTER.format(schedule.time)
+                MILITARY_TIME_FORMATTER.format(schedule.getLocalTimeOfDay())
             }
         }
 
         val timestamps = log?.timestamps
-        return timestamps?.any { timestamp -> timestamp.timeOfDay == expectedTimeOfDay } ?: false
+        return timestamps?.lastOrNull { timestamp -> timestamp.timeOfDay == expectedTimeOfDay }?.loggedDate
+    }
+
+    override fun proceedToInitialFragmentOnSecondRun(trackingFragment: TrackingFragment<*, *, *>) {
+        trackingFragment.replaceWithFragment(MedicationLoggingFragment.newInstance(this.stepView))
+    }
+
+    override fun setupModelFromPreviousCollection(previousLoggingCollection: LoggingCollection<MedicationLog>) {
+        // For previous med logging collections, we need to pass more information to create the config
+        val activeElements = HashMap<String, MedicationConfig>()
+        for (log in previousLoggingCollection.items) {
+            activeElements[log.identifier] = instantiateConfigFromLog(log)
+        }
+        activeElementsById.value = activeElements
     }
 }
 

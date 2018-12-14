@@ -29,9 +29,9 @@ import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.slf4j.LoggerFactory
 import org.threeten.bp.DateTimeUtils
 import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.zone.ZoneRulesException
 import java.util.Calendar
 
 class MedicationSchedulingFragment :
@@ -80,8 +80,8 @@ class MedicationSchedulingFragment :
         val content = SpannableString(getString(R.string.remove_medication))
         content.setSpan(UnderlineSpan(), 0, str.length, 0)
         detail.text = content
-        detail.setOnClickListener(::onRemoveMedicationClicked)
-        navigationActionBar.setActionButtonClickListener { actionButton ->
+        detail.setOnClickListener { onRemoveMedicationClicked() }
+        navigationActionBar.setActionButtonClickListener { _ ->
             val viewModelValue = viewModel.activeElementsById.value
                     ?: return@setActionButtonClickListener
             var configs = SortUtil.getActiveElementsSorted(viewModelValue)
@@ -102,6 +102,9 @@ class MedicationSchedulingFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        config?.dosage?.let {
+            dosage_input.setText(it)
+        }
         dosage_input.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
@@ -139,11 +142,13 @@ class MedicationSchedulingFragment :
                     ZoneId.of("Z")
                 }
 
-                cal.time = DateTimeUtils.toDate(schedule.time.atDate(LocalDate.now()).toInstant(zoneId))
+                schedule.getLocalTimeOfDay()?.let {
+                    cal.time = DateTimeUtils.toDate(it.atDate(LocalDate.now()).toInstant(zoneId))
+                }
                 val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hours, minutes ->
                     cal.set(Calendar.HOUR, hours)
                     cal.set(Calendar.MINUTE, minutes)
-                    schedule.time = DateTimeUtils.toZonedDateTime(cal).toLocalTime()
+                    schedule.setLocalTimeOfDay(DateTimeUtils.toZonedDateTime(cal).toLocalTime())
                     val configUnwrapped = config ?: return@OnTimeSetListener
                     val schedules = configUnwrapped.schedules.toMutableList()
                     schedules[position] = schedule
@@ -161,20 +166,10 @@ class MedicationSchedulingFragment :
                 val formatter = DateTimeFormatter.ofPattern("h:mm a")
                 LOGGER.debug("showDaySelection()")
                 val dialog = MedicationDayFragment.newInstance(
-                        schedule.id, identifier, formatter.format(schedule.time), schedule.days)
+                        identifier, formatter.format(schedule.getLocalTimeOfDay()), schedule.daysOfWeek)
                 dialog.listener = object : DaySelectedListener {
-                    override fun onDaySelected(scheduleIdentifier: String, days: List<String>) {
-                        val daysList = days.toMutableList()
-                        daysList.removeAll { str -> str == "" }
-                        if (daysList.size < 7 && !daysList.isEmpty()) {
-                            schedule.everday = false
-                            schedule.days = daysList
-                        } else {
-                            schedule.everday = true
-                            schedule.days = arrayListOf()
-                        }
-
-                        schedule.days = daysList
+                    override fun onDaySelected(scheduleName: String, days: Set<Int>) {
+                        schedule.daysOfWeek = days
                         val configUnwrapped = config ?: return
                         val index: Int = configUnwrapped.schedules.indexOf(schedule)
                         val schedules = configUnwrapped.schedules.toMutableList()
@@ -190,17 +185,17 @@ class MedicationSchedulingFragment :
 
             override fun onAnytimeSet(schedule: Schedule, anytime: Boolean, position: Int) {
                 val configUnwrapped = config ?: return
-                val schedules = configUnwrapped.schedules.toMutableList()
-                val iterator = schedules.iterator()
-                while (iterator.hasNext()) {
-                    val subSchedule = iterator.next()
-                    if (subSchedule.id != subSchedule.id) {
-                        iterator.remove()
-                    }
+
+                if (anytime) {
+                    schedule.timeOfDay = null
+                    schedule.daysOfWeek = Schedule.dailySet
+                } else {
+                    schedule.setLocalTimeOfDay(LocalTime.MIDNIGHT)
+                    schedule.daysOfWeek = Schedule.dailySet
                 }
 
-                schedule.anytime = anytime
-                val updatedConfig = configUnwrapped.toBuilder().setSchedules(mutableListOf(schedule)).build()
+                val updatedConfig = configUnwrapped.toBuilder()
+                        .setSchedules(mutableListOf(schedule)).build()
                 viewModel.addConfig(updatedConfig)
                 // All of the schedules may have change so we refresh the adapter.
                 Handler(Looper.getMainLooper()).post {
@@ -212,7 +207,7 @@ class MedicationSchedulingFragment :
             }
         }
 
-        val schedules = config?.schedules?.toMutableList() ?: mutableListOf()
+        val schedules = config?.schedules?.toMutableList() ?: mutableListOf(Schedule("0"))
         return MedicationAdapter(schedules, listener)
     }
 
@@ -223,8 +218,7 @@ class MedicationSchedulingFragment :
     private fun addSchedule() {
         val configUnwrapped = config ?: return
         val schedules = configUnwrapped.schedules.toMutableList()
-        val newSchedule = Schedule(
-                schedules.size.toString())
+        val newSchedule = Schedule(schedules.size.toString())
         schedules.add(newSchedule)
         adapter.addSchedule(newSchedule)
         val updatedConfig = configUnwrapped.toBuilder().setSchedules(schedules).build()
@@ -235,7 +229,7 @@ class MedicationSchedulingFragment :
         navigationActionBar.setForwardButtonEnabled(config?.isConfigured ?: false)
     }
 
-    private fun onRemoveMedicationClicked(view: View) {
+    private fun onRemoveMedicationClicked() {
         val dialog = MedicationRemoveFragment.newInstance(
                 identifier, object : MedicationRemoveListener {
             override fun onRemoveMedicationConfirmed() {

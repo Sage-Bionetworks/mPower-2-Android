@@ -79,14 +79,17 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
         if (previousLoggingCollection == null) {
             activeElementsById.setValue(new HashMap<>());
         } else {
-            Map<String, ConfigType> activeElements = new HashMap<>();
-            for (LogType log : previousLoggingCollection.getItems()) {
-                String identifier = log.getIdentifier();
-                activeElements.put(identifier, instantiateConfigFromSelection(trackingItemsById.get(identifier)));
-            }
-
-            activeElementsById.setValue(activeElements);
+            setupModelFromPreviousCollection(previousLoggingCollection);
         }
+    }
+
+    protected void setupModelFromPreviousCollection(@NonNull LoggingCollection<LogType> previousLoggingCollection) {
+        Map<String, ConfigType> activeElements = new HashMap<>();
+        for (LogType log : previousLoggingCollection.getItems()) {
+            String identifier = log.getIdentifier();
+            activeElements.put(identifier, instantiateConfigFromSelection(trackingItemsById.get(identifier)));
+        }
+        activeElementsById.setValue(activeElements);
     }
 
     public void proceedToInitialFragment(TrackingFragment trackingFragment) {

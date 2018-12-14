@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking.fragment
 
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.ViewCompat
@@ -12,6 +13,7 @@ import kotlinx.android.synthetic.main.mpower2_medication_logging_step.missed_med
 import kotlinx.android.synthetic.main.mpower2_medication_logging_step.missed_medication_recycler_view
 import kotlinx.android.synthetic.main.mpower2_medication_logging_step.rs2_step_navigation_action_add_more
 import kotlinx.android.synthetic.main.mpower2_medication_logging_step.rs2_step_navigation_action_cancel
+import kotlinx.android.synthetic.main.mpower2_medication_logging_step.rs2_step_navigation_action_bar
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction
 import org.sagebionetworks.research.mpower.R
@@ -29,11 +31,13 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationTi
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
 import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.slf4j.LoggerFactory
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.ZoneId
-import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.zone.ZoneRulesException
+import java.util.Calendar
+import java.util.Date
 
 /**
  * The fragment in which a user enters which medications have been taken and at what times, for a given day.
@@ -53,13 +57,47 @@ class MedicationLoggingFragment : TrackingFragment<MedicationConfig, MedicationL
     }
 
     private inner class Listener(private val isCurrent: Boolean) : MedicationLoggingListener {
+        override fun onTimePressed(currentLoggedDate: Instant, medicationIdentifier: String,
+                scheduleItem: MedicationLoggingSchedule, position: Int) {
+            val calendar = Calendar.getInstance()
+            calendar.time = Date(currentLoggedDate.toEpochMilli())
+            TimePickerDialog(context,
+                    { _, hour, minute ->
+                        calendar.set(Calendar.HOUR_OF_DAY, hour)
+                        calendar.set(Calendar.MINUTE, minute)
+                        val newLoggedDate = Instant.ofEpochMilli(calendar.timeInMillis)
+                        viewModel.loggedElementsById.value?.let { logMap ->
+                            logMap[medicationIdentifier]?.toBuilder()
+                                ?.setLoggedDate(newLoggedDate)
+                                ?.build()?.let {
+                                viewModel.addLoggedElement(it)
+                                val recyclerView = if (isCurrent) medication_recycler_view else missed_medication_recycler_view
+                                val updatedScheduleItem = MedicationLoggingSchedule(
+                                        scheduleItem.config, scheduleItem.schedule, newLoggedDate)
+                                (recyclerView.adapter as MedicationLoggingAdapter).updateItem(updatedScheduleItem, position)
+                            }
+                        }
+                    },
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE), false).show()
+        }
+
         override fun onTakenPressed(medicationIdentifier: String, scheduleItem: MedicationLoggingSchedule, position: Int) {
             val now = LocalDateTime.now()
+            var dosage = ""
+            var scheduleItems = mutableListOf<Schedule>()
+            viewModel.activeElementsById.value?.let {
+                dosage = it[medicationIdentifier]?.dosage ?: dosage
+                scheduleItems = it[medicationIdentifier]?.schedules ?: scheduleItems
+            }
             // Log is either the previous log or the a new one with the given identifier
             val log = viewModel.loggedElementsById.value!![medicationIdentifier] ?:
-            MedicationLog.builder()
-                    .setIdentifier(medicationIdentifier)
-                    .build()
+                MedicationLog.builder()
+                        .setIdentifier(medicationIdentifier)
+                        .setText(medicationIdentifier)
+                        .setScheduleItems(scheduleItems)
+                        .setDosage(dosage)
+                        .build()
 
             val zoneId = try {
                 ZoneId.systemDefault()
@@ -80,8 +118,12 @@ class MedicationLoggingFragment : TrackingFragment<MedicationConfig, MedicationL
                     .build())
 
             val recyclerView = if (isCurrent) medication_recycler_view else missed_medication_recycler_view
-            val updatedScheduleItem = MedicationLoggingSchedule(scheduleItem.config, scheduleItem.schedule, true)
+            val logDate = viewModel.applicableLoggedDate(
+                    scheduleItem.config, scheduleItem.schedule, viewModel.getTimeBlock(LocalTime.now()).first)
+            val updatedScheduleItem = MedicationLoggingSchedule(
+                    scheduleItem.config, scheduleItem.schedule, logDate)
             (recyclerView.adapter as MedicationLoggingAdapter).updateItem(updatedScheduleItem, position)
+            setSubmitButtonEnabled(true)
         }
 
         override fun onUndoPressed(medicationIdentifier: String, scheduleItem: MedicationLoggingSchedule, position: Int) {
@@ -102,12 +144,17 @@ class MedicationLoggingFragment : TrackingFragment<MedicationConfig, MedicationL
                     .build())
 
             val recyclerView = if (isCurrent) medication_recycler_view else missed_medication_recycler_view
-            val updatedScheduleItem = MedicationLoggingSchedule(scheduleItem.config, scheduleItem.schedule, false)
+            val logDate = viewModel.applicableLoggedDate(
+                    scheduleItem.config, scheduleItem.schedule, viewModel.getTimeBlock(LocalTime.now()).first)
+            val updatedScheduleItem = MedicationLoggingSchedule(
+                    scheduleItem.config, scheduleItem.schedule, logDate)
             (recyclerView.adapter as MedicationLoggingAdapter).updateItem(updatedScheduleItem, position)
+            setSubmitButtonEnabled(shouldSubmitButtonBeEnabled())
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupSubmitButton()
         val topListener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP)
         rs2_step_navigation_action_add_more.setOnClickListener { _ ->
             val fragment = MedicationReviewFragment.newInstance(stepView)
@@ -185,8 +232,51 @@ class MedicationLoggingFragment : TrackingFragment<MedicationConfig, MedicationL
 
     private fun getTimeOfDay(schedule: Schedule, now: LocalTime): String {
         return when {
-            schedule.anytime -> viewModel.getTimeBlock(now).first
-            else -> DateTimeFormatter.ofPattern("HH:mm").format(schedule.time)
+            schedule.isAnytime() -> viewModel.getTimeBlock(now).first
+            else -> schedule.timeOfDay ?: ""
         }
+    }
+
+    /**
+     * Called when the submit button is clicked.
+     * @param view that was clicked.
+     */
+    protected fun onSubmitButtonClicked(view: View) {
+        val loggingResult = viewModel.loggingCollection
+        performTaskViewModel.addStepResult(loggingResult)
+        performTaskFragment.goForward()
+    }
+
+    open protected fun setupSubmitButton() {
+        if (rs2_step_navigation_action_bar == null) {
+            return
+        }
+        setSubmitButtonEnabled(shouldSubmitButtonBeEnabled())
+        rs2_step_navigation_action_bar.forwardButton.setText(R.string.button_submit)
+        rs2_step_navigation_action_bar.forwardButton.setOnClickListener { onSubmitButtonClicked(it) }
+    }
+
+    /**
+     * @param enabled when true, submit button will be enabled, when false it will be disabled.
+     */
+    protected fun setSubmitButtonEnabled(enabled: Boolean) {
+        if (rs2_step_navigation_action_bar == null) {
+            return
+        }
+        rs2_step_navigation_action_bar.setForwardButtonEnabled(enabled)
+    }
+
+    /**
+     * @return if the user has interacted with any logging ui yet, false if they just arrived on the screen.
+     */
+    protected fun shouldSubmitButtonBeEnabled(): Boolean {
+        viewModel.loggedElementsById.value?.let {
+            for (medicationLog in it.values) {
+                if (medicationLog.loggedDate != null) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 }

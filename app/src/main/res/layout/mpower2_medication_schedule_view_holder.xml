@@ -1,83 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/margin_medium"
+    android:layout_height="@dimen/medication_logging_schedule_row_height"
     android:paddingEnd="@dimen/margin_large"
-    android:paddingStart="@dimen/margin_large"
-    android:paddingTop="@dimen/margin_medium">
+    android:paddingStart="@dimen/margin_large">
 
-    <org.sagebionetworks.research.mpower.tracking.widget.UnderlinedButton
-        android:id="@+id/time_button"
-        style="@style/Widget.MPower.TextView.UnderlinedButton"
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_xxsmall"
-        android:text="Time - Edit"
-        android:textColor="@color/royal500"
-        android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@+id/days_label"
-        app:layout_constraintEnd_toStartOf="@+id/taken_button"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/checkmark"
-        app:layout_constraintTop_toBottomOf="@+id/taken_at_label" />
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/button_container">
 
-    <TextView
-        android:id="@+id/days_label"
-        style="@style/Widget.MPower.TextView.SelectionDetail"
+        <RelativeLayout
+            android:id="@+id/logged_date_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical">
+
+            <ImageView
+                android:id="@+id/checkmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/medication_logging_taken_button"
+                app:srcCompat="@drawable/checkbox"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/checkmark"
+                android:layout_marginStart="@dimen/margin_small">
+
+                <TextView
+                    style="@style/Widget.MPower.TextView.SelectionItemTitle"
+                    android:id="@+id/taken_at_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/medication_logging_taken_at_label"
+                    android:textStyle="bold"
+                    android:paddingTop="@dimen/margin_small"
+                    android:paddingLeft="@dimen/margin_small"/>
+
+                <org.sagebionetworks.research.mpower.tracking.widget.UnderlinedButton
+                    style="@style/Research.TextButton"
+                    android:id="@+id/time_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/royal500"
+                    android:fontFamily="@font/lato_bold"
+                    android:textSize="16sp"
+                    android:gravity="left"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/not_logged_date_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Widget.MPower.TextView.SelectionItemTitle"
+                android:id="@+id/medication_schedule_time_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/medication_logging_taken_at_label"
+                android:textStyle="bold"/>
+
+            <TextView
+                style="@style/Widget.MPower.TextView.SelectionDetail"
+                android:id="@+id/medication_schedule_days_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@id/button_container"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_xxsmall"
-        android:text="Thursday"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/checkmark"
-        app:layout_constraintTop_toBottomOf="@+id/time_button" />
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true">
 
-    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
-        android:id="@+id/taken_button"
-        style="@style/MPower.RoundedCornerMaterialButton"
-        android:layout_width="@dimen/medication_logging_taken_button_width"
-        android:layout_height="@dimen/mp_rounded_button_height"
-        android:text="Taken"
-        app:layout_constraintBottom_toBottomOf="@+id/days_label"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/time_button" />
+        <FrameLayout
+            android:id="@+id/logged_date_container_button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
-    <org.sagebionetworks.research.mpower.tracking.widget.UnderlinedButton
-        android:id="@+id/undo_button"
-        style="@style/Widget.MPower.ActionButton.TriggersLogging.UnderlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/medication_logging_undo_button"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/days_label"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/taken_at_label" />
+            <org.sagebionetworks.research.mpower.tracking.widget.UnderlinedButton
+                style="@style/Research.TextButton"
+                android:id="@+id/undo_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/medication_logging_undo_button"
+                android:layout_gravity="center_vertical|end"
+                android:textColor="@color/royal500"/>
 
-    <ImageView
-        android:id="@+id/checkmark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/time_button"
-        app:layout_constraintEnd_toStartOf="@+id/time_button"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/taken_at_label"
-        app:srcCompat="@drawable/checkbox" />
+        </FrameLayout>
 
-    <TextView
-        android:id="@+id/taken_at_label"
-        style="@style/Widget.MPower.TextView.SelectionItemTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/medication_logging_taken_at_label"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/time_button"
-        app:layout_constraintStart_toStartOf="@id/time_button"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
+        <FrameLayout
+            android:id="@+id/not_logged_date_container_button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
-</android.support.constraint.ConstraintLayout>
+            <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+                android:id="@+id/taken_button"
+                style="@style/Widget.ResearchStack.NavigationActionBar.PrimaryButton"
+                android:layout_width="@dimen/medication_logging_taken_button_width"
+                android:layout_height="@dimen/mp_rounded_button_height"
+                android:text="@string/medication_logging_taken_button"
+                android:layout_gravity="center_vertical|end"/>
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+</RelativeLayout>

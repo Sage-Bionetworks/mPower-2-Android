@@ -214,8 +214,9 @@
     <string name="medication_remove_title">Are you sure you want to remove %s from your current medication list?</string>
     <string name="medication_remove_detail">Removing this medication will remove it from your Medications list. If you wish to re-add it, it will not be saved.</string>
 
-    <string name="medication_logging_time_button_suffix"> - Edit</string>
+    <string name="medication_logging_time_button_suffix">\u0020- Edit</string>
     <string name="medication_logging_taken_at_label">Taken at</string>
+    <string name="medication_logging_taken_button">Taken</string>
     <string name="medication_logging_undo_button">Undo</string>
 
     <string name="medication_logging_morning_time_block">Morning</string>
