@@ -43,7 +43,7 @@ class MedicationTimeBasedFilteringTest {
 
         init {
             val schedule = Schedule("0")
-            schedule.anytime = true
+            schedule.timeOfDay = null
 
             CONFIG_1 = MedicationConfig.builder()
                     .setIdentifier("Med1")
@@ -59,9 +59,9 @@ class MedicationTimeBasedFilteringTest {
         val CONFIG_2: MedicationConfig
 
         init {
-            val schedule = Schedule("0")
-            schedule.days = Arrays.asList("Monday", "Tuesday", "Friday")
-            schedule.time = LocalTime.MIDNIGHT.plusHours(6)
+            val schedule = Schedule(
+                    LocalTime.MIDNIGHT.plusHours(6),
+                    setOf(2, 3, 6))
 
             CONFIG_2 = MedicationConfig.builder()
                     .setIdentifier("Med2")
@@ -77,13 +77,10 @@ class MedicationTimeBasedFilteringTest {
         val CONFIG_3: MedicationConfig
 
         init {
-            val schedule1 = Schedule("0")
-            schedule1.everday = true
-            schedule1.time = LocalTime.NOON.plusHours(1)
+            val schedule1 = Schedule(LocalTime.NOON.plusHours(1))
 
-            val schedule2 = Schedule("1")
-            schedule2.days = Arrays.asList("Saturday", "Sunday")
-            schedule2.time = LocalTime.NOON.plusHours(6)
+            val schedule2 = Schedule(LocalTime.NOON.plusHours(6),
+                    setOf(7, 1))
 
             CONFIG_3 = MedicationConfig.builder()
                     .setIdentifier("Med3")
@@ -99,9 +96,7 @@ class MedicationTimeBasedFilteringTest {
         val CONFIG_4: MedicationConfig
 
         init {
-            val schedule = Schedule("0")
-            schedule.everday = true
-            schedule.time = LocalTime.MIDNIGHT.plusHours(1)
+            val schedule = Schedule(LocalTime.MIDNIGHT.plusHours(1))
 
             CONFIG_4 = MedicationConfig.builder()
                     .setIdentifier("Med4")
@@ -117,17 +112,9 @@ class MedicationTimeBasedFilteringTest {
         val CONFIG_5: MedicationConfig
 
         init {
-            val schedule1 = Schedule("0")
-            schedule1.days = Collections.singletonList("Thursday")
-            schedule1.time = LocalTime.NOON.plusHours(5).plusMinutes(30)
-
-            val schedule2 = Schedule("1")
-            schedule1.days = Collections.singletonList("Thursday")
-            schedule2.time = LocalTime.NOON.plusHours(9)
-
-            val schedule3 = Schedule("2")
-            schedule1.days = Collections.singletonList("Friday")
-            schedule2.time = LocalTime.MIDNIGHT.plusHours(2).plusMinutes(30)
+            val schedule1 = Schedule(LocalTime.NOON.plusHours(5).plusMinutes(30), setOf(4))
+            val schedule2 = Schedule(LocalTime.NOON.plusHours(9), setOf(4))
+            val schedule3 = Schedule(LocalTime.MIDNIGHT.plusHours(2).plusMinutes(30), setOf(5))
 
             CONFIG_5 = MedicationConfig.builder()
                     .setIdentifier("Med5")
@@ -211,20 +198,33 @@ class MedicationTimeBasedFilteringTest {
     @Test
     fun test_CurrentConfigs_6AM_Tuesday() {
         // September 25th, 2018 is a Tuesday.
-        val time: LocalDateTime = LocalDateTime.of(2018, Month.SEPTEMBER, 25, 5, 0)
+        val time: LocalDateTime = LocalDateTime.of(2018, Month.SEPTEMBER, 25, 6, 0)
         val timeBlock: Pair<String, RangeSet<LocalTime>> = viewModel.getTimeBlock(time.toLocalTime())
         val currentConfigs: List<MedicationLoggingItem> = viewModel.getCurrentTimeBlockMedications(timeBlock,
                 time.toLocalDate())
         val expected: List<MedicationLoggingItem> = Arrays.asList(
-                MedicationLoggingTitle("Med1"),
-                MedicationLoggingSchedule(CONFIG_1, CONFIG_1.schedules[0], false),
-                MedicationLoggingTitle("Med2"),
-                MedicationLoggingSchedule(CONFIG_2, CONFIG_2.schedules[0], false)
+                MedicationLoggingTitle("Med1 100mg"),
+                MedicationLoggingSchedule(CONFIG_1, CONFIG_1.schedules[0], null),
+                MedicationLoggingTitle("Med2 100mg"),
+                MedicationLoggingSchedule(CONFIG_2, CONFIG_2.schedules[0], null)
         )
 
-        assertEquals("Logs contained incorrect items, or items were in an incorrect order.",
-                expected, currentConfigs)
+        assertEquals(currentConfigs.size, expected.size)
+
+        assertTrue(currentConfigs[0] is MedicationLoggingTitle)
+        assertEquals((currentConfigs[0] as MedicationLoggingTitle).title, "Med1 100mg")
+
+        assertTrue(currentConfigs[1] is MedicationLoggingSchedule)
+        assertEquals((currentConfigs[1] as MedicationLoggingSchedule).config, CONFIG_1)
+        assertEquals((currentConfigs[1] as MedicationLoggingSchedule).schedule, CONFIG_1.schedules[0])
+        assertNull((currentConfigs[1] as MedicationLoggingSchedule).loggedDate)
+
+        assertTrue(currentConfigs[2] is MedicationLoggingTitle)
+        assertEquals((currentConfigs[2] as MedicationLoggingTitle).title, "Med2 100mg")
+
+        assertTrue(currentConfigs[3] is MedicationLoggingSchedule)
+        assertEquals((currentConfigs[3] as MedicationLoggingSchedule).config, CONFIG_2)
+        assertEquals((currentConfigs[3] as MedicationLoggingSchedule).schedule, CONFIG_2.schedules[0])
+        assertNull((currentConfigs[3] as MedicationLoggingSchedule).loggedDate)
     }
-
-
 }

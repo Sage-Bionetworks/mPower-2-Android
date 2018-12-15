@@ -37,6 +37,14 @@ data class Schedule(
     }
 
     /**
+     * Secondary constructor to initialize the class easier with LocalTime
+     * @param timeOfDay that will be converted and stored as a [String]
+     * @param daysOfWeek set of days that are in the schedule
+     */
+    constructor(timeOfDay: LocalTime, daysOfWeek: Set<Int> = dailySet):
+            this(timeOfDayFormatter.format(timeOfDay), daysOfWeek)
+
+    /**
      * @param localTime to convert into the Schedule data class' timeOfDay [String]
      */
     fun setLocalTimeOfDay(localTime: LocalTime) {

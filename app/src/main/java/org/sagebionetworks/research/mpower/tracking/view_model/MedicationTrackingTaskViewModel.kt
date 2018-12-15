@@ -50,7 +50,7 @@ class MedicationTrackingTaskViewModel(context: Context,
         val evening = resources.getString(R.string.medication_logging_evening_time_block)
         val night = resources.getString(R.string.medication_logging_night_time_block)
         timeBlocks = setOf(
-                Pair(morning, ImmutableRangeSet.of(Range.openClosed(fiveAM, LocalTime.NOON))),
+                Pair(morning, ImmutableRangeSet.of(Range.closed(fiveAM, LocalTime.NOON))),
                 Pair(afternoon, ImmutableRangeSet.of(Range.openClosed(LocalTime.NOON, fivePM))),
                 Pair(evening, ImmutableRangeSet.of(Range.openClosed(fivePM, tenPM))),
                 Pair(night, ImmutableRangeSet.unionOf(listOf(Range.lessThan(fiveAM), Range.atLeast(tenPM))))
