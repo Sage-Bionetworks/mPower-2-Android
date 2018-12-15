@@ -3,6 +3,7 @@ package org.sagebionetworks.research.mpower.tracking.widget;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.TextView;
 
 import org.sagebionetworks.research.mpower.R;
@@ -11,6 +12,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MedicationReviewWidget extends ConstraintLayout{
+    @BindView(R.id.medication_review_widget_root)
+    View root;
+
     @BindView(R.id.item_title)
     TextView title;
 
@@ -53,6 +57,10 @@ public class MedicationReviewWidget extends ConstraintLayout{
 
     public TextView getDaysLabel() {
         return daysLabel;
+    }
+
+    public View getRoot() {
+        return root;
     }
 
     public UnderlinedButton getEditButton() {

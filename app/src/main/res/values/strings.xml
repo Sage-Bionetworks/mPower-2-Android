@@ -230,4 +230,5 @@
     <string name="button_record">Record</string>
     <string name="button_recorded">Recorded</string>
     <string name="button_undo">Undo</string>
+    <string name="button_edit">Edit</string>
 </resources>

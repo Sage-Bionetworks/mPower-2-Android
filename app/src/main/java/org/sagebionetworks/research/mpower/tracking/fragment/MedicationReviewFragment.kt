@@ -53,7 +53,8 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationConfig, 
             }
         }
 
-        val medicationConfigs = SortUtil.getActiveElementsSorted(viewModel.activeElementsById.value!!)
+        val medicationConfigs =
+                SortUtil.getActiveElementsSorted(viewModel.activeElementsById.value!!)
         return MedicationReviewAdapter(medicationConfigs, medicationReviewListener)
     }
 

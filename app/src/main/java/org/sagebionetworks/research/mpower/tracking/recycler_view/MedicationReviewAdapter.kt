@@ -36,7 +36,7 @@ class MedicationReviewViewHolder(val widget: MedicationReviewWidget, private val
     : RecyclerView.ViewHolder(widget) {
 
     fun setContent(config: MedicationConfig, position: Int) {
-        var title = config.identifier + " " + config.dosage
+        val title = config.identifier + " " + config.dosage
         widget.title.text = title
         if (config.schedules[0].isAnytime()) {
             widget.timeLabel.setText(R.string.medication_schedule_anytime)
@@ -71,8 +71,8 @@ class MedicationReviewViewHolder(val widget: MedicationReviewWidget, private val
             }
 
             widget.timeLabel.text = timesStrings.localizedAndJoin(widget.context)
-            widget.editButton.setOnClickListener { _ -> listener.editButtonPressed(config, position) }
         }
+        widget.root.setOnClickListener { _ -> listener.editButtonPressed(config, position) }
     }
 }
 

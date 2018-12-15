@@ -78,7 +78,8 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
             refreshNextButtonEnabled();
         };
 
-        ImmutableList<SelectionUIFormItem> availableItems = ImmutableList.copyOf(SortUtil.getAvailableElementsSorted(viewModel.getAvailableElements().getValue()));
+        ImmutableList<SelectionUIFormItem> availableItems = ImmutableList.copyOf(
+                SortUtil.getAvailableElementsSorted(viewModel.getAvailableElements().getValue()));
         Set<Integer> selectedIndices = getSelectedIndices(availableItems);
         return new SelectionItemAdapter(availableItems, selectionListener, selectedIndices);
     }

@@ -90,13 +90,17 @@ class MedicationTrackingTaskViewModel(context: Context,
     }
 
     override fun instantiateConfigFromSelection(item: TrackingItem): MedicationConfig {
+        loggedElementsById.value?.get(item.identifier)?.let {
+            // If we have an existing log, we can make a default config with it's values set
+            return instantiateConfigFromLog(it)
+        }
         return MedicationConfig.builder()
                 .setIdentifier(item.identifier)
                 .setSchedules(listOf(Schedule(Schedule.timeOfDayFormatter.format(LocalTime.MIDNIGHT))))
                 .build()
     }
 
-    open protected fun instantiateConfigFromLog(log: MedicationLog): MedicationConfig {
+    private fun instantiateConfigFromLog(log: MedicationLog): MedicationConfig {
         return MedicationConfig.builder()
                 .setIdentifier(log.identifier)
                 .setSchedules(log.scheduleItems)

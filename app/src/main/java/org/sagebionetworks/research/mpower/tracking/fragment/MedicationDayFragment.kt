@@ -63,7 +63,6 @@ class MedicationDayFragment : AppCompatDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var days: ArrayList<String>? = null
         if (savedInstanceState == null) {
             val args = arguments
             if (args != null) {

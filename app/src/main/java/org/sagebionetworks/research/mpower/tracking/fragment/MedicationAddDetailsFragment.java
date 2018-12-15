@@ -34,15 +34,17 @@ public class MedicationAddDetailsFragment extends
         View result = super.onCreateView(inflater, container, savedInstanceState);
         title.setText(R.string.medication_add_details_title);
         detail.setText(R.string.medication_add_details_detail);
-        addMore.setText(R.string.medication_add_more);
-        addMore.setOnClickListener(view -> {
-            MedicationSelectionFragment fragment = MedicationSelectionFragment.newInstance(stepView);
-            replaceWithFragment(fragment);
-        });
+        if (addMore != null) {
+            addMore.setText(R.string.medication_add_more);
+            addMore.setOnClickListener(view -> {
+                MedicationSelectionFragment fragment = MedicationSelectionFragment.newInstance(stepView);
+                replaceWithFragment(fragment);
+            });
+        }
 
         navigationActionBar.setActionButtonClickListener(actionButton -> {
             if (actionButton.getId() == R.id.rs2_step_navigation_action_forward) {
-                List<MedicationConfig> unconfiguredElements = getUnconfiguredElements();
+                List<MedicationConfig> unconfiguredElements = getActiveElements();
                 if (unconfiguredElements.isEmpty()) {
                     MedicationReviewFragment fragment = MedicationReviewFragment.Companion.newInstance(stepView);
                     replaceWithFragment(fragment);
@@ -74,18 +76,15 @@ public class MedicationAddDetailsFragment extends
             adapter.notifyDataSetChanged();
         };
 
-        List<MedicationConfig> unconfiguredElements = getUnconfiguredElements();
+        List<MedicationConfig> unconfiguredElements = getActiveElements();
         return new MedicationAddDetailsAdapter(unconfiguredElements, medicationAddDetailsListener);
     }
 
-    private List<MedicationConfig> getUnconfiguredElements() {
+    private List<MedicationConfig> getActiveElements() {
         List<MedicationConfig> result = new ArrayList<>();
-        for (MedicationConfig config : SortUtil.getActiveElementsSorted(viewModel.getActiveElementsById().getValue())) {
-            if (!config.isConfigured()) {
-                result.add(config);
-            }
+        if (viewModel.getActiveElementsById().getValue() != null) {
+            result.addAll(SortUtil.getActiveElementsSorted(viewModel.getActiveElementsById().getValue()));
         }
-
         return result;
     }
 }
