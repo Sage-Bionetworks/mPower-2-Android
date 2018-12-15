@@ -258,9 +258,12 @@ public abstract class TrackingTaskViewModel<ConfigType extends TrackingItemConfi
      * @return a LiveData containing the log with the given identifier or null if there is no log with the given
      *         identifier.
      */
-    public LiveData<LogType> getLoggedElement(@NonNull String identifier) {
-        return Transformations
-                .map(loggedElementsById, elements -> loggedElementsById.getValue().get(identifier));
+    @Nullable
+    public LogType getLoggedElement(@NonNull String identifier) {
+        if (loggedElementsById.getValue() == null) {
+            return null;
+        }
+        return loggedElementsById.getValue().get(identifier);
     }
 
     /**
