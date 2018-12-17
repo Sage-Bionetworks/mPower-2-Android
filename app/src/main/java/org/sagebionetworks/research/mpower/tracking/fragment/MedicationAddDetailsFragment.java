@@ -17,6 +17,7 @@ import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MedicationAddDetailsFragment extends
         RecyclerViewTrackingFragment<MedicationConfig, MedicationLog, MedicationTrackingTaskViewModel,
@@ -58,6 +59,25 @@ public class MedicationAddDetailsFragment extends
         });
 
         return result;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Map<String, MedicationConfig> activeElementsMap =
+                viewModel.getActiveElementsById().getValue();
+        if (activeElementsMap == null) {
+            return;
+        }
+        List<MedicationConfig> sortedElements =
+                SortUtil.getActiveElementsSorted(activeElementsMap);
+        for (MedicationConfig config : sortedElements) {
+            if (!config.isConfigured()) {
+                return;  // still need to configure some elements, stay on this screen
+            }
+        }
+        replaceWithFragment(MedicationReviewFragment.Companion.newInstance(stepView));
     }
 
     @Override

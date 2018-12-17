@@ -16,6 +16,8 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.medication_dosage.dosage_input
 import kotlinx.android.synthetic.main.mpower2_logging_step.rs2_step_navigation_action_add_more
+import kotlinx.android.synthetic.main.mpower2_medication_scheduling.rs2_step_navigation_action_backward
+import org.sagebionetworks.research.domain.task.navigation.NavDirection
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.SortUtil
 import org.sagebionetworks.research.mpower.tracking.recycler_view.Listener
@@ -118,6 +120,11 @@ class MedicationSchedulingFragment :
 
             override fun afterTextChanged(p0: Editable?) {}
         })
+
+        rs2_step_navigation_action_backward.setOnClickListener { _ ->
+            // Back button will always go back to the medication add details screen
+            replaceWithFragment(MedicationAddDetailsFragment.newInstance(stepView))
+        }
 
         rs2_step_navigation_action_add_more.setOnClickListener { addSchedule() }
         setupNextButtonEnabled()

@@ -72,6 +72,7 @@ class MedicationReviewViewHolder(val widget: MedicationReviewWidget, private val
 
             widget.timeLabel.text = timesStrings.localizedAndJoin(widget.context)
         }
+        widget.editButton.setOnClickListener { _ -> listener.editButtonPressed(config, position) }
         widget.root.setOnClickListener { _ -> listener.editButtonPressed(config, position) }
     }
 }

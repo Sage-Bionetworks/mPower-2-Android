@@ -21,7 +21,7 @@ public interface TrackingItemLog {
      * Returns the text of this log.
      * @return the text of this log.
      */
-    @NonNull
+    @Nullable
     String getText();
 
     /**

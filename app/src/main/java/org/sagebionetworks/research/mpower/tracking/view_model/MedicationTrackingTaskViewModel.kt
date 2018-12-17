@@ -86,6 +86,9 @@ class MedicationTrackingTaskViewModel(context: Context,
     override fun instantiateLogForUnloggedItem(config: MedicationConfig): MedicationLog {
         return MedicationLog.builder()
                 .setIdentifier(config.identifier)
+                .setText(config.identifier)
+                .setDosage(config.dosage ?: "")
+                .setScheduleItems(config.schedules)
                 .build()
     }
 

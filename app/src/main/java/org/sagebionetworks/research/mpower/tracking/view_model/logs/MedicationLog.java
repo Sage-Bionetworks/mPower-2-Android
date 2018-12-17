@@ -24,7 +24,7 @@ public abstract class MedicationLog implements TrackingItemLog {
         public abstract Builder setIdentifier(@NonNull String identifier);
 
         @NonNull
-        public abstract Builder setText(@NonNull String text);
+        public abstract Builder setText(@Nullable String text);
 
         @NonNull
         public abstract Builder setDosage(@NonNull String dosage);
@@ -39,7 +39,7 @@ public abstract class MedicationLog implements TrackingItemLog {
         public abstract Builder setTimestamps(@NonNull Set<MedicationTimestamp> timestamps);
     }
 
-    @NonNull
+    @Nullable
     @Override
     public abstract String getText();
 

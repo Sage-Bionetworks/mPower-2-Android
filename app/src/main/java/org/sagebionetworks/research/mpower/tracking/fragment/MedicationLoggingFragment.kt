@@ -161,6 +161,7 @@ class MedicationLoggingFragment : TrackingFragment<MedicationConfig, MedicationL
             replaceWithFragment(fragment)
         }
 
+        rs2_step_navigation_action_cancel.setOnClickListener { onCancelButtonClicked() }
         ViewCompat.setOnApplyWindowInsetsListener(rs2_step_navigation_action_cancel, topListener)
         setupItemDecorations()
         medication_recycler_view.isNestedScrollingEnabled = false
@@ -278,5 +279,13 @@ class MedicationLoggingFragment : TrackingFragment<MedicationConfig, MedicationL
             }
         }
         return false
+    }
+
+    /**
+     * Called when the cancel button is clicked.
+     * @param view the cancel button view.
+     */
+    protected fun onCancelButtonClicked() {
+        this.performTaskFragment.cancelTask(false)
     }
 }

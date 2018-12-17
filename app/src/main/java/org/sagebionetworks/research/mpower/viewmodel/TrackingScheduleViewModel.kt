@@ -127,6 +127,7 @@ class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
                         medicationReportLiveData.value?.firstOrNull())
             }
             mediator.addSource(medicationReportLiveData) {
+
                 mediator.value = TrackingReports(
                         triggerReportLiveData.value?.firstOrNull(),
                         symptomReportLiveData.value?.firstOrNull(),
@@ -163,7 +164,7 @@ class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
                 var loggingCollection: LoggingCollection<*>? = null
                 try {
                     loggingCollection = gson.fromJson(json, type)
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     // No need to crash the app, user will just have to redo selection
                     logger.error(e.message)
                 }
