@@ -301,4 +301,11 @@ public class ShowTappingStepFragment extends
         }
         return formatted;
     }
+
+    @Override
+    protected void onSpeechServiceConnected() {
+        // Once the speech service is connected, we want to override the default functionality of
+        // speaking once the countdown starts, because that doesn't happen until the user taps a button.
+        textToSpeechService.forceSpeakStartCommands();
+    }
 }
