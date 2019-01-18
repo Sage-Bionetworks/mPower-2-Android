@@ -37,7 +37,6 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,13 +44,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.sagebionetworks.research.domain.result.AnswerResultType;
-import org.sagebionetworks.research.domain.result.ResultType;
-import org.sagebionetworks.research.domain.result.implementations.AnswerResultBase;
-import org.sagebionetworks.research.domain.result.interfaces.AnswerResult;
-import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
+import org.sagebionetworks.research.mobile_ui.show_step.view.FormUIStepFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowFormUIStepFragment;
 import org.sagebionetworks.research.motor_control_module.R;
 import org.sagebionetworks.research.motor_control_module.result.HandSelectionResult;
 import org.sagebionetworks.research.presentation.model.form.ChoiceInputFieldViewBase;
@@ -61,10 +55,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.threeten.bp.Instant;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ShowHandSelectionStepFragment extends ShowFormUIStepFragment {
+public class ShowHandSelectionStepFragment extends FormUIStepFragment {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowHandSelectionStepFragment.class);
     public static final String HAND_SELECTION_KEY = "handSelection";
 

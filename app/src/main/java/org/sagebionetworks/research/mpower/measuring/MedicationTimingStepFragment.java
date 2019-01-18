@@ -46,7 +46,7 @@ import android.view.ViewGroup;
 
 import org.sagebionetworks.research.domain.result.AnswerResultType;
 import org.sagebionetworks.research.domain.result.implementations.AnswerResultBase;
-import org.sagebionetworks.research.mobile_ui.show_step.view.ShowFormUIStepFragment;
+import org.sagebionetworks.research.mobile_ui.show_step.view.FormUIStepFragment;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.presentation.model.form.ChoiceInputFieldViewBase;
@@ -59,7 +59,7 @@ import org.threeten.bp.Instant;
 
 import java.util.List;
 
-public class MedicationTimingStepFragment extends ShowFormUIStepFragment {
+public class MedicationTimingStepFragment extends FormUIStepFragment {
     private static final Logger LOGGER = LoggerFactory.getLogger(MedicationTimingStepFragment.class);
     public static final String MEDICATION_TIMING_SELECTION_KEY = "medicationTiming";
 
