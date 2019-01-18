@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/margin_large">
+    android:padding="@dimen/margin_large"
+    android:foreground="?attr/selectableItemBackgroundBorderless">
 
     <TextView
         android:id="@+id/item_title"
         style="@style/Widget.MPower.TextView.SelectionSectionTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Medication Name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+    <ImageView
         android:id="@+id/chevron"
         android:layout_width="@dimen/tracking_chevron_width"
         android:layout_height="wrap_content"
-        android:background="@drawable/left_chevron"
+        android:src="@drawable/left_chevron"
         app:layout_constraintBottom_toBottomOf="@+id/item_title"
         app:layout_constraintDimensionRatio="H,1:2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/item_title" />
+
 </android.support.constraint.ConstraintLayout>

@@ -16,6 +16,8 @@ import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
+import org.sagebionetworks.research.mpower.tracking.model.TrackingSubstepInfo;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItemLog;
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
@@ -39,16 +41,20 @@ public abstract class LoggingFragment
     @NonNull
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
-        Map<String, Action> actions = this.stepView.getLoggingInfo().getActions();
-        if (actions != null && !actions.isEmpty()) {
-            Action addMore = actions.get(ActionType.ADD_MORE);
-            if (this.addMore != null) {
-                this.addMore.setText(addMore.getButtonTitle());
+        TrackingSubstepInfo loggingInfo = this.stepView.getLoggingInfo();
+        if (loggingInfo != null) {
+            Map<String, Action> actions = loggingInfo.getActions();
+            if (actions != null && !actions.isEmpty()) {
+                Action addMore = actions.get(ActionType.ADD_MORE);
+                if (this.addMore != null) {
+                    this.addMore.setText(addMore.getButtonTitle());
+                }
             }
+
+            this.title.setText(loggingInfo.getTitle());
+            this.detail.setText(loggingInfo.getDetail());
         }
 
-        this.title.setText(this.stepView.getLoggingInfo().getTitle());
-        this.detail.setText(this.stepView.getLoggingInfo().getDetail());
         if (this.addMore != null) {
             this.addMore.setOnClickListener((view) -> {
                 Fragment nextFragment = this.getNextFragment();
@@ -98,7 +104,10 @@ public abstract class LoggingFragment
     @Override
     @Nullable
     public ItemDecoration initializeItemDecoration() {
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(this.getContext(), DividerItemDecoration.VERTICAL);
+        if (getContext() == null) {
+            return null;  // Guard NPE exceptions
+        }
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         Drawable drawable = this.getResources().getDrawable(R.drawable.mpower2_logging_item_decoration);
         itemDecoration.setDrawable(drawable);
         return itemDecoration;

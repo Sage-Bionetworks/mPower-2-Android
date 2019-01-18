@@ -43,6 +43,7 @@ import com.dampcake.gson.immutable.ImmutableListAdapter
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableList
 import com.google.common.reflect.TypeToken
+import org.json.JSONException
 import org.sagebionetworks.research.domain.inject.GsonModule_ProvideGuavaImmutableTypeAdapterFactory
 import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult
@@ -51,6 +52,7 @@ import org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION
 import org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS
 import org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SymptomLog
 import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters
@@ -61,6 +63,8 @@ import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntit
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.viewmodel.ReportAndScheduleViewModel
+import org.slf4j.LoggerFactory
+import org.threeten.bp.LocalDateTime
 import java.util.UUID
 import javax.inject.Inject
 
@@ -78,6 +82,8 @@ class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
             return TrackingScheduleViewModel(scheduledActivityEntityDao, scheduleRepository, reportRepository) as T
         }
     }
+
+    private val logger = LoggerFactory.getLogger(TrackingScheduleViewModel::class.java);
 
     private var trackingSchedulesLiveData: LiveData<TrackingSchedules>? = null
     /**
@@ -121,6 +127,7 @@ class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
                         medicationReportLiveData.value?.firstOrNull())
             }
             mediator.addSource(medicationReportLiveData) {
+
                 mediator.value = TrackingReports(
                         triggerReportLiveData.value?.firstOrNull(),
                         symptomReportLiveData.value?.firstOrNull(),
@@ -146,7 +153,7 @@ class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
             when(taskId) {
                 TRIGGERS -> object : TypeToken<LoggingCollection<SimpleTrackingItemLog>>(){}.type
                 SYMPTOMS -> object : TypeToken<LoggingCollection<SymptomLog>>(){}.type
-                MEDICATION -> null // TODO: deserialize MedLog
+                MEDICATION -> object : TypeToken<LoggingCollection<MedicationLog>>(){}.type
                 else -> null
             }?.let { type ->
                 val gson = EntityTypeConverters().bridgeGsonBuilder
@@ -154,7 +161,13 @@ class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
                         .registerTypeAdapterFactory(ImmutableAdapterFactory.forGuava())
                         .create()
                 val json = gson.toJson(reportData)
-                val loggingCollection: LoggingCollection<*> = gson.fromJson(json, type)
+                var loggingCollection: LoggingCollection<*>? = null
+                try {
+                    loggingCollection = gson.fromJson(json, type)
+                } catch (e: Throwable) {
+                    // No need to crash the app, user will just have to redo selection
+                    logger.error(e.message)
+                }
                 val taskResult = TaskResultBase(taskId, taskRunUuid)
                 return taskResult.addAsyncResult(loggingCollection)
             }

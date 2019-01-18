@@ -12,8 +12,9 @@ import kotlinx.android.synthetic.main.medication_schedule.view.schedule_anytime
 import kotlinx.android.synthetic.main.medication_schedule.view.time_container
 import kotlinx.android.synthetic.main.medication_schedule.view.time_text
 import org.sagebionetworks.research.mpower.R
-import org.sagebionetworks.research.mpower.tracking.SortUtil
+import org.sagebionetworks.research.mpower.tracking.fragment.MedicationDayFragment
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
+import org.sagebionetworks.research.sageresearch.extensions.localizedAndJoin
 import org.slf4j.LoggerFactory
 import org.threeten.bp.format.DateTimeFormatter
 
@@ -47,17 +48,22 @@ class MedicationAdapter(var items: MutableList<Schedule>, val listener: Listener
 
     override fun onBindViewHolder(scheduleViewHolder: ScheduleViewHolder, position: Int) {
         val schedule = items[position]
-        scheduleViewHolder.checkbox.isChecked = schedule.anytime
+        scheduleViewHolder.checkbox.isChecked = schedule.isAnytime()
         scheduleViewHolder.checkbox.setOnCheckedChangeListener { _, isChecked ->
             listener.onAnytimeSet(schedule, isChecked, position)
         }
 
-        val visibility = if (schedule.anytime) View.GONE else View.VISIBLE
+        val visibility = if (schedule.isAnytime()) View.GONE else View.VISIBLE
         scheduleViewHolder.dayContainer.visibility = visibility
         scheduleViewHolder.timeContainer.visibility = visibility
 
-        val formatter = DateTimeFormatter.ofPattern("h:mm a")
-        scheduleViewHolder.timeText.text = formatter.format(schedule.time)
+        if (schedule.isAnytime()) {
+            scheduleViewHolder.timeText.text =
+                    scheduleViewHolder.timeText.resources.getString(R.string.medication_schedule_anytime)
+        } else {
+            val formatter = DateTimeFormatter.ofPattern("h:mm a")
+            scheduleViewHolder.timeText.text = formatter.format(schedule.getLocalTimeOfDay())
+        }
         scheduleViewHolder.timeContainer.setOnClickListener { _ ->
             LOGGER.debug("Time clicked")
             listener.onTimeSelectionPressed(schedule, position)
@@ -68,11 +74,11 @@ class MedicationAdapter(var items: MutableList<Schedule>, val listener: Listener
             listener.onDaySelectionPressed(schedule, position)
         }
 
-        if (schedule.everday) {
-            scheduleViewHolder.dayText.setText(R.string.medication_schedule_everyday)
+        scheduleViewHolder.dayText.text = if (schedule.isDaily()) {
+            scheduleViewHolder.dayText.context.getString(R.string.medication_schedule_everyday)
         } else {
-            val days = SortUtil.sortDaysList(schedule.days, scheduleViewHolder.checkbox.context)
-            scheduleViewHolder.dayText.text = days.joinToString(",")
+            MedicationDayFragment.getDayStringSet(scheduleViewHolder.dayText.resources, schedule.daysOfWeek)
+                    .localizedAndJoin(scheduleViewHolder.dayText.context)
         }
     }
 }

@@ -1,32 +1,26 @@
 package org.sagebionetworks.research.mpower.tracking.fragment;
 
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.NumberPicker.OnValueChangeListener;
 
-import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
-import org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar.ActionButtonClickListener;
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsViewHolder.MedicationAddDetailsListener;
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel;
-import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class MedicationAddDetailsFragment extends
-        RecyclerViewTrackingFragment<MedicationConfig, SimpleTrackingItemLog, MedicationTrackingTaskViewModel,
+        RecyclerViewTrackingFragment<MedicationConfig, MedicationLog, MedicationTrackingTaskViewModel,
                 MedicationAddDetailsAdapter> {
     @NonNull
     public static MedicationAddDetailsFragment newInstance(@NonNull StepView step) {
@@ -41,15 +35,17 @@ public class MedicationAddDetailsFragment extends
         View result = super.onCreateView(inflater, container, savedInstanceState);
         title.setText(R.string.medication_add_details_title);
         detail.setText(R.string.medication_add_details_detail);
-        addMore.setText(R.string.medication_add_more);
-        addMore.setOnClickListener(view -> {
-            MedicationSelectionFragment fragment = MedicationSelectionFragment.newInstance(stepView);
-            replaceWithFragment(fragment);
-        });
+        if (addMore != null) {
+            addMore.setText(R.string.medication_add_more);
+            addMore.setOnClickListener(view -> {
+                MedicationSelectionFragment fragment = MedicationSelectionFragment.newInstance(stepView);
+                replaceWithFragment(fragment);
+            });
+        }
 
         navigationActionBar.setActionButtonClickListener(actionButton -> {
             if (actionButton.getId() == R.id.rs2_step_navigation_action_forward) {
-                List<MedicationConfig> unconfiguredElements = getUnconfiguredElements();
+                List<MedicationConfig> unconfiguredElements = getActiveElements();
                 if (unconfiguredElements.isEmpty()) {
                     MedicationReviewFragment fragment = MedicationReviewFragment.Companion.newInstance(stepView);
                     replaceWithFragment(fragment);
@@ -63,6 +59,25 @@ public class MedicationAddDetailsFragment extends
         });
 
         return result;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Map<String, MedicationConfig> activeElementsMap =
+                viewModel.getActiveElementsById().getValue();
+        if (activeElementsMap == null) {
+            return;
+        }
+        List<MedicationConfig> sortedElements =
+                SortUtil.getActiveElementsSorted(activeElementsMap);
+        for (MedicationConfig config : sortedElements) {
+            if (!config.isConfigured()) {
+                return;  // still need to configure some elements, stay on this screen
+            }
+        }
+        replaceWithFragment(MedicationReviewFragment.Companion.newInstance(stepView));
     }
 
     @Override
@@ -81,18 +96,15 @@ public class MedicationAddDetailsFragment extends
             adapter.notifyDataSetChanged();
         };
 
-        List<MedicationConfig> unconfiguredElements = getUnconfiguredElements();
+        List<MedicationConfig> unconfiguredElements = getActiveElements();
         return new MedicationAddDetailsAdapter(unconfiguredElements, medicationAddDetailsListener);
     }
 
-    private List<MedicationConfig> getUnconfiguredElements() {
+    private List<MedicationConfig> getActiveElements() {
         List<MedicationConfig> result = new ArrayList<>();
-        for (MedicationConfig config : viewModel.getActiveElementsById().getValue().values()) {
-            if (!config.isConfigured()) {
-                result.add(config);
-            }
+        if (viewModel.getActiveElementsById().getValue() != null) {
+            result.addAll(SortUtil.getActiveElementsSorted(viewModel.getActiveElementsById().getValue()));
         }
-
         return result;
     }
 }

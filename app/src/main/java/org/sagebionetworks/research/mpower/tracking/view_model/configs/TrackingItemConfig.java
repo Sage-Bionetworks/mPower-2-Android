@@ -15,12 +15,6 @@ public interface TrackingItemConfig {
     String getIdentifier();
 
     /**
-     * Returns the tracking item for this config.
-     * @return the tracking item for this config.
-     */
-    TrackingItem getTrackingItem();
-
-    /**
      * Returns true if the user has configured this item, false otherwise.
      * @return true if the user has configured this item, false otherwise.
      */

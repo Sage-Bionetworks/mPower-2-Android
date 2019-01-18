@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/appTextDark"
         android:text="@string/schedule_title"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:fontFamily="@font/lato_bold"
         android:textStyle="bold"
         android:layout_margin="20dp"/>
@@ -39,22 +39,21 @@
     <LinearLayout
         android:id="@+id/time_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackgroundBorderless">
         <TextView
             android:id="@+id/time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/appTextDark"
-            android:text="N/A"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:layout_margin="20dp"/>
     </LinearLayout>
+
     <TimePicker
         android:id="@+id/schedule_time_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:timePickerMode="spinner"
         android:visibility="gone"/>
 
     <View
@@ -66,14 +65,15 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/day_container">
+        android:id="@+id/day_container"
+        android:foreground="?attr/selectableItemBackgroundBorderless">
         <TextView
             android:id="@+id/day_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/appTextDark"
-            android:text="Everyday"
-            android:textSize="16dp"
+            android:text="@string/medication_schedule_everyday"
+            android:textSize="16sp"
             android:layout_margin="20dp"/>
         <ImageView
             android:layout_width="wrap_content"

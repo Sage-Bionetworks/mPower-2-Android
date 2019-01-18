@@ -23,6 +23,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.TrackingItem
 import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -54,9 +55,18 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        refreshNextButtonEnabled();
+    }
+
+    @Override
     @NonNull
     public SelectionItemAdapter initializeAdapter() {
         SelectionItemViewHolder.SelectionListener selectionListener = (item, position) -> {
+            if (viewModel.getActiveElementsById().getValue() == null) {
+                return; // NPE guard
+            }
             if (viewModel.getActiveElementsById().getValue().containsKey(item.getIdentifier())) {
                 viewModel.itemDeselected(item);
             } else {
@@ -65,14 +75,19 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
 
             adapter.toggleSelected(position);
             adapter.notifyItemChanged(position);
+            refreshNextButtonEnabled();
         };
 
-        ImmutableList<SelectionUIFormItem> availableItems = ImmutableList.copyOf(SortUtil.getAvailableElementsSorted(viewModel.getAvailableElements().getValue()));
+        ImmutableList<SelectionUIFormItem> availableItems = ImmutableList.copyOf(
+                SortUtil.getAvailableElementsSorted(viewModel.getAvailableElements().getValue()));
         Set<Integer> selectedIndices = getSelectedIndices(availableItems);
         return new SelectionItemAdapter(availableItems, selectionListener, selectedIndices);
     }
 
     private Set<Integer> getSelectedIndices(@NonNull ImmutableList<SelectionUIFormItem> availableItems) {
+        if (viewModel.getActiveElementsById().getValue() == null) {
+            return new HashSet<>();  // NPE Guard
+        }
         Set<String> selectedIdentifiers = viewModel.getActiveElementsById().getValue().keySet();
         Set<Integer> selectedIndices = new HashSet<>();
         for (int i = 0; i < availableItems.size(); i++) {
@@ -94,4 +109,13 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
      * @return the Fragment that should replace this fragment when the forward button is pressed.
      */
     public abstract TrackingFragment<?, ?, ?> getNextFragment();
+
+    /**
+     * Refreshes the enabled state of the next button.
+     * It is enabled if we have at least 1 item selected, false otherwise.
+     */
+    protected void refreshNextButtonEnabled() {
+        Map<String, ConfigType> selectedItemsMap = viewModel.getActiveElementsById().getValue();
+        navigationActionBar.setForwardButtonEnabled(selectedItemsMap != null && !selectedItemsMap.isEmpty());
+    }
 }

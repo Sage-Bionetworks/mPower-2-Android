@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.SortUtil
+import org.sagebionetworks.research.mpower.tracking.fragment.MedicationDayFragment
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
 import org.sagebionetworks.research.mpower.tracking.widget.MedicationReviewWidget
+import org.sagebionetworks.research.sageresearch.extensions.localizedAndJoin
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 
@@ -34,29 +36,31 @@ class MedicationReviewViewHolder(val widget: MedicationReviewWidget, private val
     : RecyclerView.ViewHolder(widget) {
 
     fun setContent(config: MedicationConfig, position: Int) {
-        var title = config.identifier + " " + config.dosage
+        val title = config.identifier + " " + config.dosage
         widget.title.text = title
-        if (config.schedules[0].anytime) {
+        if (config.schedules[0].isAnytime()) {
             widget.timeLabel.setText(R.string.medication_schedule_anytime)
             widget.daysLabel.visibility = View.GONE
         } else {
-            val days: MutableList<String> = mutableListOf()
+            val days: MutableSet<Int> = mutableSetOf()
             for (schedule in config.schedules) {
-                days.addAll(schedule.days)
+                days.addAll(schedule.daysOfWeek)
             }
 
             val dayString = if (days.isEmpty()) {
                 widget.context.resources.getString(R.string.medication_schedule_everyday)
             } else {
-                val sortedDays = SortUtil.sortDaysList(days, widget.context)
-                sortedDays.joinToString("")
+                MedicationDayFragment.getDayStringSet(widget.resources, days)
+                        .localizedAndJoin(widget.context)
             }
 
             widget.daysLabel.visibility = View.VISIBLE
             widget.daysLabel.text = dayString
             val times: MutableList<LocalTime> = mutableListOf()
             for (schedule in config.schedules) {
-                times.add(schedule.time)
+                schedule.getLocalTimeOfDay()?.let {
+                    times.add(it)
+                }
             }
 
             val sortedTimes = SortUtil.sortTimesList(times)
@@ -66,9 +70,10 @@ class MedicationReviewViewHolder(val widget: MedicationReviewWidget, private val
                 timesStrings.add(formatter.format(time))
             }
 
-            widget.timeLabel.text = timesStrings.joinToString(",")
-            widget.editButton.setOnClickListener { _ -> listener.editButtonPressed(config, position) }
+            widget.timeLabel.text = timesStrings.localizedAndJoin(widget.context)
         }
+        widget.editButton.setOnClickListener { _ -> listener.editButtonPressed(config, position) }
+        widget.root.setOnClickListener { _ -> listener.editButtonPressed(config, position) }
     }
 }
 

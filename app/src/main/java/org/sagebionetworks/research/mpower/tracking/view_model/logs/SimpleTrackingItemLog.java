@@ -7,7 +7,6 @@ import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
-import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.threeten.bp.Instant;
 
 /**
@@ -32,6 +31,14 @@ public abstract class SimpleTrackingItemLog implements TrackingItemLog {
     @Nullable
     @Override
     public abstract Instant getLoggedDate();
+
+    /**
+     * Returns the text of this log.
+     * @return the text of this log.
+     */
+    @NonNull
+    @Override
+    public abstract String getText();
 
     public static Builder builder() {
         return new AutoValue_SimpleTrackingItemLog.Builder();

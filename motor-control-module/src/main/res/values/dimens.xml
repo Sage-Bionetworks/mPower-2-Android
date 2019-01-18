@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="icon_width">68dp</dimen>
+
     <dimen name="back_button_width">32dp</dimen>
     <dimen name="cancel_button_width">32dp</dimen>
     <dimen name="info_button_width">32dp</dimen>

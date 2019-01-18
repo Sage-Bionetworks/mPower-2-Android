@@ -17,11 +17,17 @@ public abstract class SimpleTrackingItemConfig implements TrackingItemConfig {
         public abstract SimpleTrackingItemConfig build();
 
         @NonNull
-        public abstract Builder setIdentifier(@NonNull String identifier);
+        public abstract Builder setTrackingItem(@NonNull TrackingItem trackingItem);
 
         @NonNull
-        public abstract Builder setTrackingItem(@NonNull TrackingItem trackingItem);
+        public abstract Builder setIdentifier(@NonNull String identifier);
     }
+
+    /**
+     * Returns the tracking item for this config.
+     * @return the tracking item for this config.
+     */
+    public abstract TrackingItem getTrackingItem();
 
     public static Builder builder() {
         return new AutoValue_SimpleTrackingItemConfig.Builder();
