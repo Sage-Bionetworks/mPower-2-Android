@@ -12,7 +12,6 @@ import org.sagebionetworks.research.mpower.MainFragment;
 import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
 import org.sagebionetworks.research.mpower.history.HistoryFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;
-import org.sagebionetworks.research.mpower.measuring.MedicationTimingFragmentModule;
 import org.sagebionetworks.research.mpower.profile.ProfileFragment;
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity;
 import org.sagebionetworks.research.mpower.sageresearch.archive.TappingResultArchiveFactory;
@@ -44,8 +43,7 @@ public abstract class MPowerUserModule {
     abstract InsightsFragment contributeInsightsFragmentInjector();
 
     // these modules contain an aggregate of ShowStepFragment subcomponents, so they are scoped under the PerformTaskFragment
-    @ContributesAndroidInjector(modules = {ShowStepFragmentModule.class, MpMotorControlShowStepFragmentsModule.class,
-            MedicationTimingFragmentModule.class})
+    @ContributesAndroidInjector(modules = {ShowStepFragmentModule.class, MpMotorControlShowStepFragmentsModule.class})
     @PerformTaskFragmentScope
     abstract PerformTaskFragment contributePerformTaskFragmentInjector();
 
