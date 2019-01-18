@@ -30,6 +30,10 @@ public abstract class TappingSample {
 
         public abstract Builder setTimestamp(double timestamp);
 
+        public Builder setTimestamp(long timestampMillis) {
+            return setTimestamp((double) timestampMillis / 1_000);
+        }
+
         public abstract Builder setUptime(double uptime);
 
         public Builder setUptime(long uptimeMillis) {

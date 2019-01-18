@@ -8,11 +8,13 @@ import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
+import java.io.Serializable;
+
 /**
  * A TrackingSection represents a grouping of TrackingItems used by the UI to display the items in a logical way.
  */
 @AutoValue
-public abstract class TrackingSection implements SelectionUIFormItem, Parcelable {
+public abstract class TrackingSection implements SelectionUIFormItem, Parcelable, Serializable {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract TrackingSection build();

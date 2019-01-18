@@ -36,6 +36,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import org.sagebionetworks.research.domain.step.interfaces.CountdownStep;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
@@ -60,9 +61,9 @@ public class MtcCountdownStepView extends ActiveUIStepViewBase implements Countd
             @Nullable DisplayString detail, @Nullable DisplayString footnote,
             @Nullable ColorThemeView colorTheme, @Nullable ImageThemeView imageTheme,
             @NonNull Duration duration, @NonNull final Map<String, String> spokenInstructions,
-            boolean isBackgroundAudioRequired) {
+            @NonNull final ImmutableSet<String> commands, boolean isBackgroundAudioRequired) {
         super(identifier, actions, title, text, detail, footnote,
-                colorTheme, imageTheme, duration, spokenInstructions, isBackgroundAudioRequired);
+                colorTheme, imageTheme, duration, spokenInstructions, commands, isBackgroundAudioRequired);
     }
 
     public static MtcCountdownStepView fromMtcCountdownStep(Step step, DrawableMapper mapper) {
@@ -75,7 +76,7 @@ public class MtcCountdownStepView extends ActiveUIStepViewBase implements Countd
                 activeStep.getActions(), activeStep.getTitle(), activeStep.getText(),
                 activeStep.getDetail(), activeStep.getFootnote(), activeStep.getColorTheme(),
                 activeStep.getImageTheme(), activeStep.getDuration(), activeStep.getSpokenInstructions(),
-                activeStep.isBackgroundAudioRequired());
+                activeStep.getCommands(), activeStep.isBackgroundAudioRequired());
     }
 
     @NonNull

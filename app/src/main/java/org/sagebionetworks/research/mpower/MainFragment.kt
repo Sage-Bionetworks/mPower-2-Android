@@ -46,6 +46,8 @@ import org.sagebionetworks.research.mpower.profile.ProfileFragment
 import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
+import android.content.Intent
+import org.sagebionetworks.research.mpower.EntryFragment.Companion
 
 /**
  * A simple [Fragment] subclass.
@@ -129,5 +131,15 @@ class MainFragment : DaggerFragment() {
             fragmentTransaction.attach(nextFragment)
         }
         fragmentTransaction.commit()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // Due to a behavior issue in nested child fragments
+        // We must call the onActivityResult on all the children
+        for (fragment in childFragmentManager.fragments) {
+            LOGGER.info("Calling onActivityResult for fragment " + fragment.id)
+            fragment.onActivityResult(requestCode, resultCode, data)
+        }
     }
 }

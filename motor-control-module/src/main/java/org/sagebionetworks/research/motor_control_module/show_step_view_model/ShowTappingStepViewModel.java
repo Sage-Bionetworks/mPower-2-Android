@@ -17,14 +17,11 @@ import org.sagebionetworks.research.motor_control_module.result.TappingResult;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.TappingButtonIdentifier;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.TappingSample;
 import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
-import org.sagebionetworks.research.motor_control_module.step.HandStepHelper.Hand;
 import org.sagebionetworks.research.motor_control_module.step_view.TappingStepView;
 import org.sagebionetworks.research.presentation.perform_task.PerformTaskViewModel;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowActiveUIStepViewModel;
-import org.threeten.bp.Instant;
 import org.threeten.bp.ZonedDateTime;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
