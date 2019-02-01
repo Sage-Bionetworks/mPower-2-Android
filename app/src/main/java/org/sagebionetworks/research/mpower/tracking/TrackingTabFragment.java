@@ -1,7 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking;
 
 import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
-import static org.sagebionetworks.research.mpower.research.MpIdentifier.BACKGROUND;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
 import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN;
@@ -9,6 +8,7 @@ import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityK
 
 import android.app.Activity;
 
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 
 import android.content.Context;
@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.OnApplyWindowInsetsListener;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
@@ -33,12 +34,11 @@ import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity;
-import org.sagebionetworks.research.mpower.researchstack.MpResearchStackArchiveFactory;
-import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
+import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment.TrackingMenuFragmentViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderState;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderViewModel;
@@ -101,18 +101,8 @@ public class TrackingTabFragment extends Fragment {
 
     private Unbinder unbinder;
 
-    // Note: state is not stored so killing the app and restarting will redisplay the finished schedules
-    // on the first day.
-    private boolean hasShownStudyBurst = false;
-
-    /**
-     * The current survey task being run, null if no survey is running
-     */
-    private @Nullable MpSmartSurveyTask currentSurveyTask;
-    /**
-     * The current survey schedule for current survey task being run, null if no survey is running
-     */
-    private @Nullable ScheduledActivityEntity currentSurveySchedule;
+    private @NonNull
+    TrackingTabFragmentViewModel trackingTabViewModel;
 
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
@@ -134,7 +124,6 @@ public class TrackingTabFragment extends Fragment {
         // Move the status bar down by the window insets.
         OnApplyWindowInsetsListener listener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
         ViewCompat.setOnApplyWindowInsetsListener(this.trackingStatusBar, listener);
-
         return view;
     }
 
@@ -160,6 +149,9 @@ public class TrackingTabFragment extends Fragment {
             LOGGER.debug("Observed todayHistoryItems");
             // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
         });
+
+        trackingTabViewModel =
+                ViewModelProviders.of(getActivity()).get(TrackingTabFragmentViewModel.class);
 
         studyBurstViewModel = ViewModelProviders.of(this, studyBurstViewModelFactory)
                 .get(StudyBurstViewModel.class);
@@ -209,7 +201,7 @@ public class TrackingTabFragment extends Fragment {
 //        if (!hasShownStudyBurst && item.getBackgroundSurvey() != null) {
 //            launchRsSurvey(item.getBackgroundSurvey());
 //        }
-        if (!hasShownStudyBurst &&
+        if (!trackingTabViewModel.hasShownStudyBurst &&
                 !item.hasCompletedMotivationSurvey() &&
                 item.getMotivationSurvey() != null) {
             showActionBarFlow(item);
@@ -266,11 +258,13 @@ public class TrackingTabFragment extends Fragment {
             return; // NPE guard statement
         }
 
+        LOGGER.info("Launching rs survey " + surveySchedule.activityIdentifier());
+
         // The study burst reminder is a special case survey that isn't an RS survey,
         // but the task result is uploaded as one, so it needs special case logic here
         if (STUDY_BURST_REMINDER.equals(surveySchedule.activityIdentifier())) {
-            hasShownStudyBurst = true;
-            currentSurveySchedule = surveySchedule;
+            trackingTabViewModel.hasShownStudyBurst = true;
+            trackingTabViewModel.currentSurveySchedule = surveySchedule;
             runStudyBurstReminder();
             return;
         }
@@ -280,51 +274,58 @@ public class TrackingTabFragment extends Fragment {
             return; // More NPE guard statements
         }
 
-        hasShownStudyBurst = true;
+        trackingTabViewModel.hasShownStudyBurst = true;
         trackingStatusBar.setEnabled(false);
         trackingStatusBar.setProgressBarVisibility(View.VISIBLE);
-        currentSurveySchedule = surveySchedule;
+        trackingTabViewModel.currentSurveySchedule = surveySchedule;
         // This triggers a SingleLiveEvent which only posts a success once
         studyBurstViewModel.loadRsSurvey(surveySchedule);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        LOGGER.info("onActivityResult with requestCode " + requestCode + " resultCode " + resultCode);
         // Will be set if a survey was just successfully completed and uploaded
         String successfulSurveyUploadTaskId = null;
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TASK) {
             TaskResult taskResult = (TaskResult)
                     data.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT);
 
-            if (currentSurveyTask != null) {
+            LOGGER.info("Task was successfully finished");
+
+            if (trackingTabViewModel.currentSurveyTask != null) {
                 // This will trigger any after-rule processing like adding data groups based on survey answers
-                currentSurveyTask.processTaskResult(taskResult);
+                trackingTabViewModel.currentSurveyTask.processTaskResult(taskResult);
             }
-            if (currentSurveySchedule != null) {
-                currentSurveySchedule.setStartedOn(Instant.ofEpochMilli(taskResult.getStartDate().getTime()));
-                currentSurveySchedule.setFinishedOn(Instant.ofEpochMilli(taskResult.getEndDate().getTime()));
+            if (trackingTabViewModel.currentSurveySchedule != null) {
+                LOGGER.info("currentSurveySchedule non-null, uploading results");
+                trackingTabViewModel.currentSurveySchedule.setStartedOn(Instant.ofEpochMilli(taskResult.getStartDate().getTime()));
+                trackingTabViewModel.currentSurveySchedule.setFinishedOn(Instant.ofEpochMilli(taskResult.getEndDate().getTime()));
                 // This function updates the schedule on bridge and in the ScheduleRepository
-                studyBurstViewModel.updateScheduleToBridge(currentSurveySchedule);
+                studyBurstViewModel.updateScheduleToBridge(trackingTabViewModel.currentSurveySchedule);
                 // This function uploads the result of the task to S3
-                studyBurstViewModel.uploadResearchStackTaskResultToS3(currentSurveySchedule, taskResult);
+                studyBurstViewModel.uploadResearchStackTaskResultToS3(trackingTabViewModel.currentSurveySchedule, taskResult);
                 // This function will generate a client data report for the research stack task result
                 reportViewModel.saveResearchStackReports(taskResult);
 
-                if (MOTIVATION.equals(currentSurveySchedule.activityIdentifier())) {
+                if (MOTIVATION.equals(trackingTabViewModel.currentSurveySchedule.activityIdentifier())) {
                     // send the user straight into the study burst
                     goToStudyBurst();
                 }
-                successfulSurveyUploadTaskId = currentSurveySchedule.activityIdentifier();
+                successfulSurveyUploadTaskId = trackingTabViewModel.currentSurveySchedule.activityIdentifier();
+            } else {
+                LOGGER.info("currentSurveySchedule is null, cannot upload results");
             }
         }
-        currentSurveyTask = null;
-        currentSurveySchedule = null;
+        trackingTabViewModel.currentSurveyTask = null;
+        trackingTabViewModel.currentSurveySchedule = null;
 
         // Check this at the end because it may set currentSurveyTask and currentSurveySchedule
         if (resultCode == Activity.RESULT_OK && requestCode == STUDY_BURST_REQUEST_CODE) {
             ScheduledActivityEntity scheduleToRun = (ScheduledActivityEntity)
                     data.getSerializableExtra(STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN);
             if (scheduleToRun != null) {
+                LOGGER.info("Study burst finished with new activity to run " + scheduleToRun.activityIdentifier());
                 launchRsSurvey(scheduleToRun);
             }
         }
@@ -332,6 +333,7 @@ public class TrackingTabFragment extends Fragment {
         // Check this at the end because it may set currentSurveyTask and currentSurveySchedule
         // Per logic of iOS flow, demographics survey should be run after a successful study burst reminder
         if (STUDY_BURST_REMINDER.equals(successfulSurveyUploadTaskId)) {
+            LOGGER.info("Study burst reminder task finished attempting to run demographics survey");
             StudyBurstItem currentItem = studyBurstViewModel.liveData().getValue();
             if (currentItem != null && currentItem.getDemographicsSurvey() != null) {
                 launchRsSurvey(currentItem.getDemographicsSurvey());
@@ -348,9 +350,9 @@ public class TrackingTabFragment extends Fragment {
         trackingStatusBar.setProgressBarVisibility(View.GONE);
         if (task != null && getActivity() != null) {
             MpTaskFactory factory = new MpTaskFactory();
-            currentSurveyTask = factory.createMpSmartSurveyTask(getActivity(), task);
-            startActivityForResult(IntentFactory.INSTANCE.newTaskIntent(getActivity(),
-                    MpViewTaskActivity.class, currentSurveyTask), REQUEST_TASK);
+            trackingTabViewModel.currentSurveyTask = factory.createMpSmartSurveyTask(getActivity(), task);
+            startActivityForResultParent(IntentFactory.INSTANCE.newTaskIntent(getActivity(),
+                    MpViewTaskActivity.class, trackingTabViewModel.currentSurveyTask), REQUEST_TASK);
         }
     }
 
@@ -368,14 +370,29 @@ public class TrackingTabFragment extends Fragment {
     }
 
     private void runStudyBurstReminder() {
-        startActivityForResult(new Intent(getActivity(), StudyBurstReminderActivity.class), REQUEST_TASK);
+        startActivityForResultParent(new Intent(getActivity(), StudyBurstReminderActivity.class), REQUEST_TASK);
     }
 
     /**
      * Transitions to the study burst screen
      */
     private void goToStudyBurst() {
-        startActivityForResult(new Intent(getActivity(), StudyBurstActivity.class), STUDY_BURST_REQUEST_CODE);
+        startActivityForResultParent(new Intent(getActivity(), StudyBurstActivity.class), STUDY_BURST_REQUEST_CODE);
+    }
+
+    /**
+     * Due to a behavior issue in nested child fragments (like this fragment)
+     * We must call the startActivityForResult on the parent fragment if we can
+     * @param intent to launch
+     * @param requestCode to launch with
+     */
+    private void startActivityForResultParent(Intent intent, int requestCode) {
+        Fragment parent = this;
+        while (parent.getParentFragment() != null) {
+            parent = parent.getParentFragment();
+        }
+        LOGGER.info("Starting activity for result with parent fragment " + parent.getId());
+        parent.startActivityForResult(intent, requestCode);
     }
 
     private void updateStudyBurstReminders(@Nullable StudyBurstReminderState reminderState) {
@@ -384,4 +401,24 @@ public class TrackingTabFragment extends Fragment {
         }
         studyBurstReminderViewModel.updateRemindersOnDevice(getActivity(), reminderState);
     }
+
+    /**
+     * TrackingMenuFragmentViewModel contains data that should persist across the fragment life cycle state changes
+     */
+    public static class TrackingTabFragmentViewModel extends ViewModel {
+        // Note: state is not stored so killing the app and restarting will redisplay the finished schedules
+        // on the first day.
+        boolean hasShownStudyBurst = false;
+
+        /**
+         * The current survey task being run, null if no survey is running
+         */
+        @Nullable MpSmartSurveyTask currentSurveyTask;
+
+        /**
+         * The current survey schedule for current survey task being run, null if no survey is running
+         */
+        @Nullable ScheduledActivityEntity currentSurveySchedule;
+    }
 }
+
