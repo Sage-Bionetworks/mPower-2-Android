@@ -100,11 +100,11 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.ryanharter.auto.value:auto-value-parcel-adapter:0.2.6'
-    implementation 'com.ryanharter.auto.value:auto-value-gson-annotations:0.7.0'
-    kapt "com.google.auto.value:auto-value:1.6"
+    implementation "com.ryanharter.auto.value:auto-value-gson-annotations:$auto_value_gson_version"
+    kapt "com.google.auto.value:auto-value:$auto_value_version"
     kapt 'com.ryanharter.auto.value:auto-value-parcel:0.2.6'
-    kapt 'com.ryanharter.auto.value:auto-value-gson:0.7.0'
-    kapt 'com.google.auto.value:auto-value-annotations:1.6' // include again for auto-value-gson
+    kapt "com.ryanharter.auto.value:auto-value-gson:$auto_value_gson_version"
+    kapt "com.google.auto.value:auto-value-annotations:$auto_value_version" // include again for auto-value-gson
 
     // Dagger
     implementation "com.google.dagger:dagger-android:$dagger_version"
@@ -154,9 +154,9 @@ dependencies {
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-RC1"
 
     // firebase
-    implementation 'com.google.firebase:firebase-core:16.0.4'
+    implementation 'com.google.firebase:firebase-core:16.0.7'
     // Crashlytics
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
 
     testImplementation 'com.dampcake:gson-immutable:1.2'
     testImplementation 'org.aaronhe:threetenbp-gson-adapter:1.0.2'

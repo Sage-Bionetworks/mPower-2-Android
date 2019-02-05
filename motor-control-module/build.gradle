@@ -70,11 +70,11 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
 
     implementation 'com.ryanharter.auto.value:auto-value-parcel-adapter:0.2.6'
-    implementation 'com.ryanharter.auto.value:auto-value-gson-annotations:0.7.0'
-    annotationProcessor "com.google.auto.value:auto-value:1.6"
+    implementation "com.ryanharter.auto.value:auto-value-gson-annotations:$auto_value_gson_version"
+    annotationProcessor "com.google.auto.value:auto-value:$auto_value_version"
     annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.6'
-    annotationProcessor 'com.ryanharter.auto.value:auto-value-gson:0.7.0'
-    annotationProcessor 'com.google.auto.value:auto-value-annotations:1.6' // include again for auto-value-gson
+    annotationProcessor "com.ryanharter.auto.value:auto-value-gson:$auto_value_gson_version"
+    annotationProcessor "com.google.auto.value:auto-value-annotations:$auto_value_version" // include again for auto-value-gson
 
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation 'com.google.code.findbugs:jsr305:2.0.1'
@@ -89,10 +89,10 @@ dependencies {
     implementation project(path: ':data')
     testImplementation "org.mockito:mockito-core:2.+"
 
-    testImplementation 'com.google.dagger:dagger-android:2.15'
-    testImplementation 'com.google.dagger:dagger-android-support:2.15'
-    testAnnotationProcessor 'com.google.dagger:dagger-android-processor:2.15'
-    testAnnotationProcessor "com.google.dagger:dagger-compiler:2.15"
+    testImplementation "com.google.dagger:dagger-android:$dagger_version"
+    testImplementation "com.google.dagger:dagger-android-support:$dagger_version"
+    testAnnotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
+    testAnnotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
 
     implementation 'com.ibm.icu:icu4j:53.1'
 }
