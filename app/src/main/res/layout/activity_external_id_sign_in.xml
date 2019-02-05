@@ -23,7 +23,8 @@
         app:layout_constraintBottom_toBottomOf="@id/firstName"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/firstName"
-        app:layout_constraintTop_toTopOf="@id/firstName" />
+        app:layout_constraintTop_toTopOf="@id/firstName"
+        tools:ignore="HardcodedText" />
 
     <EditText
         android:id="@+id/firstName"
@@ -44,7 +45,8 @@
         app:layout_constraintBottom_toBottomOf="@id/externalId"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/externalId"
-        app:layout_constraintTop_toTopOf="@id/externalId" />
+        app:layout_constraintTop_toTopOf="@id/externalId"
+        tools:ignore="HardcodedText" />
 
     <EditText
         android:id="@+id/externalId"
@@ -62,7 +64,8 @@
         android:layout_height="wrap_content"
         android:text="Skip Consent"
         app:layout_constraintLeft_toLeftOf="@id/externalIdLabel"
-        app:layout_constraintTop_toBottomOf="@id/externalId" />
+        app:layout_constraintTop_toBottomOf="@id/externalId"
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/signIn"
@@ -72,13 +75,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/skipConsent" />
+        app:layout_constraintTop_toBottomOf="@id/skipConsent"
+        tools:ignore="HardcodedText" />
 
 
     <TextView
         android:id="@+id/textview_error_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/signIn" />
 
 </android.support.constraint.ConstraintLayout>

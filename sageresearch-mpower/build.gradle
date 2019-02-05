@@ -45,10 +45,10 @@ dependencies {
     implementation "com.android.support:support-v4:$support_library_version"
 
     // Dagger
-    implementation 'com.google.dagger:dagger-android:2.16'
-    implementation 'com.google.dagger:dagger-android-support:2.16'
-    kapt 'com.google.dagger:dagger-android-processor:2.16'
-    kapt "com.google.dagger:dagger-compiler:2.16"
+    implementation "com.google.dagger:dagger-android:$dagger_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     // arch components
     implementation 'android.arch.lifecycle:extensions:1.1.1'

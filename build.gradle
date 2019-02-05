@@ -3,7 +3,11 @@
 buildscript {
     ext.kotlin_version = '1.3.11'
     ext.support_library_version = '28.0.0'
-
+    ext.butterknife_version = '9.0.0'
+    ext.dagger_version = '2.21'
+    ext.guava_version = '27.0.1-android'
+    ext.auto_value_version = '1.6.3'
+    ext.auto_value_gson_version = '0.8.0'
 
     repositories {
         google()
@@ -20,7 +24,7 @@ buildscript {
 
         // SageResearch
         classpath "org.jetbrains.dokka:dokka-android-gradle-plugin:0.9.17"
-        classpath 'com.jakewharton:butterknife-gradle-plugin:10.0.0'
+        classpath "com.jakewharton:butterknife-gradle-plugin:$butterknife_version"
 
         //quality
         classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.13'
