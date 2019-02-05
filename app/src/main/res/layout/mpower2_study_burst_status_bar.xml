@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    tools:layout_height="80dp"
     android:layout_height="match_parent"
     android:foreground="?attr/selectableItemBackgroundBorderless">
 
@@ -27,7 +28,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginLeft="45dp"
             android:fontFamily="@font/lato"
-            android:text="Study Burst"
+            tools:text="Study Burst Progress Bar Title"
             android:textColor="@color/appWhite"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -40,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="TextView"
+            tools:text="Study Burst Progress Bar Text"
             android:textColor="@color/appWhite"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@+id/study_burst_progress_bar_title"
@@ -76,6 +77,8 @@
     <org.sagebionetworks.research.mpower.studyburst.StudyBurstStatusWheel
         android:id="@+id/studyBurstStatusWheel"
         android:layout_width="@dimen/study_burst_status_wheel_size"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:layout_height="@dimen/study_burst_status_wheel_size"/>
 
 </android.support.constraint.ConstraintLayout>
