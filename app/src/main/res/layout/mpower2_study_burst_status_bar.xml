@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     tools:layout_height="80dp"
     android:layout_height="match_parent"
+    xmlns:tool="http://schemas.android.com/tools"
     android:foreground="?attr/selectableItemBackgroundBorderless">
 
     <android.support.constraint.ConstraintLayout
@@ -77,8 +76,8 @@
     <org.sagebionetworks.research.mpower.studyburst.StudyBurstStatusWheel
         android:id="@+id/studyBurstStatusWheel"
         android:layout_width="@dimen/study_burst_status_wheel_size"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="@dimen/study_burst_status_wheel_size"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_height="@dimen/study_burst_status_wheel_size"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

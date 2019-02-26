@@ -1,13 +1,22 @@
 package org.sagebionetworks.research.mpower.research
 
-import org.sagebionetworks.research.domain.task.TaskInfoBase
-import org.sagebionetworks.research.mpower.research.MpIdentifier.*
+import org.sagebionetworks.research.mpower.research.MpIdentifier.BACKGROUND
+import org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS
+import org.sagebionetworks.research.mpower.research.MpIdentifier.ENGAGEMENT
+import org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION
+import org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION
+import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
+import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER
+import org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS
+import org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING
+import org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR
+import org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS
+import org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroupObject
-import org.sagebionetworks.research.sageresearch.manager.TaskInfo
 import org.sagebionetworks.research.sageresearch.manager.TaskInfoObject
 import org.threeten.bp.LocalDateTime
 import java.util.Random

@@ -15,8 +15,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 28
         // this is not the final version code, product flavors add to it
-        versionCode 35
-        versionName "0.9.3"
+        versionCode 36
+        versionName "0.9.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -156,7 +156,7 @@ dependencies {
     // firebase
     implementation 'com.google.firebase:firebase-core:16.0.7'
     // Crashlytics
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
 
     testImplementation 'com.dampcake:gson-immutable:1.2'
     testImplementation 'org.aaronhe:threetenbp-gson-adapter:1.0.2'

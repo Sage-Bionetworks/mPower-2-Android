@@ -34,8 +34,10 @@ package org.sagebionetworks.research.motor_control_module.step_view;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
 import org.sagebionetworks.research.domain.step.StepType;
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.motor_control_module.step.Icon;

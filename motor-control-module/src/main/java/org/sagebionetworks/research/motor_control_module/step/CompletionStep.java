@@ -37,7 +37,6 @@ import android.support.annotation.Nullable;
 
 import org.sagebionetworks.research.domain.async.AsyncActionConfiguration;
 import org.sagebionetworks.research.domain.step.StepType;
-
 import org.sagebionetworks.research.domain.step.implementations.UIStepBase;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;

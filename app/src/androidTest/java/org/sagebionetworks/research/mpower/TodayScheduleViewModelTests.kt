@@ -5,7 +5,8 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.support.test.InstrumentationRegistry
 import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -18,8 +19,8 @@ import org.sagebionetworks.research.mpower.viewmodel.ItemType.SYMPTOMS
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.TRIGGERS
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel
 import org.sagebionetworks.research.mpower.viewmodel.find
-import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledRepositorySyncStateDao
 import org.sagebionetworks.research.sageresearch.viewmodel.RoomTestHelper
 import org.sagebionetworks.research.sageresearch.viewmodel.TestResourceHelper

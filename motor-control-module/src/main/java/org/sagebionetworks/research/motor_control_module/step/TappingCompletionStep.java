@@ -21,8 +21,6 @@ import org.threeten.bp.Instant;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.concurrent.Immutable;
-
 @AutoValue
 public abstract class TappingCompletionStep implements ThemedUIStep {
     public static final String TYPE_KEY = AppStepType.TAPPING_COMPLETION;

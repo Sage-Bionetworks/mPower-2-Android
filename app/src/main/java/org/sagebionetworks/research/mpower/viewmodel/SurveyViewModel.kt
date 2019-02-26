@@ -7,9 +7,9 @@ import android.support.annotation.VisibleForTesting
 import com.google.common.base.Preconditions
 import org.sagebionetworks.research.mpower.research.DataSourceManager
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
-import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.threeten.bp.LocalDateTime
 import javax.inject.Inject

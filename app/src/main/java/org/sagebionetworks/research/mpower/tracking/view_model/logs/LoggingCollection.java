@@ -6,21 +6,17 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 
 import org.sagebionetworks.research.domain.result.interfaces.Result;
-import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters;
 import org.sagebionetworks.research.sageresearch.dao.room.ReportResultDataMap;
 import org.sagebionetworks.research.sageresearch.dao.room.ReportResultDataMapHelper;
 import org.threeten.bp.Instant;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A logging collection stores a group of logs from a tracking task. This allows logs to be serialized/deserialized

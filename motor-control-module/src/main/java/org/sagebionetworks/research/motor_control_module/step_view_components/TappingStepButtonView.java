@@ -35,6 +35,7 @@ package org.sagebionetworks.research.motor_control_module.step_view_components;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+
 import org.sagebionetworks.research.motor_control_module.R;
 
 public class TappingStepButtonView extends ConstraintLayout {

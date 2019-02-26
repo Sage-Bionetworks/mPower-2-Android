@@ -1,18 +1,10 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
-import org.sagebionetworks.research.mpower.tracking.fragment.TriggersLoggingFragment;
-import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
-import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.widget.TriggersLoggingUIFormItemWidget;
-import org.threeten.bp.Instant;
 
 /**
  * View Holder for the Logging Items from the Triggers Task.

@@ -37,10 +37,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.BindViews;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
+
 import org.sagebionetworks.research.mobile_ui.R2;
 import org.sagebionetworks.research.mobile_ui.show_step.view.view_binding.UIStepViewBinding;
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
@@ -49,6 +46,11 @@ import org.sagebionetworks.research.motor_control_module.step_view.OverviewStepV
 import org.sagebionetworks.research.motor_control_module.widget.DisablableScrollView;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * An OverviewStepViewBinding is an extension of UIStepViewBinding that also has icon views. These icon views consist
