@@ -7,9 +7,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import org.sagebionetworks.research.domain.step.interfaces.Step;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.tapping.TappingButtonIdentifier;
 import org.sagebionetworks.research.motor_control_module.step.AppStepType;
-import org.sagebionetworks.research.motor_control_module.step.MPowerActiveUIStep;
 import org.sagebionetworks.research.motor_control_module.step.TappingStep;
 import org.sagebionetworks.research.presentation.DisplayString;
 import org.sagebionetworks.research.presentation.mapper.DrawableMapper;

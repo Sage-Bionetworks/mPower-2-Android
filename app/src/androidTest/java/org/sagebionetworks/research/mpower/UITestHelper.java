@@ -1,23 +1,27 @@
 package org.sagebionetworks.research.mpower;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.test.rule.ActivityTestRule;
-import org.hamcrest.core.AllOf;
-import org.hamcrest.core.AnyOf;
-import org.junit.Before;
-import org.junit.Rule;
-import org.sagebionetworks.bridge.android.SingleFragmentActivity;
-import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
-import org.threeten.bp.Instant;
-
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
+import static android.support.test.espresso.matcher.ViewMatchers.Visibility;
+import static android.support.test.espresso.matcher.ViewMatchers.withAlpha;
+import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+
 import static org.hamcrest.Matchers.not;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.support.test.rule.ActivityTestRule;
+
+import org.hamcrest.core.AllOf;
+import org.hamcrest.core.AnyOf;
+import org.junit.Rule;
+import org.sagebionetworks.bridge.android.SingleFragmentActivity;
+import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
+import org.threeten.bp.Instant;
 
 public abstract class UITestHelper {
     public static final String TREMOR_SHARED_PREFS_KEY = "Tremor";

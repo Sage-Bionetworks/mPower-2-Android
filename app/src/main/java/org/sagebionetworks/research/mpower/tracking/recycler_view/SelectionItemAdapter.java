@@ -14,8 +14,6 @@ import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
 import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**

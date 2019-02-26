@@ -34,16 +34,12 @@ package org.sagebionetworks.research.mpower.viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.dampcake.gson.immutable.ImmutableAdapterFactory
-import com.dampcake.gson.immutable.ImmutableListAdapter
 import com.google.common.base.Preconditions
-import com.google.common.collect.ImmutableList
 import com.google.common.reflect.TypeToken
-import org.sagebionetworks.research.domain.inject.GsonModule_ProvideGuavaImmutableTypeAdapterFactory
 import org.sagebionetworks.research.domain.result.implementations.TaskResultBase
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult
 import org.sagebionetworks.research.mpower.inject.AutoValueGson_AppAutoValueTypeAdapterFactory

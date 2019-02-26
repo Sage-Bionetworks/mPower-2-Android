@@ -2,7 +2,13 @@ package org.sagebionetworks.research.mpower.tracking;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.sagebionetworks.research.mpower.research.MpIdentifier.*;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS;
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE;
+
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Resources;

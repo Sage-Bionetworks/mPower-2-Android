@@ -19,9 +19,9 @@ import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.SortUtil
 import org.sagebionetworks.research.mpower.tracking.recycler_view.Listener
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAdapter
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
 import org.sagebionetworks.research.sageresearch.extensions.toInstant

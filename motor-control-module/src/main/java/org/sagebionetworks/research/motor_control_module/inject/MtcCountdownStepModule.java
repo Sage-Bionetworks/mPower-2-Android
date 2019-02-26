@@ -42,7 +42,6 @@ import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule.ShowStepFrag
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule.StepViewKey;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.MtcCountdownStepFragment;
 import org.sagebionetworks.research.motor_control_module.step.MtcCountdownStep;
-import org.sagebionetworks.research.motor_control_module.step_view.CompletionStepView;
 import org.sagebionetworks.research.motor_control_module.step_view.MtcCountdownStepView;
 import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule.StepViewClassKey;
 import org.sagebionetworks.research.presentation.inject.StepViewModule.InternalStepViewFactory;
@@ -50,7 +49,6 @@ import org.sagebionetworks.research.presentation.inject.StepViewModule.StepTypeK
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_model_factories.ShowActiveUIStepViewModelFactory;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_model_factories.ShowStepViewModelFactory;
-import org.sagebionetworks.research.presentation.show_step.show_step_view_model_factories.ShowUIStepViewModelFactory;
 
 import dagger.Module;
 import dagger.Provides;

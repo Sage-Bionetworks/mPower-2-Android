@@ -32,6 +32,7 @@
 
 package org.sagebionetworks.research.mpower
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -46,8 +47,6 @@ import org.sagebionetworks.research.mpower.profile.ProfileFragment
 import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
-import android.content.Intent
-import org.sagebionetworks.research.mpower.EntryFragment.Companion
 
 /**
  * A simple [Fragment] subclass.

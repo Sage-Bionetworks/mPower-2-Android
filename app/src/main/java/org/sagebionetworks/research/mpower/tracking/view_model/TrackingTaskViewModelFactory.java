@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProvider.Factory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.sagebionetworks.research.domain.repository.TaskRepository;
 import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mpower.research.MpIdentifier;
@@ -14,7 +13,6 @@ import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection;
 
 import java.util.List;
-import java.util.UUID;
 
 import javax.inject.Inject;
 

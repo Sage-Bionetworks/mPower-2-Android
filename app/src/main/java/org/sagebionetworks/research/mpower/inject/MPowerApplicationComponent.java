@@ -6,7 +6,6 @@ import org.sagebionetworks.bridge.android.di.BridgeApplicationScope;
 import org.sagebionetworks.research.domain.inject.TaskModule;
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
 import org.sagebionetworks.research.mpower.MPowerApplication;
-import org.sagebionetworks.research.mpower.measuring.MedicationTimingFragmentModule;
 import org.sagebionetworks.research.mpower.measuring.MedicationTimingStepModule;
 import org.sagebionetworks.research.mpower.researchstack.inject.MPowerResearchStackModule;
 import org.sagebionetworks.research.sageresearch_app_sdk.inject.SageResearchAppSDKModule;

@@ -11,8 +11,8 @@ import org.sagebionetworks.research.presentation.inject.ShowStepViewModelModule.
 import org.sagebionetworks.research.presentation.inject.StepViewModule.InternalStepViewFactory;
 import org.sagebionetworks.research.presentation.inject.StepViewModule.StepTypeKey;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
-import org.sagebionetworks.research.presentation.show_step.show_step_view_model_factories.ShowStepViewModelFactory;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_model_factories.ShowActiveUIStepViewModelFactory;
+import org.sagebionetworks.research.presentation.show_step.show_step_view_model_factories.ShowStepViewModelFactory;
 
 import dagger.Module;
 import dagger.Provides;

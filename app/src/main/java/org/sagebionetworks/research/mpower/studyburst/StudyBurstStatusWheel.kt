@@ -4,10 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
-import kotlinx.android.synthetic.main.mpower2_study_burst_status_bar.view.*
+import kotlinx.android.synthetic.main.study_burst_status_wheel.view.study_burst_progress_bar_day
+import kotlinx.android.synthetic.main.study_burst_status_wheel.view.study_burst_progress_bar_day_count
+import kotlinx.android.synthetic.main.study_burst_status_wheel.view.study_burst_progress_bar_dial
 import org.sagebionetworks.research.mpower.R
-import kotlinx.android.synthetic.main.study_burst_status_wheel.*;
-import kotlinx.android.synthetic.main.study_burst_status_wheel.view.*
 
 class StudyBurstStatusWheel : FrameLayout {
     constructor(context: Context) : super(context)

@@ -36,7 +36,6 @@ import static org.sagebionetworks.research.motor_control_module.show_step_fragme
 import static org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.HandSelection.RIGHT;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -44,8 +43,6 @@ import org.sagebionetworks.research.domain.result.AnswerResultType;
 import org.sagebionetworks.research.domain.result.implementations.AnswerResultBase;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.HandSelection;
 import org.threeten.bp.Instant;
-
-import java.util.List;
 
 public class HandSelectionResult extends AnswerResultBase<String> {
 

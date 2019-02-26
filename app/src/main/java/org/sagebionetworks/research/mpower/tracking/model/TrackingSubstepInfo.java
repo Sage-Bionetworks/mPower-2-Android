@@ -1,21 +1,16 @@
 package org.sagebionetworks.research.mpower.tracking.model;
 
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
-import org.sagebionetworks.research.domain.async.AsyncActionConfiguration;
-import org.sagebionetworks.research.domain.step.interfaces.UIStep;
 import org.sagebionetworks.research.domain.step.ui.action.Action;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Represents the information about what type of screen should be displayed for on of the parts (Selection, Logging)

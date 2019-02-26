@@ -2,7 +2,6 @@ package org.sagebionetworks.research.motor_control_module.step_view;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -19,7 +18,6 @@ import org.sagebionetworks.research.presentation.model.implementations.ActiveUIS
 import org.sagebionetworks.research.presentation.model.interfaces.ActiveUIStepView;
 import org.threeten.bp.Duration;
 
-import java.util.List;
 import java.util.Map;
 
 public class MPowerActiveUIStepView extends ActiveUIStepViewBase {

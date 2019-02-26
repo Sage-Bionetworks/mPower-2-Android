@@ -1,6 +1,5 @@
 package org.sagebionetworks.research.mpower.tracking.view_model.configs
 
-import org.threeten.bp.Instant
 import org.threeten.bp.LocalTime
 
 data class Schedule(var id: String) {

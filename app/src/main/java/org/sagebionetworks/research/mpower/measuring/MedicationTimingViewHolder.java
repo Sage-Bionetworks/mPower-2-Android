@@ -39,7 +39,6 @@ import android.view.View;
 
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.HandSelection;
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.HandSelectionAdapter;
 import org.sagebionetworks.research.motor_control_module.show_step_fragment.hand_selection.ShowHandSelectionStepFragment;
 
 public class MedicationTimingViewHolder extends RecyclerView.ViewHolder {

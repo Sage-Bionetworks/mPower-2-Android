@@ -1,7 +1,5 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -9,11 +7,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
 /**

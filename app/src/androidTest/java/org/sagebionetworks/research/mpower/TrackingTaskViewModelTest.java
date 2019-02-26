@@ -11,7 +11,6 @@ import android.support.test.annotation.UiThreadTest;
 import android.support.test.filters.MediumTest;
 import android.support.test.runner.AndroidJUnit4;
 
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

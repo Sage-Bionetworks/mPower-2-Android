@@ -1,8 +1,8 @@
 package org.sagebionetworks.research.mpower.inject;
 
 import org.sagebionetworks.research.mpower.tracking.fragment.MedicationAddDetailsFragment;
-import org.sagebionetworks.research.mpower.tracking.fragment.MedicationSchedulingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.MedicationReviewFragment;
+import org.sagebionetworks.research.mpower.tracking.fragment.MedicationSchedulingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.MedicationSelectionFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomSelectionFragment;
