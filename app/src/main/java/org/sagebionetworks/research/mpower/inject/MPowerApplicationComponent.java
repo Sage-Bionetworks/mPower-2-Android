@@ -6,7 +6,6 @@ import org.sagebionetworks.bridge.android.di.BridgeApplicationScope;
 import org.sagebionetworks.research.domain.inject.TaskModule;
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
 import org.sagebionetworks.research.mpower.MPowerApplication;
-import org.sagebionetworks.research.mpower.measuring.MedicationTimingStepModule;
 import org.sagebionetworks.research.mpower.researchstack.inject.MPowerResearchStackModule;
 import org.sagebionetworks.research.sageresearch_app_sdk.inject.SageResearchAppSDKModule;
 
@@ -19,8 +18,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
 @Component(modules = {PerformTaskModule.class, SageResearchAppSDKModule.class, TaskModule.class,
         MPowerResearchStackModule.class, AppDataModule.class, AndroidSupportInjectionModule.class,
         MPowerSageResearchModule.class, MPowerAppModule.class, MPowerUserModule.class,
-        TrackingStepModule.class, TrackingFragmentsModule.class,
-        MedicationTimingStepModule.class},
+        TrackingStepModule.class, TrackingFragmentsModule.class},
         dependencies = {MPowerUserScopeComponent.class})
 public interface MPowerApplicationComponent extends AndroidInjector<MPowerApplication> {
 
