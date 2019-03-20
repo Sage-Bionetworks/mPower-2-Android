@@ -7,17 +7,14 @@ import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityK
 import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_REQUEST_CODE;
 
 import android.app.Activity;
-
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.OnApplyWindowInsetsListener;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
@@ -29,7 +26,6 @@ import org.researchstack.backbone.factory.IntentFactory;
 import org.researchstack.backbone.model.TaskModel;
 import org.researchstack.backbone.result.TaskResult;
 import org.researchstack.backbone.ui.ViewTaskActivity;
-
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
@@ -38,7 +34,6 @@ import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
-import org.sagebionetworks.research.mpower.tracking.TrackingMenuFragment.TrackingMenuFragmentViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderState;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderViewModel;

@@ -2,8 +2,6 @@ package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
 import static org.sagebionetworks.research.motor_control_module.R2.attr.selectableItemBackgroundBorderless;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
 import android.content.res.Resources.Theme;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -16,11 +14,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.model.TrackingSection;
-import org.sagebionetworks.research.mpower.tracking.view_model.TrackingTaskViewModel;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.widget.SelectionUIFormItemWidget;
 
 /**

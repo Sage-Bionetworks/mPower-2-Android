@@ -11,18 +11,16 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
-
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider
+import org.sagebionetworks.bridge.android.BridgeApplication
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.StudyParticipant
 import org.sagebionetworks.research.mpower.research.CompletionTask
 import org.sagebionetworks.research.mpower.research.DataSourceManager
-import org.sagebionetworks.bridge.android.BridgeApplication
 import org.sagebionetworks.research.mpower.research.MpIdentifier.BACKGROUND
 import org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS
 import org.sagebionetworks.research.mpower.research.MpIdentifier.ENGAGEMENT
@@ -38,13 +36,13 @@ import org.sagebionetworks.research.mpower.viewmodel.StudyBurstSettingsDao
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
 import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters
 import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
+import org.sagebionetworks.research.sageresearch.dao.room.ScheduledRepositorySyncStateDao
 import org.sagebionetworks.research.sageresearch.extensions.filterByActivityId
 import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
-import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
-import org.sagebionetworks.research.sageresearch.dao.room.ScheduledRepositorySyncStateDao
 import org.sagebionetworks.research.sageresearch.viewmodel.RoomTestHelper
 import org.sagebionetworks.research.sageresearch.viewmodel.TestResourceHelper
 import org.threeten.bp.Instant

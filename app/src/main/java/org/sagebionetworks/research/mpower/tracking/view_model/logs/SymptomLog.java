@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
-import org.sagebionetworks.research.mpower.tracking.model.TrackingItem;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.AutoValue_SymptomLog.GsonTypeAdapter;
 import org.threeten.bp.Instant;
 

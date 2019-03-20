@@ -3,13 +3,10 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SimpleItemAnimator;
-import android.view.View;
 
-import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.TriggersLoggingItemAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.TriggersLoggingItemViewHolder.TriggersLoggingListener;
-import org.sagebionetworks.research.mpower.tracking.view_model.SimpleTrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.TriggersTrackingTaskViewModel;
 import org.sagebionetworks.research.mpower.tracking.view_model.configs.SimpleTrackingItemConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.SimpleTrackingItemLog;

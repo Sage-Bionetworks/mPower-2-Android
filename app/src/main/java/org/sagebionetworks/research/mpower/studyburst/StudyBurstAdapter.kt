@@ -10,10 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import kotlinx.android.synthetic.main.study_burst_cell.view.*
+import kotlinx.android.synthetic.main.study_burst_cell.view.cell_details
+import kotlinx.android.synthetic.main.study_burst_cell.view.cell_image
+import kotlinx.android.synthetic.main.study_burst_cell.view.cell_title
+import kotlinx.android.synthetic.main.study_burst_cell.view.checkmark
+import kotlinx.android.synthetic.main.study_burst_cell.view.view_holder_root
 import org.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.R
-import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 
 class StudyBurstAdapter(context: Context, val items : List<StudyBurstTaskInfo>?) : RecyclerView.Adapter<ViewHolder>() {

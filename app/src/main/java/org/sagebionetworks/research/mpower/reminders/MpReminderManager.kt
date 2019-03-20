@@ -37,7 +37,6 @@ import android.content.Context
 import org.sagebionetworks.research.mpower.R.string
 import org.sagebionetworks.research.mpower.research.MpIdentifier
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
-import org.sagebionetworks.research.sageresearch.extensions.startOfDay
 import org.sagebionetworks.research.sageresearch.reminders.MpReminderAlarmReceiver
 import org.sagebionetworks.research.sageresearch.reminders.Reminder
 import org.sagebionetworks.research.sageresearch.reminders.ReminderManager

@@ -1,5 +1,11 @@
 package org.sagebionetworks.research.motor_control_module;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.sagebionetworks.research.motor_control_module.StepTestHelper.mockResultWithIdentifier;
+import static org.sagebionetworks.research.motor_control_module.StepTestHelper.mockStepWithIdentifier;
+import static org.sagebionetworks.research.motor_control_module.StepTestHelper.simulateAdvance;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -22,12 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.sagebionetworks.research.motor_control_module.StepTestHelper.mockResultWithIdentifier;
-import static org.sagebionetworks.research.motor_control_module.StepTestHelper.mockStepWithIdentifier;
-import static org.sagebionetworks.research.motor_control_module.StepTestHelper.simulateAdvance;
 
 /**
  * The test task for these tests has the following structure

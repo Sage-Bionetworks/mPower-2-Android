@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import org.sagebionetworks.research.domain.result.implementations.ResultBase;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowActiveUIStepFragmentBase;
 import org.sagebionetworks.research.mobile_ui.show_step.view.ShowStepFragmentBase;
@@ -20,11 +19,9 @@ import org.sagebionetworks.research.motor_control_module.step.HandStepHelper.Han
 import org.sagebionetworks.research.motor_control_module.step_view.MPowerActiveUIStepView;
 import org.sagebionetworks.research.presentation.model.action.ActionType;
 import org.sagebionetworks.research.presentation.model.action.ActionView;
-import org.sagebionetworks.research.presentation.model.action.SkipToActionView;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 import org.sagebionetworks.research.presentation.model.interfaces.UIStepView;
 import org.sagebionetworks.research.presentation.show_step.show_step_view_models.ShowActiveUIStepViewModel;
-import org.threeten.bp.Instant;
 
 import java.util.HashMap;
 import java.util.Map;

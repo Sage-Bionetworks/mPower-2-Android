@@ -9,7 +9,6 @@ import android.app.Application;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

@@ -44,7 +44,6 @@ import org.sagebionetworks.research.domain.step.ui.action.Action;
 import org.sagebionetworks.research.domain.step.ui.theme.ColorTheme;
 import org.sagebionetworks.research.domain.step.ui.theme.ImageTheme;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
