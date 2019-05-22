@@ -97,21 +97,5 @@ public class ShowMPowerActiveUIStepFragment extends ShowActiveUIStepFragmentBase
 
         return super.getActionTypeFromActionButton(actionButton);
     }
-
-    /**
-     * @return the formatted spoken instructions with any occurrence of "%@" replaced with the hand in the step.
-     */
-    @Override
-    protected Map<String, String> formattedSpokenInstructions() {
-        Map<String, String> formatted = new HashMap<>();
-        for (Entry<String, String> entry: super.formattedSpokenInstructions().entrySet()) {
-            String entryValue = entry.getValue();
-            Hand hand = HandStepHelper.whichHand(stepView.getIdentifier());
-            if (hand != null) {
-                entryValue = entryValue.replaceAll(JSON_PLACEHOLDER, hand.toString());
-            }
-            formatted.put(entry.getKey(), entryValue);
-        }
-        return formatted;
-    }
+    
 }
