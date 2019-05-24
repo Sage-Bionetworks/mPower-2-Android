@@ -4,8 +4,9 @@
   "asyncActions": [{
     "identifier": "motion",
     "type": "motion",
+    "startStepIdentifier": "tremor",
     "requiresBackgroundAudio": true,
-    "recorderTypes": ["accelerometer", "gyro"]
+    "recorderTypes": ["accelerometer", "gyro", "gravity", "userAcceleration", "attitude", "rotationRate"]
   }],
   "steps": [{
     "identifier": "instruction",
@@ -34,26 +35,6 @@
         "buttonTitle": "Hold phone"
       }
     }
-  },
-  {
-    "identifier":"countdown",
-    "type":"mtcCountdown",
-    "text":"Begin in...",
-    "isFirstRunOnly": false,
-    "image":{
-      "type":"fetchable",
-      "imageName":"hold_phone_left",
-      "placementType":"fullsizeBackground"
-    },
-    "viewTheme":{
-      "viewIdentifier":"Countdown",
-      "storyboardIdentifier":"ActiveTaskSteps"
-    },
-    "colorTheme":{
-      "usesLightStyle":true
-    },
-    "duration":5,
-    "commands":["playSoundOnStart", "transitionAutomatically"]
   },
   {
     "identifier": "tremor",
