@@ -63,7 +63,10 @@ public class TriggersTrackingTaskViewModel extends TrackingTaskViewModel<SimpleT
 
     @Override
     protected SimpleTrackingItemLog instantiateLogForUnloggedItem(@NonNull final SimpleTrackingItemConfig config) {
-        return null;
+        return SimpleTrackingItemLog.builder()
+                .setIdentifier(config.getIdentifier())
+                .setText(config.getIdentifier())
+                .build();
     }
 
     @Override
