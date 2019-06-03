@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableSet;
 
 import org.sagebionetworks.research.domain.step.interfaces.Step;
 import org.sagebionetworks.research.motor_control_module.step.AppStepType;
+import org.sagebionetworks.research.motor_control_module.step.HandStepHelper;
 import org.sagebionetworks.research.motor_control_module.step.MPowerActiveUIStep;
 import org.sagebionetworks.research.presentation.DisplayString;
 import org.sagebionetworks.research.presentation.mapper.DrawableMapper;
@@ -18,7 +19,10 @@ import org.sagebionetworks.research.presentation.model.implementations.ActiveUIS
 import org.sagebionetworks.research.presentation.model.interfaces.ActiveUIStepView;
 import org.threeten.bp.Duration;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import static org.sagebionetworks.research.motor_control_module.step.HandStepHelper.JSON_PLACEHOLDER;
 
 public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
     public static final String TYPE = AppStepType.MPOWER_ACTIVE;
@@ -50,4 +54,19 @@ public class MPowerActiveUIStepView extends ActiveUIStepViewBase {
     public String getType() {
         return TYPE;
     }
+
+    @Override
+    public Map<String, String> getSpokenInstructions() {
+        Map<String, String> formatted = new HashMap<>();
+        for (Map.Entry<String, String> entry: super.getSpokenInstructions().entrySet()) {
+            String entryValue = entry.getValue();
+            HandStepHelper.Hand hand = HandStepHelper.whichHand(getIdentifier());
+            if (hand != null) {
+                entryValue = entryValue.replaceAll(JSON_PLACEHOLDER, hand.toString());
+            }
+            formatted.put(entry.getKey(), entryValue);
+        }
+        return formatted;
+    }
+
 }

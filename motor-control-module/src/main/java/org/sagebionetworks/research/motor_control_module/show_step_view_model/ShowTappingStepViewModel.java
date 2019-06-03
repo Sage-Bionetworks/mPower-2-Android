@@ -55,7 +55,7 @@ public class ShowTappingStepViewModel extends ShowActiveUIStepViewModel<TappingS
             final PerformTaskViewModel performTaskViewModel,
             final TappingStepView stepView) {
         super(performTaskViewModel, stepView);
-        this.expired = Transformations.map(this.countdown, (count) -> count != null && count == 0);
+        this.expired = Transformations.map(getCountdown(), (count) -> count != null && count == 0);
         this.buttonToLastSample = new HashMap<>();
         this.tappingStartInUptimeMillis = -1;
         this.buttonRect1 = new MutableLiveData<>();

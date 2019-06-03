@@ -285,27 +285,4 @@ public class ShowTappingStepFragment extends
     }
     // endregion
 
-    /**
-     * @return the formatted spoken instructions with any occurrence of "%@" replaced with the hand in the step.
-     */
-    @Override
-    protected Map<String, String> formattedSpokenInstructions() {
-        Map<String, String> formatted = new HashMap<>();
-        for (Entry<String, String> entry: super.formattedSpokenInstructions().entrySet()) {
-            String entryValue = entry.getValue();
-            Hand hand = HandStepHelper.whichHand(stepView.getIdentifier());
-            if (hand != null) {
-                entryValue = entryValue.replaceAll(JSON_PLACEHOLDER, hand.toString());
-            }
-            formatted.put(entry.getKey(), entryValue);
-        }
-        return formatted;
-    }
-
-    @Override
-    protected void onSpeechServiceConnected() {
-        // Once the speech service is connected, we want to override the default functionality of
-        // speaking once the countdown starts, because that doesn't happen until the user taps a button.
-        textToSpeechService.forceSpeakStartCommands();
-    }
 }
