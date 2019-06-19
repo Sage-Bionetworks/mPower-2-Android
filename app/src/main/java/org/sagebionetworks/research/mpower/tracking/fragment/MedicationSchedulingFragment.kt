@@ -78,19 +78,26 @@ class MedicationSchedulingFragment :
         detail.setOnClickListener { addDose() }
         navigationActionBar.forwardButton.setText(R.string.button_save)
         navigationActionBar.setActionButtonClickListener { _ ->
-            val viewModelValue = viewModel.activeElementsById.value
-                    ?: return@setActionButtonClickListener
-            var configs = SortUtil.getActiveElementsSorted(viewModelValue)
-            configs = configs.filter { config -> !config.isConfigured }
-            val iterator = configs.iterator()
-            val fragment = if (iterator.hasNext()) {
-                val nextConfig = iterator.next()
-                MedicationSchedulingFragment.newInstance(stepView, nextConfig.identifier)
+            if (fragmentManager!!.backStackEntryCount > 0) {
+                fragmentManager!!.popBackStack()
             } else {
-                MedicationReviewFragment.newInstance(stepView)
+                val fragment = MedicationLoggingFragment.newInstance(stepView)
+                replaceWithFragment(fragment)
             }
 
-            replaceWithFragment(fragment)
+//            val viewModelValue = viewModel.activeElementsById.value
+//                    ?: return@setActionButtonClickListener
+//            var configs = SortUtil.getActiveElementsSorted(viewModelValue)
+//            configs = configs.filter { config -> !config.isConfigured }
+//            val iterator = configs.iterator()
+//            val fragment = if (iterator.hasNext()) {
+//                val nextConfig = iterator.next()
+//                MedicationSchedulingFragment.newInstance(stepView, nextConfig.identifier)
+//            } else {
+//                MedicationReviewFragment.newInstance(stepView)
+//            }
+//
+//            replaceWithFragment(fragment)
         }
 
         return view

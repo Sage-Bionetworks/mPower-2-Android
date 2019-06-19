@@ -27,17 +27,23 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val result = super.onCreateView(inflater, container, savedInstanceState)
         title.setText(R.string.medication_review_title)
-        detail.visibility = View.GONE
-        addMore!!.setText(R.string.medication_add_more)
-        addMore!!.setOnClickListener { _ ->
+        detail.setText(R.string.medication_add)
+        addMore?.visibility = View.GONE
+        detail!!.setOnClickListener { _ ->
             val fragment = MedicationSelectionFragment.newInstance(stepView)
-            replaceWithFragment(fragment)
+            addChildFragmentOnTop(fragment, "MedicationSelectionFragment")
         }
 
+        navigationActionBar.forwardButton.setText(R.string.button_save)
         navigationActionBar.setActionButtonClickListener{ actionButton ->
             if (actionButton.id == R.id.rs2_step_navigation_action_forward) {
-                val fragment = MedicationLoggingFragment.newInstance(stepView)
-                replaceWithFragment(fragment)
+                if (fragmentManager!!.backStackEntryCount > 0) {
+                    //Pop the back stack to take user back to medication logging
+                    fragmentManager!!.popBackStack()
+                } else {
+                    val fragment = MedicationLoggingFragment.newInstance(stepView)
+                    replaceWithFragment(fragment)
+                }
             }
         }
 

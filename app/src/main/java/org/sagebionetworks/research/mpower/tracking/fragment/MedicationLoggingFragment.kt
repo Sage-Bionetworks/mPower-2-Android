@@ -118,7 +118,7 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
         val topListener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP)
         rs2_step_navigation_action_add_more.setOnClickListener { _ ->
             val fragment = MedicationReviewFragment.newInstance(stepView)
-            replaceWithFragment(fragment)
+            addChildFragmentOnTop(fragment, "MedicationReview")
         }
 
         rs2_step_navigation_action_cancel.setOnClickListener { onCancelButtonClicked() }

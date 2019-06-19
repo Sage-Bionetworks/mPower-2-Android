@@ -41,8 +41,12 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
         this.detail.setText(this.stepView.getSelectionInfo().getDetail());
         this.navigationActionBar.setActionButtonClickListener((actionButton -> {
             if (actionButton.getId() == R.id.rs2_step_navigation_action_forward) {
-                Fragment nextFragment = this.getNextFragment();
-                replaceWithFragment(nextFragment);
+                if (getFragmentManager().getBackStackEntryCount() > 0) {
+                    getFragmentManager().popBackStack();
+                } else {
+                    Fragment nextFragment = this.getNextFragment();
+                    replaceWithFragment(nextFragment);
+                }
             }
         }));
 
