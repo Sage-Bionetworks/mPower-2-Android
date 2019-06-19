@@ -5,8 +5,11 @@ import android.app.Dialog
 import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.app.AppCompatDialogFragment
 import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -102,9 +105,9 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         LOGGER.debug("onViewCreated()")
 
-        day_selection_title.text = getString(R.string.medication_day_selection_title, name, time)
+        day_selection_title.text = getString(R.string.medication_day_selection_title, name)
         var recycler = medication_day_recycler
-        recycler.layoutManager = LinearLayoutManager(context)
+        recycler.layoutManager = GridLayoutManager(context, 2)
         val dayStrings = getDays(resources)
         recycler.adapter = DayAdapter(ArrayList((0..(dayStrings.size-1)).toList()), dayStrings, context!!)
         recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
@@ -142,18 +145,28 @@ class MedicationDayFragment : AppCompatDialogFragment() {
             holder.tvDay.text = dayStrings[items[position]]
             val adjustedPosition = position + 1
             if (selectedDays.contains(adjustedPosition)) {
-                holder.root.setBackgroundResource(R.color.royal300)
+                //holder.root.setBackgroundResource(R.color.royal300)
+                holder.tvDay.isSelected = true
+                holder.tvDay.setCompoundDrawablesWithIntrinsicBounds(resources.getDrawable( R.drawable.ic_check_black_16dp), null, null ,null)
             } else {
-                holder.root.setBackgroundResource(R.color.appWhite)
+                //holder.root.setBackgroundResource(R.color.appWhite)
+                holder.tvDay.isSelected = false
+                holder.tvDay.setCompoundDrawablesWithIntrinsicBounds(null, null, null ,null)
+
             }
 
-            holder.root.setOnClickListener { view ->
+            holder.tvDay.setOnClickListener { view ->
                 if (selectedDays.contains(adjustedPosition)) {
                     selectedDays.remove(adjustedPosition)
-                    view.setBackgroundResource(R.color.appWhite)
+                    holder.tvDay.isSelected = false
+                    //view.setBackgroundResource(R.color.appWhite)
                 } else {
                     selectedDays.add(adjustedPosition)
-                    view.setBackgroundResource(R.color.royal300)
+                    holder.tvDay.isSelected = true
+                    //view.setBackgroundResource(R.color.royal300)
+                }
+                Handler(Looper.getMainLooper()).post {
+                    notifyItemChanged(position)
                 }
             }
         }
