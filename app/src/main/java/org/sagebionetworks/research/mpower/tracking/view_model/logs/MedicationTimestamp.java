@@ -8,30 +8,53 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
 import org.threeten.bp.Instant;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
 
 
 @AutoValue
 public abstract class MedicationTimestamp {
+
+    /**
+     * @property timeOfDayFormatter used to convert back and forth from [LocalTime] to timeOfDay [String]
+     */
+    private static final DateTimeFormatter timeOfDayFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract MedicationTimestamp build();
 
-        @NonNull
-        public abstract Builder setLoggedDate(@NonNull Instant loggedDate);
+        @Nullable
+        public abstract Builder setLoggedDate(@Nullable Instant loggedDate);
 
-        @NonNull
-        public abstract Builder setTimeOfDay(@NonNull String timeOfDay);
+        @Nullable
+        public abstract Builder setTimeOfDay(@Nullable String timeOfDay);
     }
 
-    @NonNull
+    @Nullable
     public abstract Instant getLoggedDate();
 
-    @NonNull
-    public abstract String getTimeOfDay();
+
+    @Nullable
+    public abstract String getTimeOfDay();    /**
+     * @return timeOfDay [String] converted to a LocalTime.  Returns null if timeOfDay is also null.
+     */
+
+    public LocalTime getLocalTimeOfDay() {
+        if (getTimeOfDay() != null) {
+            return LocalTime.parse(getTimeOfDay(), timeOfDayFormatter);
+        }
+        return null;
+    }
+
+    public MedicationTimestamp copyAndClearLoggedDate() {
+        return builder().setTimeOfDay(getTimeOfDay()).build();
+    }
+
 
     @NonNull
     public static Builder builder() {
-        return new AutoValue_MedicationTimestamp.Builder();
+        return new AutoValue_MedicationTimestamp.Builder().setLoggedDate(null);
     }
 
     @NonNull

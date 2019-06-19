@@ -4,14 +4,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
 /**
  * Subtype of SelectionFragment specific to the flow and data types of the Medication task.
  */
-public class MedicationSelectionFragment extends SelectionFragment<MedicationConfig, MedicationLog, MedicationTrackingTaskViewModel> {
+public class MedicationSelectionFragment extends SelectionFragment<MedicationLog, MedicationLog, MedicationTrackingTaskViewModel> {
     @NonNull
     public static MedicationSelectionFragment newInstance(@NonNull StepView step) {
         MedicationSelectionFragment fragment = new MedicationSelectionFragment();

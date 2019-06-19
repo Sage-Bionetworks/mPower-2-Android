@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/item_title"
-        style="@style/Widget.MPower.TextView.SelectionSectionTitle"
+        style="@style/Widget.MPower.TextView.SelectionItemTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"

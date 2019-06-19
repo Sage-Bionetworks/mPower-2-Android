@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/margin_large"
+    android:background="@color/white"
+    android:animateLayoutChanges="true">
+
+    <TextView
+        android:id="@+id/dosage_title"
+        style="@style/Widget.MPower.TextView.SelectionSectionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dosage_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dosage_remove"
+        style="@style/Widget.MPower.TextView.SelectionSectionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/remove_dose"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/dosage_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dosage_title"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:singleLine="true"
+        android:fontFamily="@font/lato_bold"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_vertical"
+        android:hint="@string/dosage_hint"
+        android:padding="10dp"
+        android:background="@drawable/mpower2_edittext_background"/>
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dosage_edit_text">
+        <RadioButton
+            android:id="@+id/radio_button_any_time"
+            style="@style/Widget.MPower.RadioButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Take this medication any time" />
+        <RadioButton
+            android:id="@+id/radio_button_schedule"
+            style="@style/Widget.MPower.RadioButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="When do you take this?" />
+    </RadioGroup>
+
+    <org.sagebionetworks.research.mpower.tracking.widget.MedicationAddDetailsWidget
+        android:id="@+id/select_days"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/radio_group" />
+    <org.sagebionetworks.research.mpower.tracking.widget.MedicationAddDetailsWidget
+        android:id="@+id/select_times"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/select_days" />
+
+
+
+</android.support.constraint.ConstraintLayout>

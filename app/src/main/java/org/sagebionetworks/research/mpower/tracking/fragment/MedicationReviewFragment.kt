@@ -9,11 +9,10 @@ import org.sagebionetworks.research.mpower.tracking.SortUtil
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationReviewAdapter
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationReviewListener
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
 
-class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationConfig, MedicationLog,
+class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, MedicationLog,
         MedicationTrackingTaskViewModel, MedicationReviewAdapter>() {
 
     companion object {
@@ -47,7 +46,7 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationConfig, 
 
     override fun initializeAdapter(): MedicationReviewAdapter {
         val medicationReviewListener : MedicationReviewListener = object : MedicationReviewListener {
-            override fun editButtonPressed(config: MedicationConfig, position: Int) {
+            override fun editButtonPressed(config: MedicationLog, position: Int) {
                 val schedulingFragment = MedicationSchedulingFragment.newInstance(stepView, config.identifier)
                 addChildFragmentOnTop(schedulingFragment, "MedicationReviewFragment")
             }

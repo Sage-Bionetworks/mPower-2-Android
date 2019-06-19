@@ -161,8 +161,10 @@ class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
                 try {
                     loggingCollection = gson.fromJson(json, type)
                 } catch (e: Throwable) {
+                    //TODO: Handle loading old format
                     // No need to crash the app, user will just have to redo selection
                     logger.error(e.message)
+                    return TaskResultBase(taskId, taskRunUuid)
                 }
                 val taskResult = TaskResultBase(taskId, taskRunUuid)
                 return taskResult.addAsyncResult(loggingCollection)

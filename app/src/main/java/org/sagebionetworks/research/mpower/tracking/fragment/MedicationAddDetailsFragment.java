@@ -11,7 +11,6 @@ import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsAdapter;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsViewHolder.MedicationAddDetailsListener;
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig;
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog;
 import org.sagebionetworks.research.presentation.model.interfaces.StepView;
 
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MedicationAddDetailsFragment extends
-        RecyclerViewTrackingFragment<MedicationConfig, MedicationLog, MedicationTrackingTaskViewModel,
+        RecyclerViewTrackingFragment<MedicationLog, MedicationLog, MedicationTrackingTaskViewModel,
                 MedicationAddDetailsAdapter> {
     @NonNull
     public static MedicationAddDetailsFragment newInstance(@NonNull StepView step) {
@@ -45,12 +44,12 @@ public class MedicationAddDetailsFragment extends
 
         navigationActionBar.setActionButtonClickListener(actionButton -> {
             if (actionButton.getId() == R.id.rs2_step_navigation_action_forward) {
-                List<MedicationConfig> unconfiguredElements = getActiveElements();
+                List<MedicationLog> unconfiguredElements = getActiveElements();
                 if (unconfiguredElements.isEmpty()) {
                     MedicationReviewFragment fragment = MedicationReviewFragment.Companion.newInstance(stepView);
                     replaceWithFragment(fragment);
                 } else {
-                    MedicationConfig nextConfig = unconfiguredElements.get(0);
+                    MedicationLog nextConfig = unconfiguredElements.get(0);
                     MedicationSchedulingFragment fragment =
                             MedicationSchedulingFragment.Companion.newInstance(stepView, nextConfig.getIdentifier());
                     addChildFragmentOnTop(fragment, "medicationAddDetails");
@@ -65,14 +64,14 @@ public class MedicationAddDetailsFragment extends
     public void onStart() {
         super.onStart();
 
-        Map<String, MedicationConfig> activeElementsMap =
+        Map<String, MedicationLog> activeElementsMap =
                 viewModel.getActiveElementsById().getValue();
         if (activeElementsMap == null) {
             return;
         }
-        List<MedicationConfig> sortedElements =
+        List<MedicationLog> sortedElements =
                 SortUtil.getActiveElementsSorted(activeElementsMap);
-        for (MedicationConfig config : sortedElements) {
+        for (MedicationLog config : sortedElements) {
             if (!config.isConfigured()) {
                 return;  // still need to configure some elements, stay on this screen
             }
@@ -96,12 +95,12 @@ public class MedicationAddDetailsFragment extends
             adapter.notifyDataSetChanged();
         };
 
-        List<MedicationConfig> unconfiguredElements = getActiveElements();
+        List<MedicationLog> unconfiguredElements = getActiveElements();
         return new MedicationAddDetailsAdapter(unconfiguredElements, medicationAddDetailsListener);
     }
 
-    private List<MedicationConfig> getActiveElements() {
-        List<MedicationConfig> result = new ArrayList<>();
+    private List<MedicationLog> getActiveElements() {
+        List<MedicationLog> result = new ArrayList<>();
         if (viewModel.getActiveElementsById().getValue() != null) {
             result.addAll(SortUtil.getActiveElementsSorted(viewModel.getActiveElementsById().getValue()));
         }

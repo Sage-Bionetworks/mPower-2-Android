@@ -36,6 +36,7 @@
 
     <string name="app_name">mPower</string>
     <string name="button_submit">Submit</string>
+    <string name="button_save">Save</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_tracking">Tracking</string>
     <string name="title_history">History</string>
@@ -123,6 +124,19 @@
     <string name="tracking_left_label">Symptom</string>
     <string name="tracking_right_label">Trigger</string>
 
+
+    <plurals name="number_of_doses">
+        <!--
+             As a developer, you should always supply "one" and "other"
+             strings. Your translators will know which strings are actually
+             needed for their language. Always include %d in "one" because
+             translators will need to use %d for languages where "one"
+             doesn't mean 1 (as explained above).
+          -->
+        <item quantity="one">%d Dose.</item>
+        <item quantity="other">%d Doses.</item>
+    </plurals>
+
     <!-- Today Fragment -->
     <!-- The term to use when referring to multiple instances of a task, such as when describing-->
     <!-- how may times the user has logged taking medication.-->
@@ -136,6 +150,8 @@
     <string name="task_singular_term_for_activities">"%1$d Activity"</string>
 
     <string name="remove_medication">Remove medication</string>
+    <string name="add_dose">Add another dose</string>
+    <string name="remove_dose"><u>Remove</u></string>
     <string name="schedule_title">Schedule</string>
     <string name="schedule_anytime">Take this medication anytime</string>
     <string name="schedule_add_label">Add another schedule</string>
@@ -209,6 +225,8 @@
     <string name="medication_schedule_add_more">Add another schedule</string>
     <string name="medication_schedule_everyday">Everyday</string>
     <string name="medication_schedule_anytime">Anytime</string>
+    <string name="medication_select_days">Select Day(s)</string>
+    <string name="medication_select_times">Select Time(s)</string>
     <string name="medication_review_title">Medication list</string>
     <string name="medication_remove_button">Yes, remove medication</string>
     <string name="medication_remove_title">Are you sure you want to remove %s from your current medication list?</string>
@@ -231,4 +249,5 @@
     <string name="button_recorded">Recorded</string>
     <string name="button_undo">Undo</string>
     <string name="button_edit">Edit</string>
+    <string name="button_add_details">Add details</string>
 </resources>

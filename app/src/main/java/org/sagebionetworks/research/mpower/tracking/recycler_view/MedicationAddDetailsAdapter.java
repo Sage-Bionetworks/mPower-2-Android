@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAddDetailsViewHolder.MedicationAddDetailsListener;
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig;
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog;
 import org.sagebionetworks.research.mpower.tracking.widget.MedicationAddDetailsWidget;
 
 import java.util.ArrayList;
@@ -17,9 +17,9 @@ public class MedicationAddDetailsAdapter extends Adapter<MedicationAddDetailsVie
     @NonNull
     private MedicationAddDetailsListener medicationAddDetailsListener;
     @NonNull
-    private List<MedicationConfig> unconfiguredElements;
+    private List<MedicationLog> unconfiguredElements;
 
-    public MedicationAddDetailsAdapter(@NonNull final List<MedicationConfig> unconfiguredElements,
+    public MedicationAddDetailsAdapter(@NonNull final List<MedicationLog> unconfiguredElements,
             @NonNull final MedicationAddDetailsListener medicationAddDetailsListener) {
         this.medicationAddDetailsListener = medicationAddDetailsListener;
         this.unconfiguredElements = new ArrayList<>(unconfiguredElements);
