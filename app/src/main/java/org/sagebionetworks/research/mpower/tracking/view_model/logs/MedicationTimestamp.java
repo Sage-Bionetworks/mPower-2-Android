@@ -18,7 +18,7 @@ public abstract class MedicationTimestamp {
     /**
      * @property timeOfDayFormatter used to convert back and forth from [LocalTime] to timeOfDay [String]
      */
-    private static final DateTimeFormatter timeOfDayFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    public static final DateTimeFormatter timeOfDayFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
     @AutoValue.Builder
     public abstract static class Builder {

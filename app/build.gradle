@@ -68,6 +68,9 @@ android {
         jvmTarget = '1.6'
     }
 }
+androidExtensions {
+    experimental = true
+}
 
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'

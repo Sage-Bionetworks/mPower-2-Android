@@ -26,6 +26,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLo
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationTimestamp
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
 import org.slf4j.LoggerFactory
+import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 
 class MedicationSchedulingFragment :
@@ -143,36 +144,24 @@ class MedicationSchedulingFragment :
                 setupNextButtonEnabled()
             }
 
-            override fun onTimeSelectionPressed(schedule: DosageItem) {
-//                val cal = Calendar.getInstance()
-//                val zoneId : ZoneId = try {
-//                    ZoneId.systemDefault()
-//                } catch (e : Throwable) {
-//                    ZoneId.of("Z")
-//                }
-//
-//                schedule.getLocalTimeOfDay()?.let {
-//                    cal.time = DateTimeUtils.toDate(it.atDate(LocalDate.now()).toInstant(zoneId))
-//                }
-//                val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hours, minutes ->
-//                    cal.set(Calendar.HOUR, hours)
-//                    cal.set(Calendar.MINUTE, minutes)
-//                    schedule.setLocalTimeOfDay(DateTimeUtils.toZonedDateTime(cal).toLocalTime())
-//                    val configUnwrapped = config ?: return@OnTimeSetListener
-//                    val schedules = configUnwrapped.schedules.toMutableList()
-//                    schedules[position] = schedule
-//                    adapter.updateDosage(position, schedule)
-//                    val updatedConfig = configUnwrapped.toBuilder().setSchedules(schedules).build()
-//                    viewModel.addConfig(updatedConfig)
-//                }
-//
-//                TimePickerDialog(context, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE),
-//                        false)
-//                        .show()
+            override fun onTimeSelectionPressed(dosageItem: DosageItem) {
+
+                var dialog = GridSelectionFragment.newInstance(
+                        getString(R.string.medication_time_selection_title, identifier),
+                        viewModel.getSelectionTimes(context!!, dosageItem))
+                dialog.listener = object : ItemsSelectedListener {
+                    override fun onItemsSelected(selectedItemIds: List<String>) {
+                        val configUnwrapped = config ?: return
+                        dosageItem.timestamps.clear()
+                        val timestamps = selectedItemIds.map { MedicationTimestamp.builder().setTimeOfDay(it)!!.build() }
+                        dosageItem.timestamps.addAll(timestamps)
+                        adapter.updateDosage(dosageItem)
+                    }
+                }
+                dialog.show(fragmentManager, "Times select")
             }
 
             override fun onDaySelectionPressed(dosageItem: DosageItem) {
-                val formatter = DateTimeFormatter.ofPattern("h:mm a")
                 LOGGER.debug("showDaySelection()")
                 val dialog = MedicationDayFragment.newInstance(
                         identifier, "", dosageItem.daysOfWeek)

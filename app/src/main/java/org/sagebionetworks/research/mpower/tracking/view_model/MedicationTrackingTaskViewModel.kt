@@ -7,6 +7,7 @@ import com.google.common.collect.RangeSet
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.SortUtil
 import org.sagebionetworks.research.mpower.tracking.fragment.MedicationLoggingFragment
+import org.sagebionetworks.research.mpower.tracking.fragment.SelectionItem
 import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView
@@ -16,13 +17,16 @@ import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLogg
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.DosageItem
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.LoggingCollection
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationTimestamp
 import org.sagebionetworks.research.sageresearch.extensions.inSameDayAs
 import org.slf4j.LoggerFactory
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.ZoneId
+import org.threeten.bp.format.DateTimeFormatter
 import java.util.*
+import kotlin.collections.ArrayList
 
 typealias TimeBlock = Pair<String, RangeSet<LocalTime>>
 
@@ -34,13 +38,13 @@ class MedicationTrackingTaskViewModel(context: Context,
     private val LOGGER = LoggerFactory.getLogger(MedicationTrackingTaskViewModel::class.java)
 
     private val timeBlocks: Set<TimeBlock>
+    private val morningStart = LocalTime.MIDNIGHT.plusHours(5) // 5am
+    private val eveningStart = LocalTime.NOON.plusHours(5)  // 5pm
+    private val nightStart = LocalTime.NOON.plusHours(9)    // 9pm
 
     private var previousLoggingCollection: LoggingCollection<MedicationLog>? = null
 
     init {
-        val fiveAM = LocalTime.MIDNIGHT.plusHours(5)
-        val fivePM = LocalTime.NOON.plusHours(5)
-        val tenPM = LocalTime.NOON.plusHours(10)
         // TODO: move from presentation layer to UI layer; move test from androidTest to test @liujoshua 2018/10/03
         val resources = context.resources
         val morning = resources.getString(R.string.medication_logging_morning_time_block)
@@ -48,10 +52,10 @@ class MedicationTrackingTaskViewModel(context: Context,
         val evening = resources.getString(R.string.medication_logging_evening_time_block)
         val night = resources.getString(R.string.medication_logging_night_time_block)
         timeBlocks = setOf(
-                Pair(morning, ImmutableRangeSet.of(Range.closed(fiveAM, LocalTime.NOON))),
-                Pair(afternoon, ImmutableRangeSet.of(Range.openClosed(LocalTime.NOON, fivePM))),
-                Pair(evening, ImmutableRangeSet.of(Range.openClosed(fivePM, tenPM))),
-                Pair(night, ImmutableRangeSet.unionOf(listOf(Range.lessThan(fiveAM), Range.atLeast(tenPM))))
+                Pair(morning, ImmutableRangeSet.of(Range.closed(morningStart, LocalTime.NOON))),
+                Pair(afternoon, ImmutableRangeSet.of(Range.openClosed(LocalTime.NOON, eveningStart))),
+                Pair(evening, ImmutableRangeSet.of(Range.openClosed(eveningStart, nightStart))),
+                Pair(night, ImmutableRangeSet.unionOf(listOf(Range.lessThan(morningStart), Range.atLeast(nightStart))))
         )
     }
 
@@ -224,5 +228,42 @@ class MedicationTrackingTaskViewModel(context: Context,
         activeElementsById.value = activeElements
         loggedElementsById.value = activeElements
     }
+
+    fun getSelectionTimes(context: Context, dosageItem: DosageItem) : ArrayList<SelectionItem> {
+        val formatter = DateTimeFormatter.ofPattern("h:mm a")
+        val selectionItemList = arrayListOf<SelectionItem>()
+        val header = SelectionItem(context.getString(R.string.medication_logging_morning_time_block), "morning", false, true)
+        selectionItemList.add(header)
+
+        val startTime = LocalTime.MIDNIGHT.plusHours(5)
+        var curTime = startTime
+        var done = false
+        while (!done) {
+            if (curTime == LocalTime.NOON) {
+                val header = SelectionItem(context.getString(R.string.medication_logging_afternoon_time_block), "afternoon", false, true)
+                selectionItemList.add(header)
+            } else if (curTime == eveningStart) {
+                val header = SelectionItem(context.getString(R.string.medication_logging_evening_time_block), "evening", false, true)
+                selectionItemList.add(header)
+            } else if (curTime == nightStart) {
+                val header = SelectionItem(context.getString(R.string.medication_logging_night_time_block), "night", false, true)
+                selectionItemList.add(header)
+            }
+
+            val identifier = MedicationTimestamp.timeOfDayFormatter.format(curTime)
+            val text = formatter.format(curTime)
+            val isSelected = dosageItem.timestamps.firstOrNull {
+                it.timeOfDay == identifier
+            } != null
+            selectionItemList.add(SelectionItem(text, identifier, isSelected, false))
+            curTime = curTime.plusMinutes(30)
+
+            if (curTime == startTime) {
+                done = true
+            }
+        }
+        return selectionItemList
+    }
+
 }
 

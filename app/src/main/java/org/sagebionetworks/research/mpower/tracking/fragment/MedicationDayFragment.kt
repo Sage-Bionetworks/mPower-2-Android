@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatDialogFragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
@@ -15,6 +16,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import kotlinx.android.synthetic.main.dialog_medication_day.day_selection_back
 import kotlinx.android.synthetic.main.dialog_medication_day.day_selection_save
 import kotlinx.android.synthetic.main.dialog_medication_day.day_selection_title
@@ -57,7 +59,6 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         }
     }
 
-    lateinit var customView: View
     lateinit var listener: DaySelectedListener
     lateinit var selectedDays: MutableList<Int>
     lateinit var name: String
@@ -87,18 +88,20 @@ class MedicationDayFragment : AppCompatDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
         LOGGER.debug("onCreateView()")
-        return customView
+        return inflater.inflate(R.layout.dialog_medication_day, null)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         LOGGER.debug("onCreateDialog()")
+        val dialog = super.onCreateDialog(savedInstanceState)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        return dialog
 
-        customView = LayoutInflater.from(activity)
-                .inflate(R.layout.dialog_medication_day, null)
+    }
 
-        return AlertDialog.Builder(context)
-                .setView(customView)
-                .create()
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -110,7 +113,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         recycler.layoutManager = GridLayoutManager(context, 2)
         val dayStrings = getDays(resources)
         recycler.adapter = DayAdapter(ArrayList((0..(dayStrings.size-1)).toList()), dayStrings, context!!)
-        recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        //recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         day_selection_back.setOnClickListener { _ ->
             dismiss()
