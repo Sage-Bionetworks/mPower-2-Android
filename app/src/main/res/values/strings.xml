@@ -169,6 +169,15 @@
         <item>Friday</item>
         <item>Saturday</item>
     </string-array>
+    <string-array name="days_of_the_week_short">
+        <item>Sun</item>
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+    </string-array>
 
     <string name="measuring_walk_and_balance_label">Walk And Balance</string>
     <string name="measuring_finger_tapping_label">Finger Tapping</string>
@@ -222,7 +231,7 @@
     <!-- Medication -->
     <string name="medication_add_details_title">Add medication details</string>
     <string name="medication_add_details_detail">Select to add your medication dosing information and schedule(s).</string>
-    <string name="medication_add">Add a medication</string>
+    <string name="medication_add"><u>Add a medication</u></string>
     <string name="medication_add_more">Edit medication list</string>
     <string name="medication_schedule_add_more">Add another schedule</string>
     <string name="medication_schedule_everyday">Everyday</string>
@@ -236,6 +245,7 @@
 
     <string name="medication_logging_time_button_suffix">\u0020- Edit</string>
     <string name="medication_logging_taken_at_label">Taken at</string>
+    <string name="medication_logging_take_at_label">Take at</string>
     <string name="medication_logging_taken_button">Taken</string>
     <string name="medication_logging_undo_button">Undo</string>
 

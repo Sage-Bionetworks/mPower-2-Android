@@ -17,7 +17,7 @@
     <dimen name="mp_profile_spacer_height">25dp</dimen>
 
     <!-- Medication Logging -->
-    <dimen name="medication_logging_schedule_row_height">120dp</dimen>
+    <dimen name="medication_logging_schedule_row_height">100dp</dimen>
     <dimen name="medication_logging_taken_button_width">150dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 

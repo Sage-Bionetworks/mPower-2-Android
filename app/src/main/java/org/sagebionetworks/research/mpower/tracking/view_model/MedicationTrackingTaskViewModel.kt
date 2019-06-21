@@ -132,12 +132,15 @@ class MedicationTrackingTaskViewModel(context: Context,
                 val isForToday = dosage.daysOfWeek.contains(todayString)
 
                 val timeStamps = dosage.timestamps.filter { medTimestamp ->
-                    (isForToday && timeBlock.second.contains(medTimestamp.localTimeOfDay)) || dosage.isAnytime
+                    dosage.isAnytime || (isForToday && timeBlock.second.contains(medTimestamp.localTimeOfDay))
                 }
 
                 if (dosage.isAnytime) {
                     items.add(MedicationLoggingTitle(config.identifier + " " + dosage.dosage))
                     items.add(MedicationLoggingSchedule(config, dosage, null))
+                    items.addAll(timeStamps.map { timeStamp ->
+                        MedicationLoggingSchedule(config, dosage, timeStamp)
+                    })
                 } else if (!timeStamps.isEmpty()) {
                     items.add(MedicationLoggingTitle(config.identifier + " " + dosage.dosage))
                     items.addAll(timeStamps.map { timeStamp ->

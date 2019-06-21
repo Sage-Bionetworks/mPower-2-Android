@@ -182,13 +182,13 @@ class MedicationSchedulingFragment :
                     dosageItem.timestamps.clear()
                     dosageItem.daysOfWeek.addAll(DosageItem.dailySet)
                 } else {
+                    dosageItem.timestamps.clear()
                     dosageItem.timestamps.add(MedicationTimestamp.builder().setTimeOfDay("08:00")!!.build())
                 }
                 adapter.updateDosage(dosageItem)
             }
         }
 
-//        var dosages = config?.dosageItems?.toMutableList() ?: mutableListOf(DosageItem.builder().setDaysOfWeek(mutableSetOf()).build())
         if (config!!.dosageItems.isEmpty()) {
             val dose = DosageItem("", DosageItem.dailySet.toMutableSet(), mutableSetOf())
             config?.dosageItems?.add(dose)

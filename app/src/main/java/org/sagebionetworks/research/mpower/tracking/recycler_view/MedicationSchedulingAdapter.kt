@@ -107,7 +107,7 @@ class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listen
         dosageViewHolder.dayContainer.visibility = visibility
         dosageViewHolder.timeContainer.visibility = visibility
 
-        if (dosage.timestamps.isEmpty()) {
+        if (dosage.timestamps.isEmpty() || dosage.isAnytime) {
             dosageViewHolder.timeText.text =
                     dosageViewHolder.timeText.resources.getString(R.string.medication_select_times)
         } else {
@@ -131,6 +131,8 @@ class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listen
 
         dosageViewHolder.dayText.text = if (dosage.daysOfWeek.size == 7) {
             dosageViewHolder.dayText.context.getString(R.string.medication_schedule_everyday)
+        } else if (dosage.daysOfWeek.isEmpty()) {
+            dosageViewHolder.dayText.context.getString(R.string.medication_select_days)
         } else {
             MedicationDayFragment.getDayStringSet(dosageViewHolder.dayText.resources, dosage.daysOfWeek)
                     .localizedAndJoin(dosageViewHolder.dayText.context)

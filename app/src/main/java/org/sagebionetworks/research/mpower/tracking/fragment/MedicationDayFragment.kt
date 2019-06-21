@@ -51,8 +51,12 @@ class MedicationDayFragment : AppCompatDialogFragment() {
             return ArrayList(Arrays.asList(*resources.getStringArray(R.array.days_of_the_week)))
         }
 
+        fun getDaysShort(resources: Resources): ArrayList<String> {
+            return ArrayList(Arrays.asList(*resources.getStringArray(R.array.days_of_the_week_short)))
+        }
+
         fun getDayStringSet(resources: Resources, indexSet: Set<Int>): Set<String> {
-            return getDays(resources).filterIndexed { index, _ ->
+            return getDaysShort(resources).filterIndexed { index, _ ->
                 // index + 1 is because days start on index 1 (sunday), there is no day 0
                 indexSet.contains((index + 1))
             }.toSet()

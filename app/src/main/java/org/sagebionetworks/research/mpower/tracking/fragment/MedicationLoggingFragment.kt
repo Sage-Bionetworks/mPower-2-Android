@@ -84,7 +84,11 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
             scheduleItem.dosageItem.timestamps.add(timeStamp)
             val updatedScheduleItem = MedicationLoggingSchedule(scheduleItem.config, scheduleItem.dosageItem, timeStamp)
             val recyclerView = if (isCurrent) medication_recycler_view else missed_medication_recycler_view
-            (recyclerView.adapter as MedicationLoggingAdapter).updateItem(updatedScheduleItem, position)
+            if (scheduleItem.dosageItem.isAnytime) {
+                (recyclerView.adapter as MedicationLoggingAdapter).addItem(updatedScheduleItem, position+1)
+            } else {
+                (recyclerView.adapter as MedicationLoggingAdapter).updateItem(updatedScheduleItem, position)
+            }
 
 //            setSubmitButtonEnabled(true)
         }
@@ -97,8 +101,7 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
 
             val recyclerView = if (isCurrent) medication_recycler_view else missed_medication_recycler_view
             if (scheduleItem.dosageItem.isAnytime) {
-                val updatedScheduleItem = MedicationLoggingSchedule(scheduleItem.config, scheduleItem.dosageItem, null)
-                (recyclerView.adapter as MedicationLoggingAdapter).updateItem(updatedScheduleItem, position)
+                (recyclerView.adapter as MedicationLoggingAdapter).removeItem(scheduleItem)
             } else {
                 var timestampBuilder = scheduleItem.medicationTimestamp?.toBuilder()
                         ?: MedicationTimestamp.builder()

@@ -1,5 +1,7 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view
 
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.LayoutInflater
@@ -45,7 +47,25 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
 
     fun updateItem(item: MedicationLoggingItem, position: Int) {
         items[position] = item
-        notifyItemChanged(position)
+        Handler(Looper.getMainLooper()).post {
+            notifyItemChanged(position)
+        }
+    }
+
+    fun addItem(item: MedicationLoggingItem, position: Int) {
+        items.add(position, item)
+        Handler(Looper.getMainLooper()).post {
+            notifyItemInserted(position)
+        }
+    }
+
+    fun removeItem(item: MedicationLoggingItem) {
+        var position = items.indexOf(item)
+        if (items.remove(item)) {
+            Handler(Looper.getMainLooper()).post {
+                notifyItemRemoved(position)
+            }
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -69,12 +89,23 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
                 val scheduleItem = items[position] as MedicationLoggingSchedule
                 val scheduleHolder = holder as MedicationScheduleViewHolder
 
+                val formatter  =
+                        DateTimeFormatter.ofPattern("h:mm a")
+                                .withLocale(Locale.getDefault())
+                                .withZone(ZoneId.systemDefault())
+
                 // Setup the labels for the not logged view
                 if (scheduleItem.dosageItem.isAnytime) {
                     holder.notLoggedDaysLabel.setText(R.string.medication_schedule_anytime)
                     holder.notLoggedTimeLabel.visibility = View.GONE
                 } else {
                     holder.notLoggedTimeLabel.visibility = View.VISIBLE
+                    scheduleItem.medicationTimestamp?.localTimeOfDay?.let {
+                        val timeText =  holder.itemView.resources.getString(R.string.medication_logging_take_at_label) +
+                                " " + formatter.format(it)
+                        holder.notLoggedTimeLabel.text = timeText
+                    }
+
                     val daysText = when {
                         scheduleItem.dosageItem.isDaily -> holder.itemView.resources.getString(R.string.medication_schedule_everyday)
                         else -> MedicationDayFragment.getDayStringSet(
@@ -86,10 +117,6 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
 
                 // Setup the labels and buttons for the view when logged
                 scheduleItem.medicationTimestamp?.loggedDate?.let {
-                    val formatter  =
-                            DateTimeFormatter.ofPattern("h:mm a")
-                                .withLocale(Locale.getDefault())
-                                .withZone(ZoneId.systemDefault())
                     val timeText = formatter.format(it) +
                             holder.itemView.resources.getString(R.string.medication_logging_time_button_suffix)
                     scheduleHolder.timeButton.text = timeText
@@ -105,14 +132,17 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
 
                 // add click- listeners to the buttons
                 scheduleHolder.takenButton.setOnClickListener { _ ->
-                    listener.onTakenPressed(scheduleItem.config.identifier, scheduleItem, position)
+                    val curPosition = items.indexOf(scheduleItem)
+                    listener.onTakenPressed(scheduleItem.config.identifier, scheduleItem, curPosition)
                 }
                 scheduleHolder.undoButton.setOnClickListener { _ ->
-                    listener.onUndoPressed(scheduleItem.config.identifier, scheduleItem, position)
+                    val curPosition = items.indexOf(scheduleItem)
+                    listener.onUndoPressed(scheduleItem.config.identifier, scheduleItem, curPosition)
                 }
                 scheduleHolder.timeButton.setOnClickListener { _ ->
                     scheduleItem.medicationTimestamp?.loggedDate?.let {
-                        listener.onTimePressed(it, scheduleItem.config.identifier, scheduleItem, position)
+                        val curPosition = items.indexOf(scheduleItem)
+                        listener.onTimePressed(it, scheduleItem.config.identifier, scheduleItem, curPosition)
                     }
                 }
             }

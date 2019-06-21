@@ -67,7 +67,7 @@
                 android:layout_marginStart="@dimen/margin_xlarge"
                 android:layout_marginTop="@dimen/margin_xsmall"
                 android:gravity="center"
-                android:textColor="@color/white"
+                android:textColor="@color/text_button_color_state"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
