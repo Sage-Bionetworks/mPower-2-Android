@@ -229,7 +229,7 @@
     <string name="duration_fragment_forward_button">Save</string>
 
     <!-- Medication -->
-    <string name="medication_add_details_title">Add medication details</string>
+    <string name="medication_add_details_title">Add medication details to start tracking your medications</string>
     <string name="medication_add_details_detail">Select to add your medication dosing information and schedule(s).</string>
     <string name="medication_add"><u>Add a medication</u></string>
     <string name="medication_add_more">Edit medication list</string>

@@ -46,7 +46,7 @@ public class MedicationAddDetailsFragment extends
             if (actionButton.getId() == R.id.rs2_step_navigation_action_forward) {
                 List<MedicationLog> unconfiguredElements = getActiveElements();
                 if (unconfiguredElements.isEmpty()) {
-                    MedicationReviewFragment fragment = MedicationReviewFragment.Companion.newInstance(stepView);
+                    MedicationReviewFragment fragment = MedicationReviewFragment.Companion.newInstance(stepView, false);
                     replaceWithFragment(fragment);
                 } else {
                     MedicationLog nextConfig = unconfiguredElements.get(0);
@@ -76,7 +76,7 @@ public class MedicationAddDetailsFragment extends
                 return;  // still need to configure some elements, stay on this screen
             }
         }
-        replaceWithFragment(MedicationReviewFragment.Companion.newInstance(stepView));
+        replaceWithFragment(MedicationReviewFragment.Companion.newInstance(stepView, false));
     }
 
     @Override

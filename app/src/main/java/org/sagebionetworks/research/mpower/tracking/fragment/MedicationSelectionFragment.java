@@ -21,6 +21,6 @@ public class MedicationSelectionFragment extends SelectionFragment<MedicationLog
 
     @Override
     public TrackingFragment<?, ?, ?> getNextFragment() {
-        return MedicationAddDetailsFragment.newInstance(stepView);
+        return MedicationReviewFragment.Companion.newInstance(stepView, true);
     }
 }

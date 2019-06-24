@@ -15,10 +15,15 @@ import org.sagebionetworks.research.presentation.model.interfaces.StepView
 class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, MedicationLog,
         MedicationTrackingTaskViewModel, MedicationReviewAdapter>() {
 
+
     companion object {
-        fun newInstance(step : StepView) : MedicationReviewFragment {
+
+        val ARGUMENT_IS_SETUP = "isSetup"
+
+        fun newInstance(step : StepView, isSetup : Boolean) : MedicationReviewFragment {
             val fragment = MedicationReviewFragment()
             val args = TrackingFragment.createArguments(step)
+            args.putBoolean(ARGUMENT_IS_SETUP, isSetup)
             fragment.arguments = args
             return fragment
         }
@@ -26,7 +31,12 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val result = super.onCreateView(inflater, container, savedInstanceState)
-        title.setText(R.string.medication_review_title)
+        val isSetup = arguments?.getBoolean(ARGUMENT_IS_SETUP) ?: false
+        if (isSetup) {
+            title.setText(R.string.medication_add_details_title)
+        } else {
+            title.setText(R.string.medication_review_title)
+        }
         detail.setText(R.string.medication_add)
         addMore?.visibility = View.GONE
         detail!!.setOnClickListener { _ ->
