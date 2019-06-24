@@ -16,8 +16,9 @@ import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLogg
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingSchedule
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingTitle
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.MedicationConfig
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.DosageItem
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationTimestamp
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.Month
@@ -39,16 +40,12 @@ class MedicationTimeBasedFilteringTest {
                 .setIdentifier("Med1")
                 .setSectionIdentifier("section")
                 .build()
-        val CONFIG_1: MedicationConfig
+        val CONFIG_1: MedicationLog
 
         init {
-            val schedule = Schedule("0")
-            schedule.timeOfDay = null
-
-            CONFIG_1 = MedicationConfig.builder()
+            CONFIG_1 = MedicationLog.builder()
                     .setIdentifier("Med1")
-                    .setDosage(DOSAGE)
-                    .setSchedules(Collections.singletonList(schedule))
+                    .setDosageItems(mutableListOf(DosageItem(DOSAGE, DosageItem.dailySet.toMutableSet(), mutableSetOf())))
                     .build()
         }
 
@@ -56,17 +53,15 @@ class MedicationTimeBasedFilteringTest {
                 .setIdentifier("Med2")
                 .setSectionIdentifier("section")
                 .build()
-        val CONFIG_2: MedicationConfig
+        val CONFIG_2: MedicationLog
 
         init {
-            val schedule = Schedule(
-                    LocalTime.MIDNIGHT.plusHours(6),
-                    setOf(2, 3, 6))
+            val timeStamp = MedicationTimestamp.builder().setTimeOfDay("06:00")!!.build()
+            val days = setOf(2, 3, 6)
 
-            CONFIG_2 = MedicationConfig.builder()
+            CONFIG_2 = MedicationLog.builder()
                     .setIdentifier("Med2")
-                    .setDosage(DOSAGE)
-                    .setSchedules(Collections.singletonList(schedule))
+                    .setDosageItems(mutableListOf(DosageItem(DOSAGE, days.toMutableSet(), mutableSetOf(timeStamp))))
                     .build();
         }
 
@@ -74,18 +69,16 @@ class MedicationTimeBasedFilteringTest {
                 .setIdentifier("Med3")
                 .setSectionIdentifier("section")
                 .build()
-        val CONFIG_3: MedicationConfig
+        val CONFIG_3: MedicationLog
 
         init {
-            val schedule1 = Schedule(LocalTime.NOON.plusHours(1))
+            val timeStamp1 = MedicationTimestamp.builder().setTimeOfDay("13:00")!!.build()
+            val timeStamp2 = MedicationTimestamp.builder().setTimeOfDay("18:00")!!.build()
+            val days = setOf(7, 1)
 
-            val schedule2 = Schedule(LocalTime.NOON.plusHours(6),
-                    setOf(7, 1))
-
-            CONFIG_3 = MedicationConfig.builder()
+            CONFIG_3 = MedicationLog.builder()
                     .setIdentifier("Med3")
-                    .setDosage(DOSAGE)
-                    .setSchedules(Arrays.asList(schedule1, schedule2))
+                    .setDosageItems(mutableListOf(DosageItem(DOSAGE, days.toMutableSet(), mutableSetOf(timeStamp1, timeStamp2))))
                     .build()
         }
 
@@ -93,15 +86,14 @@ class MedicationTimeBasedFilteringTest {
                 .setIdentifier("Med4")
                 .setSectionIdentifier("section")
                 .build()
-        val CONFIG_4: MedicationConfig
+        val CONFIG_4: MedicationLog
 
         init {
-            val schedule = Schedule(LocalTime.MIDNIGHT.plusHours(1))
+            val timeStamp = MedicationTimestamp.builder().setTimeOfDay("01:00")!!.build()
 
-            CONFIG_4 = MedicationConfig.builder()
+            CONFIG_4 = MedicationLog.builder()
                     .setIdentifier("Med4")
-                    .setDosage(DOSAGE)
-                    .setSchedules(Collections.singletonList(schedule))
+                    .setDosageItems(mutableListOf(DosageItem(DOSAGE, DosageItem.dailySet.toMutableSet(), mutableSetOf(timeStamp))))
                     .build()
         }
 
@@ -109,17 +101,20 @@ class MedicationTimeBasedFilteringTest {
                 .setIdentifier("Med5")
                 .setSectionIdentifier("section")
                 .build()
-        val CONFIG_5: MedicationConfig
+        val CONFIG_5: MedicationLog
 
         init {
-            val schedule1 = Schedule(LocalTime.NOON.plusHours(5).plusMinutes(30), setOf(4))
-            val schedule2 = Schedule(LocalTime.NOON.plusHours(9), setOf(4))
-            val schedule3 = Schedule(LocalTime.MIDNIGHT.plusHours(2).plusMinutes(30), setOf(5))
+            val timeStamp1 = MedicationTimestamp.builder().setTimeOfDay("17:30")!!.build()
+            val timeStamp2 = MedicationTimestamp.builder().setTimeOfDay("21:00")!!.build()
+            val timeStamp3 = MedicationTimestamp.builder().setTimeOfDay("02:30")!!.build()
+            val days = setOf(4)
+//            val schedule1 = Schedule(LocalTime.NOON.plusHours(5).plusMinutes(30), setOf(4))
+//            val schedule2 = Schedule(LocalTime.NOON.plusHours(9), setOf(4))
+//            val schedule3 = Schedule(LocalTime.MIDNIGHT.plusHours(2).plusMinutes(30), setOf(5))
 
-            CONFIG_5 = MedicationConfig.builder()
+            CONFIG_5 = MedicationLog.builder()
                     .setIdentifier("Med5")
-                    .setDosage(DOSAGE)
-                    .setSchedules(Arrays.asList(schedule1, schedule2, schedule3))
+                    .setDosageItems(mutableListOf(DosageItem(DOSAGE, days.toMutableSet(), mutableSetOf(timeStamp1, timeStamp2, timeStamp3))))
                     .build()
         }
 
@@ -204,9 +199,9 @@ class MedicationTimeBasedFilteringTest {
                 time.toLocalDate())
         val expected: List<MedicationLoggingItem> = Arrays.asList(
                 MedicationLoggingTitle("Med1 100mg"),
-                MedicationLoggingSchedule(CONFIG_1, CONFIG_1.schedules[0], null),
+                MedicationLoggingSchedule(CONFIG_1, CONFIG_1.dosageItems[0], null),
                 MedicationLoggingTitle("Med2 100mg"),
-                MedicationLoggingSchedule(CONFIG_2, CONFIG_2.schedules[0], null)
+                MedicationLoggingSchedule(CONFIG_2, CONFIG_2.dosageItems[0], null)
         )
 
         assertEquals(currentConfigs.size, expected.size)
@@ -216,15 +211,15 @@ class MedicationTimeBasedFilteringTest {
 
         assertTrue(currentConfigs[1] is MedicationLoggingSchedule)
         assertEquals((currentConfigs[1] as MedicationLoggingSchedule).config, CONFIG_1)
-        assertEquals((currentConfigs[1] as MedicationLoggingSchedule).schedule, CONFIG_1.schedules[0])
-        assertNull((currentConfigs[1] as MedicationLoggingSchedule).loggedDate)
+        assertEquals((currentConfigs[1] as MedicationLoggingSchedule).dosageItem, CONFIG_1.dosageItems[0])
+        assertFalse((currentConfigs[1] as MedicationLoggingSchedule).isLogged)
 
         assertTrue(currentConfigs[2] is MedicationLoggingTitle)
         assertEquals((currentConfigs[2] as MedicationLoggingTitle).title, "Med2 100mg")
 
         assertTrue(currentConfigs[3] is MedicationLoggingSchedule)
         assertEquals((currentConfigs[3] as MedicationLoggingSchedule).config, CONFIG_2)
-        assertEquals((currentConfigs[3] as MedicationLoggingSchedule).schedule, CONFIG_2.schedules[0])
-        assertNull((currentConfigs[3] as MedicationLoggingSchedule).loggedDate)
+        assertEquals((currentConfigs[3] as MedicationLoggingSchedule).dosageItem, CONFIG_2.dosageItems[0])
+        assertFalse((currentConfigs[3] as MedicationLoggingSchedule).isLogged)
     }
 }
