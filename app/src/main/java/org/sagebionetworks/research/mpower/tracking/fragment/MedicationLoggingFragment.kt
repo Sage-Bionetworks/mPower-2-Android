@@ -42,6 +42,11 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
     }
 
     private inner class Listener(private val isCurrent: Boolean) : MedicationLoggingListener {
+        override fun onAddDetailsPressed(medicationLog: MedicationLog) {
+            val schedulingFragment = MedicationSchedulingFragment.newInstance(stepView, medicationLog.identifier)
+            addChildFragmentOnTop(schedulingFragment, "MedicationDosageFragment")
+        }
+
         override fun onTimePressed(currentLoggedDate: Instant, medicationIdentifier: String,
                 scheduleItem: MedicationLoggingSchedule, position: Int) {
             val calendar = Calendar.getInstance()
@@ -173,7 +178,8 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
         val titleDecoration = SelectiveItemDividerDecoration(titleDivider,
                 object : SelectiveItemDividerDecoration.Selector {
                     override fun shouldDrawDivider(current: ViewHolder, next: ViewHolder?): Boolean {
-                        return current is MedicationScheduleViewHolder && next is MedicationTitleViewHolder
+                        return current is MedicationLoggingAddDetailsViewHolder ||
+                                (current is MedicationScheduleViewHolder && (next is MedicationTitleViewHolder || next is MedicationLoggingAddDetailsViewHolder))
                     }
                 })
 

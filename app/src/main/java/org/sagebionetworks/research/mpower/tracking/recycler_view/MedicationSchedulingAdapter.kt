@@ -25,6 +25,12 @@ class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listen
 
     private var editIndex = -1
 
+    init {
+        if (items.size == 1) {
+            editIndex = 0
+        }
+    }
+
     companion object {
         const val TYPE_EDIT = 0
         const val TYPE_VIEW = 1

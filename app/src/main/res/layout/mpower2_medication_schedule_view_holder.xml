@@ -116,8 +116,10 @@
             <org.sagebionetworks.research.mobile_ui.widget.ActionButton
                 android:id="@+id/taken_button"
                 style="@style/Widget.ResearchStack.NavigationActionBar.PrimaryButton"
-                android:layout_width="@dimen/medication_logging_taken_button_width"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/mp_rounded_button_height"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:text="@string/medication_logging_taken_button"
                 android:layout_gravity="center_vertical|end"/>
 

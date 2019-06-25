@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import kotlinx.android.synthetic.main.mpower2_medication_review_widget_add_details.view.*
 import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.*
 import kotlinx.android.synthetic.main.mpower2_medication_schedule_view_holder.view.time_button
 import kotlinx.android.synthetic.main.mpower2_symptoms_logging_item.view.item_title
@@ -16,6 +17,7 @@ import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.fragment.MedicationDayFragment
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingItem.TYPE.SCHEDULE
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingItem.TYPE.TITLE
+import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingItem.TYPE.ADD_DETAILS
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.DosageItem
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationTimestamp
@@ -33,6 +35,7 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
     companion object {
         const val TYPE_TITLE = 0
         const val TYPE_SCHEDULE = 1
+        const val TYPE_ADD_DETAILS = 2
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -40,6 +43,9 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
         return when (viewType) {
             TYPE_TITLE -> MedicationTitleViewHolder(
                     inflater.inflate(R.layout.mpower2_medication_title_view_holder, parent, false))
+            TYPE_ADD_DETAILS ->
+                MedicationLoggingAddDetailsViewHolder(
+                        inflater.inflate(R.layout.mpower2_medication_review_widget_add_details, parent, false))
             else -> MedicationScheduleViewHolder(
                     inflater.inflate(R.layout.mpower2_medication_schedule_view_holder, parent, false))
         }
@@ -72,6 +78,7 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
         return when (items[position].type) {
             TITLE -> TYPE_TITLE
             SCHEDULE -> TYPE_SCHEDULE
+            ADD_DETAILS -> TYPE_ADD_DETAILS
         }
     }
 
@@ -146,6 +153,16 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
                     }
                 }
             }
+
+            ADD_DETAILS -> {
+                val addDetails = items[position] as MedicationLoggingAddDetails
+                val viewHolder = holder as MedicationLoggingAddDetailsViewHolder
+                viewHolder.title.setText(addDetails.config.identifier)
+                viewHolder.addDetails.setOnClickListener { _ ->
+                    listener.onAddDetailsPressed(addDetails.config)
+                }
+
+            }
         }
     }
 
@@ -156,7 +173,7 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
 
 abstract class MedicationLoggingItem {
     enum class TYPE {
-        TITLE, SCHEDULE
+        TITLE, SCHEDULE, ADD_DETAILS
     }
 
     abstract val type: TYPE
@@ -164,6 +181,10 @@ abstract class MedicationLoggingItem {
 
 class MedicationLoggingTitle(val title: String) : MedicationLoggingItem() {
     override val type: TYPE = TITLE
+}
+
+class MedicationLoggingAddDetails(val config: MedicationLog) : MedicationLoggingItem() {
+    override val type: TYPE = ADD_DETAILS
 }
 
 class MedicationLoggingSchedule(val config: MedicationLog, val dosageItem: DosageItem, val medicationTimestamp: MedicationTimestamp?)
@@ -174,6 +195,11 @@ class MedicationLoggingSchedule(val config: MedicationLog, val dosageItem: Dosag
 
 class MedicationTitleViewHolder(view: View) : ViewHolder(view) {
     val title: TextView = view.item_title
+}
+
+class MedicationLoggingAddDetailsViewHolder(view: View) : ViewHolder(view) {
+    val title: TextView = view.item_title
+    val addDetails = view.edit_button
 }
 
 class MedicationScheduleViewHolder(view: View) : ViewHolder(view) {
@@ -195,4 +221,5 @@ interface MedicationLoggingListener {
     fun onUndoPressed(medicationIdentifier: String, scheduleItem: MedicationLoggingSchedule, position: Int)
     fun onTimePressed(currentLoggedDate: Instant, medicationIdentifier: String,
             scheduleItem: MedicationLoggingSchedule, position: Int)
+    fun onAddDetailsPressed(medicationLog: MedicationLog)
 }

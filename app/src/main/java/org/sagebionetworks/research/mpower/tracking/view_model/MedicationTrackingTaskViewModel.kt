@@ -11,6 +11,7 @@ import org.sagebionetworks.research.mpower.tracking.fragment.SelectionItem
 import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView
+import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingAddDetails
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingItem
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingSchedule
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationLoggingTitle
@@ -127,6 +128,10 @@ class MedicationTrackingTaskViewModel(context: Context,
         val items: MutableList<MedicationLoggingItem> = mutableListOf()
         val sortedConfigs = SortUtil.getActiveElementsSorted(activeElementsById.value!!)
         for (config in sortedConfigs) {
+            if (config.dosageItems.isEmpty()) {
+                items.add(MedicationLoggingAddDetails(config))
+            }
+
             for (dosage in config.dosageItems) {
                 val todayString = today.dayOfWeek.value
                 val isForToday = dosage.daysOfWeek.contains(todayString)
