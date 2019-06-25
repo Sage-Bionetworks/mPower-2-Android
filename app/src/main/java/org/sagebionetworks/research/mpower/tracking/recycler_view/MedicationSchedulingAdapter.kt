@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.mpower2_dosage_details.view.*
+import kotlinx.android.synthetic.main.mpower2_medication_review_widget.view.*
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.fragment.MedicationDayFragment
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.DosageItem
@@ -17,19 +18,30 @@ import org.sagebionetworks.research.sageresearch.extensions.localizedAndJoin
 import org.slf4j.LoggerFactory
 import org.threeten.bp.format.DateTimeFormatter
 
-class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listener) : RecyclerView.Adapter<DosageViewHolder>() {
+class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val LOGGER = LoggerFactory.getLogger(
             MedicationAdapter::class.java)
 
+    private var editIndex = -1
+
+    companion object {
+        const val TYPE_EDIT = 0
+        const val TYPE_VIEW = 1
+    }
+
     fun addDosage(dosage: DosageItem) {
         items.add(0, dosage)
+        val oldEditIndex = editIndex
+        editIndex = 0
+
         Handler(Looper.getMainLooper()).post {
             notifyItemInserted(0)
-        }
-        if (items.size == 2) {
-            Handler(Looper.getMainLooper()).post {
+            if (items.size == 2) {
                 notifyItemChanged(1)
+            }
+            if (oldEditIndex != -1) {
+                notifyItemChanged(oldEditIndex)
             }
         }
     }
@@ -51,93 +63,156 @@ class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listen
         }
     }
 
+    fun setEditRow(index: Int) {
+        val oldEditIndex = editIndex
+        editIndex = index
+        Handler(Looper.getMainLooper()).post {
+            if (oldEditIndex != -1) {
+                notifyItemChanged(oldEditIndex)
+            }
+            notifyItemChanged(editIndex)
+        }
+    }
+
+
     override fun getItemCount(): Int {
         return items.size
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DosageViewHolder {
-        return DosageViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.mpower2_dosage_details, parent, false))
+    override fun getItemViewType(position: Int): Int {
+        if (position == editIndex) {
+            return TYPE_EDIT
+        }
+        return TYPE_VIEW
     }
 
-    override fun onBindViewHolder(dosageViewHolder: DosageViewHolder, position: Int) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            TYPE_EDIT -> DosageViewHolder(
+                    LayoutInflater.from(parent.context).inflate(R.layout.mpower2_dosage_details, parent, false))
+            else -> ViewDosageViewHolder(
+                    LayoutInflater.from(parent.context).inflate(R.layout.mpower2_medication_review_widget, parent, false))
+        }
+    }
+
+    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         val dosage = items[position]
 
-        dosageViewHolder.removeButton.setOnClickListener{
-            listener.onRemovePressed(dosage)
-        }
-        if (items.size < 2) {
-            dosageViewHolder.removeButton.visibility = View.GONE
-        } else {
-            dosageViewHolder.removeButton.visibility = View.VISIBLE
-        }
-
-        if (dosageViewHolder.textWatcher != null) {
-            dosageViewHolder.dosageText.removeTextChangedListener(dosageViewHolder.textWatcher)
-        }
-        dosageViewHolder.dosageText.setText(dosage.dosage)
-        val textWatcher = object: TextWatcher {
-            override fun afterTextChanged(editable: Editable?) {
-                listener.onDosageTextChange(dosage, editable.toString())
+        when (getItemViewType(position)) {
+            TYPE_VIEW -> {
+                val dosageViewHolder = viewHolder as ViewDosageViewHolder
+                dosageViewHolder.dosageText.setText(dosage.dosage)
+                if (!dosage.timestamps.isEmpty()) {
+                    val formatter = DateTimeFormatter.ofPattern("h:mm a")
+                    val times = mutableListOf<String>()
+                    for (timeStamp: MedicationTimestamp in dosage.timestamps) {
+                        times.add(formatter.format(timeStamp.localTimeOfDay))
+                    }
+                    dosageViewHolder.timeText.text = times.localizedAndJoin(dosageViewHolder.timeText.context)
+                } else {
+                    dosageViewHolder.timeText.text = dosageViewHolder.timeText.resources.getString(R.string.medication_schedule_anytime)
+                }
+                dosageViewHolder.dayText.text = if (dosage.daysOfWeek.size == 7) {
+                    dosageViewHolder.dayText.context.getString(R.string.medication_schedule_everyday)
+                } else if (dosage.daysOfWeek.isEmpty()) {
+                    ""
+                } else {
+                    MedicationDayFragment.getDayStringSet(dosageViewHolder.dayText.resources, dosage.daysOfWeek)
+                            .localizedAndJoin(dosageViewHolder.dayText.context)
+                }
+                dosageViewHolder.editButton.setOnClickListener { _ ->
+                    setEditRow(items.indexOf(dosage))
+                }
             }
 
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            TYPE_EDIT -> {
+                val dosageViewHolder = viewHolder as DosageViewHolder
+                dosageViewHolder.removeButton.setOnClickListener {
+                    editIndex = -1
+                    listener.onRemovePressed(dosage)
+                }
+                if (items.size < 2) {
+                    dosageViewHolder.removeButton.visibility = View.GONE
+                } else {
+                    dosageViewHolder.removeButton.visibility = View.VISIBLE
+                }
+
+                if (dosageViewHolder.textWatcher != null) {
+                    dosageViewHolder.dosageText.removeTextChangedListener(dosageViewHolder.textWatcher)
+                }
+                dosageViewHolder.dosageText.setText(dosage.dosage)
+                val textWatcher = object : TextWatcher {
+                    override fun afterTextChanged(editable: Editable?) {
+                        listener.onDosageTextChange(dosage, editable.toString())
+                    }
+
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    }
+
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                    }
+                }
+                dosageViewHolder.textWatcher = textWatcher
+                dosageViewHolder.dosageText.addTextChangedListener(textWatcher)
+                if (dosage.dosage.isEmpty()) {
+                    dosageViewHolder.dosageText.requestFocus()
+
+                }
+
+                dosageViewHolder.radioButtonAnytime.setOnCheckedChangeListener(null)
+                dosageViewHolder.radioButtonAnytime.isChecked = dosage.isAnytime
+                dosageViewHolder.radioButtonSchedule.isChecked = !dosage.isAnytime
+
+                dosageViewHolder.radioButtonAnytime.setOnCheckedChangeListener { _, isChecked ->
+                    listener.onAnytimeSet(dosage, isChecked)
+                }
+
+                val visibility = if (dosage.isAnytime) View.GONE else View.VISIBLE
+                dosageViewHolder.dayContainer.visibility = visibility
+                dosageViewHolder.timeContainer.visibility = visibility
+
+                if (dosage.timestamps.isEmpty() || dosage.isAnytime) {
+                    dosageViewHolder.timeText.text =
+                            dosageViewHolder.timeText.resources.getString(R.string.medication_select_times)
+                } else {
+                    val formatter = DateTimeFormatter.ofPattern("h:mm a")
+                    val times = mutableListOf<String>()
+                    for (timeStamp: MedicationTimestamp in dosage.timestamps) {
+                        times.add(formatter.format(timeStamp.localTimeOfDay))
+                    }
+
+                    dosageViewHolder.timeText.text = times.localizedAndJoin(dosageViewHolder.timeText.context)
+                }
+                dosageViewHolder.timeContainer.setOnClickListener { _ ->
+                    LOGGER.debug("Time clicked")
+                    listener.onTimeSelectionPressed(dosage)
+                }
+
+                dosageViewHolder.dayContainer.setOnClickListener { _ ->
+                    LOGGER.debug("Day container clicked")
+                    listener.onDaySelectionPressed(dosage)
+                }
+
+                dosageViewHolder.dayText.text = if (dosage.daysOfWeek.size == 7) {
+                    dosageViewHolder.dayText.context.getString(R.string.medication_schedule_everyday)
+                } else if (dosage.daysOfWeek.isEmpty()) {
+                    dosageViewHolder.dayText.context.getString(R.string.medication_select_days)
+                } else {
+                    MedicationDayFragment.getDayStringSet(dosageViewHolder.dayText.resources, dosage.daysOfWeek)
+                            .localizedAndJoin(dosageViewHolder.dayText.context)
+                }
             }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-        }
-        dosageViewHolder.textWatcher = textWatcher
-        dosageViewHolder.dosageText.addTextChangedListener(textWatcher)
-        if (dosage.dosage.isEmpty()) {
-            dosageViewHolder.dosageText.requestFocus()
-
-        }
-
-        dosageViewHolder.radioButtonAnytime.setOnCheckedChangeListener(null)
-        dosageViewHolder.radioButtonAnytime.isChecked = dosage.isAnytime
-        dosageViewHolder.radioButtonSchedule.isChecked = !dosage.isAnytime
-
-        dosageViewHolder.radioButtonAnytime.setOnCheckedChangeListener { _, isChecked ->
-            listener.onAnytimeSet(dosage, isChecked)
-        }
-
-        val visibility = if (dosage.isAnytime) View.GONE else View.VISIBLE
-        dosageViewHolder.dayContainer.visibility = visibility
-        dosageViewHolder.timeContainer.visibility = visibility
-
-        if (dosage.timestamps.isEmpty() || dosage.isAnytime) {
-            dosageViewHolder.timeText.text =
-                    dosageViewHolder.timeText.resources.getString(R.string.medication_select_times)
-        } else {
-            val formatter = DateTimeFormatter.ofPattern("h:mm a")
-            val times = mutableListOf<String>()
-            for (timeStamp: MedicationTimestamp in dosage.timestamps) {
-                times.add(formatter.format(timeStamp.localTimeOfDay))
-            }
-
-            dosageViewHolder.timeText.text = times.localizedAndJoin(dosageViewHolder.timeText.context)
-        }
-        dosageViewHolder.timeContainer.setOnClickListener { _ ->
-            LOGGER.debug("Time clicked")
-            listener.onTimeSelectionPressed(dosage)
-        }
-
-        dosageViewHolder.dayContainer.setOnClickListener { _ ->
-            LOGGER.debug("Day container clicked")
-            listener.onDaySelectionPressed(dosage)
-        }
-
-        dosageViewHolder.dayText.text = if (dosage.daysOfWeek.size == 7) {
-            dosageViewHolder.dayText.context.getString(R.string.medication_schedule_everyday)
-        } else if (dosage.daysOfWeek.isEmpty()) {
-            dosageViewHolder.dayText.context.getString(R.string.medication_select_days)
-        } else {
-            MedicationDayFragment.getDayStringSet(dosageViewHolder.dayText.resources, dosage.daysOfWeek)
-                    .localizedAndJoin(dosageViewHolder.dayText.context)
         }
     }
+}
+
+class ViewDosageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    val dosageText = view.item_title
+    val timeText = view.time_label
+    val dayText = view.days_label
+    val editButton = view.edit_button
 }
 
 class DosageViewHolder(view: View) : RecyclerView.ViewHolder(view) {

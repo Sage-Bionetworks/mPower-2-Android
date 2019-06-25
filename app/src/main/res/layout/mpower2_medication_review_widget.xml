@@ -10,6 +10,7 @@
     android:paddingTop="@dimen/margin_medium"
     android:clickable="true"
     android:focusable="true"
+    android:background="@color/white"
     android:foreground="?attr/selectableItemBackgroundBorderless">
 
     <TextView

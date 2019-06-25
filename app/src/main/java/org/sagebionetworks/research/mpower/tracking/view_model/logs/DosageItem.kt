@@ -1,18 +1,8 @@
 package org.sagebionetworks.research.mpower.tracking.view_model.logs
 
-import com.google.auto.value.AutoValue
-import com.google.common.collect.Collections2
-import com.google.common.collect.ImmutableSet
-import com.google.gson.Gson
-import com.google.gson.TypeAdapter
-
-import org.threeten.bp.Instant
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
-
-import java.util.ArrayList
-import java.util.Collections
-import java.util.HashSet
+import java.util.*
 
 data class DosageItem (
 
@@ -43,7 +33,7 @@ data class DosageItem (
         val timeOfDayFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
         /**
-         * @property dailySet that represents all the possible values for [Schedule.daysOfWeek]
+         * @property dailySet that represents all the possible values for [DosageItem.daysOfWeek]
          */
         val dailySet: Set<Int> = (1..totalDaysOfTheWeek).toSet()
 
