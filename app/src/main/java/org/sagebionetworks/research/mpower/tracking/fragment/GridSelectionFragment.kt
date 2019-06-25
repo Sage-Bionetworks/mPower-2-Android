@@ -32,40 +32,29 @@ class GridSelectionFragment : AppCompatDialogFragment() {
     companion object {
         val ARG_ITEMS = "ARG_ITEMS"
         val ARG_TITLE = "ARG_TITLE"
+        val ARG_SINGLE_SELECT = "ARG_SINGLE_SELECT"
 //        val ARG_TIME = "ARG_TIME"
 //        val ARG_DAYS = "ARG_DAYS"
 
         val TYPE_HEADER = 1
         val TYPE_ITEM = 2
 
-        fun newInstance(name: String, items: ArrayList<SelectionItem>): GridSelectionFragment {
+        fun newInstance(name: String, items: ArrayList<SelectionItem>, singleSelect: Boolean): GridSelectionFragment {
             val fragment = GridSelectionFragment()
             val args = Bundle()
             args.putParcelableArrayList(ARG_ITEMS, items)
             args.putString(ARG_TITLE, name)
+            args.putBoolean(ARG_SINGLE_SELECT, singleSelect)
             fragment.arguments = args
             return fragment
         }
-
-//        fun getDays(resources: Resources): ArrayList<String> {
-//            return ArrayList(Arrays.asList(*resources.getStringArray(R.array.days_of_the_week)))
-//        }
-//
-//        fun getDayStringSet(resources: Resources, indexSet: Set<Int>): Set<String> {
-//            return getDays(resources).filterIndexed { index, _ ->
-//                // index + 1 is because days start on index 1 (sunday), there is no day 0
-//                indexSet.contains((index + 1))
-//            }.toSet()
-//        }
     }
 
-    //lateinit var customView: View
-    lateinit var listener: ItemsSelectedListener
-//    lateinit var selectedDays: MutableList<Int>
-    lateinit var title: String
-//    lateinit var time: String
 
+    lateinit var listener: ItemsSelectedListener
+    lateinit var title: String
     lateinit var items: ArrayList<SelectionItem>
+    var singleSelect = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,12 +64,14 @@ class GridSelectionFragment : AppCompatDialogFragment() {
             if (args != null) {
                 items = args.getParcelableArrayList<SelectionItem>(ARG_ITEMS)
                 title = args.getString(ARG_TITLE)
+                singleSelect = args.getBoolean(ARG_SINGLE_SELECT, false)
             } else {
                 LOGGER.warn("No arguments found")
             }
         } else {
             items = savedInstanceState.getParcelableArrayList<SelectionItem>(ARG_ITEMS)
             title = savedInstanceState.getString(ARG_TITLE)
+            singleSelect = savedInstanceState.getBoolean(ARG_SINGLE_SELECT)
         }
     }
 
@@ -108,6 +99,9 @@ class GridSelectionFragment : AppCompatDialogFragment() {
         LOGGER.debug("onViewCreated()")
 
         day_selection_title.text = title
+        if (singleSelect) {
+            day_selection_message.visibility = View.GONE
+        }
         var recycler = medication_day_recycler
         val adapter = DayAdapter(items, context!!)
         recycler.adapter = adapter
@@ -138,12 +132,19 @@ class GridSelectionFragment : AppCompatDialogFragment() {
             listener.onItemsSelected(identifiers)
             dismiss()
         }
+        updateSaveButtonEnabled()
+    }
+
+    private fun updateSaveButtonEnabled() {
+        val isEnabled = items.firstOrNull { it.isSelected } != null
+        day_selection_save.isEnabled = items.firstOrNull { it.isSelected } != null
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelableArrayList(ARG_ITEMS, items)
         outState.putString(ARG_TITLE, title)
+        outState.putBoolean(ARG_SINGLE_SELECT, singleSelect)
     }
 
     inner class DayAdapter(val items: List<SelectionItem>, val context: Context) :
@@ -176,30 +177,31 @@ class GridSelectionFragment : AppCompatDialogFragment() {
             holder.tvDay.text = selectionItem.displayText
             if (getItemViewType(position) == TYPE_ITEM) {
                 if (selectionItem.isSelected) {
-                    //holder.root.setBackgroundResource(R.color.royal300)
                     holder.tvDay.isSelected = true
                     holder.tvDay.setCompoundDrawablesWithIntrinsicBounds(resources.getDrawable(R.drawable.ic_check_black_16dp), null, null, null)
                 } else {
-                    //holder.root.setBackgroundResource(R.color.appWhite)
                     holder.tvDay.isSelected = false
                     holder.tvDay.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
 
                 }
 
                 holder.tvDay.setOnClickListener { view ->
-                    selectionItem.isSelected = !selectionItem.isSelected
+                    if (!singleSelect || !selectionItem.isSelected) {
+                        if (singleSelect) {
+                            items.forEach {
+                                it.isSelected = false
+                                Handler(Looper.getMainLooper()).post {
+                                    notifyItemChanged(items.indexOf(it))
+                                }
+                            }
+                        }
 
-//                    if (selectedDays.contains(adjustedPosition)) {
-//                        selectedDays.remove(adjustedPosition)
-//                        holder.tvDay.isSelected = false
-//                        //view.setBackgroundResource(R.color.appWhite)
-//                    } else {
-//                        selectedDays.add(adjustedPosition)
-//                        holder.tvDay.isSelected = true
-//                        //view.setBackgroundResource(R.color.royal300)
-//                    }
-                    Handler(Looper.getMainLooper()).post {
-                        notifyItemChanged(position)
+                        selectionItem.isSelected = !selectionItem.isSelected
+
+                        Handler(Looper.getMainLooper()).post {
+                            notifyItemChanged(position)
+                        }
+                        updateSaveButtonEnabled()
                     }
                 }
             }
@@ -216,6 +218,5 @@ interface ItemsSelectedListener {
 }
 
 class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    var root = view
     val tvDay: TextView = view.findViewById(R.id.day_text)
 }

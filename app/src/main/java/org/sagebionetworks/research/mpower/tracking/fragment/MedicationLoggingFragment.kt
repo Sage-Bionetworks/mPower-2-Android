@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.View
 import kotlinx.android.synthetic.main.mpower2_medication_logging_step.*
+import org.joda.time.Minutes
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction
 import org.sagebionetworks.research.mpower.R
@@ -18,9 +19,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationTi
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
 import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.slf4j.LoggerFactory
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
+import org.threeten.bp.*
 import org.threeten.bp.zone.ZoneRulesException
 import java.util.*
 
@@ -49,26 +48,32 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
 
         override fun onTimePressed(currentLoggedDate: Instant, medicationIdentifier: String,
                 scheduleItem: MedicationLoggingSchedule, position: Int) {
-            val calendar = Calendar.getInstance()
-            calendar.time = Date(currentLoggedDate.toEpochMilli())
-            TimePickerDialog(context,
-                    { _, hour, minute ->
-                        calendar.set(Calendar.HOUR_OF_DAY, hour)
-                        calendar.set(Calendar.MINUTE, minute)
-                        val newLoggedDate = Instant.ofEpochMilli(calendar.timeInMillis)
+
+            var selectionItems = viewModel.getSelectionTimes(context!!, scheduleItem.dosageItem)
+            selectionItems.forEach { it.isSelected = false }
+            selectionItems.firstOrNull { it.identifier == scheduleItem.medicationTimestamp?.timeOfDay }?.isSelected = true
+            var dialog = GridSelectionFragment.newInstance(
+                    getString(R.string.medication_time_edit_title, medicationIdentifier),
+                    selectionItems, true)
+            dialog.listener = object : ItemsSelectedListener {
+                override fun onItemsSelected(selectedItemIds: List<String>) {
+                    if (selectedItemIds.isNotEmpty()) {
+                        val timeStamp = LocalTime.parse(selectedItemIds.get(0), MedicationTimestamp.timeOfDayFormatter)
+                        val updatedLoggedDate = ZonedDateTime.of(LocalDateTime.of(LocalDate.now(), timeStamp), ZoneId.systemDefault()).toInstant()
 
                         scheduleItem.medicationTimestamp?.let { medicationTimestamp ->
                             scheduleItem.dosageItem.timestamps.remove(medicationTimestamp)
-                            val updatedTimeStamp = medicationTimestamp.toBuilder().setLoggedDate(newLoggedDate)!!.build()
+                            val updatedTimeStamp = medicationTimestamp.toBuilder().setLoggedDate(updatedLoggedDate)!!.build()
                             scheduleItem.dosageItem.timestamps.add(updatedTimeStamp)
                             val recyclerView = if (isCurrent) medication_recycler_view else missed_medication_recycler_view
                             val updatedScheduleItem = MedicationLoggingSchedule(
                                     scheduleItem.config, scheduleItem.dosageItem, updatedTimeStamp)
                             (recyclerView.adapter as MedicationLoggingAdapter).updateItem(updatedScheduleItem, position)
                         }
-                    },
-                    calendar.get(Calendar.HOUR_OF_DAY),
-                    calendar.get(Calendar.MINUTE), false).show()
+                    }
+                }
+            }
+            dialog.show(fragmentManager, "Times select")
         }
 
         override fun onTakenPressed(medicationIdentifier: String, scheduleItem: MedicationLoggingSchedule, position: Int) {

@@ -148,7 +148,7 @@ class MedicationSchedulingFragment :
 
                 var dialog = GridSelectionFragment.newInstance(
                         getString(R.string.medication_time_selection_title, identifier),
-                        viewModel.getSelectionTimes(context!!, dosageItem))
+                        viewModel.getSelectionTimes(context!!, dosageItem), false)
                 dialog.listener = object : ItemsSelectedListener {
                     override fun onItemsSelected(selectedItemIds: List<String>) {
                         val configUnwrapped = config ?: return

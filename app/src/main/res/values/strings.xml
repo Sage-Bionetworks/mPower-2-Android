@@ -159,6 +159,7 @@
     <string name="dosage_hint">e.g.: 10/100 mg</string>
     <string name="medication_day_selection_title">On which days do you take %1$s?</string>
     <string name="medication_time_selection_title">At what times do you take %1$s?</string>
+    <string name="medication_time_edit_title">At what time did you take %1$s?</string>
     <string name="medication_day_selection_message">Select all that apply</string>
     <string-array name="days_of_the_week">
         <item>Sunday</item>
