@@ -104,7 +104,7 @@ class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingI
                 // Setup the labels for the not logged view
                 if (scheduleItem.dosageItem.isAnytime) {
                     holder.notLoggedDaysLabel.setText(R.string.medication_schedule_anytime)
-                    holder.notLoggedTimeLabel.visibility = View.GONE
+                    holder.notLoggedTimeLabel.setText(holder.itemView.resources.getString(R.string.medication_logging_take_at_label))
                 } else {
                     holder.notLoggedTimeLabel.visibility = View.VISIBLE
                     scheduleItem.medicationTimestamp?.localTimeOfDay?.let {

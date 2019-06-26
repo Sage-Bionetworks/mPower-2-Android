@@ -44,6 +44,7 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
             addChildFragmentOnTop(fragment, "MedicationSelectionFragment")
         }
 
+        navigationActionBar.skipButton.setText(R.string.medication_add_details_later)
         navigationActionBar.forwardButton.setText(R.string.button_save)
         navigationActionBar.setActionButtonClickListener{ actionButton ->
             if (actionButton.id == R.id.rs2_step_navigation_action_forward) {
@@ -58,6 +59,26 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
         }
 
         return result
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateButtonState()
+    }
+
+    private fun updateButtonState() {
+        val medicationConfigs =
+                SortUtil.getActiveElementsSorted(viewModel.activeElementsById.value!!)
+        if (medicationConfigs.indexOfFirst { !it.isConfigured } == -1) {
+            //All configured
+            navigationActionBar.skipButton.visibility = View.GONE
+            navigationActionBar.forwardButton.isEnabled = true
+        } else {
+            //Not all configured
+            navigationActionBar.skipButton.visibility = View.VISIBLE
+            navigationActionBar.forwardButton.isEnabled = false
+        }
+
     }
 
     override fun initializeAdapter(): MedicationReviewAdapter {

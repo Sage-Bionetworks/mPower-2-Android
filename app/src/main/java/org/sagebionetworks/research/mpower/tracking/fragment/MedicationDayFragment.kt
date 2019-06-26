@@ -122,7 +122,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         val dayStrings = getDays(resources)
         dayStrings.add(resources.getString(medication_schedule_everyday))
         recycler.adapter = DayAdapter(ArrayList((0..(dayStrings.size-1)).toList()), dayStrings, context!!)
-      
+
         day_selection_back.setOnClickListener { _ ->
             dismiss()
         }
@@ -156,11 +156,9 @@ class MedicationDayFragment : AppCompatDialogFragment() {
             holder.tvDay.text = dayStrings[items[position]]
             val adjustedPosition = position + 1
             if ((selectedDays.contains(adjustedPosition) && selectedDays.size < 7) || (selectedDays.size == 7 && position == 7)) {
-                //holder.root.setBackgroundResource(R.color.royal300)
                 holder.tvDay.isSelected = true
                 holder.tvDay.setCompoundDrawablesWithIntrinsicBounds(resources.getDrawable( R.drawable.ic_check_black_16dp), null, null ,null)
             } else {
-                //holder.root.setBackgroundResource(R.color.appWhite)
                 holder.tvDay.isSelected = false
                 holder.tvDay.setCompoundDrawablesWithIntrinsicBounds(null, null, null ,null)
 

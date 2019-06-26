@@ -93,20 +93,6 @@ class MedicationSchedulingFragment :
                 val fragment = MedicationLoggingFragment.newInstance(stepView)
                 replaceWithFragment(fragment)
             }
-
-//            val viewModelValue = viewModel.activeElementsById.value
-//                    ?: return@setActionButtonClickListener
-//            var configs = SortUtil.getActiveElementsSorted(viewModelValue)
-//            configs = configs.filter { config -> !config.isConfigured }
-//            val iterator = configs.iterator()
-//            val fragment = if (iterator.hasNext()) {
-//                val nextConfig = iterator.next()
-//                MedicationSchedulingFragment.newInstance(stepView, nextConfig.identifier)
-//            } else {
-//                MedicationReviewFragment.newInstance(stepView)
-//            }
-//
-//            replaceWithFragment(fragment)
         }
 
         return view
@@ -201,7 +187,7 @@ class MedicationSchedulingFragment :
             val dose = DosageItem("", DosageItem.dailySet.toMutableSet(), mutableSetOf())
             config?.dosageItems?.add(dose)
         }
-        return MedicationAdapter(config!!.dosageItems.toMutableList(), listener)
+        return MedicationAdapter(config!!.dosageItems.toMutableList(), listener, medScheduleViewModel)
     }
 
     override fun getLayoutId(): Int {
@@ -231,8 +217,11 @@ class MedicationSchedulingFragment :
                 viewModel.activeElementsById.value?.let {
                     if (it.isEmpty()) {
                         replaceWithFragment(MedicationSelectionFragment.newInstance(stepView))
+                    } else if (fragmentManager!!.backStackEntryCount > 0) {
+                        fragmentManager!!.popBackStack()
                     } else {
-                        replaceWithFragment(MedicationAddDetailsFragment.newInstance(stepView))
+                        val fragment = MedicationLoggingFragment.newInstance(stepView)
+                        replaceWithFragment(fragment)
                     }
                 }
             }
@@ -251,5 +240,6 @@ class MedicationSchedulingViewModelFactory(val medicationLog: MedicationLog?) : 
 class MedicationSchedulingViewModel(medLog: MedicationLog?) : ViewModel() {
 
     val medicationLog = medLog
+    var editIndex = if (medicationLog!!.dosageItems.size < 2) 0 else -1
 
 }

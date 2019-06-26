@@ -12,24 +12,18 @@ import kotlinx.android.synthetic.main.mpower2_dosage_details.view.*
 import kotlinx.android.synthetic.main.mpower2_medication_review_widget.view.*
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.fragment.MedicationDayFragment
+import org.sagebionetworks.research.mpower.tracking.fragment.MedicationSchedulingViewModel
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.DosageItem
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationTimestamp
 import org.sagebionetworks.research.sageresearch.extensions.localizedAndJoin
 import org.slf4j.LoggerFactory
 import org.threeten.bp.format.DateTimeFormatter
 
-class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listener, var medicationSchedulingViewModel: MedicationSchedulingViewModel) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val LOGGER = LoggerFactory.getLogger(
             MedicationAdapter::class.java)
 
-    private var editIndex = -1
-
-    init {
-        if (items.size == 1) {
-            editIndex = 0
-        }
-    }
 
     companion object {
         const val TYPE_EDIT = 0
@@ -38,8 +32,8 @@ class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listen
 
     fun addDosage(dosage: DosageItem) {
         items.add(0, dosage)
-        val oldEditIndex = editIndex
-        editIndex = 0
+        val oldEditIndex = medicationSchedulingViewModel.editIndex
+        medicationSchedulingViewModel.editIndex = 0
 
         Handler(Looper.getMainLooper()).post {
             notifyItemInserted(0)
@@ -70,13 +64,13 @@ class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listen
     }
 
     fun setEditRow(index: Int) {
-        val oldEditIndex = editIndex
-        editIndex = index
+        val oldEditIndex = medicationSchedulingViewModel.editIndex
+        medicationSchedulingViewModel.editIndex = index
         Handler(Looper.getMainLooper()).post {
             if (oldEditIndex != -1) {
                 notifyItemChanged(oldEditIndex)
             }
-            notifyItemChanged(editIndex)
+            notifyItemChanged(medicationSchedulingViewModel.editIndex)
         }
     }
 
@@ -86,7 +80,7 @@ class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listen
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == editIndex) {
+        if (position == medicationSchedulingViewModel.editIndex) {
             return TYPE_EDIT
         }
         return TYPE_VIEW
@@ -135,7 +129,7 @@ class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listen
             TYPE_EDIT -> {
                 val dosageViewHolder = viewHolder as DosageViewHolder
                 dosageViewHolder.removeButton.setOnClickListener {
-                    editIndex = -1
+                    medicationSchedulingViewModel.editIndex = -1
                     listener.onRemovePressed(dosage)
                 }
                 if (items.size < 2) {
