@@ -47,8 +47,12 @@ public abstract class MedicationTimestamp {
         return null;
     }
 
-    public MedicationTimestamp copyAndClearLoggedDate() {
-        return builder().setTimeOfDay(getTimeOfDay()).build();
+    public MedicationTimestamp copy(boolean clearLoggedDate) {
+        if (clearLoggedDate) {
+            return builder().setTimeOfDay(getTimeOfDay()).build();
+        } else {
+            return toBuilder().build();
+        }
     }
 
 

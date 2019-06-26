@@ -228,7 +228,7 @@ class MedicationTrackingTaskViewModel(context: Context,
         for (log in previousLoggingCollection.items) {
             var config = log;
             if (newDay) {
-                config = log.copyAndClearLoggedDate()
+                config = log.copy(true)
             }
 
             activeElements[log.identifier] = config

@@ -52,10 +52,10 @@ public abstract class MedicationLog implements TrackingItemLog, TrackingItemConf
                 getDosageItems().get(0).getDosage() != null && !getDosageItems().get(0).getDosage().isEmpty();
     }
 
-    public MedicationLog copyAndClearLoggedDate() {
+    public MedicationLog copy(boolean clearLoggedDate) {
         List<DosageItem> dosages = new ArrayList<>();
         for(DosageItem dosage: getDosageItems()) {
-            dosages.add(dosage.copyAndClearLoggedDate());
+            dosages.add(dosage.copy(clearLoggedDate));
         }
         return builder().setDosageItems(dosages)
                 .setIdentifier(getIdentifier())

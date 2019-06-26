@@ -62,14 +62,14 @@ data class DosageItem (
 
 
 
-    fun copyAndClearLoggedDate(): DosageItem {
-        val timestamps = HashSet<MedicationTimestamp>()
+    fun copy(clearLoggedDate: Boolean): DosageItem {
+        val timestampsCopy = HashSet<MedicationTimestamp>()
         for (timestamp in timestamps) {
-            timestamps.add(timestamp.copyAndClearLoggedDate())
+            timestampsCopy.add(timestamp.copy(clearLoggedDate))
         }
-        val daysOfWeek = HashSet<Int>()
-        daysOfWeek.addAll(daysOfWeek)
-        return DosageItem(dosage, daysOfWeek, timestamps)
+        val daysOfWeekCopy = HashSet<Int>()
+        daysOfWeekCopy.addAll(daysOfWeek)
+        return DosageItem(dosage, daysOfWeekCopy, timestampsCopy)
 
     }
 

@@ -1,5 +1,8 @@
 package org.sagebionetworks.research.mpower.tracking.fragment
 
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.ViewCompat
@@ -10,14 +13,9 @@ import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import butterknife.BindView
-import kotlinx.android.synthetic.main.mpower2_medication_logging_step.*
 import kotlinx.android.synthetic.main.mpower2_medication_scheduling.*
-import kotlinx.android.synthetic.main.mpower2_medication_scheduling.rs2_step_navigation_action_bar
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper
-import org.sagebionetworks.research.mobile_ui.widget.ActionButton
 import org.sagebionetworks.research.mpower.R
-import org.sagebionetworks.research.mpower.tracking.SortUtil
 import org.sagebionetworks.research.mpower.tracking.recycler_view.Listener
 import org.sagebionetworks.research.mpower.tracking.recycler_view.MedicationAdapter
 import org.sagebionetworks.research.mpower.tracking.view_model.MedicationTrackingTaskViewModel
@@ -26,22 +24,26 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLo
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationTimestamp
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
 import org.slf4j.LoggerFactory
-import org.threeten.bp.LocalTime
-import org.threeten.bp.format.DateTimeFormatter
 
 class MedicationSchedulingFragment :
         RecyclerViewTrackingFragment<MedicationLog, MedicationLog,
                 MedicationTrackingTaskViewModel, MedicationAdapter>() {
 
     private val LOGGER = LoggerFactory.getLogger(MedicationSchedulingFragment::class.java)
-    private val config: MedicationLog?
+    private val configOriginal: MedicationLog?
         get() {
             viewModel.activeElementsById.value?.let {
                 return it[identifier]
             } ?: return null
         }
 
+    private val config: MedicationLog?
+        get() {
+            return medScheduleViewModel.medicationLog
+        }
+
     private lateinit var identifier: String
+    private lateinit var medScheduleViewModel: MedicationSchedulingViewModel
 
     companion object {
         private val ARG_IDENTIFIER = "identifier"
@@ -57,6 +59,7 @@ class MedicationSchedulingFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         LOGGER.debug("onCreate()")
         if (savedInstanceState != null) {
             identifier = savedInstanceState.getString(ARG_IDENTIFIER) ?: ""
@@ -66,6 +69,9 @@ class MedicationSchedulingFragment :
             LOGGER.warn("MedicationSchedulingFragment created without an identifier argument")
             return
         }
+        val medicationLog = configOriginal?.copy(false)
+        medScheduleViewModel = ViewModelProviders.of(this, MedicationSchedulingViewModelFactory(medicationLog)).get(MedicationSchedulingViewModel::class.java)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -79,6 +85,8 @@ class MedicationSchedulingFragment :
         detail.setOnClickListener { addDose() }
         navigationActionBar.forwardButton.setText(R.string.button_save)
         navigationActionBar.setActionButtonClickListener { _ ->
+            configOriginal?.dosageItems?.clear()
+            configOriginal?.dosageItems?.addAll(config!!.dosageItems)
             if (fragmentManager!!.backStackEntryCount > 0) {
                 fragmentManager!!.popBackStack()
             } else {
@@ -231,4 +239,17 @@ class MedicationSchedulingFragment :
         })
         dialog.show(fragmentManager, "Remove medication")
     }
+
+}
+
+class MedicationSchedulingViewModelFactory(val medicationLog: MedicationLog?) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return MedicationSchedulingViewModel(medicationLog) as T
+    }
+}
+
+class MedicationSchedulingViewModel(medLog: MedicationLog?) : ViewModel() {
+
+    val medicationLog = medLog
+
 }
