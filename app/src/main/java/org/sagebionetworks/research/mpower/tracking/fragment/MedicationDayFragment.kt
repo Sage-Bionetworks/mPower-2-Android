@@ -24,6 +24,8 @@ import kotlinx.android.synthetic.main.dialog_medication_day.medication_day_recyc
 import kotlinx.android.synthetic.main.list_item_day.view.day_text
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.R.layout
+import org.sagebionetworks.research.mpower.R2.string.medication_schedule_everyday
+import org.sagebionetworks.research.mpower.tracking.view_model.logs.DosageItem
 import org.slf4j.LoggerFactory
 import java.util.Arrays
 
@@ -64,7 +66,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
     }
 
     lateinit var listener: DaySelectedListener
-    lateinit var selectedDays: MutableList<Int>
+    lateinit var selectedDays: MutableSet<Int>
     lateinit var name: String
     lateinit var time: String
 
@@ -76,7 +78,8 @@ class MedicationDayFragment : AppCompatDialogFragment() {
             if (args != null) {
                 name = args.getString(ARG_NAME) ?: ""
                 time = args.getString(ARG_TIME) ?: ""
-                selectedDays = args.getIntegerArrayList(ARG_DAYS) ?: mutableListOf()
+                selectedDays = mutableSetOf<Int>()
+                selectedDays.addAll(args.getIntegerArrayList(ARG_DAYS))
             } else {
                 LOGGER.warn("No arguments found")
                 name = "Default"
@@ -85,7 +88,8 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         } else {
             name = savedInstanceState.getString(ARG_NAME) ?: ""
             time = savedInstanceState.getString(ARG_TIME) ?: ""
-            selectedDays = savedInstanceState.getIntegerArrayList(ARG_DAYS) ?: mutableListOf()
+            selectedDays = mutableSetOf<Int>()
+            selectedDays.addAll(savedInstanceState.getIntegerArrayList(ARG_DAYS))
         }
     }
 
@@ -116,9 +120,9 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         var recycler = medication_day_recycler
         recycler.layoutManager = GridLayoutManager(context, 2)
         val dayStrings = getDays(resources)
+        dayStrings.add(resources.getString(medication_schedule_everyday))
         recycler.adapter = DayAdapter(ArrayList((0..(dayStrings.size-1)).toList()), dayStrings, context!!)
-        //recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-
+      
         day_selection_back.setOnClickListener { _ ->
             dismiss()
         }
@@ -151,7 +155,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         override fun onBindViewHolder(holder: DayViewHolder, position: Int) {
             holder.tvDay.text = dayStrings[items[position]]
             val adjustedPosition = position + 1
-            if (selectedDays.contains(adjustedPosition)) {
+            if ((selectedDays.contains(adjustedPosition) && selectedDays.size < 7) || (selectedDays.size == 7 && position == 7)) {
                 //holder.root.setBackgroundResource(R.color.royal300)
                 holder.tvDay.isSelected = true
                 holder.tvDay.setCompoundDrawablesWithIntrinsicBounds(resources.getDrawable( R.drawable.ic_check_black_16dp), null, null ,null)
@@ -163,17 +167,31 @@ class MedicationDayFragment : AppCompatDialogFragment() {
             }
 
             holder.tvDay.setOnClickListener { view ->
-                if (selectedDays.contains(adjustedPosition)) {
-                    selectedDays.remove(adjustedPosition)
-                    holder.tvDay.isSelected = false
-                    //view.setBackgroundResource(R.color.appWhite)
+                if (position == 7) {
+                    if (selectedDays.size != 7) {
+                        selectedDays.addAll(DosageItem.dailySet)
+                        holder.tvDay.isSelected = true
+
+                        Handler(Looper.getMainLooper()).post {
+                            notifyDataSetChanged()
+                        }
+                    }
+
                 } else {
-                    selectedDays.add(adjustedPosition)
-                    holder.tvDay.isSelected = true
-                    //view.setBackgroundResource(R.color.royal300)
-                }
-                Handler(Looper.getMainLooper()).post {
-                    notifyItemChanged(position)
+                    if (selectedDays.size == 7) {
+                        selectedDays.clear()
+                    }
+
+                    if (selectedDays.contains(adjustedPosition)) {
+                        selectedDays.remove(adjustedPosition)
+                        holder.tvDay.isSelected = false
+                    } else {
+                        selectedDays.add(adjustedPosition)
+                        holder.tvDay.isSelected = true
+                    }
+                    Handler(Looper.getMainLooper()).post {
+                        notifyDataSetChanged()
+                    }
                 }
             }
         }
