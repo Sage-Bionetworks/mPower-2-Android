@@ -74,11 +74,11 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
         if (medicationConfigs.indexOfFirst { !it.isConfigured } == -1) {
             //All configured
             navigationActionBar.skipButton.visibility = View.GONE
-            navigationActionBar.forwardButton.isEnabled = true
+            navigationActionBar.setForwardButtonEnabled(true)
         } else {
             //Not all configured
             navigationActionBar.skipButton.visibility = View.VISIBLE
-            navigationActionBar.forwardButton.isEnabled = false
+            navigationActionBar.setForwardButtonEnabled(false)
         }
 
     }
