@@ -33,6 +33,7 @@ import java.util.Set;
 public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, LogType extends TrackingItemLog,
                 ViewModelType extends TrackingTaskViewModel<ConfigType, LogType>>
         extends RecyclerViewTrackingFragment<ConfigType, LogType, ViewModelType, SelectionItemAdapter> {
+
     @Override
     @NonNull
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,6 +63,13 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
     @Override
     @NonNull
     public SelectionItemAdapter initializeAdapter() {
+        ImmutableList<SelectionUIFormItem> availableItems = ImmutableList.copyOf(
+                SortUtil.getAvailableElementsSorted(viewModel.getAvailableElements().getValue()));
+        Set<Integer> selectedIndices = getSelectedIndices(availableItems);
+        return new SelectionItemAdapter(availableItems, getSelectionListener(), selectedIndices);
+    }
+
+    protected SelectionItemViewHolder.SelectionListener getSelectionListener() {
         SelectionItemViewHolder.SelectionListener selectionListener = (item, position) -> {
             if (viewModel.getActiveElementsById().getValue() == null) {
                 return; // NPE guard
@@ -76,11 +84,7 @@ public abstract class SelectionFragment<ConfigType extends TrackingItemConfig, L
             adapter.notifyItemChanged(position);
             refreshNextButtonEnabled();
         };
-
-        ImmutableList<SelectionUIFormItem> availableItems = ImmutableList.copyOf(
-                SortUtil.getAvailableElementsSorted(viewModel.getAvailableElements().getValue()));
-        Set<Integer> selectedIndices = getSelectedIndices(availableItems);
-        return new SelectionItemAdapter(availableItems, selectionListener, selectedIndices);
+        return selectionListener;
     }
 
     private Set<Integer> getSelectedIndices(@NonNull ImmutableList<SelectionUIFormItem> availableItems) {
