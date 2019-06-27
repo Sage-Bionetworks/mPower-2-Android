@@ -33,8 +33,6 @@ class GridSelectionFragment : AppCompatDialogFragment() {
         val ARG_ITEMS = "ARG_ITEMS"
         val ARG_TITLE = "ARG_TITLE"
         val ARG_SINGLE_SELECT = "ARG_SINGLE_SELECT"
-//        val ARG_TIME = "ARG_TIME"
-//        val ARG_DAYS = "ARG_DAYS"
 
         val TYPE_HEADER = 1
         val TYPE_ITEM = 2
@@ -118,10 +116,6 @@ class GridSelectionFragment : AppCompatDialogFragment() {
         })
         recycler.layoutManager = gridLayoutManager
 
-
-
-        //recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-
         day_selection_back.setOnClickListener { _ ->
             dismiss()
         }
@@ -136,7 +130,6 @@ class GridSelectionFragment : AppCompatDialogFragment() {
     }
 
     private fun updateSaveButtonEnabled() {
-        val isEnabled = items.firstOrNull { it.isSelected } != null
         day_selection_save.isEnabled = items.firstOrNull { it.isSelected } != null
     }
 
