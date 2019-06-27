@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingTop="@dimen/list_item_spacing_half"
+    android:paddingBottom="@dimen/list_item_spacing_half"
+    tools:context=".tracking.fragment.RecordMedicationDialogFragment">
+
+    <TextView
+        android:id="@+id/details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/appDarkGrey"
+        android:textSize="18sp"
+        android:text="@string/medication_would_you_like"
+        android:fontFamily="@font/lato"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:paddingStart="@dimen/margin_medium"
+        android:paddingEnd="@dimen/margin_medium"/>
+
+    <org.sagebionetworks.research.mobile_ui.widget.NavigationActionBar
+        android:id="@+id/rs2_step_navigation_action_bar"
+        style="@style/Widget.ResearchStack.NavigationActionBar.BottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

@@ -13,7 +13,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLo
 import org.sagebionetworks.research.presentation.model.interfaces.StepView
 
 class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, MedicationLog,
-        MedicationTrackingTaskViewModel, MedicationReviewAdapter>() {
+        MedicationTrackingTaskViewModel, MedicationReviewAdapter>(), RecordMedicationDialogFragment.Listener {
 
 
     companion object {
@@ -47,7 +47,12 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
         navigationActionBar.skipButton.setText(R.string.medication_add_details_later)
         navigationActionBar.forwardButton.setText(R.string.button_save)
         navigationActionBar.setActionButtonClickListener{ actionButton ->
-            if (actionButton.id == R.id.rs2_step_navigation_action_forward
+            if (isSetup && actionButton.id == R.id.rs2_step_navigation_action_forward) {
+                val fragment = RecordMedicationDialogFragment.newInstance()
+                fragment.setTargetFragment(this, 123)
+                fragment.show(fragmentManager, "dialog")
+
+            } else if (actionButton.id == R.id.rs2_step_navigation_action_forward
                     || actionButton.id == R.id.rs2_step_navigation_action_skip) {
                 if (fragmentManager!!.backStackEntryCount > 0) {
                     //Pop the back stack to take user back to medication logging
@@ -98,5 +103,16 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
 
     override fun getLayoutId(): Int {
         return R.layout.mpower2_logging_step
+    }
+
+    override fun onRecordbuttonClicked() {
+        val fragment = MedicationLoggingFragment.newInstance(stepView)
+        replaceWithFragment(fragment)
+    }
+
+    override fun onSkipButtonClicked() {
+        val loggingResult = viewModel.loggingCollection
+        performTaskViewModel.addStepResult(loggingResult)
+        performTaskFragment.goForward()
     }
 }
