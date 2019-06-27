@@ -47,7 +47,8 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
         navigationActionBar.skipButton.setText(R.string.medication_add_details_later)
         navigationActionBar.forwardButton.setText(R.string.button_save)
         navigationActionBar.setActionButtonClickListener{ actionButton ->
-            if (actionButton.id == R.id.rs2_step_navigation_action_forward) {
+            if (actionButton.id == R.id.rs2_step_navigation_action_forward
+                    || actionButton.id == R.id.rs2_step_navigation_action_skip) {
                 if (fragmentManager!!.backStackEntryCount > 0) {
                     //Pop the back stack to take user back to medication logging
                     fragmentManager!!.popBackStack()
@@ -60,6 +61,7 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
 
         return result
     }
+
 
     override fun onResume() {
         super.onResume()
