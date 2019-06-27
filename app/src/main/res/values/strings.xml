@@ -238,6 +238,7 @@
     <string name="medication_schedule_add_more">Add another schedule</string>
     <string name="medication_schedule_everyday">Everyday</string>
     <string name="medication_schedule_anytime">Anytime</string>
+    <string name="medication_select">Select Medications</string>
     <string name="medication_select_days">Select Day(s)</string>
     <string name="medication_select_times">Select Time(s)</string>
     <string name="medication_review_title">Medication list</string>
@@ -264,4 +265,7 @@
     <string name="button_undo">Undo</string>
     <string name="button_edit">Edit</string>
     <string name="button_add_details">Add details</string>
+
+    <string name="medication_list_empty_details">On the next screen, select your current Parkinson\'s medications. In the future, your custom list will be here-ready for tracking.</string>
+    <string name="medication_list_empty_title">Your custom Medication List will live here</string>
 </resources>

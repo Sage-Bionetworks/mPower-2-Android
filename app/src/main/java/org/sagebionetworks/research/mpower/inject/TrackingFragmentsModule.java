@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower.inject;
 
+import org.sagebionetworks.research.mpower.tracking.fragment.MedicationListEmptyFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.MedicationLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.MedicationReviewFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.MedicationSchedulingFragment;
@@ -38,6 +39,9 @@ public abstract class TrackingFragmentsModule {
 
     @ContributesAndroidInjector
     abstract MedicationLoggingFragment contributeMedicationLoggingFragmentInjector();
+
+    @ContributesAndroidInjector
+    abstract MedicationListEmptyFragment contributeMedicationListEmptyFragmentInjector();
 
     @ContributesAndroidInjector
     abstract TimePickerFragment contributeTimePickerFragmentInjector();

@@ -145,6 +145,10 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
 
     override fun onStart() {
         super.onStart()
+        if (viewModel.activeElementsById.value.isNullOrEmpty()) {
+            replaceWithFragment(MedicationListEmptyFragment.newInstance(stepView));
+        }
+
         view?.let { ViewCompat.requestApplyInsets(it) }
         // Filter the schedules down to those that should appear in the current time blocks medications, and setup
         // the adapter.
@@ -261,6 +265,6 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
      * @param view the cancel button view.
      */
     protected fun onCancelButtonClicked() {
-        this.performTaskFragment.cancelTask(false)
+        this.performTaskFragment.cancelTask(true)
     }
 }

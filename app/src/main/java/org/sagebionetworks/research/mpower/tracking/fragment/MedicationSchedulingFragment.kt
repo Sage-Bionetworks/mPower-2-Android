@@ -215,9 +215,7 @@ class MedicationSchedulingFragment :
                 viewModel.removeLoggedElement(identifier)
                 viewModel.removeConfig(identifier)
                 viewModel.activeElementsById.value?.let {
-                    if (it.isEmpty()) {
-                        replaceWithFragment(MedicationSelectionFragment.newInstance(stepView))
-                    } else if (fragmentManager!!.backStackEntryCount > 0) {
+                    if (fragmentManager!!.backStackEntryCount > 0) {
                         fragmentManager!!.popBackStack()
                     } else {
                         val fragment = MedicationLoggingFragment.newInstance(stepView)
