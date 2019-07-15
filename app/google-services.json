@@ -23,6 +23,22 @@
           }
         },
         {
+          "client_id": "274744837571-esu12mjhrqasiscefpojnn1dppbh7m78.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.sagebionetworks.research.mpower",
+            "certificate_hash": "425f76e8e5482df074db8091b07feba73c40f66e"
+          }
+        },
+        {
+          "client_id": "274744837571-cen9nb97bif70fessf6s4p9odi75q803.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.sagebionetworks.research.mpower",
+            "certificate_hash": "d943391fee6197091b91c95cb50dcf0fcb0dfe27"
+          }
+        },
+        {
           "client_id": "274744837571-pc4s47h3jh0clrfksefu6jn4ks8neg2r.apps.googleusercontent.com",
           "client_type": 3
         }
