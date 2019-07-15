@@ -68,6 +68,9 @@ android {
         jvmTarget = '1.6'
     }
 }
+androidExtensions {
+    experimental = true
+}
 
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
@@ -123,7 +126,7 @@ dependencies {
     implementation "com.android.support:support-v4:$support_library_version"
     implementation "com.android.support:support-annotations:$support_library_version"
     implementation "com.android.support:appcompat-v7:$support_library_version"
-    implementation "com.android.support:support-v4:$support_library_version"
+    implementation "com.android.support:recyclerview-v7:$support_library_version"
 
     // room db functionality
     implementation 'android.arch.persistence.room:runtime:1.1.1'

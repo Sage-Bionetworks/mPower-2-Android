@@ -3,19 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <Button
+    <TextView
         android:id="@+id/day_text"
-        style="@style/MPower.RoundedCornerMaterialButton.Gray"
+        style="@style/MPowerTextAppearance.FieldHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:drawableLeft="@drawable/ic_check_black_16dp"
-        android:drawableTint="@color/appTextDark"
-        android:drawablePadding="0dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textSize="16sp"
-        android:fontFamily="@font/lato"
         android:layout_margin="10dp"
         android:layout_centerVertical="true"/>
 

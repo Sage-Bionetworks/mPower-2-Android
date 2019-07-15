@@ -8,14 +8,14 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
-import org.sagebionetworks.research.mpower.tracking.view_model.configs.Schedule;
+import org.sagebionetworks.research.mpower.tracking.view_model.configs.TrackingItemConfig;
 import org.threeten.bp.Instant;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @AutoValue
-public abstract class MedicationLog implements TrackingItemLog {
+public abstract class MedicationLog implements TrackingItemLog, TrackingItemConfig {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract MedicationLog build();
@@ -27,48 +27,44 @@ public abstract class MedicationLog implements TrackingItemLog {
         public abstract Builder setText(@Nullable String text);
 
         @NonNull
-        public abstract Builder setDosage(@NonNull String dosage);
-
-        @NonNull
-        public abstract Builder setScheduleItems(@NonNull List<Schedule> scheduleItems);
+        public abstract Builder setDosageItems(@NonNull List<DosageItem> dosageItems);
 
         @NonNull
         public abstract Builder setLoggedDate(@Nullable Instant loggedDate);
 
-        @NonNull
-        public abstract Builder setTimestamps(@NonNull Set<MedicationTimestamp> timestamps);
     }
 
     @Nullable
     @Override
     public abstract String getText();
 
-    /**
-     * @return The timestamps to use to mark the medication as "taken".
-     */
     @NonNull
-    public abstract Set<MedicationTimestamp> getTimestamps();
+    public abstract List<DosageItem> getDosageItems();
 
-    /**
-     * @return The scheduled items associated with this medication log.
-     */
-    @NonNull
-    public abstract List<Schedule> getScheduleItems();
-
-    /**
-     * @return A string answer value for the dosage.
-     */
-    @NonNull
-    public abstract String getDosage();
 
     @Nullable
     @Override
     public abstract Instant getLoggedDate();
 
+    @Override
+    public boolean isConfigured() {
+        return getDosageItems() != null && getDosageItems().size() > 0 &&
+                getDosageItems().get(0).getDosage() != null && !getDosageItems().get(0).getDosage().isEmpty();
+    }
+
+    public MedicationLog copy(boolean clearLoggedDate) {
+        List<DosageItem> dosages = new ArrayList<>();
+        for(DosageItem dosage: getDosageItems()) {
+            dosages.add(dosage.copy(clearLoggedDate));
+        }
+        return builder().setDosageItems(dosages)
+                .setIdentifier(getIdentifier())
+                .setText(getText()).build();
+    }
+
     @NonNull
     public static Builder builder() {
-        return new AutoValue_MedicationLog.Builder()
-                .setTimestamps(ImmutableSet.of());
+        return new AutoValue_MedicationLog.Builder();
     }
 
     @NonNull
@@ -78,4 +74,5 @@ public abstract class MedicationLog implements TrackingItemLog {
 
     @NonNull
     public abstract Builder toBuilder();
+
 }

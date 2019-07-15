@@ -32,6 +32,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <org.sagebionetworks.research.mobile_ui.widget.ActionButton
+                android:id="@+id/rs2_step_navigation_action_delete"
+                android:layout_width="@dimen/back_button_width"
+                android:layout_height="0dp"
+                android:layout_marginEnd="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="@drawable/ic_delete_icon"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:id="@+id/rs2_title"
                 android:layout_width="0dp"
@@ -47,7 +58,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rs2_step_navigation_action_backward" />
 
-            <TextView
+            <Button
                 style="@style/Research.TextButton"
                 android:id="@+id/rs2_detail"
                 android:layout_width="0dp"
@@ -55,24 +66,12 @@
                 android:layout_marginEnd="@dimen/margin_xlarge"
                 android:layout_marginStart="@dimen/margin_xlarge"
                 android:layout_marginTop="@dimen/margin_xsmall"
-                android:fontFamily="@font/lato"
                 android:gravity="center"
-                android:textColor="@color/white"
+                android:textColor="@color/text_button_color_state"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rs2_title" />
-
-
-            <include
-                android:id="@+id/dosage_container"
-                layout="@layout/medication_dosage"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_large"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rs2_detail" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rs2_recycler_view"
@@ -81,26 +80,7 @@
                 android:layout_marginTop="@dimen/margin_xsmall"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dosage_container" />
-
-            <org.sagebionetworks.research.mobile_ui.widget.ActionButton
-                android:id="@+id/rs2_step_navigation_action_add_more"
-                style="@style/Research.Gray.RoundedCornerMaterialButton"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/mp_rounded_button_height"
-                android:layout_marginBottom="@dimen/margin_medium"
-                android:layout_marginEnd="@dimen/margin_large"
-                android:layout_marginStart="@dimen/margin_large"
-                android:layout_marginTop="@dimen/margin_small"
-                android:drawableLeft="@drawable/ic_add_black_24dp"
-                android:drawableTint="@color/appTextDark"
-                android:paddingStart="@dimen/margin_medium"
-                android:textColor="@color/appTextDark"
-                android:text="@string/medication_schedule_add_more"
-                app:layout_constraintBottom_toBottomOf="@id/contentView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rs2_recycler_view" />
+                app:layout_constraintTop_toBottomOf="@+id/rs2_detail" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>

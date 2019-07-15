@@ -150,10 +150,14 @@ public abstract class RecyclerViewTrackingFragment
      * @param view the cancel button view.
      */
     protected void onCancelButtonClicked(View view) {
-        boolean showDialog = false;
-        if(this.performTaskViewModel.hasPreviousStep()) {
-            showDialog = true;
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            boolean showDialog = false;
+            if (this.performTaskViewModel.hasPreviousStep()) {
+                showDialog = true;
+            }
+            this.performTaskFragment.cancelTask(showDialog);
         }
-        this.performTaskFragment.cancelTask(showDialog);
     }
 }

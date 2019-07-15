@@ -163,6 +163,7 @@ class TrackingScheduleViewModel(scheduleDao: ScheduledActivityEntityDao,
                 } catch (e: Throwable) {
                     // No need to crash the app, user will just have to redo selection
                     logger.error(e.message)
+                    return TaskResultBase(taskId, taskRunUuid)
                 }
                 val taskResult = TaskResultBase(taskId, taskRunUuid)
                 return taskResult.addAsyncResult(loggingCollection)
