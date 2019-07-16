@@ -18,9 +18,9 @@ default_platform :android
 skip_docs
 
 platform :android do
-  before_all do
-    ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
-  end
+  # before_all do
+    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
+  # end
 
   desc "Runs all the tests"
   lane :test do
@@ -50,16 +50,19 @@ platform :android do
         }
     )
 
-    all_aab_paths = Actions.lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS]
+    supply(
+         track: options[:track],
+         aab: "app/build/outputs/bundle/participantRelease/app.aab",
+         json_key: "../android-certificates/play_service_account_79bda59f.json",
+         check_superseded_tracks: true
+    )
 
-    all_aab_paths.each do |aab_path|
-       supply(
-             track: options[:track],
-             aab: aab_path,
-             json_key: "../android-certificates/play_service_account_79bda59f.json",
-             check_superseded_tracks: true
-       )
-    end
+    supply(
+         track: options[:track],
+         aab: "app/build/outputs/bundle/internalRelease/app.aab",
+         json_key: "../android-certificates/play_service_account_79bda59f.json",
+         check_superseded_tracks: true
+    )
 
     git_commit(path: "app/build.gradle", message: "[skip ci] Version Bump #{version_name}, #{next_version_code}")
     add_git_tag(tag: "#{version_name}_#{next_version_code}")
@@ -97,9 +100,9 @@ platform :android do
   after_all do |lane|
     # This block is called, only if the executed lane was successful
 
-    slack(
-      message: "Successfully deployed new App Update."
-    )
+    # slack(
+    #  message: "Successfully deployed new App Update."
+    # )
   end
 
   error do |lane, exception|

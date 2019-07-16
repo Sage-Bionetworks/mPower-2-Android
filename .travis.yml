@@ -76,10 +76,10 @@ jobs:
           alias:$KEY_ALIAS storepass:$KEYSTORE_PASSWORD keypass:$KEY_PASSWORD \
           storefile:$TRAVIS_BUILD_DIR/../android-certificates/SageBionetworks.keystore
 
-notifications:
-  slack:
-    secure: RbaFEfm9sdMnGUa5p+yLJo8m6oMO6h22BxGP/FA+wabZweixYvuZPOYCffLBpECjVTFA+Mh5/EMIaRgrEnIarlv1v3GnIaI3IRrxEisYrpgEDlLJo7n9llXOyD2a0YGGEtwdhJBqRGtRwTjXDS0jOh/l8YPACSedSiOl2f5z3nkKfkoMlKS4JwsLWLT2vE8v0pOxgo4xPX/u2Qb5r1sl5Hw/X5Vx3bkhXdzq9KMWYR1mGvByDpJrF9nycLpxsOnIhMfWfVmRZS8qa61QwGYOU5lWwW8B5y8NQ4gGgOWUAtTVz+q8izEi7gzqFNT/33tSVJ8kL9hDbfFLtY4s1kHFarm9aJkQIkfjuVho0odeLgLsAUmre1cAL6YZZMlSy3GacRv35e3tphPX3oNbUXaRe+tCgOv1yXfRqj/T9g/mXzadpMxLW2qLYp7dBOJp6Xg9iz/QjHLBkRPSnOneVIisLvCTpyieIpu0tUbWeC4/UvkeTrodmGaKHDhxdtWLpQ+brWmZTKaxHRYOrzHoCIVh30ZPyP5BS/w5tFkaSkLvcVXdGK9NvlcZYbmXoZ1spufd6mN5q2+HQRHljMQ6Aufwbc3y1LjYbfum/1kaCF0JfO6dVb1BVn7tvwF/Kw0/nieJD5p/BTMbQSjB5keghMWvahujsygW7XryoDAuhkjVtBk=
-    on_success: change # default: always
+#notifications:
+#  slack:
+#    secure: RbaFEfm9sdMnGUa5p+yLJo8m6oMO6h22BxGP/FA+wabZweixYvuZPOYCffLBpECjVTFA+Mh5/EMIaRgrEnIarlv1v3GnIaI3IRrxEisYrpgEDlLJo7n9llXOyD2a0YGGEtwdhJBqRGtRwTjXDS0jOh/l8YPACSedSiOl2f5z3nkKfkoMlKS4JwsLWLT2vE8v0pOxgo4xPX/u2Qb5r1sl5Hw/X5Vx3bkhXdzq9KMWYR1mGvByDpJrF9nycLpxsOnIhMfWfVmRZS8qa61QwGYOU5lWwW8B5y8NQ4gGgOWUAtTVz+q8izEi7gzqFNT/33tSVJ8kL9hDbfFLtY4s1kHFarm9aJkQIkfjuVho0odeLgLsAUmre1cAL6YZZMlSy3GacRv35e3tphPX3oNbUXaRe+tCgOv1yXfRqj/T9g/mXzadpMxLW2qLYp7dBOJp6Xg9iz/QjHLBkRPSnOneVIisLvCTpyieIpu0tUbWeC4/UvkeTrodmGaKHDhxdtWLpQ+brWmZTKaxHRYOrzHoCIVh30ZPyP5BS/w5tFkaSkLvcVXdGK9NvlcZYbmXoZ1spufd6mN5q2+HQRHljMQ6Aufwbc3y1LjYbfum/1kaCF0JfO6dVb1BVn7tvwF/Kw0/nieJD5p/BTMbQSjB5keghMWvahujsygW7XryoDAuhkjVtBk=
+#    on_success: change # default: always
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
