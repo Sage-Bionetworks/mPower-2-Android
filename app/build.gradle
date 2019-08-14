@@ -16,7 +16,7 @@ android {
         targetSdkVersion 28
         // this is not the final version code, product flavors add to it
         versionCode 51
-        versionName "0.10.0"
+        versionName "0.10.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
