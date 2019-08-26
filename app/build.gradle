@@ -77,16 +77,14 @@ dependencies {
 
     api 'com.google.guava:guava:27.0.1-android'
 
-
-    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     // Local projects
     implementation project(':android-sdk')
     implementation project(':backbone')
-    implementation project(':data')
+    implementation "org.sagebionetworks.research:data:$sage_research_version"
     implementation project(':sageresearch-mpower')
     implementation project(':researchstack-mpower')
-    implementation project(':motor-control-module')
 
     // ButterKnife
     implementation "com.jakewharton:butterknife:$butterknife_version"

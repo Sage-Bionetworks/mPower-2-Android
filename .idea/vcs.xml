@@ -4,6 +4,5 @@
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/BridgeAndroidSDK" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/BridgeAndroidSDK/ResearchStack" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/BridgeAndroidSDK/SageResearch-Android" vcs="Git" />
   </component>
 </project>
