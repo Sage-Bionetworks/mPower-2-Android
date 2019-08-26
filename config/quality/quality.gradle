@@ -52,8 +52,12 @@ configurations.errorprone {
     // forcing dependencies to match the ones in the dependencies section
 }
 dependencies {
-    checkstyle 'com.puppycrawl.tools:checkstyle:8.10'
-    errorprone "com.google.errorprone:error_prone_core:2.3.1"
+    checkstyle 'com.puppycrawl.tools:checkstyle:8.21'
+    errorprone "com.google.errorprone:error_prone_core:2.3.3"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += [ '-XepDisableWarningsInGeneratedCode', '-XepExcludedPaths:.*/build/generated.*']
 }
 
 def qualityConfigDir = "$project.projectDir/../config/quality"

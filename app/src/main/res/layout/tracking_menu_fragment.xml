@@ -16,7 +16,7 @@
 
     <include
         android:id="@+id/tracking_menu_content_view"
-        layout="@layout/mpower2_icon_view"
+        layout="@layout/srmc_icon_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_medium"

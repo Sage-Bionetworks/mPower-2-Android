@@ -1,9 +1,7 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
-import static org.sagebionetworks.research.motor_control_module.R2.attr.selectableItemBackgroundBorderless;
 
 import android.content.res.Resources.Theme;
-import android.os.Build;
 import android.os.Build.VERSION;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
