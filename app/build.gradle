@@ -15,8 +15,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 28
         // this is not the final version code, product flavors add to it
-        versionCode 52
-        versionName "0.10.1"
+        versionCode 53
+        versionName "0.11.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -77,17 +77,14 @@ dependencies {
 
     api 'com.google.guava:guava:27.0.1-android'
 
-    implementation 'net.zetetic:android-database-sqlcipher:4.2.0@aar'
-
-    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     // Local projects
     implementation project(':android-sdk')
     implementation project(':backbone')
-    implementation project(':data')
+    implementation "org.sagebionetworks.research:data:$sage_research_version"
     implementation project(':sageresearch-mpower')
     implementation project(':researchstack-mpower')
-    implementation project(':motor-control-module')
 
     // ButterKnife
     implementation "com.jakewharton:butterknife:$butterknife_version"

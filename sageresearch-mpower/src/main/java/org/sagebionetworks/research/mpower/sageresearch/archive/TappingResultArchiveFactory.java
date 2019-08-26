@@ -13,7 +13,7 @@ import org.sagebionetworks.bridge.data.JsonArchiveFile;
 import org.sagebionetworks.research.domain.result.AnswerResultType;
 import org.sagebionetworks.research.domain.result.implementations.AnswerResultBase;
 import org.sagebionetworks.research.domain.result.interfaces.Result;
-import org.sagebionetworks.research.motor_control_module.result.TappingResult;
+import org.sagebionetworks.research.modules.motor_control.result.TappingResult;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AbstractResultArchiveFactory;
 import org.sagebionetworks.research.sageresearch_app_sdk.archive.AnswerResultArchiveFactory;
 import org.threeten.bp.Instant;

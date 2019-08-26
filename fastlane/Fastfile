@@ -50,19 +50,16 @@ platform :android do
         }
     )
 
-    supply(
-         track: options[:track],
-         aab: "app/build/outputs/bundle/participantRelease/app.aab",
-         json_key: "../android-certificates/play_service_account_79bda59f.json",
-         check_superseded_tracks: true
-    )
+    all_aab_paths = Actions.lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS]
 
-    supply(
-         track: options[:track],
-         aab: "app/build/outputs/bundle/internalRelease/app.aab",
-         json_key: "../android-certificates/play_service_account_79bda59f.json",
-         check_superseded_tracks: true
-    )
+    all_aab_paths.each do |aab_path|
+       supply(
+             track: options[:track],
+             aab: aab_path,
+             json_key: "../android-certificates/play_service_account_79bda59f.json",
+             check_superseded_tracks: true
+       )
+    end
 
     git_commit(path: "app/build.gradle", message: "[skip ci] Version Bump #{version_name}, #{next_version_code}")
     add_git_tag(tag: "#{version_name}_#{next_version_code}")

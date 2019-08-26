@@ -38,13 +38,14 @@ import org.sagebionetworks.research.domain.inject.InputFieldsModule;
 import org.sagebionetworks.research.domain.inject.StepModule;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskActivity;
-import org.sagebionetworks.research.motor_control_module.inject.CompletionStepModule;
-import org.sagebionetworks.research.motor_control_module.inject.HandSelectionStepModule;
-import org.sagebionetworks.research.motor_control_module.inject.InstructionStepModule;
-import org.sagebionetworks.research.motor_control_module.inject.MPowerActiveStepModule;
-import org.sagebionetworks.research.motor_control_module.inject.MtcCountdownStepModule;
-import org.sagebionetworks.research.motor_control_module.inject.TappingCompletionStepModule;
-import org.sagebionetworks.research.motor_control_module.inject.TappingStepModule;
+
+import org.sagebionetworks.research.modules.common.step.completion.CompletionStepModule;
+import org.sagebionetworks.research.modules.common.step.instruction.InstructionStepModule;
+import org.sagebionetworks.research.modules.motor_control.inject.HandSelectionStepModule;
+import org.sagebionetworks.research.modules.motor_control.inject.MPowerActiveStepModule;
+import org.sagebionetworks.research.modules.motor_control.inject.MtcCountdownStepModule;
+import org.sagebionetworks.research.modules.motor_control.inject.TappingCompletionStepModule;
+import org.sagebionetworks.research.modules.motor_control.inject.TappingStepModule;
 import org.sagebionetworks.research.mpower.WebConsentFragment;
 
 import dagger.Module;

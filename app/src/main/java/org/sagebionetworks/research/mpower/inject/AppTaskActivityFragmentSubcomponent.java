@@ -3,7 +3,7 @@ package org.sagebionetworks.research.mpower.inject;
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskFragmentScope;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepFragmentModule;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
-import org.sagebionetworks.research.motor_control_module.inject.MotorControlShowStepFragmentsModule;
+import org.sagebionetworks.research.modules.motor_control.inject.MotorControlShowStepFragmentsModule;
 
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;

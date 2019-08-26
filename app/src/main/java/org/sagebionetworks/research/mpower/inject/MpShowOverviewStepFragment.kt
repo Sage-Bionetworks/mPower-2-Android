@@ -35,7 +35,7 @@ package org.sagebionetworks.research.mpower.inject
 import android.support.design.widget.BottomSheetDialog
 import android.widget.Button
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton
-import org.sagebionetworks.research.motor_control_module.show_step_fragment.ShowOverviewStepFragment
+import org.sagebionetworks.research.modules.common.step.overview.ShowOverviewStepFragment
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.reminders.MpReminderManager
 import org.sagebionetworks.research.mpower.reminders.REMINDER_ACTION_RUN_TASK
