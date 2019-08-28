@@ -32,35 +32,45 @@
 
 package org.sagebionetworks.research.mpower.inject;
 
+import com.google.gson.TypeAdapterFactory;
+
 import org.sagebionetworks.research.domain.inject.ActionModule;
 import org.sagebionetworks.research.domain.inject.AsyncActionModule;
 import org.sagebionetworks.research.domain.inject.InputFieldsModule;
 import org.sagebionetworks.research.domain.inject.StepModule;
 import org.sagebionetworks.research.mobile_ui.inject.ShowStepModule;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskActivity;
-
 import org.sagebionetworks.research.modules.common.step.completion.CompletionStepModule;
-import org.sagebionetworks.research.modules.common.step.instruction.InstructionStepModule;
+import org.sagebionetworks.research.modules.motor_control.inject.HandNavigationInstructionStepModule;
 import org.sagebionetworks.research.modules.motor_control.inject.HandSelectionStepModule;
 import org.sagebionetworks.research.modules.motor_control.inject.MPowerActiveStepModule;
+import org.sagebionetworks.research.modules.motor_control.inject.MotorControlAutoValueTypeAdapterFactory;
 import org.sagebionetworks.research.modules.motor_control.inject.MtcCountdownStepModule;
 import org.sagebionetworks.research.modules.motor_control.inject.TappingCompletionStepModule;
 import org.sagebionetworks.research.modules.motor_control.inject.TappingStepModule;
 import org.sagebionetworks.research.mpower.WebConsentFragment;
 
 import dagger.Module;
+import dagger.Provides;
 import dagger.android.AndroidInjectionModule;
 import dagger.android.ContributesAndroidInjector;
+import dagger.multibindings.IntoSet;
 
 @Module(includes = {AndroidInjectionModule.class, ShowStepModule.class, InputFieldsModule.class, ActionModule.class,
-        StepModule.class, AsyncActionModule.class, InstructionStepModule.class,
+        StepModule.class, AsyncActionModule.class, HandNavigationInstructionStepModule.class,
         MpOverviewStepModule.class, MPowerActiveStepModule.class, CompletionStepModule.class,
-        TappingCompletionStepModule.class, TappingStepModule.class, HandSelectionStepModule.class,
-        MtcCountdownStepModule.class})
+        MPowerActiveStepModule.class, TappingCompletionStepModule.class, TappingStepModule.class,
+        HandSelectionStepModule.class, MtcCountdownStepModule.class})
 public abstract class MPowerSageResearchModule {
     @ContributesAndroidInjector
     abstract PerformTaskActivity contributePerformTaskActivityInjector();
 
     @ContributesAndroidInjector
     abstract WebConsentFragment contributeWebConsentFragmentInjector();
+
+    @Provides
+    @IntoSet
+    static TypeAdapterFactory provideMotorControlAutoValueTypeAdapterFactory() {
+        return MotorControlAutoValueTypeAdapterFactory.create();
+    }
 }
