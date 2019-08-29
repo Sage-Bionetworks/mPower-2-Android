@@ -16,7 +16,7 @@ android {
         targetSdkVersion 28
 
         // this is not the final version code, product flavors add to it
-        versionCode 55
+        versionCode 56
         versionName "0.13.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
