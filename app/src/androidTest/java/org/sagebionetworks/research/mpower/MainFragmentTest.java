@@ -20,7 +20,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sagebionetworks.bridge.android.SingleFragmentActivity;
+import org.sagebionetworks.research.test.utils.SingleFragmentActivity;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)

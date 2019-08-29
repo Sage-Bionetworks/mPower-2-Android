@@ -146,6 +146,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.8.9'
     testImplementation "org.sagebionetworks.bridge:test-utils:$bridge_sdk_version"
 
+    androidTestImplementation "org.sagebionetworks.bridge:test-utils:$bridge_sdk_version"
     androidTestImplementation 'org.mockito:mockito-android:2.22.0'
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.2'
     androidTestImplementation'android.arch.core:core-testing:1.1.1'

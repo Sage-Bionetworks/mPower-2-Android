@@ -19,8 +19,8 @@ import android.support.test.rule.ActivityTestRule;
 import org.hamcrest.core.AllOf;
 import org.hamcrest.core.AnyOf;
 import org.junit.Rule;
-import org.sagebionetworks.bridge.android.SingleFragmentActivity;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
+import org.sagebionetworks.research.test.utils.SingleFragmentActivity;
 import org.threeten.bp.Instant;
 
 public abstract class UITestHelper {
