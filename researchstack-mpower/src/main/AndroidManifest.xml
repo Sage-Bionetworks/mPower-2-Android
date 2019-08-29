@@ -4,7 +4,7 @@
 
     <application android:allowBackup="true">
         <activity
-            android:name="org.researchstack.backbone.ui.ActiveTaskActivity"
+            android:name="org.sagebionetworks.researchstack.backbone.ui.ActiveTaskActivity"
             android:parentActivityName="org.sagebionetworks.research.mpower.MpPhoneAuthActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Backbone" />

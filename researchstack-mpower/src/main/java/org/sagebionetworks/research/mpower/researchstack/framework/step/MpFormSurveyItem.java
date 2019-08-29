@@ -34,7 +34,7 @@ package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.researchstack.backbone.model.survey.FormSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.FormSurveyItem;
 
 /**
  * Created by TheMDP on 10/24/17.

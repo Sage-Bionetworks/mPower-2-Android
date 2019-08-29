@@ -9,22 +9,22 @@ import android.support.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.researchstack.backbone.ResourceManager;
-import org.researchstack.backbone.ResourcePathManager;
-import org.researchstack.backbone.answerformat.AnswerFormat;
-import org.researchstack.backbone.model.TaskModel;
-import org.researchstack.backbone.model.survey.BooleanQuestionSurveyItem;
-import org.researchstack.backbone.model.survey.ChoiceQuestionSurveyItem;
-import org.researchstack.backbone.model.survey.IntegerRangeSurveyItem;
-import org.researchstack.backbone.model.survey.QuestionSurveyItem;
-import org.researchstack.backbone.model.survey.SurveyItem;
-import org.researchstack.backbone.model.survey.SurveyItemType;
-import org.researchstack.backbone.model.survey.TextfieldSurveyItem;
-import org.researchstack.backbone.model.survey.factory.SurveyFactory;
-import org.researchstack.backbone.model.taskitem.TaskItem;
-import org.researchstack.backbone.model.taskitem.TaskItemAdapter;
-import org.researchstack.backbone.step.QuestionStep;
-import org.researchstack.backbone.task.Task;
+import org.sagebionetworks.researchstack.backbone.ResourceManager;
+import org.sagebionetworks.researchstack.backbone.ResourcePathManager;
+import org.sagebionetworks.researchstack.backbone.answerformat.AnswerFormat;
+import org.sagebionetworks.researchstack.backbone.model.TaskModel;
+import org.sagebionetworks.researchstack.backbone.model.survey.BooleanQuestionSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.ChoiceQuestionSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.IntegerRangeSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.QuestionSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.SurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.SurveyItemType;
+import org.sagebionetworks.researchstack.backbone.model.survey.TextfieldSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.factory.SurveyFactory;
+import org.sagebionetworks.researchstack.backbone.model.taskitem.TaskItem;
+import org.sagebionetworks.researchstack.backbone.model.taskitem.TaskItemAdapter;
+import org.sagebionetworks.researchstack.backbone.step.QuestionStep;
+import org.sagebionetworks.researchstack.backbone.task.Task;
 import org.sagebionetworks.bridge.researchstack.onboarding.BridgeSurveyFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpFormStep;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpFormSurveyItem;
@@ -86,7 +86,7 @@ public class MpTaskFactory extends BridgeSurveyFactory {
 
     protected class MpCustomStepCreator extends BridgeCustomStepCreator {
         @Override
-        public org.researchstack.backbone.step.Step createCustomStep(
+        public org.sagebionetworks.researchstack.backbone.step.Step createCustomStep(
                 Context context, SurveyItem item, boolean isSubtaskStep, SurveyFactory factory) {
             if (item.getCustomTypeValue() != null) {
                 switch (item.getCustomTypeValue()) {

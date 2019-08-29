@@ -1,8 +1,8 @@
 package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
-import org.researchstack.backbone.result.TaskResult;
-import org.researchstack.backbone.step.InstructionStep;
-import org.researchstack.backbone.utils.StepResultHelper;
+import org.sagebionetworks.researchstack.backbone.result.TaskResult;
+import org.sagebionetworks.researchstack.backbone.step.InstructionStep;
+import org.sagebionetworks.researchstack.backbone.utils.StepResultHelper;
 
 import java.util.List;
 

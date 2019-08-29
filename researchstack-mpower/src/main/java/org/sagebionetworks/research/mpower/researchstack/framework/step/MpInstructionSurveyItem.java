@@ -2,7 +2,7 @@ package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.researchstack.backbone.model.survey.InstructionSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.InstructionSurveyItem;
 
 public class MpInstructionSurveyItem extends InstructionSurveyItem {
 

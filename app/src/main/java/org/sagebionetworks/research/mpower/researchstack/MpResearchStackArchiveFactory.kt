@@ -33,9 +33,9 @@
 package org.sagebionetworks.research.mpower.researchstack
 
 import org.joda.time.DateTime
-import org.researchstack.backbone.answerformat.AnswerFormat
-import org.researchstack.backbone.result.Result
-import org.researchstack.backbone.result.StepResult
+import org.sagebionetworks.researchstack.backbone.answerformat.AnswerFormat
+import org.sagebionetworks.researchstack.backbone.result.Result
+import org.sagebionetworks.researchstack.backbone.result.StepResult
 import org.sagebionetworks.bridge.data.Archive
 import org.sagebionetworks.bridge.data.ArchiveFile
 import org.sagebionetworks.bridge.data.JsonArchiveFile
@@ -68,7 +68,7 @@ open class MpResearchStackArchiveFactory: ResearchStackUploadArchiveFactory() {
      */
     override fun addFiles(
             archiveBuilder: Archive.Builder,
-            flattenedResultList: List<org.researchstack.backbone.result.Result>?,
+            flattenedResultList: List<org.sagebionetworks.researchstack.backbone.result.Result>?,
             taskIdentifier: String) {
 
         if (MpIdentifier.STUDY_BURST_COMPLETED_UPLOAD == taskIdentifier) {
@@ -91,7 +91,7 @@ open class MpResearchStackArchiveFactory: ResearchStackUploadArchiveFactory() {
      */
     protected fun fromResultList(
             filename: String,
-            resultList: List<org.researchstack.backbone.result.Result>?): JsonArchiveFile {
+            resultList: List<org.sagebionetworks.researchstack.backbone.result.Result>?): JsonArchiveFile {
 
         val answerMap = HashMap<String, Any>()
         resultList?.forEach {

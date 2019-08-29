@@ -2,8 +2,8 @@ package org.sagebionetworks.research.mpower.researchstack.inject;
 
 import android.content.Context;
 
-import org.researchstack.backbone.ResearchStack;
-import org.researchstack.backbone.StorageAccess;
+import org.sagebionetworks.researchstack.backbone.ResearchStack;
+import org.sagebionetworks.researchstack.backbone.StorageAccess;
 import org.sagebionetworks.bridge.android.di.BridgeApplicationScope;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpResearchStack;

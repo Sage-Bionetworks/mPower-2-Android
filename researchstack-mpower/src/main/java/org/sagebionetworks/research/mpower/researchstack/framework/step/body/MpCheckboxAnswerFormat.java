@@ -32,7 +32,7 @@
 
 package org.sagebionetworks.research.mpower.researchstack.framework.step.body;
 
-import org.researchstack.backbone.answerformat.BooleanAnswerFormat;
+import org.sagebionetworks.researchstack.backbone.answerformat.BooleanAnswerFormat;
 
 
 /**

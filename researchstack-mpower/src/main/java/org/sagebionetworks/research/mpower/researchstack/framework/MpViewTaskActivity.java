@@ -43,12 +43,12 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.researchstack.backbone.StorageAccess;
-import org.researchstack.backbone.result.TaskResult;
-import org.researchstack.backbone.step.Step;
-import org.researchstack.backbone.ui.ViewTaskActivity;
-import org.researchstack.backbone.ui.step.layout.ActiveStepLayout;
-import org.researchstack.backbone.ui.step.layout.StepLayout;
+import org.sagebionetworks.researchstack.backbone.StorageAccess;
+import org.sagebionetworks.researchstack.backbone.result.TaskResult;
+import org.sagebionetworks.researchstack.backbone.step.Step;
+import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity;
+import org.sagebionetworks.researchstack.backbone.ui.step.layout.ActiveStepLayout;
+import org.sagebionetworks.researchstack.backbone.ui.step.layout.StepLayout;
 
 import org.sagebionetworks.research.mpower.researchstack.R;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.toolbar.MpTaskToolbar;
@@ -160,7 +160,7 @@ public class MpViewTaskActivity extends ViewTaskActivity {
         // Allow for customization of the toolbar
         if (current instanceof MpTaskToolbarActionManipulator) {
             MpTaskToolbarActionManipulator manipulator = (MpTaskToolbarActionManipulator) current;
-            if(item.getItemId() == org.researchstack.backbone.R.id.rsb_clear_menu_item) {
+            if(item.getItemId() == org.sagebionetworks.researchstack.backbone.R.id.rsb_clear_menu_item) {
                 return manipulator.bpToolbarRightIconClicked();
             } else if (item.getItemId() == android.R.id.home) {
                 clickWasConsumed = manipulator.bpToolbarLeftIconClicked();

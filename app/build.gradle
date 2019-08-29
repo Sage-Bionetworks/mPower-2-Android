@@ -80,11 +80,11 @@ dependencies {
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     // Local projects
-    implementation project(':android-sdk')
-    implementation project(':backbone')
-    implementation "org.sagebionetworks.research:data:$sage_research_version"
     implementation project(':sageresearch-mpower')
     implementation project(':researchstack-mpower')
+
+    implementation "org.sagebionetworks.research:data:$sage_research_version"
+    implementation "org.sagebionetworks.research:mobile-ui:$sage_research_version"
 
     // ButterKnife
     implementation "com.jakewharton:butterknife:$butterknife_version"
@@ -142,7 +142,7 @@ dependencies {
     testImplementation 'android.arch.core:core-testing:1.1.1'
     testImplementation 'org.threeten:threetenbp:1.3.7'
     testImplementation 'org.mockito:mockito-core:2.8.9'
-    testImplementation project(':test-utils')
+    testImplementation "org.sagebionetworks.bridge:test-utils:$bridge_sdk_version"
 
     androidTestImplementation 'org.mockito:mockito-android:2.22.0'
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.2'

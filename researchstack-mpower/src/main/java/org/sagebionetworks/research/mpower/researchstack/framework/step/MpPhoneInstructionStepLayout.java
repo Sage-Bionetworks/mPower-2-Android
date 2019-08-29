@@ -8,10 +8,10 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
 
-import org.researchstack.backbone.DataResponse;
-import org.researchstack.backbone.result.StepResult;
-import org.researchstack.backbone.step.Step;
-import org.researchstack.backbone.utils.ObservableUtils;
+import org.sagebionetworks.researchstack.backbone.DataResponse;
+import org.sagebionetworks.researchstack.backbone.result.StepResult;
+import org.sagebionetworks.researchstack.backbone.step.Step;
+import org.sagebionetworks.researchstack.backbone.utils.ObservableUtils;
 import org.sagebionetworks.bridge.rest.exceptions.InvalidEntityException;
 import org.sagebionetworks.bridge.rest.model.Phone;
 import org.sagebionetworks.research.mpower.researchstack.R;

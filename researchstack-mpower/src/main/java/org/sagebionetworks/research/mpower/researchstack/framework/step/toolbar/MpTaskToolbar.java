@@ -58,12 +58,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.researchstack.backbone.step.Step;
-import org.researchstack.backbone.step.SubtaskStep;
-import org.researchstack.backbone.task.OrderedTask;
-import org.researchstack.backbone.task.Task;
-import org.researchstack.backbone.ui.step.layout.StepLayout;
-import org.researchstack.backbone.ui.views.StepSwitcher;
+import org.sagebionetworks.researchstack.backbone.step.Step;
+import org.sagebionetworks.researchstack.backbone.step.SubtaskStep;
+import org.sagebionetworks.researchstack.backbone.task.OrderedTask;
+import org.sagebionetworks.researchstack.backbone.task.Task;
+import org.sagebionetworks.researchstack.backbone.ui.step.layout.StepLayout;
+import org.sagebionetworks.researchstack.backbone.ui.views.StepSwitcher;
 import org.sagebionetworks.research.mpower.researchstack.R;
 
 /**

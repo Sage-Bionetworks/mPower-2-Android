@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions.checkArgument
 import com.google.gson.reflect.TypeToken
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.researchstack.backbone.model.TaskModel
+import org.sagebionetworks.researchstack.backbone.model.TaskModel
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.research.CompletionTask
@@ -255,10 +255,10 @@ open class StudyBurstViewModel(
         }
 
         // Use the upload identifier instead
-        val taskResult = org.researchstack.backbone.result.TaskResult(STUDY_BURST_COMPLETED_UPLOAD)
+        val taskResult = org.sagebionetworks.researchstack.backbone.result.TaskResult(STUDY_BURST_COMPLETED_UPLOAD)
         val stepId = "TaskStep" // can be anything, identifier not used in the upload
-        val stepResult = org.researchstack.backbone.result.StepResult<Any>(
-                org.researchstack.backbone.step.Step(stepId))
+        val stepResult = org.sagebionetworks.researchstack.backbone.result.StepResult<Any>(
+                org.sagebionetworks.researchstack.backbone.step.Step(stepId))
 
         stepResult.results["taskOrder"] = getTaskSortOrder().joinToString()
         // Fill in info about the finished tasks' guid

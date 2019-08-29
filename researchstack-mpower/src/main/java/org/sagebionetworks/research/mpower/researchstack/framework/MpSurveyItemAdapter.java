@@ -5,11 +5,11 @@ import android.support.annotation.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 
-import org.researchstack.backbone.model.survey.BooleanQuestionSurveyItem;
-import org.researchstack.backbone.model.survey.ChoiceQuestionSurveyItem;
-import org.researchstack.backbone.model.survey.IntegerRangeSurveyItem;
-import org.researchstack.backbone.model.survey.SurveyItem;
-import org.researchstack.backbone.model.survey.TextfieldSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.BooleanQuestionSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.ChoiceQuestionSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.IntegerRangeSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.SurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.TextfieldSurveyItem;
 import org.sagebionetworks.bridge.researchstack.task.creation.BridgeSurveyItemAdapter;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpFormSurveyItem;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpInstructionSurveyItem;
@@ -35,7 +35,7 @@ public class MpSurveyItemAdapter extends BridgeSurveyItemAdapter {
 
     @VisibleForTesting
     static final Map<String, Class<? extends SurveyItem>> TYPE_TO_CLASS =
-            ImmutableMap.<String, Class<? extends org.researchstack.backbone.model.survey.SurveyItem>>builder()
+            ImmutableMap.<String, Class<? extends org.sagebionetworks.researchstack.backbone.model.survey.SurveyItem>>builder()
 
                     // Form Mappings
                     .put(MP_FORM_SURVEY_ITEM_TYPE,              MpFormSurveyItem.class)

@@ -2,8 +2,8 @@ package org.sagebionetworks.research.mpower.researchstack.framework;
 
 import android.content.Context;
 
-import org.researchstack.backbone.TaskProvider;
-import org.researchstack.backbone.task.Task;
+import org.sagebionetworks.researchstack.backbone.TaskProvider;
+import org.sagebionetworks.researchstack.backbone.task.Task;
 
 import java.util.HashMap;
 

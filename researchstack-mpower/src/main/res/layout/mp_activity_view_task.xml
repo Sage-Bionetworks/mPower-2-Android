@@ -23,7 +23,7 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <org.researchstack.backbone.ui.views.StepSwitcher
+    <org.sagebionetworks.researchstack.backbone.ui.views.StepSwitcher
         android:id="@+id/bp_step_switcher"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -2,10 +2,10 @@ package org.sagebionetworks.research.mpower.researchstack.framework;
 
 import android.text.TextUtils;
 
-import org.researchstack.backbone.ResourceManager;
-import org.researchstack.backbone.model.SchedulesAndTasksModel;
-import org.researchstack.backbone.model.SectionModel;
-import org.researchstack.backbone.model.TaskModel;
+import org.sagebionetworks.researchstack.backbone.ResourceManager;
+import org.sagebionetworks.researchstack.backbone.model.SchedulesAndTasksModel;
+import org.sagebionetworks.researchstack.backbone.model.SectionModel;
+import org.sagebionetworks.researchstack.backbone.model.TaskModel;
 
 public class MpResourceManager extends ResourceManager {
     public static final int PEM = 4;

@@ -38,9 +38,9 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import com.google.common.base.Preconditions
-import org.researchstack.backbone.result.StepResult
-import org.researchstack.backbone.result.TaskResult
-import org.researchstack.backbone.step.Step
+import org.sagebionetworks.researchstack.backbone.result.StepResult
+import org.sagebionetworks.researchstack.backbone.result.TaskResult
+import org.sagebionetworks.researchstack.backbone.step.Step
 import org.sagebionetworks.research.mpower.reminders.MpReminderManager
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER

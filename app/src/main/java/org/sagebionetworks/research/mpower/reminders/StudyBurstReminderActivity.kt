@@ -42,7 +42,7 @@ import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_reminder.reminder_checkbox
 import kotlinx.android.synthetic.main.activity_reminder.reminder_done_button
 import kotlinx.android.synthetic.main.activity_reminder.reminder_time_button
-import org.researchstack.backbone.ui.ViewTaskActivity.EXTRA_TASK_RESULT
+import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity.EXTRA_TASK_RESULT
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderViewModel
 import org.slf4j.LoggerFactory

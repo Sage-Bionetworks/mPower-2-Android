@@ -80,7 +80,7 @@ public class ProfileFragment extends Fragment {
     public void onLicensesClicked() {
         LOGGER.debug("Clicked on the licenses button");
         String path = MpResourceManager.getInstance().getLicense().getAbsolutePath();
-        Intent intent = org.researchstack.backbone.ui.ViewWebDocumentActivity.newIntentForPath(this.getActivity(),
+        Intent intent = org.sagebionetworks.researchstack.backbone.ui.ViewWebDocumentActivity.newIntentForPath(this.getActivity(),
                 "", path);
         startActivity(intent);
     }

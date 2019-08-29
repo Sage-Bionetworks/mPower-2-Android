@@ -9,7 +9,7 @@ import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
-import org.researchstack.backbone.ResearchStack;
+import org.sagebionetworks.researchstack.backbone.ResearchStack;
 import org.sagebionetworks.bridge.android.di.BridgeStudyComponent;
 import org.sagebionetworks.research.mpower.inject.DaggerMPowerApplicationComponent;
 import org.sagebionetworks.research.mpower.inject.DaggerMPowerUserScopeComponent;

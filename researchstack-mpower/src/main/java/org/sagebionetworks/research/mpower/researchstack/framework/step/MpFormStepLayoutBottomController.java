@@ -32,7 +32,7 @@
 
 package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
-import org.researchstack.backbone.ui.step.body.StepBody;
+import org.sagebionetworks.researchstack.backbone.ui.step.body.StepBody;
 
 /**
  * Created by TheMDP on 1/4/18.

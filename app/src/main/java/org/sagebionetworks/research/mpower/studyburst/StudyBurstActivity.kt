@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.activity_study_burst.studyBurstStatusWheel
 import kotlinx.android.synthetic.main.activity_study_burst.studyBurstTitle
 import kotlinx.android.synthetic.main.activity_study_burst.studyBurstTopProgressBar
 import kotlinx.android.synthetic.main.activity_study_burst.study_burst_next
-import org.researchstack.backbone.utils.ResUtils
+import org.sagebionetworks.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.TaskLauncher
 import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type.LAUNCH_ERROR
