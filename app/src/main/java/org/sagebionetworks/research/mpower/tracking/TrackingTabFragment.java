@@ -1,6 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking;
 
-import static org.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
+import static org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
 import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN;
@@ -22,10 +22,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import org.researchstack.backbone.factory.IntentFactory;
-import org.researchstack.backbone.model.TaskModel;
-import org.researchstack.backbone.result.TaskResult;
-import org.researchstack.backbone.ui.ViewTaskActivity;
+import org.sagebionetworks.researchstack.backbone.factory.IntentFactory;
+import org.sagebionetworks.researchstack.backbone.model.TaskModel;
+import org.sagebionetworks.researchstack.backbone.result.TaskResult;
+import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;

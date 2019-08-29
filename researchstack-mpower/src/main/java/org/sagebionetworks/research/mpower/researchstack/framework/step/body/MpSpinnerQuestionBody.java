@@ -26,10 +26,10 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
-import org.researchstack.backbone.model.Choice;
-import org.researchstack.backbone.result.StepResult;
-import org.researchstack.backbone.step.Step;
-import org.researchstack.backbone.ui.step.body.SingleChoiceQuestionBody;
+import org.sagebionetworks.researchstack.backbone.model.Choice;
+import org.sagebionetworks.researchstack.backbone.result.StepResult;
+import org.sagebionetworks.researchstack.backbone.step.Step;
+import org.sagebionetworks.researchstack.backbone.ui.step.body.SingleChoiceQuestionBody;
 import org.sagebionetworks.research.mpower.researchstack.R;
 
 import java.util.ArrayList;

@@ -3,10 +3,10 @@ package org.sagebionetworks.research.mpower.researchstack.framework;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import org.researchstack.backbone.DataProvider;
-import org.researchstack.backbone.result.Result;
-import org.researchstack.backbone.result.StepResult;
-import org.researchstack.backbone.result.TaskResult;
+import org.sagebionetworks.researchstack.backbone.DataProvider;
+import org.sagebionetworks.researchstack.backbone.result.Result;
+import org.sagebionetworks.researchstack.backbone.result.StepResult;
+import org.sagebionetworks.researchstack.backbone.result.TaskResult;
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
 import org.sagebionetworks.bridge.researchstack.BridgeDataProvider;
 import org.sagebionetworks.bridge.researchstack.TaskHelper;

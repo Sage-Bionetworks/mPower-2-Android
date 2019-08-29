@@ -2,22 +2,22 @@ package org.sagebionetworks.research.mpower.researchstack.framework;
 
 import android.content.Context;
 
-import org.researchstack.backbone.AppPrefs;
-import org.researchstack.backbone.DataProvider;
-import org.researchstack.backbone.PermissionRequestManager;
-import org.researchstack.backbone.ResearchStack;
-import org.researchstack.backbone.ResourceManager;
-import org.researchstack.backbone.TaskProvider;
-import org.researchstack.backbone.UiManager;
-import org.researchstack.backbone.notification.NotificationConfig;
-import org.researchstack.backbone.notification.SimpleNotificationConfig;
-import org.researchstack.backbone.onboarding.OnboardingManager;
-import org.researchstack.backbone.storage.database.AppDatabase;
-import org.researchstack.backbone.storage.file.EncryptionProvider;
-import org.researchstack.backbone.storage.file.FileAccess;
-import org.researchstack.backbone.storage.file.PinCodeConfig;
-import org.researchstack.backbone.storage.file.SimpleFileAccess;
-import org.researchstack.backbone.storage.file.aes.AesProvider;
+import org.sagebionetworks.researchstack.backbone.AppPrefs;
+import org.sagebionetworks.researchstack.backbone.DataProvider;
+import org.sagebionetworks.researchstack.backbone.PermissionRequestManager;
+import org.sagebionetworks.researchstack.backbone.ResearchStack;
+import org.sagebionetworks.researchstack.backbone.ResourceManager;
+import org.sagebionetworks.researchstack.backbone.TaskProvider;
+import org.sagebionetworks.researchstack.backbone.UiManager;
+import org.sagebionetworks.researchstack.backbone.notification.NotificationConfig;
+import org.sagebionetworks.researchstack.backbone.notification.SimpleNotificationConfig;
+import org.sagebionetworks.researchstack.backbone.onboarding.OnboardingManager;
+import org.sagebionetworks.researchstack.backbone.storage.database.AppDatabase;
+import org.sagebionetworks.researchstack.backbone.storage.file.EncryptionProvider;
+import org.sagebionetworks.researchstack.backbone.storage.file.FileAccess;
+import org.sagebionetworks.researchstack.backbone.storage.file.PinCodeConfig;
+import org.sagebionetworks.researchstack.backbone.storage.file.SimpleFileAccess;
+import org.sagebionetworks.researchstack.backbone.storage.file.aes.AesProvider;
 
 public class MpResearchStack extends ResearchStack {
 

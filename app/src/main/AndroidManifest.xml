@@ -80,7 +80,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="org.researchstack.backbone.ui.ViewTaskActivity"
+            android:name="org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity"
             android:screenOrientation="portrait" />
 
         <activity
@@ -91,7 +91,7 @@
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name="org.researchstack.backbone.ui.ViewWebDocumentActivity"
+            android:name="org.sagebionetworks.researchstack.backbone.ui.ViewWebDocumentActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
 

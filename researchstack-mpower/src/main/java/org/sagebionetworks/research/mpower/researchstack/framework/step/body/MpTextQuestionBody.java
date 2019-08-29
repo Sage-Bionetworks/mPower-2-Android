@@ -40,10 +40,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import org.researchstack.backbone.answerformat.TextAnswerFormat;
-import org.researchstack.backbone.result.StepResult;
-import org.researchstack.backbone.step.Step;
-import org.researchstack.backbone.ui.step.body.TextQuestionBody;
+import org.sagebionetworks.researchstack.backbone.answerformat.TextAnswerFormat;
+import org.sagebionetworks.researchstack.backbone.result.StepResult;
+import org.sagebionetworks.researchstack.backbone.step.Step;
+import org.sagebionetworks.researchstack.backbone.ui.step.body.TextQuestionBody;
 
 import org.sagebionetworks.research.mpower.researchstack.R;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpFormStepLayout.MpFormResultChangedListener;

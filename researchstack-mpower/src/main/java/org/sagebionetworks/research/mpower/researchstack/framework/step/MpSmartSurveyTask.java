@@ -36,35 +36,35 @@ import android.content.Context;
 import android.support.annotation.VisibleForTesting;
 import android.widget.ImageView.ScaleType;
 
-import org.researchstack.backbone.answerformat.AnswerFormat;
-import org.researchstack.backbone.answerformat.BooleanAnswerFormat;
-import org.researchstack.backbone.answerformat.ChoiceAnswerFormat;
-import org.researchstack.backbone.answerformat.DateAnswerFormat;
-import org.researchstack.backbone.answerformat.DecimalAnswerFormat;
-import org.researchstack.backbone.answerformat.DurationAnswerFormat;
-import org.researchstack.backbone.answerformat.IntegerAnswerFormat;
-import org.researchstack.backbone.answerformat.TextAnswerFormat;
-import org.researchstack.backbone.answerformat.UnknownAnswerFormat;
-import org.researchstack.backbone.model.Choice;
-import org.researchstack.backbone.model.TaskModel;
-import org.researchstack.backbone.model.TaskModel.EnumerationModel;
-import org.researchstack.backbone.model.TaskModel.RuleModel;
-import org.researchstack.backbone.model.TaskModel.StepModel;
-import org.researchstack.backbone.model.survey.ChoiceQuestionSurveyItem;
-import org.researchstack.backbone.model.survey.IntegerRangeSurveyItem;
-import org.researchstack.backbone.model.survey.QuestionSurveyItem;
-import org.researchstack.backbone.model.survey.SurveyItemType;
-import org.researchstack.backbone.model.survey.TextfieldSurveyItem;
-import org.researchstack.backbone.result.StepResult;
-import org.researchstack.backbone.result.TaskResult;
-import org.researchstack.backbone.step.InstructionStep;
-import org.researchstack.backbone.step.QuestionStep;
-import org.researchstack.backbone.step.Step;
-import org.researchstack.backbone.task.OrderedTask;
-import org.researchstack.backbone.task.SmartSurveyTask;
+import org.sagebionetworks.researchstack.backbone.answerformat.AnswerFormat;
+import org.sagebionetworks.researchstack.backbone.answerformat.BooleanAnswerFormat;
+import org.sagebionetworks.researchstack.backbone.answerformat.ChoiceAnswerFormat;
+import org.sagebionetworks.researchstack.backbone.answerformat.DateAnswerFormat;
+import org.sagebionetworks.researchstack.backbone.answerformat.DecimalAnswerFormat;
+import org.sagebionetworks.researchstack.backbone.answerformat.DurationAnswerFormat;
+import org.sagebionetworks.researchstack.backbone.answerformat.IntegerAnswerFormat;
+import org.sagebionetworks.researchstack.backbone.answerformat.TextAnswerFormat;
+import org.sagebionetworks.researchstack.backbone.answerformat.UnknownAnswerFormat;
+import org.sagebionetworks.researchstack.backbone.model.Choice;
+import org.sagebionetworks.researchstack.backbone.model.TaskModel;
+import org.sagebionetworks.researchstack.backbone.model.TaskModel.EnumerationModel;
+import org.sagebionetworks.researchstack.backbone.model.TaskModel.RuleModel;
+import org.sagebionetworks.researchstack.backbone.model.TaskModel.StepModel;
+import org.sagebionetworks.researchstack.backbone.model.survey.ChoiceQuestionSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.IntegerRangeSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.QuestionSurveyItem;
+import org.sagebionetworks.researchstack.backbone.model.survey.SurveyItemType;
+import org.sagebionetworks.researchstack.backbone.model.survey.TextfieldSurveyItem;
+import org.sagebionetworks.researchstack.backbone.result.StepResult;
+import org.sagebionetworks.researchstack.backbone.result.TaskResult;
+import org.sagebionetworks.researchstack.backbone.step.InstructionStep;
+import org.sagebionetworks.researchstack.backbone.step.QuestionStep;
+import org.sagebionetworks.researchstack.backbone.step.Step;
+import org.sagebionetworks.researchstack.backbone.task.OrderedTask;
+import org.sagebionetworks.researchstack.backbone.task.SmartSurveyTask;
 
-import org.researchstack.backbone.utils.LogExt;
-import org.researchstack.backbone.utils.StepResultHelper;
+import org.sagebionetworks.researchstack.backbone.utils.LogExt;
+import org.sagebionetworks.researchstack.backbone.utils.StepResultHelper;
 import org.sagebionetworks.bridge.rest.model.StudyParticipant;
 
 import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
@@ -590,7 +590,7 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
     @Override
     public String getTitleForStep(Context context, Step step) {
         int currentIndex = staticStepIdentifiers.indexOf(step.getIdentifier()) + 1;
-        return context.getString(org.researchstack.backbone.R.string.rsb_format_step_title,
+        return context.getString(org.sagebionetworks.researchstack.backbone.R.string.rsb_format_step_title,
                 currentIndex,
                 staticStepIdentifiers.size());
     }

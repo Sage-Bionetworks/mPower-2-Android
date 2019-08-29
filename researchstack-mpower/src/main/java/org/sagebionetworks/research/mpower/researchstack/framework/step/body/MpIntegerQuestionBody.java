@@ -40,11 +40,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import org.researchstack.backbone.answerformat.IntegerAnswerFormat;
-import org.researchstack.backbone.result.StepResult;
-import org.researchstack.backbone.step.Step;
-import org.researchstack.backbone.ui.step.body.IntegerQuestionBody;
-import org.researchstack.backbone.ui.step.body.StepBody;
+import org.sagebionetworks.researchstack.backbone.answerformat.IntegerAnswerFormat;
+import org.sagebionetworks.researchstack.backbone.result.StepResult;
+import org.sagebionetworks.researchstack.backbone.step.Step;
+import org.sagebionetworks.researchstack.backbone.ui.step.body.IntegerQuestionBody;
+import org.sagebionetworks.researchstack.backbone.ui.step.body.StepBody;
 
 import org.sagebionetworks.research.mpower.researchstack.R;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpFormStepLayout.MpFormResultChangedListener;

@@ -7,7 +7,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.support.annotation.VisibleForTesting
 import com.google.common.base.Preconditions.checkArgument
-import org.researchstack.backbone.utils.ResUtils
+import org.sagebionetworks.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.research.MpIdentifier
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
 import org.sagebionetworks.research.mpower.viewmodel.ItemType.ACTIVITIES

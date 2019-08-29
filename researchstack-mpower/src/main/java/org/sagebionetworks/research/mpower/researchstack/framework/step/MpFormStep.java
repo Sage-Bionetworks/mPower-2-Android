@@ -32,8 +32,8 @@
 
 package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
-import org.researchstack.backbone.step.NavigationFormStep;
-import org.researchstack.backbone.step.QuestionStep;
+import org.sagebionetworks.researchstack.backbone.step.NavigationFormStep;
+import org.sagebionetworks.researchstack.backbone.step.QuestionStep;
 
 import java.util.List;
 

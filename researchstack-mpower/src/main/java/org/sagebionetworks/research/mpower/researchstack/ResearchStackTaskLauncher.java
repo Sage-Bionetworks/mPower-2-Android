@@ -8,9 +8,9 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.researchstack.backbone.factory.IntentFactory;
-import org.researchstack.backbone.task.Task;
-import org.researchstack.backbone.ui.ActiveTaskActivity;
+import org.sagebionetworks.researchstack.backbone.factory.IntentFactory;
+import org.sagebionetworks.researchstack.backbone.task.Task;
+import org.sagebionetworks.researchstack.backbone.ui.ActiveTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 

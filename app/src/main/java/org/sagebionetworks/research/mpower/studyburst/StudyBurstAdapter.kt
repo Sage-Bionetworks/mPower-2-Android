@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.study_burst_cell.view.cell_image
 import kotlinx.android.synthetic.main.study_burst_cell.view.cell_title
 import kotlinx.android.synthetic.main.study_burst_cell.view.checkmark
 import kotlinx.android.synthetic.main.study_burst_cell.view.view_holder_root
-import org.researchstack.backbone.utils.ResUtils
+import org.sagebionetworks.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 

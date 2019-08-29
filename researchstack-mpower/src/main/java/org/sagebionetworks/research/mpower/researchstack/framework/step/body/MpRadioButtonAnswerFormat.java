@@ -32,7 +32,7 @@
 
 package org.sagebionetworks.research.mpower.researchstack.framework.step.body;
 
-import org.researchstack.backbone.model.Choice;
+import org.sagebionetworks.researchstack.backbone.model.Choice;
 
 
 /**

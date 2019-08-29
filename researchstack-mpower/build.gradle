@@ -34,7 +34,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Dagger needs access to some RS classes
-    api project(':researchstack-sdk')
+//    api project(':researchstack-sdk')
+    api "org.sagebionetworks.bridge:researchstack-sdk:$bridge_sdk_version"
 
     // AndroidX
     implementation "com.android.support:appcompat-v7:$support_library_version"
