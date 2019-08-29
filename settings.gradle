@@ -1,12 +1,3 @@
-//include ':backbone'
-//project(':backbone').projectDir = new File('BridgeAndroidSDK/ResearchStack/backbone')
-//
-//include ':sageresearch-app-sdk', ':researchstack-sdk', ':android-sdk', ':test-utils'
-//project(':sageresearch-app-sdk').projectDir = new File('BridgeAndroidSDK/sageresearch-app-sdk')
-//project(':researchstack-sdk').projectDir = new File('BridgeAndroidSDK/researchstack-sdk')
-//project(':android-sdk').projectDir = new File('BridgeAndroidSDK/android-sdk')
-//project(':test-utils').projectDir = new File('BridgeAndroidSDK/test-utils')
-
 include ':app', ':sageresearch-mpower', ':researchstack-mpower'
 
 // uncomment this for a "composite build" which substitutes SageResearch artifacts

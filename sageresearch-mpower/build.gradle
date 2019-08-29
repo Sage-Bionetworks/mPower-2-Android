@@ -32,7 +32,6 @@ android {
 }
 
 dependencies {
-//    api project(':sageresearch-app-sdk')
     api "org.sagebionetworks.bridge:sageresearch-app-sdk:$bridge_sdk_version"
     api 'org.sagebionetworks.research.modules:motor-control:0.1.0'
 
