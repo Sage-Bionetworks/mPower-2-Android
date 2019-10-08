@@ -33,7 +33,9 @@
 package org.sagebionetworks.research.mpower
 
 import android.os.Bundle
+import android.support.v4.app.FragmentManager
 import dagger.android.support.DaggerAppCompatActivity
+
 
 class EntryActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +45,32 @@ class EntryActivity : DaggerAppCompatActivity() {
             supportFragmentManager.beginTransaction()
                     .replace(R.id.container, EntryFragment())
                     .commitNow()
+        }
+    }
+
+    private fun onBackPressed(fm: FragmentManager): Boolean {
+        for (frag in fm.fragments) {
+            if (frag.isVisible) {
+                val childFm = frag.childFragmentManager
+                if (onBackPressed(childFm)) {
+                    return true
+                } else if (childFm.backStackEntryCount > 0) {
+                    childFm.popBackStack()
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    /**
+     * Override the default back behavior so that it works for nested fragments.
+     */
+    override fun onBackPressed() {
+        if (onBackPressed(supportFragmentManager)) {
+            return
+        } else {
+            super.onBackPressed()
         }
     }
 }
