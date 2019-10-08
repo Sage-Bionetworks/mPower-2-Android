@@ -7,6 +7,9 @@ import org.sagebionetworks.research.domain.inject.TaskModule;
 import org.sagebionetworks.research.mobile_ui.inject.PerformTaskModule;
 import org.sagebionetworks.research.mpower.MPowerApplication;
 import org.sagebionetworks.research.mpower.researchstack.inject.MPowerResearchStackModule;
+import org.sagebionetworks.research.sageresearch.dao.room.AppConfigRepository;
+import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository;
+import org.sagebionetworks.research.sageresearch.dao.room.SurveyRepository;
 import org.sagebionetworks.research.sageresearch_app_sdk.inject.SageResearchAppSDKModule;
 
 import dagger.BindsInstance;
@@ -21,6 +24,13 @@ import dagger.android.support.AndroidSupportInjectionModule;
         TrackingStepModule.class, TrackingFragmentsModule.class},
         dependencies = {MPowerUserScopeComponent.class})
 public interface MPowerApplicationComponent extends AndroidInjector<MPowerApplication> {
+
+
+    void inject(ReportRepository instance);
+
+    void inject(AppConfigRepository instance);
+
+    void inject(SurveyRepository instance);
 
     @Component.Builder
     interface Builder {

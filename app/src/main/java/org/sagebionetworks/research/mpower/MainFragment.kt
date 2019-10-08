@@ -42,8 +42,8 @@ import android.view.ViewGroup
 import com.google.common.base.Supplier
 import com.google.common.collect.ImmutableMap
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_main.navigation
-import org.sagebionetworks.research.mpower.profile.ProfileFragment
+import kotlinx.android.synthetic.main.fragment_main.*
+import org.sagebionetworks.research.mpower.profile.MPowerProfileSettingsFragment
 import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
@@ -62,7 +62,7 @@ class MainFragment : DaggerFragment() {
     // Mapping of a tag to a creation method for a fragment
     private val FRAGMENT_TAG_TO_CREATOR = ImmutableMap.Builder<String, Supplier<Fragment>>()
             .put(TAG_FRAGMENT_TRACKING, Supplier { TrackingTabFragment() })
-            .put(TAG_FRAGMENT_PROFILE, Supplier { ProfileFragment() })
+            .put(TAG_FRAGMENT_PROFILE, Supplier { MPowerProfileSettingsFragment() })
             .build()
 
     // mapping of navigation IDs to a fragment tag
