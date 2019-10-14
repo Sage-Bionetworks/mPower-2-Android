@@ -1,6 +1,7 @@
 package org.sagebionetworks.research.mpower.profile
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,12 +11,14 @@ import org.sagebionetworks.bridge.rest.model.SurveyReference
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity
 import org.sagebionetworks.research.sageresearch.profile.ProfileSettingsFragment
+import org.sagebionetworks.research.sageresearch.profile.ProfileViewModel
 import org.sagebionetworks.researchstack.backbone.factory.IntentFactory
 import org.sagebionetworks.researchstack.backbone.model.TaskModel
 import org.sagebionetworks.researchstack.backbone.result.TaskResult
 import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity
 import org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK
 import org.slf4j.LoggerFactory
+import javax.inject.Inject
 
 class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
 
@@ -27,6 +30,15 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
 
     private var disposable: Disposable? = null
 
+    private lateinit var mPowerProfileViewModel: MPowerProfileViewModel
+
+    @Inject
+    lateinit var profileViewModelFactory: MPowerProfileViewModel.Factory
+
+    override fun loadProfileViewModel(): ProfileViewModel {
+        mPowerProfileViewModel = ViewModelProviders.of(this, profileViewModelFactory).get(MPowerProfileViewModel::class.java);
+        return mPowerProfileViewModel
+    }
 
     override fun launchSurvey(surveyReference: SurveyReference) {
         disposable = profileViewModel.loadSurvey(surveyReference)
@@ -38,9 +50,9 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
 
     fun launchTask(taskModel: TaskModel) {
         val factory = MpTaskFactory()
-        val smartSurveyTask = factory.createMpSmartSurveyTask(activity!!, taskModel)
+        mPowerProfileViewModel.currentSurveyTask = factory.createMpSmartSurveyTask(activity!!, taskModel)
         startActivityForResultParent(IntentFactory.INSTANCE.newTaskIntent(activity,
-                MpViewTaskActivity::class.java, smartSurveyTask), REQUEST_TASK)
+                MpViewTaskActivity::class.java, mPowerProfileViewModel.currentSurveyTask), REQUEST_TASK)
 
     }
 
@@ -61,40 +73,19 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         LOGGER.info("onActivityResult with requestCode $requestCode resultCode $resultCode")
-        // Will be set if a survey was just successfully completed and uploaded
-        var successfulSurveyUploadTaskId: String? = null
+
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TASK) {
             val taskResult = data!!.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT) as TaskResult
 
             LOGGER.info("Task was successfully finished")
 
-//            if (trackingTabViewModel.currentSurveyTask != null) {
-//                // This will trigger any after-rule processing like adding data groups based on survey answers
-//                trackingTabViewModel.currentSurveyTask!!.processTaskResult(taskResult)
-//            }
-//            if (trackingTabViewModel.currentSurveySchedule != null) {
-//                LOGGER.info("currentSurveySchedule non-null, uploading results")
-//                trackingTabViewModel.currentSurveySchedule!!.startedOn = Instant.ofEpochMilli(taskResult.startDate.time)
-//                trackingTabViewModel.currentSurveySchedule!!.finishedOn = Instant.ofEpochMilli(taskResult.endDate.time)
-//                // This function updates the schedule on bridge and in the ScheduleRepository
-//                studyBurstViewModel.updateScheduleToBridge(trackingTabViewModel.currentSurveySchedule!!)
-//                // This function uploads the result of the task to S3
-//                studyBurstViewModel.uploadResearchStackTaskResultToS3(trackingTabViewModel.currentSurveySchedule, taskResult)
-//                // This function will generate a client data report for the research stack task result
-//                reportViewModel.saveResearchStackReports(taskResult)
-//
-//                if (MOTIVATION == trackingTabViewModel.currentSurveySchedule!!.activityIdentifier()) {
-//                    // send the user straight into the study burst
-//                    goToStudyBurst()
-//                }
-//                successfulSurveyUploadTaskId = trackingTabViewModel.currentSurveySchedule!!.activityIdentifier()
-//            } else {
-//                LOGGER.info("currentSurveySchedule is null, cannot upload results")
-//            }
-        }
-//        trackingTabViewModel.currentSurveyTask = null
-//        trackingTabViewModel.currentSurveySchedule = null
+            // This will trigger any after-rule processing like adding data groups based on survey answers
+            mPowerProfileViewModel.currentSurveyTask?.processTaskResult(taskResult)
 
+            //TODO: Need to load and pass in ScheduledActivityEntity -nathaniel 10/10/19
+            profileViewModel.bridgeRepoManager.saveTaskResult(taskResult, null)
+        }
+        mPowerProfileViewModel.currentSurveyTask = null
     }
 
     override fun onDetach() {

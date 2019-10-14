@@ -1,6 +1,5 @@
 package org.sagebionetworks.research.mpower.profile;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,8 +26,6 @@ import butterknife.Unbinder;
 import dagger.android.support.AndroidSupportInjection;
 
 public class ProfileFragment extends Fragment {
-
-    private ProfileViewModel profile;
 
     private Unbinder unbinder;
 
@@ -66,8 +63,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        profile = ViewModelProviders.of(this).get(ProfileViewModel.class);
-        // TODO: Use the ViewModel @liujoshua 2018/08/06
     }
 
     @Override

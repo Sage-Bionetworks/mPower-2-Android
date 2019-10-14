@@ -10,6 +10,7 @@ import org.sagebionetworks.research.mpower.researchstack.inject.MPowerResearchSt
 import org.sagebionetworks.research.sageresearch.dao.room.AppConfigRepository;
 import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository;
 import org.sagebionetworks.research.sageresearch.dao.room.SurveyRepository;
+import org.sagebionetworks.research.sageresearch.repos.BridgeRepositoryManager;
 import org.sagebionetworks.research.sageresearch_app_sdk.inject.SageResearchAppSDKModule;
 
 import dagger.BindsInstance;
@@ -31,6 +32,8 @@ public interface MPowerApplicationComponent extends AndroidInjector<MPowerApplic
     void inject(AppConfigRepository instance);
 
     void inject(SurveyRepository instance);
+
+    void inject(BridgeRepositoryManager instance);
 
     @Component.Builder
     interface Builder {
