@@ -292,16 +292,11 @@ public class TrackingTabFragment extends Fragment {
                 // This will trigger any after-rule processing like adding data groups based on survey answers
                 trackingTabViewModel.currentSurveyTask.processTaskResult(taskResult);
             }
+
             if (trackingTabViewModel.currentSurveySchedule != null) {
                 LOGGER.info("currentSurveySchedule non-null, uploading results");
-                trackingTabViewModel.currentSurveySchedule.setStartedOn(Instant.ofEpochMilli(taskResult.getStartDate().getTime()));
-                trackingTabViewModel.currentSurveySchedule.setFinishedOn(Instant.ofEpochMilli(taskResult.getEndDate().getTime()));
-                // This function updates the schedule on bridge and in the ScheduleRepository
-                studyBurstViewModel.updateScheduleToBridge(trackingTabViewModel.currentSurveySchedule);
-                // This function uploads the result of the task to S3
-                studyBurstViewModel.uploadResearchStackTaskResultToS3(trackingTabViewModel.currentSurveySchedule, taskResult);
-                // This function will generate a client data report for the research stack task result
-                reportViewModel.saveResearchStackReports(taskResult);
+
+                surveyViewModel.getBridgeRepoManager().saveTaskResult(taskResult, trackingTabViewModel.currentSurveySchedule);
 
                 if (MOTIVATION.equals(trackingTabViewModel.currentSurveySchedule.activityIdentifier())) {
                     // send the user straight into the study burst
