@@ -82,7 +82,7 @@ public class MpResourceManager extends ResourceManager {
 
     @Override
     public Resource getConsentHtml() {
-        return null;
+        return new Resource(Resource.TYPE_HTML, BASE_PATH_HTML, "consent");
     }
 
     @Override
