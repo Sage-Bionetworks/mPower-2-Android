@@ -43,8 +43,7 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
     override fun launchSurvey(surveyReference: SurveyReference) {
         disposable = profileViewModel.loadSurvey(surveyReference)
                 .map { RestUtils.toType(it, TaskModel::class.java) }
-                .firstOrError()
-                .subscribe({ launchTask(it) }, {})
+                .subscribe({ launchTask(it) }, {LOGGER.debug("Survey loading failed")})
 
     }
 
@@ -83,9 +82,10 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
             mPowerProfileViewModel.currentSurveyTask?.processTaskResult(taskResult)
 
             //TODO: Need to load and pass in ScheduledActivityEntity -nathaniel 10/10/19
-            profileViewModel.bridgeRepoManager.saveTaskResult(taskResult, null)
+            profileViewModel.bridgeRepoManager.saveTaskResult(taskResult, mPowerProfileViewModel.currentScheduledActivity)
         }
         mPowerProfileViewModel.currentSurveyTask = null
+        mPowerProfileViewModel.currentScheduledActivity = null
     }
 
     override fun onDetach() {
