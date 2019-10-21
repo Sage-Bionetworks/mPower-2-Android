@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment
 import io.reactivex.disposables.Disposable
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.SurveyReference
+import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity
 import org.sagebionetworks.research.sageresearch.profile.ProfileSettingsFragment
@@ -86,6 +87,10 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
         }
         mPowerProfileViewModel.currentSurveyTask = null
         mPowerProfileViewModel.currentScheduledActivity = null
+    }
+
+    override fun launchStudyBurstReminderTime() {
+        startActivityForResultParent(Intent(activity, StudyBurstReminderActivity::class.java), REQUEST_TASK)
     }
 
     override fun onDetach() {
