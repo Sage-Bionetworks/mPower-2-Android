@@ -102,7 +102,7 @@ public class MpResourceManager extends ResourceManager {
 
     @Override
     public Resource getPrivacyPolicy() {
-        return new Resource(Resource.TYPE_HTML, BASE_PATH_HTML, "license");
+        return new Resource(Resource.TYPE_HTML, BASE_PATH_HTML, "PrivacyPolicy");
     }
 
     @Override
