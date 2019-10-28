@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import io.reactivex.disposables.Disposable
+import org.joda.time.DateTime
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.SurveyReference
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity
@@ -82,7 +83,6 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
             // This will trigger any after-rule processing like adding data groups based on survey answers
             mPowerProfileViewModel.currentSurveyTask?.processTaskResult(taskResult)
 
-            //TODO: Need to load and pass in ScheduledActivityEntity -nathaniel 10/10/19
             profileViewModel.bridgeRepoManager.saveTaskResult(taskResult, mPowerProfileViewModel.currentScheduledActivity)
         }
         mPowerProfileViewModel.currentSurveyTask = null
@@ -91,6 +91,13 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
 
     override fun launchStudyBurstReminderTime() {
         startActivityForResultParent(Intent(activity, StudyBurstReminderActivity::class.java), REQUEST_TASK)
+    }
+
+    override fun launchWithdraw(firstName: String, joinedDate: DateTime) {
+        val intent = Intent(activity, WithdrawFromStudyActivity::class.java)
+        intent.putExtra(WithdrawFromStudyActivity.ARG_NAME_KEY, firstName)
+        intent.putExtra(WithdrawFromStudyActivity.ARG_JOINED_DATE, joinedDate)
+        startActivity(intent)
     }
 
     override fun onDetach() {

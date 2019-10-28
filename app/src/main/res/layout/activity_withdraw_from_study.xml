@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@color/colorPrimary">
+
+
+    <ImageView
+        android:id="@+id/back_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp"
+        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/rs2_back_icon"/>
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/back_icon"
+        android:layout_centerHorizontal="true"
+        app:srcCompat="@drawable/mp_logo" />
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:layout_below="@id/logo"
+        android:fontFamily="@font/lato"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/rsb_white"/>
+
+    <TextView
+        android:id="@+id/detailTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:layout_below="@id/titleTextView"
+        android:fontFamily="@font/lato"
+        android:textAlignment="center"
+        android:textSize="19sp"
+        android:textColor="@color/rsb_white"
+        android:text="@string/withdraw_details"/>
+
+    <Button
+        android:id="@+id/buttonWithdraw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/margin_medium"
+        android:text="Withdraw from study"
+        android:textColor="@color/rsb_activity_red"
+        style="@style/MPower.RoundedCornerMaterialButton.Gray"/>
+
+
+
+</RelativeLayout>
+
