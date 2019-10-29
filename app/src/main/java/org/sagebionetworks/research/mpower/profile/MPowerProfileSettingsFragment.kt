@@ -5,6 +5,8 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import org.joda.time.DateTime
 import org.sagebionetworks.bridge.rest.RestUtils
@@ -43,9 +45,19 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
     }
 
     override fun launchSurvey(surveyReference: SurveyReference) {
+        showLoading(true)
         disposable = profileViewModel.loadSurvey(surveyReference)
                 .map { RestUtils.toType(it, TaskModel::class.java) }
-                .subscribe({ launchTask(it) }, {LOGGER.debug("Survey loading failed")})
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        {
+                            launchTask(it)
+                            showLoading(false)
+                        },
+                        {
+                            showLoading(false)
+                            LOGGER.debug("Survey loading failed")
+                        })
 
     }
 

@@ -4,6 +4,9 @@ import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_withdraw_from_study.*
@@ -52,13 +55,26 @@ class WithdrawFromStudyActivity : DaggerAppCompatActivity() {
         buttonWithdraw.setOnClickListener {
             launchSurvey()
         }
+        back_icon.setOnClickListener {
+            onBackPressed()
+        }
+    }
+
+    fun showLoading(show: Boolean) {
+        Handler(Looper.getMainLooper()).post {spinner.visibility = if (show) View.VISIBLE else View.GONE }
     }
 
     fun launchSurvey() {
-
+        showLoading(true)
         disposable = viewModel.loadWithdrawSurvey()
                 .map { RestUtils.toType(it, TaskModel::class.java) }
-                .subscribe({ launchTask(it) }, {LOGGER.debug("Survey loading failed")})
+                .subscribe({
+                    launchTask(it)
+                    showLoading(false)
+                }, {
+                    LOGGER.debug("Survey loading failed")
+                    showLoading(false)
+                })
 
     }
 

@@ -59,7 +59,9 @@
         android:textColor="@color/rsb_activity_red"
         style="@style/MPower.RoundedCornerMaterialButton.Gray"/>
 
-
+    <include layout="@layout/loading_spinner"
+        android:id="@+id/spinner"
+        android:visibility="gone"/>
 
 </RelativeLayout>
 
