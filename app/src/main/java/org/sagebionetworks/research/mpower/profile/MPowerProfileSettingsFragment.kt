@@ -9,6 +9,8 @@ import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import org.joda.time.DateTime
+import org.sagebionetworks.bridge.android.manager.models.ProfileDataItem
+import org.sagebionetworks.bridge.android.manager.models.ProfileItemProfileTableItem
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.SurveyReference
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity
@@ -21,7 +23,9 @@ import org.sagebionetworks.researchstack.backbone.model.TaskModel
 import org.sagebionetworks.researchstack.backbone.result.TaskResult
 import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity
 import org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK
+import org.sagebionetworks.researchstack.backbone.utils.StepResultHelper
 import org.slf4j.LoggerFactory
+import java.util.*
 import javax.inject.Inject
 
 class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
@@ -69,6 +73,12 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
 
     }
 
+    override fun launchEditParticipantItem(profileItem: ProfileItemProfileTableItem, profileDataItem: ProfileDataItem) {
+        mPowerProfileViewModel.currentProfileItem = profileItem
+        val task = mPowerProfileViewModel.createTask(profileItem, profileDataItem)
+        launchTask(task)
+    }
+
     //Copied from TrackingTabFragment
     /**
      * Due to a behavior issue in nested child fragments (like this fragment)
@@ -92,13 +102,24 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
 
             LOGGER.info("Task was successfully finished")
 
-            // This will trigger any after-rule processing like adding data groups based on survey answers
-            mPowerProfileViewModel.currentSurveyTask?.processTaskResult(taskResult)
+            if (mPowerProfileViewModel.currentProfileItem != null) {
+                val stepResult = StepResultHelper.findStepResult(taskResult.results.values, mPowerProfileViewModel.currentProfileItem?.profileItemKey)
+                val result = stepResult.result
+                if (result is String) {
+                    profileViewModel.saveStudyParticipantValue(result, mPowerProfileViewModel.currentProfileItem?.profileItemKey!!)
+                    adapter?.notifyDataSetChanged()
+                }
+            } else {
 
-            profileViewModel.bridgeRepoManager.saveTaskResult(taskResult, mPowerProfileViewModel.currentScheduledActivity)
+                // This will trigger any after-rule processing like adding data groups based on survey answers
+                mPowerProfileViewModel.currentSurveyTask?.processTaskResult(taskResult)
+
+                profileViewModel.bridgeRepoManager.saveTaskResult(taskResult, mPowerProfileViewModel.currentScheduledActivity)
+            }
         }
         mPowerProfileViewModel.currentSurveyTask = null
         mPowerProfileViewModel.currentScheduledActivity = null
+        mPowerProfileViewModel.currentProfileItem = null
     }
 
     override fun launchStudyBurstReminderTime() {
