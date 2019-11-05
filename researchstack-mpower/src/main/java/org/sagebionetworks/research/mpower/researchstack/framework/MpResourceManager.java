@@ -76,8 +76,7 @@ public class MpResourceManager extends ResourceManager {
 
     @Override
     public Resource getStudyOverview() {
-        // TODO: Determine if this is still necessary
-        return null;
+        return new Resource(Resource.TYPE_HTML, BASE_PATH_HTML, "StudyInformation");
     }
 
     @Override
