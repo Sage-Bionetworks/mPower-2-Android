@@ -32,13 +32,12 @@
 
 package org.sagebionetworks.research.mpower.researchstack.framework.step.body;
 
-import android.support.annotation.LayoutRes;
+import androidx.annotation.LayoutRes;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import org.sagebionetworks.researchstack.backbone.answerformat.TextAnswerFormat;
 import org.sagebionetworks.researchstack.backbone.result.StepResult;

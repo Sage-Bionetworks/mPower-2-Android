@@ -1,11 +1,11 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Transformations.map
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations.map
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import android.content.Context
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import com.google.common.base.Preconditions.checkArgument
 import org.sagebionetworks.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.research.MpIdentifier

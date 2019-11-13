@@ -1,13 +1,13 @@
 package org.sagebionetworks.research.mpower.studyburst
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import android.view.View
 import android.widget.Toast
 import dagger.android.AndroidInjection
@@ -79,7 +79,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         logger.debug("StudyBurstActivity.onCreate()")
         setContentView(R.layout.activity_study_burst)
 
-        studyBurstRecycler.layoutManager = GridLayoutManager(this, 2)
+        studyBurstRecycler.layoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 2)
         observeLiveData()
 
         study_burst_next.setOnClickListener { onNextClicked() }

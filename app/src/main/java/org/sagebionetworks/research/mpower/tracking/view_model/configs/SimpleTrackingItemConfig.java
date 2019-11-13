@@ -1,7 +1,7 @@
 package org.sagebionetworks.research.mpower.tracking.view_model.configs;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
 

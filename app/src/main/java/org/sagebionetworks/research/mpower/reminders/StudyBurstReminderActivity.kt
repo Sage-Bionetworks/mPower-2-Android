@@ -33,11 +33,11 @@
 package org.sagebionetworks.research.mpower.reminders
 
 import android.app.TimePickerDialog
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_reminder.reminder_checkbox
 import kotlinx.android.synthetic.main.activity_reminder.reminder_done_button

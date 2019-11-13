@@ -1,7 +1,7 @@
 package org.sagebionetworks.research.mpower.sageresearch.archive;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Size;
+import androidx.annotation.NonNull;
+import androidx.annotation.Size;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;

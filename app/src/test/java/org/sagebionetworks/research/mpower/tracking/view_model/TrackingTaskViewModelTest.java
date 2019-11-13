@@ -6,9 +6,9 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 import android.app.Application;
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

@@ -4,7 +4,7 @@ import static org.sagebionetworks.research.mpower.researchstack.framework.MpSurv
 import static org.sagebionetworks.research.mpower.researchstack.framework.MpSurveyItemAdapter.MP_INTEGER_SURVEY_ITEM_TYPE;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

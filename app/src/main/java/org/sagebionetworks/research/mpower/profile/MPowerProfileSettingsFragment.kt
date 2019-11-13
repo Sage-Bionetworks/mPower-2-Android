@@ -1,10 +1,10 @@
 package org.sagebionetworks.research.mpower.profile
 
 import android.app.Activity
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -87,7 +87,7 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
      * @param requestCode to launch with
      */
     private fun startActivityForResultParent(intent: Intent, requestCode: Int) {
-        var parent: Fragment? = this
+        var parent: androidx.fragment.app.Fragment? = this
         while (parent!!.parentFragment != null) {
             parent = parent.parentFragment
         }

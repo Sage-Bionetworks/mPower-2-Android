@@ -1,11 +1,11 @@
 package org.sagebionetworks.research.mpower.tracking.view_model;
 
 import android.app.Application;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProvider.Factory;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProvider.Factory;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.sagebionetworks.research.domain.result.interfaces.Result;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;

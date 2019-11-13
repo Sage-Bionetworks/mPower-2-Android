@@ -33,17 +33,15 @@
 package org.sagebionetworks.research.mpower.researchstack.framework;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
+import androidx.annotation.IdRes;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.sagebionetworks.researchstack.backbone.StorageAccess;
 import org.sagebionetworks.researchstack.backbone.result.TaskResult;
 import org.sagebionetworks.researchstack.backbone.step.Step;
 import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity;

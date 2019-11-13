@@ -1,7 +1,7 @@
 package org.sagebionetworks.research.mpower.profile
 
 import android.app.Activity
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler

@@ -1,13 +1,13 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import android.content.Context
-import android.support.annotation.DrawableRes
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.DrawableRes
+import androidx.annotation.VisibleForTesting
 import com.google.common.base.Preconditions.checkArgument
 import com.google.gson.reflect.TypeToken
 import io.reactivex.android.schedulers.AndroidSchedulers

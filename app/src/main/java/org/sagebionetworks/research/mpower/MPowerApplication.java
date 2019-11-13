@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.support.annotation.VisibleForTesting;
-import android.support.v4.app.Fragment;
+import androidx.annotation.VisibleForTesting;
+import androidx.fragment.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 

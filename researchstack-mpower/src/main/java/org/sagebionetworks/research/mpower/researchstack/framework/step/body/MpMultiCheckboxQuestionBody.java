@@ -33,7 +33,7 @@
 package org.sagebionetworks.research.mpower.researchstack.framework.step.body;
 
 import android.content.res.Resources;
-import android.support.annotation.ColorRes;
+import androidx.annotation.ColorRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

@@ -1,8 +1,8 @@
 package org.sagebionetworks.research.mpower.tracking.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.SimpleItemAnimator;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import org.sagebionetworks.research.mpower.tracking.SortUtil;
 import org.sagebionetworks.research.mpower.tracking.recycler_view.TriggersLoggingItemAdapter;

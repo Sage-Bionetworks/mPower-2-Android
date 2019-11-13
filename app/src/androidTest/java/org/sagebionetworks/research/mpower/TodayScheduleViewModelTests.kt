@@ -1,10 +1,10 @@
 package org.sagebionetworks.research.mpower
 
 import android.app.Application
-import android.arch.core.executor.testing.InstantTaskExecutorRule
-import android.support.test.InstrumentationRegistry
-import android.support.test.filters.MediumTest
-import android.support.test.runner.AndroidJUnit4
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.filters.MediumTest
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before

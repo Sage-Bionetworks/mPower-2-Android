@@ -1,8 +1,8 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView.Adapter;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 

@@ -1,8 +1,7 @@
 package org.sagebionetworks.research.mpower.tracking.view_model;
 
-import android.app.Application;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.sagebionetworks.research.mpower.tracking.fragment.SymptomLoggingFragment;
 import org.sagebionetworks.research.mpower.tracking.fragment.TrackingFragment;
