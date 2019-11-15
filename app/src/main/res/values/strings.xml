@@ -271,4 +271,11 @@
     <string name="medication_list_empty_details">On the next screen, select your current Parkinson\'s medications. In the future, your custom list will be here-ready for tracking.</string>
     <string name="medication_list_empty_title">Your custom Medication List will live here</string>
     <string name="medication_would_you_like">Would you like to record a medication for today?</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Withdraw -->
+    <string name="withdraw_title">Hi %1$s,\n You have been enrolled in the mPower2 Study since %2$s</string>
+    <string name="withdraw_details">You can withdraw from the study if you no longer want to be involved. Please note that you will be logged out of your account and no further data will be collected.</string>
 </resources>

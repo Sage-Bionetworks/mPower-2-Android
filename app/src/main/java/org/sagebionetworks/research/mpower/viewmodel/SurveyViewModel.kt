@@ -10,6 +10,7 @@ import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntityDao
+import org.sagebionetworks.research.sageresearch.repos.BridgeRepositoryManager
 import org.sagebionetworks.research.sageresearch.viewmodel.ScheduleViewModel
 import org.threeten.bp.LocalDateTime
 import javax.inject.Inject
@@ -47,17 +48,17 @@ import javax.inject.Inject
 /**
  * SurveyViewModel contains a live data object that queries for all non-excluded surveys unfinished and available now.
  */
-open class SurveyViewModel(scheduleDao: ScheduledActivityEntityDao,
+open class SurveyViewModel(val bridgeRepoManager: BridgeRepositoryManager, scheduleDao: ScheduledActivityEntityDao,
         scheduleRepo: ScheduleRepository) : ScheduleViewModel(scheduleDao, scheduleRepo) {
 
-    class Factory @Inject constructor(private val scheduledActivityEntityDao: ScheduledActivityEntityDao,
+    class Factory @Inject constructor(private val bridgeRepoManager: BridgeRepositoryManager, private val scheduledActivityEntityDao: ScheduledActivityEntityDao,
             private val scheduleRepository: ScheduleRepository) : ViewModelProvider.Factory {
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             Preconditions.checkArgument(modelClass.isAssignableFrom(SurveyViewModel::class.java))
 
-            return SurveyViewModel(scheduledActivityEntityDao, scheduleRepository) as T
+            return SurveyViewModel(bridgeRepoManager, scheduledActivityEntityDao, scheduleRepository) as T
         }
     }
 

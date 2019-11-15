@@ -12,6 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
+        <activity android:name=".profile.WithdrawFromStudyActivity"></activity>
+
         <service
             android:name="org.sagebionetworks.research.presentation.recorder.service.RecorderService"
             android:exported="false" />

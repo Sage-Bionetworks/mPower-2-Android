@@ -12,7 +12,8 @@ import org.sagebionetworks.research.mpower.MainFragment;
 import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
 import org.sagebionetworks.research.mpower.history.HistoryFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;
-import org.sagebionetworks.research.mpower.profile.ProfileFragment;
+import org.sagebionetworks.research.mpower.profile.MPowerProfileSettingsFragment;
+import org.sagebionetworks.research.mpower.profile.WithdrawFromStudyActivity;
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity;
 import org.sagebionetworks.research.mpower.sageresearch.archive.TappingResultArchiveFactory;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
@@ -60,7 +61,10 @@ public abstract class MPowerUserModule {
     abstract StudyBurstReminderActivity contributeReminderActivityInjector();
 
     @ContributesAndroidInjector
-    abstract ProfileFragment contributeProfileFragmentInjector();
+    abstract WithdrawFromStudyActivity contributWithdrawActivityInjector();
+
+    @ContributesAndroidInjector
+    abstract MPowerProfileSettingsFragment contributeProfileFragmentInjector();
 
     @ContributesAndroidInjector
     abstract TrackingMenuFragment contributeTrackingMenuFragmentInjector();

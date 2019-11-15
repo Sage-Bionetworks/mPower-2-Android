@@ -76,13 +76,12 @@ public class MpResourceManager extends ResourceManager {
 
     @Override
     public Resource getStudyOverview() {
-        // TODO: Determine if this is still necessary
-        return null;
+        return new Resource(Resource.TYPE_HTML, BASE_PATH_HTML, "StudyInformation");
     }
 
     @Override
     public Resource getConsentHtml() {
-        return null;
+        return new Resource(Resource.TYPE_HTML, BASE_PATH_HTML, "consent");
     }
 
     @Override
@@ -102,7 +101,7 @@ public class MpResourceManager extends ResourceManager {
 
     @Override
     public Resource getPrivacyPolicy() {
-        return new Resource(Resource.TYPE_HTML, BASE_PATH_HTML, "license");
+        return new Resource(Resource.TYPE_HTML, BASE_PATH_HTML, "PrivacyPolicy");
     }
 
     @Override

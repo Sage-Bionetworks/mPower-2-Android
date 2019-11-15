@@ -65,10 +65,11 @@ class EntryFragment : BridgeAccessFragment() {
             onRequireConsent()
             return
         }
-
-        childFragmentManager.beginTransaction()
-                .replace(R.id.container, MainFragment())
-                .commit()
+        if (childFragmentManager.fragments.isEmpty() || !childFragmentManager.fragments[0].isVisible || !(childFragmentManager.fragments[0] is MainFragment)) {
+            childFragmentManager.beginTransaction()
+                    .replace(R.id.container, MainFragment())
+                    .commit()
+        }
     }
 
     /**
