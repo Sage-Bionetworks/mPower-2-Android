@@ -2,7 +2,7 @@
 
 buildscript {
     ext.kotlin_version = '1.3.50'
-    ext.bridge_sdk_version = '0.3.0'
+    ext.bridge_sdk_version = '0.3.4'
     ext.sage_research_version = '0.1.0'
     ext.kotlin_version = '1.3.20'
     ext.support_library_version = '28.0.0'
