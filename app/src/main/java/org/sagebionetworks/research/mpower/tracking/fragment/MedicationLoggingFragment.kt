@@ -2,10 +2,10 @@ package org.sagebionetworks.research.mpower.tracking.fragment
 
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView.ViewHolder
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import android.view.View
 import kotlinx.android.synthetic.main.mpower2_medication_logging_step.*
 import org.joda.time.Minutes
@@ -139,8 +139,10 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
         setupItemDecorations()
         medication_recycler_view.isNestedScrollingEnabled = false
         missed_medication_recycler_view.isNestedScrollingEnabled = false
-        medication_recycler_view.layoutManager = LinearLayoutManager(medication_recycler_view.context)
-        missed_medication_recycler_view.layoutManager = LinearLayoutManager(missed_medication_recycler_view.context)
+        medication_recycler_view.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+                medication_recycler_view.context)
+        missed_medication_recycler_view.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+                missed_medication_recycler_view.context)
     }
 
     override fun onStart() {

@@ -1,13 +1,13 @@
 package org.sagebionetworks.research.mpower.tracking.fragment
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.RecyclerView.ItemDecoration
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
@@ -117,7 +117,8 @@ class MedicationSchedulingFragment :
     }
 
     override fun initializeItemDecoration(): ItemDecoration? {
-        val itemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        val itemDecoration = androidx.recyclerview.widget.DividerItemDecoration(context,
+                androidx.recyclerview.widget.DividerItemDecoration.VERTICAL)
         ResourcesCompat.getDrawable(resources, R.drawable.mpower2_logging_item_decoration, null)?.let {
             itemDecoration.setDrawable(it)
         }

@@ -34,8 +34,8 @@ package org.sagebionetworks.research.mpower
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
-import android.support.v4.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,7 +60,7 @@ class MainFragment : DaggerFragment() {
     private val TAG_FRAGMENT_PROFILE = "profile"
 
     // Mapping of a tag to a creation method for a fragment
-    private val FRAGMENT_TAG_TO_CREATOR = ImmutableMap.Builder<String, Supplier<Fragment>>()
+    private val FRAGMENT_TAG_TO_CREATOR = ImmutableMap.Builder<String, Supplier<androidx.fragment.app.Fragment>>()
             .put(TAG_FRAGMENT_TRACKING, Supplier { TrackingTabFragment() })
             .put(TAG_FRAGMENT_PROFILE, Supplier { MPowerProfileSettingsFragment() })
             .build()
@@ -114,7 +114,7 @@ class MainFragment : DaggerFragment() {
         var nextFragment = childFragmentManager.findFragmentByTag(fragmentTag)
         if (nextFragment == null) {
             LOGGER.debug("no fragment found for tag: {}, creating a new one ", fragmentTag)
-            val fragmentSupplier: Supplier<Fragment>? = FRAGMENT_TAG_TO_CREATOR[fragmentTag]
+            val fragmentSupplier: Supplier<androidx.fragment.app.Fragment>? = FRAGMENT_TAG_TO_CREATOR[fragmentTag]
                     ?: FRAGMENT_TAG_TO_CREATOR[TAG_FRAGMENT_TRACKING]
 
             if (fragmentSupplier == null) {

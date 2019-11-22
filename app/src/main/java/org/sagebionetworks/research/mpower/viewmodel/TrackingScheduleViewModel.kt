@@ -32,11 +32,11 @@
 
 package org.sagebionetworks.research.mpower.viewmodel
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.dampcake.gson.immutable.ImmutableAdapterFactory
 import com.google.common.base.Preconditions
 import com.google.common.reflect.TypeToken

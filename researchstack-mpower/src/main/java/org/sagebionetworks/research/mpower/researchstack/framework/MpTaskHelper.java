@@ -33,7 +33,7 @@
 package org.sagebionetworks.research.mpower.researchstack.framework;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import org.joda.time.DateTime;
 import org.sagebionetworks.researchstack.backbone.AppPrefs;
@@ -53,7 +53,6 @@ import org.sagebionetworks.bridge.researchstack.TaskHelper;
 import org.sagebionetworks.bridge.researchstack.factory.ArchiveFileFactory;
 import org.sagebionetworks.bridge.researchstack.survey.SurveyAnswer;
 import org.sagebionetworks.bridge.researchstack.wrapper.StorageAccessWrapper;
-import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpBooleanAnswerFormat;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpChoiceAnswerFormat;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpIntegerAnswerFormat;

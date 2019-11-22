@@ -39,10 +39,10 @@ import static org.junit.Assert.assertTrue;
 import static org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask.FORM_STEP_SUFFIX;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.MediumTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.annotation.NonNull;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.filters.MediumTest;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import android.widget.ImageView.ScaleType;
 
 import org.junit.Before;
@@ -56,13 +56,11 @@ import org.sagebionetworks.researchstack.backbone.result.StepResult;
 import org.sagebionetworks.researchstack.backbone.result.TaskResult;
 import org.sagebionetworks.researchstack.backbone.step.QuestionStep;
 import org.sagebionetworks.researchstack.backbone.step.Step;
-import org.sagebionetworks.researchstack.backbone.task.SmartSurveyTask;
 import org.sagebionetworks.bridge.rest.RestUtils;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpFormStep;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpInstructionStep;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
-import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpCheckboxAnswerFormat;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpChoiceAnswerFormat;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpIntegerAnswerFormat;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpMultiCheckboxAnswerFormat;

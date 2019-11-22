@@ -34,8 +34,8 @@ package org.sagebionetworks.research.mpower.researchstack.framework.step.body;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.annotation.ColorRes;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.annotation.ColorRes;
+import androidx.core.content.res.ResourcesCompat;
 import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;

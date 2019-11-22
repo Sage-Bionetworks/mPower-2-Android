@@ -1,7 +1,7 @@
 package org.sagebionetworks.research.mpower.tracking;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.model.SelectionUIFormItem;

@@ -7,12 +7,12 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.support.constraint.ConstraintLayout
-import android.support.v7.app.AppCompatDialogFragment
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -118,7 +118,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
 
         day_selection_title.text = getString(R.string.medication_day_selection_title, name)
         var recycler = medication_day_recycler
-        recycler.layoutManager = GridLayoutManager(context, 2)
+        recycler.layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 2)
         val dayStrings = getDays(resources)
         dayStrings.add(resources.getString(medication_schedule_everyday))
         recycler.adapter = DayAdapter(ArrayList((0..(dayStrings.size-1)).toList()), dayStrings, context!!)
@@ -141,7 +141,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
     }
 
     inner class DayAdapter(val items: ArrayList<Int>, val dayStrings: List<String>, val context: Context) :
-            RecyclerView.Adapter<DayViewHolder>() {
+            androidx.recyclerview.widget.RecyclerView.Adapter<DayViewHolder>() {
 
         override fun getItemCount(): Int {
             return items.size
@@ -200,7 +200,7 @@ interface DaySelectedListener {
     fun onDaySelected(scheduleName: String, days: Set<Int>)
 }
 
-class DayViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class DayViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
     var root = view
     val tvDay = view.day_text
 }

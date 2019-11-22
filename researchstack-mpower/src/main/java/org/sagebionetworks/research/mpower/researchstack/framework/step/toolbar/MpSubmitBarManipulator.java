@@ -32,7 +32,7 @@
 
 package org.sagebionetworks.research.mpower.researchstack.framework.step.toolbar;
 
-import android.support.annotation.ColorRes;
+import androidx.annotation.ColorRes;
 
 /**
  * Created by rianhouston on 1/27/18.

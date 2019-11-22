@@ -1,8 +1,8 @@
 package org.sagebionetworks.research.mpower
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.RangeSet
 import org.junit.*

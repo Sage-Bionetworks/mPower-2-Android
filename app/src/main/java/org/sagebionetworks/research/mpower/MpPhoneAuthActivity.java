@@ -3,11 +3,11 @@ package org.sagebionetworks.research.mpower;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.AUTHENTICATE;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 import android.widget.TextView;
 
 import org.sagebionetworks.bridge.android.access.Resource;

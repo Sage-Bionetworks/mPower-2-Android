@@ -34,10 +34,10 @@ package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.annotation.ColorRes;
-import android.support.annotation.IdRes;
-import android.support.annotation.LayoutRes;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.annotation.ColorRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
+import androidx.core.content.res.ResourcesCompat;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
