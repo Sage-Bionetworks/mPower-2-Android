@@ -413,6 +413,11 @@ data class SymptomDetails(
     }
 
     override fun details(resources: Resources): String {
+        when (severityLevel) {
+            1 -> return resources.getString(R.string.severity_mild)
+            2 -> return resources.getString(R.string.severity_moderate)
+            3 -> return resources.getString(R.string.severity_severe)
+        }
         return ""
     }
 }
@@ -443,11 +448,11 @@ data class MedicationDetails(
         get() = R.drawable.ic_medication_purple
 
     override fun title(resources: Resources): String {
-        return medIdentifier + " " + dosage
+        return medIdentifier// + " " + dosage
     }
 
     override fun details(resources: Resources): String {
-        return ""
+        return dosage
     }
 }
 
