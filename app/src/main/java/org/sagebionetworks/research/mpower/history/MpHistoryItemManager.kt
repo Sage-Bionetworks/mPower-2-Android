@@ -92,6 +92,7 @@ class MpHistoryItemManager(val historyItemDao: HistoryItemEntityDao): HistoryIte
             val historyItem = HistoryItem(type, report.identifier!!, dateBucket, report.dateTime!!, details)
             historyList.add(historyItem.toHistoryItemEntity())
             historyList.add(createDateBucketHistoryItemEntity(dateBucket))
+            historyList.add(createTimeBucketHistoryItemEntity(dateBucket, report.dateTime!!))
         }
         historyItemDao.update(historyList)
     }

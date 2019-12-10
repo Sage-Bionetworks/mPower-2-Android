@@ -37,25 +37,49 @@
     android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/appWhite"
     android:minHeight="60dp"
     android:paddingLeft="@dimen/margin_medium"
-    android:paddingRight="@dimen/margin_medium"
     android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:background="@color/appWhite">
+    android:paddingRight="@dimen/margin_medium"
+    android:paddingBottom="10dp">
 
     <TextView
         android:id="@+id/item_text"
         style="@style/Widget.SageResearch.TextView.SelectionItemTitle"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:text="SectionText"
         app:layout_constraintBottom_toTopOf="@+id/item_detail"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/right_space"
+        app:layout_constraintStart_toEndOf="@id/left_space"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread_inside" />
+
+    <View
+        android:id="@+id/right_space"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/item_text"
+        app:layout_constraintBottom_toBottomOf="@+id/item_detail"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/appVeryLightGray"/>
+
+    <View
+        android:id="@+id/left_space"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+
+        app:layout_constraintEnd_toStartOf="@id/item_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/item_detail"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/appVeryLightGray"/>
 
     <TextView
         android:id="@+id/item_detail"
@@ -64,11 +88,11 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="detail"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/item_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/item_text"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toTopOf="@+id/item_text" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

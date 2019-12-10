@@ -46,7 +46,7 @@
 
     <TextView
         android:id="@+id/item_text"
-        style="@style/Widget.SageResearch.TextView.SelectionItemTitle"
+        style="@style/Widget.SageResearch.TextView.ListSectionTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
