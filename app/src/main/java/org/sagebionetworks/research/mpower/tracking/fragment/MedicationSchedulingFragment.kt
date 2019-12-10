@@ -153,7 +153,7 @@ class MedicationSchedulingFragment :
                         adapter.updateDosage(dosageItem)
                     }
                 }
-                dialog.show(fragmentManager, "Times select")
+                dialog.show(fragmentManager!!, "Times select")
             }
 
             override fun onDaySelectionPressed(dosageItem: DosageItem) {
@@ -169,7 +169,7 @@ class MedicationSchedulingFragment :
                     }
                 }
 
-                dialog.show(fragmentManager, "Day select")
+                dialog.show(fragmentManager!!, "Day select")
             }
 
             override fun onAnytimeSet(dosageItem: DosageItem, anytime: Boolean) {
@@ -225,7 +225,7 @@ class MedicationSchedulingFragment :
                 }
             }
         })
-        dialog.show(fragmentManager, "Remove medication")
+        dialog.show(fragmentManager!!, "Remove medication")
     }
 
 }

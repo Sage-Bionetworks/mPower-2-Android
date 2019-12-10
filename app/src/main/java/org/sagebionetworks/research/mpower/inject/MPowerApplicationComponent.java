@@ -22,7 +22,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
 @Component(modules = {PerformTaskModule.class, SageResearchAppSDKModule.class, TaskModule.class,
         MPowerResearchStackModule.class, AppDataModule.class, AndroidSupportInjectionModule.class,
         MPowerSageResearchModule.class, MPowerAppModule.class, MPowerUserModule.class,
-        TrackingStepModule.class, TrackingFragmentsModule.class},
+        TrackingStepModule.class, TrackingFragmentsModule.class, MPowerHistoryModule.class},
         dependencies = {MPowerUserScopeComponent.class})
 public interface MPowerApplicationComponent extends AndroidInjector<MPowerApplication> {
 

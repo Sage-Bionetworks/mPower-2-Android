@@ -77,7 +77,7 @@ class WebConsentFragment : DaggerFragment() {
 
     private lateinit var bridgeAccessViewModel: BridgeAccessViewModel
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
 

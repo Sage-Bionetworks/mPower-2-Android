@@ -124,6 +124,9 @@
     <string name="tracking_left_label">Symptom</string>
     <string name="tracking_right_label">Trigger</string>
 
+    <string name="right_hand_count">Right Hand: %1$d</string>
+    <string name="left_hand_count">Left Hand: %1$d</string>
+
 
     <plurals name="number_of_doses">
         <!--

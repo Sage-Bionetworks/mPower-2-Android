@@ -50,7 +50,7 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
             if (isSetup && actionButton.id == R.id.rs2_step_navigation_action_forward) {
                 val fragment = RecordMedicationDialogFragment.newInstance()
                 fragment.setTargetFragment(this, 123)
-                fragment.show(fragmentManager, "dialog")
+                fragment.show(fragmentManager!!, "dialog")
 
             } else if (actionButton.id == R.id.rs2_step_navigation_action_forward
                     || actionButton.id == R.id.rs2_step_navigation_action_skip) {
