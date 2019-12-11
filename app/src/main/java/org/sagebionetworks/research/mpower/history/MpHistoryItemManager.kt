@@ -66,12 +66,17 @@ class MpHistoryItemManager(val historyItemDao: HistoryItemEntityDao): HistoryIte
 
     private val logger = LoggerFactory.getLogger(MpHistoryItemManager::class.java);
 
+    /**
+     * Get a paged list of history items.
+     */
     fun historyItems(): LiveData<PagedList<HistoryItem>> {
         return historyItemDao.historyItems().map { input: HistoryItemEntity -> loadHistoryItem(input) }.toLiveData(100)
     }
 
+    /**
+     * Add/update history items for the given list of reports with the specified reportId.
+     */
     override fun updateHistoryItems(reportId: String, reports: List<ReportEntity>) {
-        //historyItemDao.clear()
         when(reportId) {
             MpIdentifier.TRIGGERS -> updateTriggersHistoryItems(reports)
             MpIdentifier.SYMPTOMS -> updateSymptomHistoryItems(reports)
@@ -99,9 +104,7 @@ class MpHistoryItemManager(val historyItemDao: HistoryItemEntityDao): HistoryIte
     }
 
     private fun createMeasurementHistoryDetails(type: HistoryItemType, report: ReportEntity): HistoryDetails {
-        //TODO: Parse measurement reports
-        // "handSelection"
-        // "medicationTiming"
+
         val medicationTiming = report.data?.mapValue("medicationTiming", String::class.java)?: ""
 
         return when (type) {
@@ -236,239 +239,5 @@ class MpHistoryItemManager(val historyItemDao: HistoryItemEntityDao): HistoryIte
 
 }
 
-enum class HistoryItemType {
 
-    TAPPING {
-        override fun <T:HistoryDetails> detailsClass(): Class<T> {
-            return TapDetails::class.java as Class<T>
-        }
-    },
-    TREMOR {
-        override fun <T:HistoryDetails> detailsClass(): Class<T> {
-            return TremorDetails::class.java as Class<T>
-        }
-    },
-    WALK_BALANCE {
-        override fun <T:HistoryDetails> detailsClass(): Class<T> {
-            return WalkBalanceDetails::class.java as Class<T>
-        }
-    },
-    MEDICATION {
-        override fun <T:HistoryDetails> detailsClass(): Class<T> {
-            return MedicationDetails::class.java as Class<T>
-        }
-    },
-    TRIGGER {
-        override fun <T:HistoryDetails> detailsClass(): Class<T> {
-            return TriggerDetails::class.java as Class<T>
-        }
-    },
-    SYMPTOM {
-        override fun <T:HistoryDetails> detailsClass(): Class<T> {
-            return SymptomDetails::class.java as Class<T>
-        }
-    },
-    DATE_BUCKET {
-        override fun <T:HistoryDetails> detailsClass(): Class<T> {
-            return DateBucketDetails::class.java as Class<T>
-        }
-    },
-    TIME_BUCKET {
-        override fun <T:HistoryDetails> detailsClass(): Class<T> {
-            return DateBucketDetails::class.java as Class<T>
-        }
-    };
 
-    abstract fun <T:HistoryDetails> detailsClass():Class<T>
-}
-
-interface HistoryDetails {
-
-    val iconId: Int
-        get() = -1
-
-    fun title(resources: Resources): String
-
-    fun details(resources: Resources): String {
-        return ""
-    }
-
-    fun toJson(): String {
-        return GSON.toJson(this)
-    }
-
-    companion object {
-
-        fun parsDetails(json: String, type: HistoryItemType): HistoryDetails {
-            return GSON.fromJson(json, type.detailsClass())
-        }
-
-    }
-
-}
-
-data class HistoryItem(
-        val type: HistoryItemType,
-        val reportId: String,
-        val dateBucket: String,
-        val dateTime: Instant,
-        val historyDetails: HistoryDetails
-) {
-
-    val iconId: Int
-        get() = historyDetails.iconId
-
-    fun title(resources: Resources): String {
-            when (type) {
-                DATE_BUCKET -> return dateBucketTitleDisplayFormat.format(dateBucketFormat.parse(dateBucket))
-                TIME_BUCKET -> return timeBucketFormat.format(dateTime)
-                else -> return historyDetails.title(resources)
-            }
-        }
-
-    fun details(resources: Resources): String {
-            when (type) {
-                DATE_BUCKET -> return dateBucketDetailsDisplayFormat.format(dateBucketFormat.parse(dateBucket))
-                else -> return historyDetails.details(resources)
-            }
-        }
-
-    fun toHistoryItemEntity(): HistoryItemEntity {
-        return HistoryItemEntity(type.name, historyDetails.toJson(), reportId, dateBucket, dateTime)
-    }
-
-}
-
-data class WalkBalanceDetails(
-        val medicationTiming: String
-): HistoryDetails {
-
-    override val iconId: Int
-        get() = R.drawable.ic_walk_and_stand
-
-    override fun title(resources: Resources): String {
-        return resources.getString(R.string.measuring_center_label)
-    }
-
-    override fun details(resources: Resources): String {
-        return ""
-    }
-}
-
-data class TremorDetails(
-        val medicationTiming: String
-): HistoryDetails {
-
-    override val iconId: Int
-        get() = R.drawable.ic_tremor
-
-    override fun title(resources: Resources): String {
-        return resources.getString(R.string.measuring_right_label)
-    }
-
-    override fun details(resources: Resources): String {
-        return ""
-    }
-}
-
-data class UnknownMeasurementDetails(
-        val medicationTiming: String
-): HistoryDetails {
-
-    override fun title(resources: Resources): String {
-        return "Unknown Measurement type"
-    }
-
-    override fun details(resources: Resources): String {
-        return ""
-    }
-}
-
-data class TapDetails(
-        val medicationTiming: String,
-        val leftTapCount: Int,
-        val rightTapCount: Int
-): HistoryDetails {
-
-    override val iconId: Int
-        get() = R.drawable.ic_finger_tapping
-
-    override fun title(resources: Resources): String {
-        return resources.getString(R.string.measuring_left_label)
-    }
-
-    override fun details(resources: Resources): String {
-        val right = if (rightTapCount > 0) resources.getString(R.string.right_hand_count, rightTapCount) else ""
-        val left = if (leftTapCount > 0) resources.getString(R.string.left_hand_count, leftTapCount) else ""
-        return right + ", " + left
-    }
-}
-
-data class SymptomDetails(
-        val text: String,
-        val medicationTiming: String?,
-        val durationLevel: String?,
-        val severityLevel: Int?
-): HistoryDetails {
-
-    override val iconId: Int
-        get() = R.drawable.ic_symptoms_purple
-
-    override fun title(resources: Resources): String {
-        return text
-    }
-
-    override fun details(resources: Resources): String {
-        when (severityLevel) {
-            1 -> return resources.getString(R.string.severity_mild)
-            2 -> return resources.getString(R.string.severity_moderate)
-            3 -> return resources.getString(R.string.severity_severe)
-        }
-        return ""
-    }
-}
-
-data class TriggerDetails(
-        val text: String
-): HistoryDetails {
-
-    override val iconId: Int
-        get() = R.drawable.ic_trigger_purple
-
-    override fun title(resources: Resources): String {
-        return text
-    }
-
-    override fun details(resources: Resources): String {
-        return ""
-    }
-}
-
-data class MedicationDetails(
-        val medIdentifier: String,
-        val dosage: String,
-        val timeOfDay: String?
-): HistoryDetails {
-
-    override val iconId: Int
-        get() = R.drawable.ic_medication_purple
-
-    override fun title(resources: Resources): String {
-        return medIdentifier// + " " + dosage
-    }
-
-    override fun details(resources: Resources): String {
-        return dosage
-    }
-}
-
-class DateBucketDetails(): HistoryDetails {
-
-    override fun title(resources: Resources): String {
-        return ""
-    }
-
-    override fun details(resources: Resources): String {
-        return ""
-    }
-}
