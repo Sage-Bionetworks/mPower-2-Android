@@ -34,6 +34,7 @@ import org.sagebionetworks.research.sageresearch.dao.room.HistoryItemEntityDao
 import org.sagebionetworks.research.sageresearch.dao.room.HistoryItemManager
 import org.sagebionetworks.research.sageresearch.dao.room.ReportEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
+import org.sagebionetworks.research.sageresearch.dao.room.mapValue
 import org.sagebionetworks.research.sageresearch.extensions.toInstant
 import org.slf4j.LoggerFactory
 import org.threeten.bp.Instant
@@ -101,11 +102,16 @@ class MpHistoryItemManager(val historyItemDao: HistoryItemEntityDao): HistoryIte
         //TODO: Parse measurement reports
         // "handSelection"
         // "medicationTiming"
+        val medicationTiming = report.data?.mapValue("medicationTiming", String::class.java)?: ""
 
         return when (type) {
-            WALK_BALANCE -> return WalkBalanceDetails("")
-            TREMOR -> return TremorDetails("")
-            TAPPING -> return TapDetails("", 0, 0)
+            WALK_BALANCE -> return WalkBalanceDetails(medicationTiming)
+            TREMOR -> return TremorDetails(medicationTiming)
+            TAPPING -> {
+                val left = report.data?.mapValue("left_tapping", Int::class.java)?: 0
+                val right = report.data?.mapValue("right_tapping", Int::class.java)?: 0
+                return TapDetails(medicationTiming, left, right)
+            }
             else -> return UnknownMeasurementDetails("")
         }
     }
@@ -357,7 +363,7 @@ data class TremorDetails(
         get() = R.drawable.ic_tremor
 
     override fun title(resources: Resources): String {
-        return resources.getString(R.string.measuring_left_label)
+        return resources.getString(R.string.measuring_right_label)
     }
 
     override fun details(resources: Resources): String {
@@ -388,7 +394,7 @@ data class TapDetails(
         get() = R.drawable.ic_finger_tapping
 
     override fun title(resources: Resources): String {
-        return resources.getString(R.string.measuring_right_label)
+        return resources.getString(R.string.measuring_left_label)
     }
 
     override fun details(resources: Resources): String {
