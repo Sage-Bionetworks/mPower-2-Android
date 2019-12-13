@@ -119,16 +119,16 @@ class MpHistoryItemManager(val historyItemDao: HistoryItemEntityDao): HistoryIte
         }
     }
 
-    private fun getDateBucket(report: ReportEntity): String {
-        return report.localDate?.format(dateBucketFormat)?:LocalDateTime.ofInstant(report.dateTime, ZoneId.systemDefault()).toLocalDate().format(dateBucketFormat)
+    private fun getDateBucket(report: ReportEntity): LocalDate {
+        return report.localDate?:LocalDateTime.ofInstant(report.dateTime, ZoneId.systemDefault()).toLocalDate()
     }
 
-    private fun createDateBucketHistoryItemEntity(dateBucket: String): HistoryItemEntity {
-        val startOfDay = LocalDate.parse(dateBucket).atStartOfDay().toInstant(ZoneId.systemDefault())
+    private fun createDateBucketHistoryItemEntity(dateBucket: LocalDate): HistoryItemEntity {
+        val startOfDay = dateBucket.atStartOfDay().toInstant(ZoneId.systemDefault())
         return HistoryItem(DATE_BUCKET, "DateBucket", dateBucket, startOfDay, DateBucketDetails()).toHistoryItemEntity()
     }
 
-    private fun createTimeBucketHistoryItemEntity(dateBucket: String, dateTime: Instant): HistoryItemEntity {
+    private fun createTimeBucketHistoryItemEntity(dateBucket: LocalDate, dateTime: Instant): HistoryItemEntity {
         val minutes = dateTime.truncatedTo(ChronoUnit.MINUTES).epochSecond / 60
         val roundedMinutes = floor((minutes/15).toDouble()) * 15 //Round down to nearest 15 minute
         val roundedDateTime = Instant.ofEpochSecond(roundedMinutes.toLong() * 60)

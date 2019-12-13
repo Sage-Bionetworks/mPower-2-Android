@@ -39,11 +39,14 @@ import org.sagebionetworks.research.mpower.history.HistoryItemType.DATE_BUCKET
 import org.sagebionetworks.research.mpower.history.HistoryItemType.TIME_BUCKET
 import org.sagebionetworks.research.sageresearch.dao.room.HistoryItemEntity
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
 
 data class HistoryItem(
         val type: HistoryItemType,
         val reportId: String,
-        val dateBucket: String,
+        val dateBucket: LocalDate,
         val dateTime: Instant,
         val historyDetails: HistoryDetails
 ) {
@@ -53,8 +56,7 @@ data class HistoryItem(
 
     fun title(resources: Resources): String {
         when (type) {
-            DATE_BUCKET -> return MpHistoryItemManager.dateBucketTitleDisplayFormat.format(
-                    MpHistoryItemManager.dateBucketFormat.parse(dateBucket))
+            DATE_BUCKET -> return MpHistoryItemManager.dateBucketTitleDisplayFormat.format(dateBucket)
             TIME_BUCKET -> return MpHistoryItemManager.timeBucketFormat.format(dateTime)
             else -> return historyDetails.title(resources)
         }
@@ -62,14 +64,13 @@ data class HistoryItem(
 
     fun details(resources: Resources): String {
         when (type) {
-            DATE_BUCKET -> return MpHistoryItemManager.dateBucketDetailsDisplayFormat.format(
-                    MpHistoryItemManager.dateBucketFormat.parse(dateBucket))
+            DATE_BUCKET -> return MpHistoryItemManager.dateBucketDetailsDisplayFormat.format(dateBucket)
             else -> return historyDetails.details(resources)
         }
     }
 
     fun toHistoryItemEntity(): HistoryItemEntity {
-        return HistoryItemEntity(type.name, historyDetails.toJson(), reportId, dateBucket, dateTime)
+        return HistoryItemEntity(type.name, historyDetails.toJson(), reportId, dateBucket, dateTime, LocalDateTime.ofInstant(dateTime, ZoneId.systemDefault()).toLocalTime())
     }
 
 }
