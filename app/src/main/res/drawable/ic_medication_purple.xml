@@ -1,0 +1,50 @@
+<!--
+  ~ BSD 3-Clause License
+  ~
+  ~ Copyright 2019  Sage Bionetworks. All rights reserved.
+  ~
+  ~ Redistribution and use in source and binary forms, with or without modification,
+  ~ are permitted provided that the following conditions are met:
+  ~
+  ~ 1.  Redistributions of source code must retain the above copyright notice, this
+  ~ list of conditions and the following disclaimer.
+  ~
+  ~ 2.  Redistributions in binary form must reproduce the above copyright notice,
+  ~ this list of conditions and the following disclaimer in the documentation and/or
+  ~ other materials provided with the distribution.
+  ~
+  ~ 3.  Neither the name of the copyright holder(s) nor the names of any contributors
+  ~ may be used to endorse or promote products derived from this software without
+  ~ specific prior written permission. No license is granted to the trademarks of
+  ~ the copyright holders even if such marks are included in this software.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ~ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="30dp"
+    android:height="28dp"
+    android:viewportWidth="30"
+    android:viewportHeight="28">
+  <path
+      android:pathData="M11,4.2373C10.9571,3.0993 10.4642,2.022 9.625,1.2318C8.7858,0.4415 7.6656,-0 6.5,-0C5.3344,-0 4.2142,0.4415 3.375,1.2318C2.5358,2.022 2.0429,3.0993 2,4.2373V10H11V4.2373Z"
+      android:fillColor="#9F8EC7"/>
+  <path
+      android:pathData="M2.0031,10V15.6701C1.9808,16.2311 2.0806,16.7905 2.2966,17.3148C2.5126,17.8392 2.8402,18.3178 3.26,18.722C3.6798,19.1262 4.183,19.4476 4.7397,19.6672C5.2964,19.8868 5.8951,20 6.5,20C7.1049,20 7.7036,19.8868 8.2603,19.6672C8.817,19.4476 9.3202,19.1262 9.74,18.722C10.1598,18.3178 10.4874,17.8392 10.7034,17.3148C10.9194,16.7905 11.0192,16.2311 10.997,15.6701V10H2.0031Z"
+      android:fillColor="#5A478F"/>
+  <path
+      android:pathData="M14.155,20.3522C13.3806,21.1872 12.9674,22.2975 13.002,23.4497C13.0367,24.6019 13.5165,25.7062 14.3407,26.5304C15.1649,27.3546 16.2692,27.8345 17.4214,27.8691C18.5736,27.9038 19.6839,27.4905 20.5189,26.7162L24.5938,22.6413L18.2298,16.2773L14.155,20.3522Z"
+      android:fillColor="#9F8EC7"/>
+  <path
+      android:pathData="M24.592,22.639L28.6014,18.6296C29.0138,18.2487 29.3388,17.7825 29.5569,17.2591C29.7749,16.7356 29.8816,16.1655 29.8706,15.5828C29.8596,15.0002 29.731,14.417 29.4927,13.8681C29.2543,13.3192 28.911,12.8158 28.4833,12.3881C28.0556,11.9604 27.5522,11.6171 27.0033,11.3787C26.4544,11.1403 25.8712,11.0118 25.2885,11.0008C24.7059,10.9897 24.1358,11.0965 23.6123,11.3145C23.0888,11.5326 22.6227,11.8576 22.2418,12.27L18.2324,16.2793L24.592,22.639Z"
+      android:fillColor="#5A478F"/>
+</vector>

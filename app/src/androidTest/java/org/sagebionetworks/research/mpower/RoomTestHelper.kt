@@ -64,7 +64,7 @@ abstract class RoomTestHelper {
         @BeforeClass
         @JvmStatic fun setup() {
             database = Room.inMemoryDatabaseBuilder(
-                    InstrumentationRegistry.getTargetContext(), ResearchDatabase::class.java)
+                    InstrumentationRegistry.getInstrumentation().getTargetContext(), ResearchDatabase::class.java)
                     .allowMainThreadQueries().build()
 
             activityDao = database.scheduleDao()

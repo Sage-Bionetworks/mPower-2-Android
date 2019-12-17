@@ -10,7 +10,7 @@ import org.sagebionetworks.research.mpower.EntryActivity;
 import org.sagebionetworks.research.mpower.EntryFragment;
 import org.sagebionetworks.research.mpower.MainFragment;
 import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivity;
-import org.sagebionetworks.research.mpower.history.HistoryFragment;
+import org.sagebionetworks.research.mpower.history.HistoryItemFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;
 import org.sagebionetworks.research.mpower.profile.MPowerProfileSettingsFragment;
 import org.sagebionetworks.research.mpower.profile.WithdrawFromStudyActivity;
@@ -38,9 +38,6 @@ public abstract class MPowerUserModule {
     abstract ExternalIdSignInActivity contributeExternalIdSignInActivityInjector();
 
     @ContributesAndroidInjector
-    abstract HistoryFragment contributeHistoryFragmentInjector();
-
-    @ContributesAndroidInjector
     abstract InsightsFragment contributeInsightsFragmentInjector();
 
     // these modules contain an aggregate of ShowStepFragment subcomponents, so they are scoped under the PerformTaskFragment
@@ -65,6 +62,9 @@ public abstract class MPowerUserModule {
 
     @ContributesAndroidInjector
     abstract MPowerProfileSettingsFragment contributeProfileFragmentInjector();
+
+    @ContributesAndroidInjector
+    abstract HistoryItemFragment contributeHistoryItemFragmentInjector();
 
     @ContributesAndroidInjector
     abstract TrackingMenuFragment contributeTrackingMenuFragmentInjector();

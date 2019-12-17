@@ -73,7 +73,7 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
                     }
                 }
             }
-            dialog.show(fragmentManager, "Times select")
+            dialog.show(fragmentManager!!, "Times select")
         }
 
         override fun onTakenPressed(medicationIdentifier: String, scheduleItem: MedicationLoggingSchedule, position: Int) {
