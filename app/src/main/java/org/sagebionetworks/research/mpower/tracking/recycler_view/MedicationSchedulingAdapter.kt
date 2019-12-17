@@ -2,7 +2,7 @@ package org.sagebionetworks.research.mpower.tracking.recycler_view
 
 import android.os.Handler
 import android.os.Looper
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -19,7 +19,7 @@ import org.sagebionetworks.research.sageresearch.extensions.localizedAndJoin
 import org.slf4j.LoggerFactory
 import org.threeten.bp.format.DateTimeFormatter
 
-class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listener, var medicationSchedulingViewModel: MedicationSchedulingViewModel) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listener, var medicationSchedulingViewModel: MedicationSchedulingViewModel) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     private val LOGGER = LoggerFactory.getLogger(
             MedicationAdapter::class.java)
@@ -86,7 +86,7 @@ class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listen
         return TYPE_VIEW
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             TYPE_EDIT -> DosageViewHolder(
@@ -96,7 +96,7 @@ class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listen
         }
     }
 
-    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         val dosage = items[position]
 
         when (getItemViewType(position)) {
@@ -208,14 +208,14 @@ class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listen
     }
 }
 
-class ViewDosageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class ViewDosageViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
     val dosageText = view.item_title
     val timeText = view.time_label
     val dayText = view.days_label
     val editButton = view.edit_button
 }
 
-class DosageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class DosageViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
     val dosageText = view.dosage_edit_text
     val radioButtonAnytime = view.radio_button_any_time!!
     val radioButtonSchedule = view.radio_button_schedule!!

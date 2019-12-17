@@ -1,6 +1,6 @@
 package org.sagebionetworks.research.mpower.tracking.recycler_view
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationLog
 
 class MedicationReviewAdapter(val configs: List<MedicationLog>, private val listener: MedicationReviewListener)
-    : RecyclerView.Adapter<MedicationReviewViewHolder>() {
+    : androidx.recyclerview.widget.RecyclerView.Adapter<MedicationReviewViewHolder>() {
 
     companion object {
         const val TYPE_ADD = 0
@@ -48,7 +48,7 @@ class MedicationReviewAdapter(val configs: List<MedicationLog>, private val list
 }
 
 class MedicationReviewViewHolder(val widget: View, private val listener: MedicationReviewListener)
-    : RecyclerView.ViewHolder(widget) {
+    : androidx.recyclerview.widget.RecyclerView.ViewHolder(widget) {
 
     fun setContent(config: MedicationLog, position: Int) {
         val title = config.identifier

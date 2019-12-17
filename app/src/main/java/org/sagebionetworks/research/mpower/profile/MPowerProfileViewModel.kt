@@ -1,7 +1,7 @@
 package org.sagebionetworks.research.mpower.profile
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.google.common.base.Preconditions
 import org.sagebionetworks.bridge.android.manager.models.ProfileDataItem
 import org.sagebionetworks.bridge.android.manager.models.ProfileItemProfileTableItem

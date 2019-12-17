@@ -1,6 +1,6 @@
 package org.sagebionetworks.research.mpower.researchstack.framework;
 
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;

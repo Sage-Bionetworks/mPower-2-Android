@@ -2,8 +2,8 @@ package org.sagebionetworks.research.mpower.tracking.widget;
 
 import android.content.Context;
 import android.graphics.Paint;
-import android.support.annotation.ColorRes;
-import android.support.constraint.ConstraintLayout;
+import androidx.annotation.ColorRes;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RadioButton;

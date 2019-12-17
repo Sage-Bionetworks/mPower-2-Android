@@ -7,10 +7,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Parcelable
-import android.support.constraint.ConstraintLayout
-import android.support.v7.app.AppCompatDialogFragment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -104,8 +104,8 @@ class GridSelectionFragment : AppCompatDialogFragment() {
         val adapter = DayAdapter(items, context!!)
         recycler.adapter = adapter
 
-        val gridLayoutManager = GridLayoutManager(context, 2)
-        gridLayoutManager.setSpanSizeLookup(object : GridLayoutManager.SpanSizeLookup() {
+        val gridLayoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 2)
+        gridLayoutManager.setSpanSizeLookup(object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return if (adapter.getItemViewType(position) == TYPE_HEADER) {
                     2
@@ -141,7 +141,7 @@ class GridSelectionFragment : AppCompatDialogFragment() {
     }
 
     inner class DayAdapter(val items: List<SelectionItem>, val context: Context) :
-            RecyclerView.Adapter<ItemViewHolder>() {
+            androidx.recyclerview.widget.RecyclerView.Adapter<ItemViewHolder>() {
 
         override fun getItemCount(): Int {
             return items.size
@@ -210,6 +210,6 @@ interface ItemsSelectedListener {
     fun onItemsSelected(selectedItemIds: List<String>)
 }
 
-class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class ItemViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
     val tvDay: TextView = view.findViewById(R.id.day_text)
 }

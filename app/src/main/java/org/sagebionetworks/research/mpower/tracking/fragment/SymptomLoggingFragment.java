@@ -3,7 +3,7 @@ package org.sagebionetworks.research.mpower.tracking.fragment;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.tracking.SortUtil;

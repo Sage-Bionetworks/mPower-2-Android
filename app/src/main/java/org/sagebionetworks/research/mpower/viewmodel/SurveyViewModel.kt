@@ -1,9 +1,9 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
-import android.support.annotation.VisibleForTesting
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.annotation.VisibleForTesting
 import com.google.common.base.Preconditions
 import org.sagebionetworks.research.mpower.research.DataSourceManager
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration

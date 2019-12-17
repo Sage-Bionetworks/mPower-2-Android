@@ -3,14 +3,12 @@ package org.sagebionetworks.research.mpower.researchstack;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.sagebionetworks.researchstack.backbone.factory.IntentFactory;
 import org.sagebionetworks.researchstack.backbone.task.Task;
-import org.sagebionetworks.researchstack.backbone.ui.ActiveTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 

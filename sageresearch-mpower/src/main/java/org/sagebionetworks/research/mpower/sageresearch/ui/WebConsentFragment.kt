@@ -33,14 +33,14 @@
 package org.sagebionetworks.research.mpower
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
-import android.support.annotation.AnyThread
-import android.support.annotation.RequiresApi
+import androidx.annotation.AnyThread
+import androidx.annotation.RequiresApi
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -77,7 +77,7 @@ class WebConsentFragment : DaggerFragment() {
 
     private lateinit var bridgeAccessViewModel: BridgeAccessViewModel
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
 

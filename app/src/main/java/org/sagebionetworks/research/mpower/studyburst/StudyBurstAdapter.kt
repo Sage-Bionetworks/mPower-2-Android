@@ -3,8 +3,8 @@ package org.sagebionetworks.research.mpower.studyburst
 import android.content.Context
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +19,7 @@ import org.sagebionetworks.researchstack.backbone.utils.ResUtils
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 
-class StudyBurstAdapter(context: Context, val items : List<StudyBurstTaskInfo>?) : RecyclerView.Adapter<ViewHolder>() {
+class StudyBurstAdapter(context: Context, val items : List<StudyBurstTaskInfo>?) : androidx.recyclerview.widget.RecyclerView.Adapter<ViewHolder>() {
 
     var listener: StudyBurstAdapterListener? = null
 
@@ -88,7 +88,7 @@ class StudyBurstAdapter(context: Context, val items : List<StudyBurstTaskInfo>?)
     }
 }
 
-class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
+class ViewHolder (view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
     val root: View = view.view_holder_root
     val tvTitle: TextView = view.cell_title
     val tvDetails: TextView = view.cell_details

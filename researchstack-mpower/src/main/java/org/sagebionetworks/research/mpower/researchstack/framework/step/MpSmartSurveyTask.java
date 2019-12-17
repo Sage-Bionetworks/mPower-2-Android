@@ -33,18 +33,10 @@
 package org.sagebionetworks.research.mpower.researchstack.framework.step;
 
 import android.content.Context;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 import android.widget.ImageView.ScaleType;
 
 import org.sagebionetworks.researchstack.backbone.answerformat.AnswerFormat;
-import org.sagebionetworks.researchstack.backbone.answerformat.BooleanAnswerFormat;
-import org.sagebionetworks.researchstack.backbone.answerformat.ChoiceAnswerFormat;
-import org.sagebionetworks.researchstack.backbone.answerformat.DateAnswerFormat;
-import org.sagebionetworks.researchstack.backbone.answerformat.DecimalAnswerFormat;
-import org.sagebionetworks.researchstack.backbone.answerformat.DurationAnswerFormat;
-import org.sagebionetworks.researchstack.backbone.answerformat.IntegerAnswerFormat;
-import org.sagebionetworks.researchstack.backbone.answerformat.TextAnswerFormat;
-import org.sagebionetworks.researchstack.backbone.answerformat.UnknownAnswerFormat;
 import org.sagebionetworks.researchstack.backbone.model.Choice;
 import org.sagebionetworks.researchstack.backbone.model.TaskModel;
 import org.sagebionetworks.researchstack.backbone.model.TaskModel.EnumerationModel;
@@ -57,17 +49,14 @@ import org.sagebionetworks.researchstack.backbone.model.survey.SurveyItemType;
 import org.sagebionetworks.researchstack.backbone.model.survey.TextfieldSurveyItem;
 import org.sagebionetworks.researchstack.backbone.result.StepResult;
 import org.sagebionetworks.researchstack.backbone.result.TaskResult;
-import org.sagebionetworks.researchstack.backbone.step.InstructionStep;
 import org.sagebionetworks.researchstack.backbone.step.QuestionStep;
 import org.sagebionetworks.researchstack.backbone.step.Step;
 import org.sagebionetworks.researchstack.backbone.task.OrderedTask;
-import org.sagebionetworks.researchstack.backbone.task.SmartSurveyTask;
 
 import org.sagebionetworks.researchstack.backbone.utils.LogExt;
 import org.sagebionetworks.researchstack.backbone.utils.StepResultHelper;
 import org.sagebionetworks.bridge.rest.model.StudyParticipant;
 
-import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 

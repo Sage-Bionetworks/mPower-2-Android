@@ -33,7 +33,7 @@
 package org.sagebionetworks.research.mpower
 
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
+import androidx.fragment.app.FragmentManager
 import dagger.android.support.DaggerAppCompatActivity
 
 
@@ -48,7 +48,7 @@ class EntryActivity : DaggerAppCompatActivity() {
         }
     }
 
-    private fun onBackPressed(fm: FragmentManager): Boolean {
+    private fun onBackPressed(fm: androidx.fragment.app.FragmentManager): Boolean {
         for (frag in fm.fragments) {
             if (frag.isVisible) {
                 val childFm = frag.childFragmentManager

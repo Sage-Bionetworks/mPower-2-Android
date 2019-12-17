@@ -1,12 +1,11 @@
 package org.sagebionetworks.research.mpower.tracking.widget;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.sagebionetworks.research.mobile_ui.widget.ActionButton;
 import org.sagebionetworks.research.mpower.R;
 
 import butterknife.BindView;

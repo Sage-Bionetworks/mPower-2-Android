@@ -32,7 +32,7 @@
 
 package org.sagebionetworks.research.mpower.inject
 
-import android.support.design.widget.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.widget.Button
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton
 import org.sagebionetworks.research.modules.common.step.overview.ShowOverviewStepFragment

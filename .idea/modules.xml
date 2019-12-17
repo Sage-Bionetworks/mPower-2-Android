@@ -3,7 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/code-mPower-2-Android.iml" filepath="$PROJECT_DIR$/code-mPower-2-Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/mPower-2-Android.iml" filepath="$PROJECT_DIR$/mPower-2-Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/mPower-2-Android-app.iml" filepath="$PROJECT_DIR$/app/mPower-2-Android-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/researchstack-mpower/mPower-2-Android-researchstack-mpower.iml" filepath="$PROJECT_DIR$/researchstack-mpower/mPower-2-Android-researchstack-mpower.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sageresearch-mpower/mPower-2-Android-sageresearch-mpower.iml" filepath="$PROJECT_DIR$/sageresearch-mpower/mPower-2-Android-sageresearch-mpower.iml" />
       <module fileurl="file://$PROJECT_DIR$/researchstack-mpower/researchstack-mpower.iml" filepath="$PROJECT_DIR$/researchstack-mpower/researchstack-mpower.iml" />
       <module fileurl="file://$PROJECT_DIR$/sageresearch-mpower/sageresearch-mpower.iml" filepath="$PROJECT_DIR$/sageresearch-mpower/sageresearch-mpower.iml" />
     </modules>

@@ -1,27 +1,22 @@
 package org.sagebionetworks.research.mpower.researchstack.framework;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.sagebionetworks.researchstack.backbone.DataProvider;
-import org.sagebionetworks.researchstack.backbone.result.Result;
-import org.sagebionetworks.researchstack.backbone.result.StepResult;
 import org.sagebionetworks.researchstack.backbone.result.TaskResult;
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
 import org.sagebionetworks.bridge.researchstack.BridgeDataProvider;
-import org.sagebionetworks.bridge.researchstack.TaskHelper;
 import org.sagebionetworks.bridge.rest.model.StudyParticipant;
 import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 

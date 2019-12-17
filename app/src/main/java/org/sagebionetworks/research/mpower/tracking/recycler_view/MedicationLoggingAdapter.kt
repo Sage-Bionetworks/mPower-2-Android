@@ -2,8 +2,8 @@ package org.sagebionetworks.research.mpower.tracking.recycler_view
 
 import android.os.Handler
 import android.os.Looper
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.ViewHolder
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +30,7 @@ import java.util.*
 
 class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingItem>,
         val logs: Map<String, MedicationLog>,
-        private val listener: MedicationLoggingListener) : RecyclerView.Adapter<ViewHolder>() {
+        private val listener: MedicationLoggingListener) : androidx.recyclerview.widget.RecyclerView.Adapter<ViewHolder>() {
 
     companion object {
         const val TYPE_TITLE = 0
