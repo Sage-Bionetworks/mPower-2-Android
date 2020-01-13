@@ -31,7 +31,5 @@
   -->
 
 <resources>
-    <string name="web_consent_url" translatable="false">https://parkinsonmpower.org/study/intro?android=true</string>
-    <bool name="should_sign_up_phone">true</bool>
     <bool name="require_clinical_consent">false</bool>
 </resources>

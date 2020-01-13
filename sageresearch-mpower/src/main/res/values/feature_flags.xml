@@ -31,5 +31,5 @@
   -->
 
 <resources>
-    <string name="web_consent_url" translatable="false">https://docs.google.com/forms/d/e/1FAIpQLSfq73gWXNqufhDQpkKZv20RjDLAHTQiSmdJVHISVd0Hg-wQ-Q/viewform</string>
+    <string name="web_consent_url" translatable="false">https://parkinsonmpower.org/study/intro?android=true</string>
 </resources>

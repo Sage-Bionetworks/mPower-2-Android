@@ -31,5 +31,4 @@
   -->
 
 <resources>
-    <bool name="should_sign_up_phone">true</bool>
 </resources>
