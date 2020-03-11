@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.sagebionetworks.research.mpower">
 
+    <!-- Required to access activity recognition. -->
+    <!-- Required for 28 and below. -->
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+    <!-- Required for 29+. -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+
     <application
         android:name=".MPowerApplication"
         android:allowBackup="false"
@@ -22,7 +28,8 @@
             android:name=".EntryActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
 
             <tools:validation testUrl="https://parkinsonmpower.org/sage-mpower-2/study-burst" />
 
@@ -52,7 +59,8 @@
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:theme="@style/MPowerTheme"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan"
+            tools:ignore="LockedOrientationActivity">
 
             <tools:validation testUrl="https://parkinsonmpower.org/sage-mpower-2/phoneSignIn/TOKEN" />
 
@@ -76,31 +84,37 @@
             android:label="@string/title_activity_external_id_sign_in"
             android:screenOrientation="portrait"
             android:theme="@style/MPowerTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".studyburst.StudyBurstActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name="org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
 
         <activity
             android:name=".researchstack.framework.MpViewTaskActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MP.Survey"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan"
+            tools:ignore="LockedOrientationActivity"/>
 
         <activity
             android:name="org.sagebionetworks.researchstack.backbone.ui.ViewWebDocumentActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
 
         <activity
             android:name=".reminders.StudyBurstReminderActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
 
         <!-- These control local reminder notification scheduling and display -->
         <receiver android:name="org.sagebionetworks.research.sageresearch.reminders.MpReminderAlarmReceiver" />
@@ -115,6 +129,14 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".ActivityTransitionsReceiver"
+            android:exported="false"
+            android:permission="com.google.android.gms.permission.ACTIVITY_RECOGNITION">
+            <intent-filter>
+                <action android:name="org.sagebionetworks.research.mpower.TRANSITIONS_RECEIVER_ACTION"/>
             </intent-filter>
         </receiver>
     </application>
