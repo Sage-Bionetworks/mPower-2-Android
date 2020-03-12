@@ -9,6 +9,8 @@
     <!-- Required for 29+. -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:name=".MPowerApplication"
         android:allowBackup="false"
@@ -139,6 +141,8 @@
                 <action android:name="org.sagebionetworks.research.mpower.TRANSITIONS_RECEIVER_ACTION"/>
             </intent-filter>
         </receiver>
+
+        <service android:name=".ActivityRecorderService" android:exported="false" />
     </application>
 
 </manifest>

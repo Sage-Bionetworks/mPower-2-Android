@@ -43,6 +43,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.ActivityRecognition
@@ -65,7 +66,7 @@ import javax.inject.Inject
  * A simple [Fragment] subclass.
  *
  */
-class MainFragment : DaggerFragment() {
+class MainFragment : DaggerFragment(), OnRequestPermissionsResultCallback {
     private val LOGGER = LoggerFactory.getLogger(MainFragment::class.java)
 
     private val runningQOrLater = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
@@ -100,7 +101,7 @@ class MainFragment : DaggerFragment() {
     }
 
     private lateinit var pendingIntent: PendingIntent
-    // private var localTransitionsReceiver = LocalTransitionsReceiver()
+    // private val transitionsReceiver = ActivityTransitionsReceiver()
 
     // tag for identifying an instance of a fragment
     private val TAG_FRAGMENT_TRACKING = "tracking"
@@ -135,13 +136,16 @@ class MainFragment : DaggerFragment() {
     }
 
     private fun setupPendingIntentForActivityTransitions() {
-        val intent = Intent(context, ActivityTransitionsReceiver::class.java)
+        LOGGER.debug("setupPendingIntentForActivityTransitions")
+        val intent = Intent(requireContext().applicationContext, ActivityTransitionsReceiver::class.java)
         intent.action = ActivityTransitionsReceiver.INTENT_ACTION
-        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        pendingIntent = PendingIntent.getBroadcast(requireContext().applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+//        val intent = Intent(ActivityTransitionsReceiver.INTENT_ACTION)
+//        pendingIntent = PendingIntent.getBroadcast(requireContext().applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
@@ -210,9 +214,11 @@ class MainFragment : DaggerFragment() {
     private fun enableActivityTransitions() {
         LOGGER.debug("enableActivityTransitions()")
         val request = ActivityTransitionRequest(activityTransitions)
-        val task: Task<Void> = ActivityRecognition
-                .getClient(requireActivity())
-                .requestActivityTransitionUpdates(request, pendingIntent)
+        val task: Task<Void> = ActivityRecognition.getClient(requireActivity())
+                .requestActivityUpdates(3000, pendingIntent)
+                // .requestActivityTransitionUpdates(request, pendingIntent)
+        // NOTE: Using activity updates for now.  Activity transitions are very delayed.  In testing, I end up walking
+        // around and sitting down before the first transition event even makes it to the BroadcastReceiver
 
         task.addOnSuccessListener {
             activityTrackingEnabled = true
@@ -230,7 +236,8 @@ class MainFragment : DaggerFragment() {
     private fun disableActivityTransitions() {
         LOGGER.debug("disableActivityTransitions()")
         val task: Task<Void> = ActivityRecognition.getClient(requireActivity())
-                                    .removeActivityTransitionUpdates(pendingIntent)
+                .removeActivityUpdates(pendingIntent)
+                // .removeActivityTransitionUpdates(pendingIntent)
 
         task.addOnSuccessListener {
             activityTrackingEnabled = false
@@ -248,7 +255,7 @@ class MainFragment : DaggerFragment() {
     private fun activityRecognitionPermissionApproved(): Boolean {
         return if (runningQOrLater) {
             PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(
-                requireContext(),
+                requireActivity(),
                 Manifest.permission.ACTIVITY_RECOGNITION
             )
         } else {
@@ -289,7 +296,8 @@ class MainFragment : DaggerFragment() {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     toggleTracking()
                 } else {
-                    requireActivity().finish()
+                    // TODO: Handle or ignore?
+                    // requireActivity().finish()
                 }
                 return
             }

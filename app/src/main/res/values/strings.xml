@@ -117,6 +117,13 @@
     <string name="reminder_notification_channel_title">mPower Reminders</string>
     <string name="reminder_notification_channel_desc">mPower reminders help you remember to log your data</string>
 
+    <string name="foreground_channel_id">mPower Alerts</string>
+    <string name="foreground_channel_title">mPower Informational Alerts</string>
+    <string name="foreground_channel_desc">mPower low importance informational alerts</string>
+
+    <string name="recording_notification_title">mPower Recording</string>
+    <string name="recording_notification_message">Recording Walk...</string>
+
     <string name="measuring_center_label">Walk And Balance</string>
     <string name="measuring_left_label">Finger Tapping</string>
     <string name="measuring_right_label">Tremor Test</string>

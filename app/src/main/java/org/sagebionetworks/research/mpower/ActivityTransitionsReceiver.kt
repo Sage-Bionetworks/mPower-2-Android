@@ -35,31 +35,39 @@ package org.sagebionetworks.research.mpower
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.text.TextUtils
-import android.util.Log
-import android.util.TimeUtils
 import com.google.android.gms.location.ActivityRecognitionResult
 import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
 import org.slf4j.LoggerFactory
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
  * Handles intents from from the Transitions API.
  */
 class ActivityTransitionsReceiver : BroadcastReceiver() {
+    private val LOGGER = LoggerFactory.getLogger(ActivityTransitionsReceiver::class.java)
+
     override fun onReceive(context: Context, intent: Intent) {
         LOGGER.debug("onReceive")
+
         if (!TextUtils.equals(INTENT_ACTION, intent.action)) {
             LOGGER.debug("Received an unsupported action in TransitionsReceiver: action = ${intent.action}")
             return
         }
 
+        val sharedPrefs = context.getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
+        val currentActivityType = sharedPrefs.getInt(CURRENT_ACTIVITY_TYPE, -1)
+        LOGGER.debug("CURRENT ACTIVITY TYPE: ${toActivityString(currentActivityType)}")
+
         if (ActivityTransitionResult.hasResult(intent)) {
-            ActivityTransitionResult.extractResult(intent)?.let { result ->
+            val result = ActivityTransitionResult.extractResult(intent)
+            result?.run {
                 for (event in result.transitionEvents) {
                     val info =
                         "Transition: ${toActivityString(event.activityType)} (${toTransitionType(
@@ -70,13 +78,83 @@ class ActivityTransitionsReceiver : BroadcastReceiver() {
                 }
             }
         }
+        if (ActivityRecognitionResult.hasResult(intent)) {
+            val result = ActivityRecognitionResult.extractResult(intent)
+            result?.run {
+                for (detectedActivity in result.probableActivities) {
+                    when (detectedActivity.type) {
+                        DetectedActivity.STILL -> {
+                            handleDetectedActivity(context, detectedActivity, sharedPrefs)
+                        }
+                        DetectedActivity.WALKING -> {
+                            handleDetectedActivity(context, detectedActivity, sharedPrefs)
+                        }
+                        else -> {}
+                    }
+                }
+            }
+        }
+    }
+
+    private fun onStartedWalking(context: Context) {
+        LOGGER.debug("onStartedWalking ${SimpleDateFormat(
+                "HH:mm:ss",
+                Locale.US
+        ).format(Date())}")
+        val i = Intent(context, ActivityRecorderService::class.java)
+        i.putExtra(ActivityRecorderService.EVENT, ActivityRecorderService.STARTED_WALKING)
+        context.startService(i)
+    }
+
+    private fun onStoppedWalking(context: Context) {
+        LOGGER.debug("onStoppedWalking ${SimpleDateFormat(
+                "HH:mm:ss",
+                Locale.US
+        ).format(Date())}")
+        val i = Intent(context, ActivityRecorderService::class.java)
+        i.putExtra(ActivityRecorderService.EVENT, ActivityRecorderService.STOPPED_WALKING)
+        context.startService(i)
+    }
+
+
+    private fun handleDetectedActivity(context: Context, detectedActivity: DetectedActivity, sharedPrefs: SharedPreferences) {
+        if (detectedActivity.confidence > 40) {
+            val currentActivityType = sharedPrefs.getInt(CURRENT_ACTIVITY_TYPE, -1)
+            val info =
+                    "Activity: ${toActivityString(detectedActivity.type)} (${detectedActivity.confidence}) ${SimpleDateFormat(
+                            "HH:mm:ss",
+                            Locale.US
+                    ).format(Date())}"
+            LOGGER.debug(info)
+
+            if (currentActivityType < 0) {
+                // no currentActivityType
+                sharedPrefs.edit().putInt(CURRENT_ACTIVITY_TYPE, detectedActivity.type).commit()
+            } else if (currentActivityType != detectedActivity.type) {
+                if (currentActivityType == DetectedActivity.STILL
+                        && detectedActivity.type == DetectedActivity.WALKING) {
+                    sharedPrefs.edit().putInt(CURRENT_ACTIVITY_TYPE, detectedActivity.type).commit()
+                    // transition from still to walking
+                    onStartedWalking(context)
+                } else if (currentActivityType == DetectedActivity.WALKING
+                        && detectedActivity.type == DetectedActivity.STILL) {
+                    sharedPrefs.edit().putInt(CURRENT_ACTIVITY_TYPE, detectedActivity.type).commit()
+                    // transition from walking to still
+                    onStoppedWalking(context)
+                } else {
+                    // do nothing
+                }
+            }
+        }
     }
 
     companion object {
-        private val LOGGER = LoggerFactory.getLogger(ActivityTransitionsReceiver::class.java)
-
         // Action fired when transitions are triggered.
         const val INTENT_ACTION = "org.sagebionetworks.research.mpower.TRANSITIONS_RECEIVER_ACTION"
+
+        const val CURRENT_ACTIVITY_TYPE = "currentActivityType"
+
+        const val TRANSITION_PREFS = "transitionPrefs"
 
         private fun toActivityString(activity: Int): String {
             return when (activity) {
