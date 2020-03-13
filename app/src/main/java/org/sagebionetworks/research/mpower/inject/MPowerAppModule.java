@@ -32,6 +32,7 @@
 
 package org.sagebionetworks.research.mpower.inject;
 
+import org.sagebionetworks.research.mpower.ActivityRecorderService;
 import org.sagebionetworks.research.mpower.MpPhoneAuthActivity;
 
 import dagger.Module;
@@ -47,4 +48,7 @@ public abstract class MPowerAppModule {
 
     @ContributesAndroidInjector
     abstract MpPhoneAuthActivity contributeMpMainActivityInjector();
+
+    @ContributesAndroidInjector
+    abstract ActivityRecorderService contributeActivityRecorderService();
 }

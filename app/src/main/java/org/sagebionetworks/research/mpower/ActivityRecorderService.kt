@@ -35,31 +35,100 @@ package org.sagebionetworks.research.mpower
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import dagger.android.DaggerService
+import io.reactivex.Single
+import org.sagebionetworks.research.domain.async.AsyncActionConfiguration
+import org.sagebionetworks.research.domain.async.DeviceMotionRecorderConfigurationImpl
+import org.sagebionetworks.research.domain.async.DistanceRecorderConfigurationImpl
+import org.sagebionetworks.research.domain.async.RecorderType
+import org.sagebionetworks.research.domain.result.interfaces.TaskResult
+import org.sagebionetworks.research.domain.step.implementations.StepBase
+import org.sagebionetworks.research.domain.step.interfaces.Step
+import org.sagebionetworks.research.domain.task.Task
+import org.sagebionetworks.research.domain.task.navigation.TaskBase
+import org.sagebionetworks.research.presentation.inject.RecorderConfigPresentationFactory
+import org.sagebionetworks.research.presentation.perform_task.TaskResultManager
+import org.sagebionetworks.research.presentation.perform_task.TaskResultManager.TaskResultManagerConnection
+import org.sagebionetworks.research.presentation.recorder.service.RecorderManager
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
+import javax.inject.Inject
 
-class ActivityRecorderService : Service() {
+class ActivityRecorderService : DaggerService() {
     private var isRecording = false
 
-//    private val recorderService = RecorderService()
-//
-//    private var taskUUID: UUID? = null
+    @Inject
+    lateinit var taskResultManager: TaskResultManager
+
+    @Inject
+    lateinit var recorderConfigPresentationFactory: RecorderConfigPresentationFactory
+
+    private lateinit var recorderManager: RecorderManager
+
+    private lateinit var task: Task
+
+    private lateinit var taskIdentifier: String
+
+    private lateinit var taskUUID: UUID
+
+    private val asyncActions = mutableSetOf<AsyncActionConfiguration>(
+        DeviceMotionRecorderConfigurationImpl.builder()
+            .setIdentifier("motionRecorder")
+            .setStartStepIdentifier("start")
+            .setStopStepIdentifier("stop")
+            .setFrequency(null)
+            .setRecorderTypes(mutableSetOf(RecorderType.MOTION))
+            .build()
+//        DistanceRecorderConfigurationImpl.builder()
+//            .setIdentifier("distanceRecorder")
+//            .setStartStepIdentifier("start")
+//            .setStopStepIdentifier("stop")
+//            .build()
+    )
+
+    private val startStep = PassiveGaitStep("start", asyncActions)
+
+    private val stopStep = PassiveGaitStep("stop", asyncActions)
+
+    private val steps = mutableListOf<Step>(startStep, stopStep)
 
     override fun onCreate() {
         super.onCreate()
-        Log.d(TAG, "onCreate")
+        Log.d(TAG, "onCreate: $taskResultManager, $recorderConfigPresentationFactory")
+
+        task = TaskBase.builder()
+                .setIdentifier("PassiveGait")
+                .setAsyncActions(asyncActions)
+                .setSteps(steps)
+                .build()
+        taskIdentifier = "PassiveGait"
+        taskUUID = UUID.randomUUID()
+
+        recorderManager = RecorderManager(task, taskIdentifier, taskUUID, this,
+                taskResultManager, recorderConfigPresentationFactory)
+
+        val singleTaskRResultManagerConn: Single<TaskResultManagerConnection> = taskResultManager.getTaskResultManagerConnection(taskIdentifier, taskUUID)
+        Log.d(TAG, "$singleTaskRResultManagerConn")
+        singleTaskRResultManagerConn
+                .doOnSuccess { conn ->
+                    println("TEST - doOnSuccss: $conn")
+                    conn.asyncResultsObservable.doOnEach { r -> Log.d(TAG, "doOnEach: $r") }
+                }
+                .doOnError { e ->
+                    println("TEST - doOnError: ${e.message}")
+                }
+    }
+
+    private fun taskResultObserver(taskResult: TaskResult?) {
+        Log.d(TAG, "Observed TaskResult: {$taskResult}")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -104,14 +173,13 @@ class ActivityRecorderService : Service() {
                 Log.d(TAG, "-- startRecording ${timeToDateStr(now)}")
                 isRecording = true
                 startForeground()
-                CoroutineScope(Dispatchers.Default).launch {
-//                    taskUUID = UUID.randomUUID()
-//                    recorderService.getActiveRecorders(taskUUID!!).forEach {
-//                        it.value.start()
-//                    }
-                    delay(MAX_RECORDING_TIME_MS)
-                    stopRecording()
-                }
+//                CoroutineScope(Dispatchers.Default).launch {
+//                    delay(MAX_RECORDING_TIME_MS)
+//                    stopRecording()
+//                }
+                // NOTE: Currently RecorderService within RecorderManager is not bound, need to fix
+                // don't care about navDirection
+                recorderManager.onStepTransition(null, startStep, 0)
             } else {
                 Log.d(TAG, "-- NOT RECORDING - ONLY RECORD ONCE EVERY $MIN_FREQUENCY_MS")
                 stopSelf()
@@ -162,6 +230,8 @@ class ActivityRecorderService : Service() {
 //                    it.value.stop()
 //                }
 //            }
+            recorderManager.onStepTransition(stopStep, null, 0)
+
             val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
             sharedPrefs.edit().putLong(LAST_RECORDED_AT, Date().time).apply()
         }
@@ -174,8 +244,18 @@ class ActivityRecorderService : Service() {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
+        unbindService(recorderManager)
         super.onDestroy()
     }
+
+    inner class PassiveGaitStep(identifier: String, asyncActions: Set<AsyncActionConfiguration>)
+        : StepBase(identifier, asyncActions) {
+
+        override fun copyWithIdentifier(identifier: String): PassiveGaitStep {
+            throw UnsupportedOperationException("PassiveGait steps cannot be copied")
+        }
+    }
+
     companion object {
         private const val TAG = "ActivityRecorderService"
 
@@ -187,7 +267,7 @@ class ActivityRecorderService : Service() {
 
         private const val FOREGROUND_NOTIFICATION_ID = 100
 
-        private const val MIN_FREQUENCY_MS: Long = 1000 * 60 * 3
+        private const val MIN_FREQUENCY_MS: Long = 0 // 1000 * 60 * 3
 
         private const val MAX_RECORDING_TIME_MS: Long = 1000 * 30
 
