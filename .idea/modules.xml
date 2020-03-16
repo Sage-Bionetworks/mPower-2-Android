@@ -4,6 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/code-mPower-2-Android.iml" filepath="$PROJECT_DIR$/code-mPower-2-Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hf-mPower-2-Android.iml" filepath="$PROJECT_DIR$/hf-mPower-2-Android.iml" group="mPower-2-Android" />
+      <module fileurl="file://$PROJECT_DIR$/app/hf-mPower-2-Android-app.iml" filepath="$PROJECT_DIR$/app/hf-mPower-2-Android-app.iml" group="mPower-2-Android/app" />
+      <module fileurl="file://$PROJECT_DIR$/researchstack-mpower/hf-mPower-2-Android-researchstack-mpower.iml" filepath="$PROJECT_DIR$/researchstack-mpower/hf-mPower-2-Android-researchstack-mpower.iml" group="mPower-2-Android/researchstack-mpower" />
+      <module fileurl="file://$PROJECT_DIR$/sageresearch-mpower/hf-mPower-2-Android-sageresearch-mpower.iml" filepath="$PROJECT_DIR$/sageresearch-mpower/hf-mPower-2-Android-sageresearch-mpower.iml" group="mPower-2-Android/sageresearch-mpower" />
       <module fileurl="file://$PROJECT_DIR$/mPower-2-Android.iml" filepath="$PROJECT_DIR$/mPower-2-Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/mPower-2-Android-app.iml" filepath="$PROJECT_DIR$/app/mPower-2-Android-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/researchstack-mpower/mPower-2-Android-researchstack-mpower.iml" filepath="$PROJECT_DIR$/researchstack-mpower/mPower-2-Android-researchstack-mpower.iml" />
