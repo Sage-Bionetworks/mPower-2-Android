@@ -46,6 +46,7 @@ import io.reactivex.Single
 import org.sagebionetworks.research.domain.async.AsyncActionConfiguration
 import org.sagebionetworks.research.domain.async.DeviceMotionRecorderConfigurationImpl
 import org.sagebionetworks.research.domain.async.DistanceRecorderConfigurationImpl
+import org.sagebionetworks.research.domain.async.MotionRecorderType
 import org.sagebionetworks.research.domain.async.RecorderType
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult
 import org.sagebionetworks.research.domain.step.implementations.StepBase
@@ -55,6 +56,7 @@ import org.sagebionetworks.research.domain.task.navigation.TaskBase
 import org.sagebionetworks.research.presentation.inject.RecorderConfigPresentationFactory
 import org.sagebionetworks.research.presentation.perform_task.TaskResultManager
 import org.sagebionetworks.research.presentation.perform_task.TaskResultManager.TaskResultManagerConnection
+import org.sagebionetworks.research.presentation.recorder.sensor.SensorRecorderConfigPresentationFactory
 import org.sagebionetworks.research.presentation.recorder.service.RecorderManager
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -69,29 +71,23 @@ class ActivityRecorderService : DaggerService() {
     lateinit var taskResultManager: TaskResultManager
 
     @Inject
-    lateinit var recorderConfigPresentationFactory: RecorderConfigPresentationFactory
+    lateinit var recorderConfigPresentationFactory: SensorRecorderConfigPresentationFactory
 
     private lateinit var recorderManager: RecorderManager
 
-    private lateinit var task: Task
-
-    private lateinit var taskIdentifier: String
-
-    private lateinit var taskUUID: UUID
-
     private val asyncActions = mutableSetOf<AsyncActionConfiguration>(
         DeviceMotionRecorderConfigurationImpl.builder()
-            .setIdentifier("motionRecorder")
+            .setIdentifier("passiveGait")
             .setStartStepIdentifier("start")
             .setStopStepIdentifier("stop")
             .setFrequency(null)
-            .setRecorderTypes(mutableSetOf(RecorderType.MOTION))
+            .setRecorderTypes(mutableSetOf(
+                MotionRecorderType.USER_ACCELERATION,
+                MotionRecorderType.MAGNETIC_FIELD,
+                MotionRecorderType.ROTATION_RATE,
+                MotionRecorderType.GYROSCOPE
+            ))
             .build()
-//        DistanceRecorderConfigurationImpl.builder()
-//            .setIdentifier("distanceRecorder")
-//            .setStartStepIdentifier("start")
-//            .setStopStepIdentifier("stop")
-//            .build()
     )
 
     private val startStep = PassiveGaitStep("start", asyncActions)
@@ -100,35 +96,21 @@ class ActivityRecorderService : DaggerService() {
 
     private val steps = mutableListOf<Step>(startStep, stopStep)
 
+    private val task = TaskBase.builder()
+            .setIdentifier("PassiveGait")
+            .setAsyncActions(asyncActions)
+            .setSteps(steps)
+            .build()
+
     override fun onCreate() {
         super.onCreate()
-        Log.d(TAG, "onCreate: $taskResultManager, $recorderConfigPresentationFactory")
 
-        task = TaskBase.builder()
-                .setIdentifier("PassiveGait")
-                .setAsyncActions(asyncActions)
-                .setSteps(steps)
-                .build()
-        taskIdentifier = "PassiveGait"
-        taskUUID = UUID.randomUUID()
+        val taskUUID = UUID.randomUUID()
 
-        recorderManager = RecorderManager(task, taskIdentifier, taskUUID, this,
+        Log.d(TAG, "onCreate: $taskUUID")
+
+        recorderManager = RecorderManager(task, TASK_IDENTIFIER, taskUUID, this,
                 taskResultManager, recorderConfigPresentationFactory)
-
-        val singleTaskRResultManagerConn: Single<TaskResultManagerConnection> = taskResultManager.getTaskResultManagerConnection(taskIdentifier, taskUUID)
-        Log.d(TAG, "$singleTaskRResultManagerConn")
-        singleTaskRResultManagerConn
-                .doOnSuccess { conn ->
-                    println("TEST - doOnSuccss: $conn")
-                    conn.asyncResultsObservable.doOnEach { r -> Log.d(TAG, "doOnEach: $r") }
-                }
-                .doOnError { e ->
-                    println("TEST - doOnError: ${e.message}")
-                }
-    }
-
-    private fun taskResultObserver(taskResult: TaskResult?) {
-        Log.d(TAG, "Observed TaskResult: {$taskResult}")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -138,7 +120,7 @@ class ActivityRecorderService : DaggerService() {
             when (val event = it.getIntExtra(EVENT, -1)) {
                 STARTED_WALKING -> startRecording()
                 STOPPED_WALKING -> stopRecording()
-                else -> throw IllegalArgumentException("EVENT is invalid: $event")
+                else -> Log.d(TAG, "EVENT is invalid: $event")
             }
         }
 
@@ -225,11 +207,6 @@ class ActivityRecorderService : DaggerService() {
                 "-- stopRecording ${SimpleDateFormat(TIME_PATTERN, Locale.US).format(Date())}"
             )
             isRecording = false
-//            CoroutineScope(Dispatchers.Default).launch {
-//                recorderService.getActiveRecorders(taskUUID!!).forEach {
-//                    it.value.stop()
-//                }
-//            }
             recorderManager.onStepTransition(stopStep, null, 0)
 
             val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
@@ -258,6 +235,8 @@ class ActivityRecorderService : DaggerService() {
 
     companion object {
         private const val TAG = "ActivityRecorderService"
+
+        private const val TASK_IDENTIFIER = "PassiveGait"
 
         private const val TRANSITION_PREFS = "transitionPrefs"
 

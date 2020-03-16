@@ -32,12 +32,41 @@
 
 package org.sagebionetworks.research.mpower
 
+import android.Manifest
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.FragmentManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.gms.location.ActivityRecognition
+import com.google.android.gms.location.ActivityTransition
 import dagger.android.support.DaggerAppCompatActivity
-
+import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel
+import org.slf4j.LoggerFactory
 
 class EntryActivity : DaggerAppCompatActivity() {
+
+    private val LOGGER = LoggerFactory.getLogger(EntryActivity::class.java)
+
+    private val passiveGaitViewModel: PassiveGaitViewModel by lazy {
+        ViewModelProviders.of(this).get(PassiveGaitViewModel::class.java)
+    }
+
+    private val trackingTransitionsObserver = Observer<Boolean> { tracking ->
+        if (tracking) {
+            enableActivityTransitions()
+        } else {
+            disableActivityTransitions()
+        }
+    }
+
+    private lateinit var pendingIntent: PendingIntent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.entry_activity)
@@ -46,6 +75,17 @@ class EntryActivity : DaggerAppCompatActivity() {
                     .replace(R.id.container, EntryFragment())
                     .commitNow()
         }
+
+        setupPendingIntentForActivityTransitions()
+
+        passiveGaitViewModel.trackTransitions.observe(this, trackingTransitionsObserver)
+    }
+
+    private fun setupPendingIntentForActivityTransitions() {
+        LOGGER.debug("setupPendingIntentForActivityTransitions")
+        val intent = Intent(applicationContext, ActivityTransitionsReceiver::class.java)
+        intent.action = ActivityTransitionsReceiver.INTENT_ACTION
+        pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     private fun onBackPressed(fm: androidx.fragment.app.FragmentManager): Boolean {
@@ -72,5 +112,98 @@ class EntryActivity : DaggerAppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    /**
+     * Registers callbacks for [ActivityTransition] events via a custom [BroadcastReceiver]
+     */
+    private fun enableActivityTransitions() {
+        if (activityRecognitionPermissionApproved()) {
+            LOGGER.debug("enableActivityTransitions()")
+            val task: com.google.android.gms.tasks.Task<Void> = ActivityRecognition.getClient(this)
+                    .requestActivityUpdates(ACTIVITY_RESULT_FREQUENCY_IN_MS, pendingIntent)
+            // .requestActivityTransitionUpdates(ActivityTransitionRequest(activityTransitions), pendingIntent)
+
+            task.addOnSuccessListener {
+                passiveGaitViewModel.trackingRegistered = true
+                LOGGER.debug("Transitions Api was successfully registered.")
+            }.addOnFailureListener { e ->
+                LOGGER.error("Transitions Api could NOT be registered: $e", e)
+            }
+        } else {
+            ActivityCompat.requestPermissions(
+                    this, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                    PERMISSION_REQUEST_ACTIVITY_RECOGNITION
+            )
+        }
+    }
+
+    /**
+     * Unregisters callbacks for [ActivityTransition] events via a custom
+     * [BroadcastReceiver]
+     */
+    private fun disableActivityTransitions() {
+        LOGGER.debug("disableActivityTransitions()")
+        val task: com.google.android.gms.tasks.Task<Void> = ActivityRecognition.getClient(this)
+                .removeActivityUpdates(pendingIntent)
+        // .removeActivityTransitionUpdates(pendingIntent)
+
+        task.addOnSuccessListener {
+            passiveGaitViewModel.trackingRegistered = false
+            LOGGER.debug("Transitions successfully unregistered.")
+        }.addOnFailureListener { e ->
+            LOGGER.error("Transitions could not be unregistered: $e", e)
+        }
+    }
+
+    /**
+     * On devices Android 10 and beyond (29+), you need to ask for the ACTIVITY_RECOGNITION via the
+     * run-time permissions.
+     */
+    private fun activityRecognitionPermissionApproved(): Boolean {
+        // TODO: Integrate consent alongside os permissions
+        return if (RUNNING_Q_OR_LATER) {
+            PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            )
+        } else {
+            true
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
+    ) {
+        val permissionResult = "Request code: $requestCode, Permissions: ${permissions.contentToString()}, Results: ${grantResults.contentToString()}"
+        LOGGER.debug("onRequestPermissionsResult(): $permissionResult")
+
+        when (requestCode) {
+            PERMISSION_REQUEST_ACTIVITY_RECOGNITION -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // do nothing, because tracking is enabled by child component
+                    LOGGER.debug("ACTIVITY RECOGNITION Permission Granted")
+                } else {
+                    LOGGER.debug("ACTIVITY RECOGNITION Permission Denied")
+                    // TODO: Handle or ignore?
+                    // requireActivity().finish()
+                }
+                return
+            }
+            else -> {
+                // Ignore all other requests.
+            }
+        }
+    }
+
+    companion object {
+        private val RUNNING_Q_OR_LATER = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
+        private const val PERMISSION_REQUEST_ACTIVITY_RECOGNITION = 45
+
+        private const val ACTIVITY_RESULT_FREQUENCY_IN_MS: Long = 3000
     }
 }
