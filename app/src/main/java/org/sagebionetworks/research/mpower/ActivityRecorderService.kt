@@ -52,7 +52,7 @@ import org.sagebionetworks.research.domain.task.navigation.TaskBase
 import org.sagebionetworks.research.presentation.perform_task.TaskResultManager
 import org.sagebionetworks.research.presentation.recorder.sensor.SensorRecorderConfigPresentationFactory
 import org.sagebionetworks.research.presentation.recorder.service.RecorderManager
-//import org.sagebionetworks.research.presentation.recorder.service.RecorderManager.RecorderServiceConnectionListener
+import org.sagebionetworks.research.presentation.recorder.service.RecorderManager.RecorderServiceConnectionListener
 import org.sagebionetworks.research.presentation.recorder.service.RecorderService
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -60,7 +60,7 @@ import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
-class ActivityRecorderService : DaggerService() { //, RecorderServiceConnectionListener {
+class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListener {
     private var isRecording = false
 
     @Inject
@@ -107,16 +107,16 @@ class ActivityRecorderService : DaggerService() { //, RecorderServiceConnectionL
         val taskUUID = UUID.randomUUID()
         Log.d(TAG, "-- setupRecorderManager: $taskUUID")
         recorderManager = RecorderManager(task, TASK_IDENTIFIER, taskUUID, this,
-                taskResultManager, recorderConfigPresentationFactory) //, this)
+                taskResultManager, recorderConfigPresentationFactory, this)
     }
 
-//    /**
-//     * @see RecorderManager.RecorderServiceConnectionListener
-//     */
-//    override fun onRecorderServiceConnected(recorderService: RecorderService, bound: Boolean) {
-//        Log.d(TAG, "onServiceConnected")
-//        recorderManager?.onStepTransition(null, startStep, NavDirection.SHIFT_RIGHT)
-//    }
+    /**
+     * @see RecorderManager.RecorderServiceConnectionListener
+     */
+    override fun onRecorderServiceConnected(recorderService: RecorderService, bound: Boolean) {
+        Log.d(TAG, "onServiceConnected")
+        recorderManager?.onStepTransition(null, startStep, NavDirection.SHIFT_RIGHT)
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand: startId = $startId, isRecording = $isRecording")
@@ -220,8 +220,8 @@ class ActivityRecorderService : DaggerService() { //, RecorderServiceConnectionL
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
-        recorderManager?.let { unbindService(it)}
-        // recorderManager?.unbind()
+        // recorderManager?.let { unbindService(it)}
+        recorderManager?.unbind()
         super.onDestroy()
     }
 

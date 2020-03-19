@@ -2,16 +2,21 @@ include ':app', ':sageresearch-mpower', ':researchstack-mpower'
 
 // uncomment this for a "composite build" which substitutes SageResearch artifacts
 // for the source code in the indicated directory
-//includeBuild ('../SageResearch-Android')
+includeBuild ('../SageResearch-Android'){
+    dependencySubstitution {
+        // substitute module('org.sagebionetworks.research:mobile-ui') with project(':mobile-ui')
+        substitute module('org.sagebionetworks.research:presentation') with project(':presentation')
+    }
+}
 
 // uncomment this for a "composite build" which substitutes ResearchModules artifacts
 // for the source code in the indicated directory
-//includeBuild ('../ResearchModules-Android')
+// includeBuild ('../ResearchModules-Android')
 
 // uncomment this for a "composite build" which substitutes BridgeAndroidSDK artifacts
 // for the source code in the indicated directory
-//includeBuild ('..BridgeAndroidSDK')
+// includeBuild ('../BridgeAndroidSDK')
 
 // uncomment this for a "composite build" which substitutes ResearchStack artifacts
 // for the source code in the indicated directory
-//includeBuild ('..ResearchStack')
+// includeBuild ('../ResearchStack')

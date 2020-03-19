@@ -5,7 +5,7 @@ buildscript {
     ext.bridge_sdk_version = '0.4.0'
     ext.sage_research_version = '0.2.0'
     ext.support_library_version = '28.0.0'
-    ext.butterknife_version = '10.2.0'
+    ext.butterknife_version = '10.2.1'
     ext.dagger_version = '2.21'
     ext.guava_version = '27.0.1-android'
     ext.auto_value_version = '1.6.3'
@@ -22,7 +22,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-        classpath 'com.google.gms:google-services:4.2.0'
+        classpath 'com.google.gms:google-services:4.3.2'
 
         // SageResearch
         classpath "org.jetbrains.dokka:dokka-android-gradle-plugin:0.9.18"
@@ -35,7 +35,6 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
 
-        // classpath 'io.fabric.tools:gradle:1.26.1'
         classpath 'io.fabric.tools:gradle:1.+'
     }
 }
