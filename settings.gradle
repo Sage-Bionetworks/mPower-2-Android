@@ -4,7 +4,6 @@ include ':app', ':sageresearch-mpower', ':researchstack-mpower'
 // for the source code in the indicated directory
 includeBuild ('../SageResearch-Android'){
     dependencySubstitution {
-        // substitute module('org.sagebionetworks.research:mobile-ui') with project(':mobile-ui')
         substitute module('org.sagebionetworks.research:presentation') with project(':presentation')
     }
 }
