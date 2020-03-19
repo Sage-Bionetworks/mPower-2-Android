@@ -42,29 +42,25 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import dagger.android.DaggerService
-import io.reactivex.Single
 import org.sagebionetworks.research.domain.async.AsyncActionConfiguration
 import org.sagebionetworks.research.domain.async.DeviceMotionRecorderConfigurationImpl
-import org.sagebionetworks.research.domain.async.DistanceRecorderConfigurationImpl
 import org.sagebionetworks.research.domain.async.MotionRecorderType
-import org.sagebionetworks.research.domain.async.RecorderType
-import org.sagebionetworks.research.domain.result.interfaces.TaskResult
 import org.sagebionetworks.research.domain.step.implementations.StepBase
 import org.sagebionetworks.research.domain.step.interfaces.Step
-import org.sagebionetworks.research.domain.task.Task
+import org.sagebionetworks.research.domain.task.navigation.NavDirection
 import org.sagebionetworks.research.domain.task.navigation.TaskBase
-import org.sagebionetworks.research.presentation.inject.RecorderConfigPresentationFactory
 import org.sagebionetworks.research.presentation.perform_task.TaskResultManager
-import org.sagebionetworks.research.presentation.perform_task.TaskResultManager.TaskResultManagerConnection
 import org.sagebionetworks.research.presentation.recorder.sensor.SensorRecorderConfigPresentationFactory
 import org.sagebionetworks.research.presentation.recorder.service.RecorderManager
+//import org.sagebionetworks.research.presentation.recorder.service.RecorderManager.RecorderServiceConnectionListener
+import org.sagebionetworks.research.presentation.recorder.service.RecorderService
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
-class ActivityRecorderService : DaggerService() {
+class ActivityRecorderService : DaggerService() { //, RecorderServiceConnectionListener {
     private var isRecording = false
 
     @Inject
@@ -73,7 +69,7 @@ class ActivityRecorderService : DaggerService() {
     @Inject
     lateinit var recorderConfigPresentationFactory: SensorRecorderConfigPresentationFactory
 
-    private lateinit var recorderManager: RecorderManager
+    private var recorderManager: RecorderManager? = null
 
     private val asyncActions = mutableSetOf<AsyncActionConfiguration>(
         DeviceMotionRecorderConfigurationImpl.builder()
@@ -103,23 +99,32 @@ class ActivityRecorderService : DaggerService() {
             .build()
 
     override fun onCreate() {
+        Log.d(TAG, "onCreate")
         super.onCreate()
-
-        val taskUUID = UUID.randomUUID()
-
-        Log.d(TAG, "onCreate: $taskUUID")
-
-        recorderManager = RecorderManager(task, TASK_IDENTIFIER, taskUUID, this,
-                taskResultManager, recorderConfigPresentationFactory)
     }
+
+    private fun setupRecorderManager() {
+        val taskUUID = UUID.randomUUID()
+        Log.d(TAG, "-- setupRecorderManager: $taskUUID")
+        recorderManager = RecorderManager(task, TASK_IDENTIFIER, taskUUID, this,
+                taskResultManager, recorderConfigPresentationFactory) //, this)
+    }
+
+//    /**
+//     * @see RecorderManager.RecorderServiceConnectionListener
+//     */
+//    override fun onRecorderServiceConnected(recorderService: RecorderService, bound: Boolean) {
+//        Log.d(TAG, "onServiceConnected")
+//        recorderManager?.onStepTransition(null, startStep, NavDirection.SHIFT_RIGHT)
+//    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand: startId = $startId, isRecording = $isRecording")
 
         intent?.let {
-            when (val event = it.getIntExtra(EVENT, -1)) {
-                STARTED_WALKING -> startRecording()
-                STOPPED_WALKING -> stopRecording()
+            when (val event = it.getSerializableExtra(EVENT) as Event) {
+                Event.STARTED_WALKING -> startRecording()
+                Event.STOPPED_WALKING -> stopRecording()
                 else -> Log.d(TAG, "EVENT is invalid: $event")
             }
         }
@@ -155,13 +160,7 @@ class ActivityRecorderService : DaggerService() {
                 Log.d(TAG, "-- startRecording ${timeToDateStr(now)}")
                 isRecording = true
                 startForeground()
-//                CoroutineScope(Dispatchers.Default).launch {
-//                    delay(MAX_RECORDING_TIME_MS)
-//                    stopRecording()
-//                }
-                // NOTE: Currently RecorderService within RecorderManager is not bound, need to fix
-                // don't care about navDirection
-                recorderManager.onStepTransition(null, startStep, 0)
+                setupRecorderManager()
             } else {
                 Log.d(TAG, "-- NOT RECORDING - ONLY RECORD ONCE EVERY $MIN_FREQUENCY_MS")
                 stopSelf()
@@ -207,7 +206,7 @@ class ActivityRecorderService : DaggerService() {
                 "-- stopRecording ${SimpleDateFormat(TIME_PATTERN, Locale.US).format(Date())}"
             )
             isRecording = false
-            recorderManager.onStepTransition(stopStep, null, 0)
+            recorderManager?.onStepTransition(null, stopStep, NavDirection.SHIFT_RIGHT)
 
             val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
             sharedPrefs.edit().putLong(LAST_RECORDED_AT, Date().time).apply()
@@ -221,7 +220,8 @@ class ActivityRecorderService : DaggerService() {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
-        unbindService(recorderManager)
+        recorderManager?.let { unbindService(it)}
+        // recorderManager?.unbind()
         super.onDestroy()
     }
 
@@ -231,6 +231,10 @@ class ActivityRecorderService : DaggerService() {
         override fun copyWithIdentifier(identifier: String): PassiveGaitStep {
             throw UnsupportedOperationException("PassiveGait steps cannot be copied")
         }
+    }
+
+    enum class Event {
+        STARTED_WALKING, STOPPED_WALKING
     }
 
     companion object {
@@ -251,9 +255,5 @@ class ActivityRecorderService : DaggerService() {
         private const val MAX_RECORDING_TIME_MS: Long = 1000 * 30
 
         const val EVENT = "EVENT"
-
-        const val STARTED_WALKING = 1
-
-        const val STOPPED_WALKING = 0
     }
 }

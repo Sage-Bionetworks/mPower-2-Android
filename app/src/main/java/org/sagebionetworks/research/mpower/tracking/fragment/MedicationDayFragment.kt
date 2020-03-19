@@ -79,7 +79,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
                 name = args.getString(ARG_NAME) ?: ""
                 time = args.getString(ARG_TIME) ?: ""
                 selectedDays = mutableSetOf<Int>()
-                selectedDays.addAll(args.getIntegerArrayList(ARG_DAYS))
+                selectedDays.addAll(args.getIntegerArrayList(ARG_DAYS)!!)
             } else {
                 LOGGER.warn("No arguments found")
                 name = "Default"
@@ -89,7 +89,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
             name = savedInstanceState.getString(ARG_NAME) ?: ""
             time = savedInstanceState.getString(ARG_TIME) ?: ""
             selectedDays = mutableSetOf<Int>()
-            selectedDays.addAll(savedInstanceState.getIntegerArrayList(ARG_DAYS))
+            selectedDays.addAll(savedInstanceState.getIntegerArrayList(ARG_DAYS)!!)
         }
     }
 

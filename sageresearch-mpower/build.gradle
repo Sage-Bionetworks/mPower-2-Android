@@ -52,7 +52,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     // arch components
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     implementation 'org.slf4j:slf4j-api:1.7.21'
     implementation 'com.github.tony19:logback-android-core:1.1.1-6'
@@ -63,6 +63,6 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

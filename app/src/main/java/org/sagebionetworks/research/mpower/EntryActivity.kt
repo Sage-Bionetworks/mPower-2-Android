@@ -42,7 +42,7 @@ import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityTransition
 import dagger.android.support.DaggerAppCompatActivity
@@ -54,7 +54,7 @@ class EntryActivity : DaggerAppCompatActivity() {
     private val LOGGER = LoggerFactory.getLogger(EntryActivity::class.java)
 
     private val passiveGaitViewModel: PassiveGaitViewModel by lazy {
-        ViewModelProviders.of(this).get(PassiveGaitViewModel::class.java)
+        ViewModelProvider(this).get(PassiveGaitViewModel::class.java)
     }
 
     private val trackingTransitionsObserver = Observer<Boolean> { tracking ->
