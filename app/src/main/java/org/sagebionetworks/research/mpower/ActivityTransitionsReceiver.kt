@@ -105,11 +105,7 @@ class ActivityTransitionsReceiver : BroadcastReceiver() {
     private fun startService(context: Context, event: ActivityRecorderService.Event) {
         val i = Intent(context, ActivityRecorderService::class.java)
         i.putExtra(ActivityRecorderService.EVENT, event)
-        if (RUNNING_O_OR_LATER) {
-            context.startForegroundService(i)
-        } else {
-            context.startService(i)
-        }
+        context.startService(i)
     }
 
     private fun onStoppedWalking(context: Context) {

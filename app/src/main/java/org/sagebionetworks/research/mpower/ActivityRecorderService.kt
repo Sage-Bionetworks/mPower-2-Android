@@ -59,8 +59,10 @@ import org.sagebionetworks.research.mpower.ActivityRecorderService.State.RECORDI
 import org.sagebionetworks.research.mpower.ActivityRecorderService.State.SAVING
 import org.sagebionetworks.research.mpower.R.drawable
 import org.sagebionetworks.research.mpower.R.string
+import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider
 import org.sagebionetworks.research.mpower.util.Repeat
 import org.sagebionetworks.research.presentation.perform_task.TaskResultManager
+import org.sagebionetworks.research.presentation.recorder.RecorderActionType
 import org.sagebionetworks.research.presentation.recorder.sensor.SensorRecorderConfigPresentationFactory
 import org.sagebionetworks.research.presentation.recorder.service.RecorderManager
 import org.sagebionetworks.research.presentation.recorder.service.RecorderManager.RecorderServiceConnectionListener
@@ -72,7 +74,6 @@ import java.util.UUID
 import javax.inject.Inject
 
 class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListener {
-    // private var isRecording = false
 
     @Inject
     lateinit var taskResultManager: TaskResultManager
@@ -84,9 +85,9 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
 
     private val asyncActions = mutableSetOf<AsyncActionConfiguration>(
         DeviceMotionRecorderConfigurationImpl.builder()
-            .setIdentifier("passiveGait")
-            .setStartStepIdentifier("start")
-            .setStopStepIdentifier("stop")
+            .setIdentifier(ACTION_IDENTIFIER)
+            .setStartStepIdentifier(RecorderActionType.START)
+            .setStopStepIdentifier(RecorderActionType.STOP)
             .setFrequency(null)
             .setRecorderTypes(mutableSetOf(
                 MotionRecorderType.USER_ACCELERATION,
@@ -97,14 +98,16 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
             .build()
     )
 
-    private val startStep = PassiveGaitStep("start", asyncActions)
+    private val startStep = PassiveGaitStep(RecorderActionType.START, asyncActions)
 
-    private val stopStep = PassiveGaitStep("stop", asyncActions)
+    private val stopStep = PassiveGaitStep(RecorderActionType.STOP, asyncActions)
 
     private val steps = mutableListOf<Step>(startStep, stopStep)
 
+    private val taskUUID = UUID.randomUUID()
+
     private val task = TaskBase.builder()
-            .setIdentifier("PassiveGait")
+            .setIdentifier(TASK_IDENTIFIER)
             .setAsyncActions(asyncActions)
             .setSteps(steps)
             .build()
@@ -122,6 +125,8 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
 
     private var state: State = NEW
 
+    private var recorderService: RecorderService? = null
+
     override fun onCreate() {
         Log.d(TAG, "onCreate")
         super.onCreate()
@@ -129,11 +134,15 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
 
     private fun setupRecorderManager() {
         state = CONNECTING
-        val taskUUID = UUID.randomUUID()
         Log.d(TAG, "-- setupRecorderManager ($state): $taskUUID")
         recorderManager = RecorderManager(task, TASK_IDENTIFIER, taskUUID, this,
                 taskResultManager, recorderConfigPresentationFactory, this)
-
+        taskResultManager.getTaskResultManagerConnection(TASK_IDENTIFIER, taskUUID).doOnSuccess {
+            Log.d(TAG, "getTaskResultManagerConnection: $it")
+            it.finalTaskResult.doOnSuccess { taskResult ->
+                Log.d(TAG, "FINAL TASK RESULT: $taskResult")
+            }
+        }
     }
 
     /**
@@ -141,6 +150,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
      */
     override fun onRecorderServiceConnected(recorderService: RecorderService, bound: Boolean) {
         if (state == CONNECTING) {
+            this.recorderService = recorderService
             recorderManager?.onStepTransition(null, startStep, NavDirection.SHIFT_RIGHT)
             state = RECORDING
             elapsedTime = 0
@@ -242,12 +252,13 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
                 "-- stopRecording ($state): ${SimpleDateFormat(TIME_PATTERN, Locale.US).format(Date())}"
             )
 
-            recorderManager?.onStepTransition(null, stopStep, NavDirection.SHIFT_RIGHT)
             recordTimer.cancel()
 
             state = RECORDED
 
             if (elapsedTime >= MIN_RECORDING_TIME_SEC) {
+                recorderManager?.onStepTransition(stopStep, null, NavDirection.SHIFT_LEFT)
+
                 val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
                 sharedPrefs.edit().putLong(LAST_RECORDED_AT, Date().time).apply()
 
@@ -265,12 +276,15 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
     private fun saveToBridge() {
         state = SAVING
         Log.d(TAG, "-- saveToBridge ($state)")
+
+        // MpDataProvider.getInstance().uploadTaskResult()
         finish()
     }
 
     private fun cancelRecording() {
         state = CANCELING
         Log.d(TAG, "-- cancelRecording ($state)")
+        this.recorderService?.cancelRecorder(taskUUID, ACTION_IDENTIFIER)
         finish()
     }
 
@@ -310,6 +324,8 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
         private const val TAG = "ActivityRecorderService"
 
         private const val TASK_IDENTIFIER = "PassiveGait"
+
+        private const val ACTION_IDENTIFIER = "passiveGait"
 
         private const val TRANSITION_PREFS = "transitionPrefs"
 

@@ -15,8 +15,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         // this is not the final version code, product flavors add to it
-        versionCode 55
-        versionName "0.12.1"
+        versionCode 56
+        versionName "0.12.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
