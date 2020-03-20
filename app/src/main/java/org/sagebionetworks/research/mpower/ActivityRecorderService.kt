@@ -40,105 +40,133 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.Builder
 import dagger.android.DaggerService
-import io.reactivex.Single
+import kotlinx.coroutines.Dispatchers
 import org.sagebionetworks.research.domain.async.AsyncActionConfiguration
 import org.sagebionetworks.research.domain.async.DeviceMotionRecorderConfigurationImpl
-import org.sagebionetworks.research.domain.async.DistanceRecorderConfigurationImpl
-import org.sagebionetworks.research.domain.async.RecorderType
-import org.sagebionetworks.research.domain.result.interfaces.TaskResult
+import org.sagebionetworks.research.domain.async.MotionRecorderType
 import org.sagebionetworks.research.domain.step.implementations.StepBase
 import org.sagebionetworks.research.domain.step.interfaces.Step
-import org.sagebionetworks.research.domain.task.Task
+import org.sagebionetworks.research.domain.task.navigation.NavDirection
 import org.sagebionetworks.research.domain.task.navigation.TaskBase
-import org.sagebionetworks.research.presentation.inject.RecorderConfigPresentationFactory
+import org.sagebionetworks.research.mpower.ActivityRecorderService.State.CANCELING
+import org.sagebionetworks.research.mpower.ActivityRecorderService.State.CONNECTING
+import org.sagebionetworks.research.mpower.ActivityRecorderService.State.FINISHED
+import org.sagebionetworks.research.mpower.ActivityRecorderService.State.NEW
+import org.sagebionetworks.research.mpower.ActivityRecorderService.State.RECORDED
+import org.sagebionetworks.research.mpower.ActivityRecorderService.State.RECORDING
+import org.sagebionetworks.research.mpower.ActivityRecorderService.State.SAVING
+import org.sagebionetworks.research.mpower.R.drawable
+import org.sagebionetworks.research.mpower.R.string
+import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider
+import org.sagebionetworks.research.mpower.util.Repeat
 import org.sagebionetworks.research.presentation.perform_task.TaskResultManager
-import org.sagebionetworks.research.presentation.perform_task.TaskResultManager.TaskResultManagerConnection
+import org.sagebionetworks.research.presentation.recorder.RecorderActionType
+import org.sagebionetworks.research.presentation.recorder.sensor.SensorRecorderConfigPresentationFactory
 import org.sagebionetworks.research.presentation.recorder.service.RecorderManager
+import org.sagebionetworks.research.presentation.recorder.service.RecorderManager.RecorderServiceConnectionListener
+import org.sagebionetworks.research.presentation.recorder.service.RecorderService
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
-class ActivityRecorderService : DaggerService() {
-    private var isRecording = false
+class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListener {
 
     @Inject
     lateinit var taskResultManager: TaskResultManager
 
     @Inject
-    lateinit var recorderConfigPresentationFactory: RecorderConfigPresentationFactory
+    lateinit var recorderConfigPresentationFactory: SensorRecorderConfigPresentationFactory
 
-    private lateinit var recorderManager: RecorderManager
-
-    private lateinit var task: Task
-
-    private lateinit var taskIdentifier: String
-
-    private lateinit var taskUUID: UUID
+    private var recorderManager: RecorderManager? = null
 
     private val asyncActions = mutableSetOf<AsyncActionConfiguration>(
         DeviceMotionRecorderConfigurationImpl.builder()
-            .setIdentifier("motionRecorder")
-            .setStartStepIdentifier("start")
-            .setStopStepIdentifier("stop")
+            .setIdentifier(ACTION_IDENTIFIER)
+            .setStartStepIdentifier(RecorderActionType.START)
+            .setStopStepIdentifier(RecorderActionType.STOP)
             .setFrequency(null)
-            .setRecorderTypes(mutableSetOf(RecorderType.MOTION))
+            .setRecorderTypes(mutableSetOf(
+                MotionRecorderType.USER_ACCELERATION,
+                MotionRecorderType.MAGNETIC_FIELD,
+                MotionRecorderType.ROTATION_RATE,
+                MotionRecorderType.GYROSCOPE
+            ))
             .build()
-//        DistanceRecorderConfigurationImpl.builder()
-//            .setIdentifier("distanceRecorder")
-//            .setStartStepIdentifier("start")
-//            .setStopStepIdentifier("stop")
-//            .build()
     )
 
-    private val startStep = PassiveGaitStep("start", asyncActions)
+    private val startStep = PassiveGaitStep(RecorderActionType.START, asyncActions)
 
-    private val stopStep = PassiveGaitStep("stop", asyncActions)
+    private val stopStep = PassiveGaitStep(RecorderActionType.STOP, asyncActions)
 
     private val steps = mutableListOf<Step>(startStep, stopStep)
 
+    private val taskUUID = UUID.randomUUID()
+
+    private val task = TaskBase.builder()
+            .setIdentifier(TASK_IDENTIFIER)
+            .setAsyncActions(asyncActions)
+            .setSteps(steps)
+            .build()
+
+    private var elapsedTime = 0L
+
+    private val recordTimer = Repeat(1000, {
+        val elapsedTimeStr = "${MAX_RECORDING_TIME_SEC - ++elapsedTime}".padStart(2, '0')
+        if (elapsedTime == MAX_RECORDING_TIME_SEC) {
+            stopRecording()
+        } else {
+            updateNotification("${getText(string.recording_notification_message)}$elapsedTimeStr")
+        }
+    }, Dispatchers.Default)
+
+    private var state: State = NEW
+
+    private var recorderService: RecorderService? = null
+
     override fun onCreate() {
+        Log.d(TAG, "onCreate")
         super.onCreate()
-        Log.d(TAG, "onCreate: $taskResultManager, $recorderConfigPresentationFactory")
-
-        task = TaskBase.builder()
-                .setIdentifier("PassiveGait")
-                .setAsyncActions(asyncActions)
-                .setSteps(steps)
-                .build()
-        taskIdentifier = "PassiveGait"
-        taskUUID = UUID.randomUUID()
-
-        recorderManager = RecorderManager(task, taskIdentifier, taskUUID, this,
-                taskResultManager, recorderConfigPresentationFactory)
-
-        val singleTaskRResultManagerConn: Single<TaskResultManagerConnection> = taskResultManager.getTaskResultManagerConnection(taskIdentifier, taskUUID)
-        Log.d(TAG, "$singleTaskRResultManagerConn")
-        singleTaskRResultManagerConn
-                .doOnSuccess { conn ->
-                    println("TEST - doOnSuccss: $conn")
-                    conn.asyncResultsObservable.doOnEach { r -> Log.d(TAG, "doOnEach: $r") }
-                }
-                .doOnError { e ->
-                    println("TEST - doOnError: ${e.message}")
-                }
     }
 
-    private fun taskResultObserver(taskResult: TaskResult?) {
-        Log.d(TAG, "Observed TaskResult: {$taskResult}")
+    private fun setupRecorderManager() {
+        state = CONNECTING
+        Log.d(TAG, "-- setupRecorderManager ($state): $taskUUID")
+        recorderManager = RecorderManager(task, TASK_IDENTIFIER, taskUUID, this,
+                taskResultManager, recorderConfigPresentationFactory, this)
+        taskResultManager.getTaskResultManagerConnection(TASK_IDENTIFIER, taskUUID).doOnSuccess {
+            Log.d(TAG, "getTaskResultManagerConnection: $it")
+            it.finalTaskResult.doOnSuccess { taskResult ->
+                Log.d(TAG, "FINAL TASK RESULT: $taskResult")
+            }
+        }
+    }
+
+    /**
+     * @see RecorderManager.RecorderServiceConnectionListener
+     */
+    override fun onRecorderServiceConnected(recorderService: RecorderService, bound: Boolean) {
+        if (state == CONNECTING) {
+            this.recorderService = recorderService
+            recorderManager?.onStepTransition(null, startStep, NavDirection.SHIFT_RIGHT)
+            state = RECORDING
+            elapsedTime = 0
+            recordTimer.start()
+            Log.d(TAG, "onServiceConnected ($state)")
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(TAG, "onStartCommand: startId = $startId, isRecording = $isRecording")
+        Log.d(TAG, "onStartCommand ($state): startId = $startId")
 
         intent?.let {
-            when (val event = it.getIntExtra(EVENT, -1)) {
-                STARTED_WALKING -> startRecording()
-                STOPPED_WALKING -> stopRecording()
-                else -> throw IllegalArgumentException("EVENT is invalid: $event")
+            when (val event = it.getSerializableExtra(EVENT) as Event) {
+                Event.STARTED_WALKING -> startRecording()
+                Event.STOPPED_WALKING -> stopRecording()
+                else -> Log.d(TAG, "EVENT is invalid: $event")
             }
         }
 
@@ -162,7 +190,7 @@ class ActivityRecorderService : DaggerService() {
     // Save to Bridge
     // Stop service
     private fun startRecording() {
-        if (!isRecording) {
+        if (state == NEW) {
             val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
             val lastRecordedAt = sharedPrefs.getLong(LAST_RECORDED_AT, -1)
             val now = Date().time
@@ -170,45 +198,44 @@ class ActivityRecorderService : DaggerService() {
             Log.d(TAG, "-- lastRecordedAt: ${timeToDateStr(lastRecordedAt)}, now: ${timeToDateStr(now)}")
 
             if (now - lastRecordedAt > MIN_FREQUENCY_MS) {
-                Log.d(TAG, "-- startRecording ${timeToDateStr(now)}")
-                isRecording = true
+                Log.d(TAG, "-- startRecording ($state): ${timeToDateStr(now)}")
                 startForeground()
-//                CoroutineScope(Dispatchers.Default).launch {
-//                    delay(MAX_RECORDING_TIME_MS)
-//                    stopRecording()
-//                }
-                // NOTE: Currently RecorderService within RecorderManager is not bound, need to fix
-                // don't care about navDirection
-                recorderManager.onStepTransition(null, startStep, 0)
+                setupRecorderManager()
             } else {
                 Log.d(TAG, "-- NOT RECORDING - ONLY RECORD ONCE EVERY $MIN_FREQUENCY_MS")
-                stopSelf()
+                finish()
             }
         }
     }
 
     private fun startForeground() {
         createNotificationChannel()
-        val notification: Notification = NotificationCompat.Builder(this, getString(R.string.foreground_channel_id))
-            .setContentTitle(getText(R.string.recording_notification_title))
-            .setContentText(getText(R.string.recording_notification_message))
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .build()
-        startForeground(FOREGROUND_NOTIFICATION_ID, notification)
+        startForeground(FOREGROUND_NOTIFICATION_ID, createNotification())
+    }
+
+    private fun createNotification(text: String? = null): Notification {
+        return Builder(this, getString(string.foreground_channel_id))
+                .setContentTitle(getText(string.recording_notification_title))
+                .setContentText(text ?: getText(string.recording_notification_message))
+                .setSmallIcon(drawable.ic_launcher_foreground)
+                .build()
+    }
+
+    private fun updateNotification(text:String) {
+        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+                .notify(FOREGROUND_NOTIFICATION_ID, createNotification(text))
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create the NotificationChannel
-            val title = getString(R.string.foreground_channel_title)
-            val desc = getString(R.string.foreground_channel_desc)
+            val title = getString(string.foreground_channel_title)
+            val desc = getString(string.foreground_channel_desc)
             val importance = NotificationManager.IMPORTANCE_LOW
-            val mChannel = NotificationChannel(getString(R.string.foreground_channel_id), title, importance)
+            val mChannel = NotificationChannel(getString(string.foreground_channel_id), title, importance)
             mChannel.description = desc
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(mChannel)
+            // Register the channel with the system; can't change importance or other behaviors after this
+            (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(mChannel)
         }
     }
 
@@ -219,22 +246,51 @@ class ActivityRecorderService : DaggerService() {
     // Save to bridge - any recording is worth saving
     // Stop service
     private fun stopRecording() {
-        if (isRecording) {
+        if (state == RECORDING) {
             Log.d(
                 TAG,
-                "-- stopRecording ${SimpleDateFormat(TIME_PATTERN, Locale.US).format(Date())}"
+                "-- stopRecording ($state): ${SimpleDateFormat(TIME_PATTERN, Locale.US).format(Date())}"
             )
-            isRecording = false
-//            CoroutineScope(Dispatchers.Default).launch {
-//                recorderService.getActiveRecorders(taskUUID!!).forEach {
-//                    it.value.stop()
-//                }
-//            }
-            recorderManager.onStepTransition(stopStep, null, 0)
 
-            val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
-            sharedPrefs.edit().putLong(LAST_RECORDED_AT, Date().time).apply()
+            recordTimer.cancel()
+
+            state = RECORDED
+
+            if (elapsedTime >= MIN_RECORDING_TIME_SEC) {
+                recorderManager?.onStepTransition(stopStep, null, NavDirection.SHIFT_LEFT)
+
+                val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
+                sharedPrefs.edit().putLong(LAST_RECORDED_AT, Date().time).apply()
+
+                saveToBridge()
+            } else {
+                cancelRecording()
+            }
         }
+        if (state == NEW|| state == CONNECTING) {
+            finish()
+        }
+
+    }
+
+    private fun saveToBridge() {
+        state = SAVING
+        Log.d(TAG, "-- saveToBridge ($state)")
+
+        // MpDataProvider.getInstance().uploadTaskResult()
+        finish()
+    }
+
+    private fun cancelRecording() {
+        state = CANCELING
+        Log.d(TAG, "-- cancelRecording ($state)")
+        this.recorderService?.cancelRecorder(taskUUID, ACTION_IDENTIFIER)
+        finish()
+    }
+
+    private fun finish() {
+        state = FINISHED
+        Log.d(TAG, "-- finish ($state)")
         stopSelf()
     }
 
@@ -244,7 +300,7 @@ class ActivityRecorderService : DaggerService() {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
-        unbindService(recorderManager)
+        recorderManager?.unbind()
         super.onDestroy()
     }
 
@@ -256,8 +312,20 @@ class ActivityRecorderService : DaggerService() {
         }
     }
 
+    enum class Event {
+        STARTED_WALKING, STOPPED_WALKING
+    }
+
+    private enum class State {
+        NEW, CONNECTING, RECORDING, RECORDED, SAVING, CANCELING, FINISHED
+    }
+
     companion object {
         private const val TAG = "ActivityRecorderService"
+
+        private const val TASK_IDENTIFIER = "PassiveGait"
+
+        private const val ACTION_IDENTIFIER = "passiveGait"
 
         private const val TRANSITION_PREFS = "transitionPrefs"
 
@@ -267,14 +335,12 @@ class ActivityRecorderService : DaggerService() {
 
         private const val FOREGROUND_NOTIFICATION_ID = 100
 
-        private const val MIN_FREQUENCY_MS: Long = 0 // 1000 * 60 * 3
+        private const val MIN_FREQUENCY_MS: Long = 1000 * 60 * 3
 
-        private const val MAX_RECORDING_TIME_MS: Long = 1000 * 30
+        private const val MIN_RECORDING_TIME_SEC = 15L
+
+        private const val MAX_RECORDING_TIME_SEC = 30L
 
         const val EVENT = "EVENT"
-
-        const val STARTED_WALKING = 1
-
-        const val STOPPED_WALKING = 0
     }
 }

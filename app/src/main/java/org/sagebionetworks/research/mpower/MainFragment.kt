@@ -32,25 +32,14 @@
 
 package org.sagebionetworks.research.mpower
 
-import android.Manifest
-import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.gms.location.ActivityRecognition
-import com.google.android.gms.location.ActivityTransition
-import com.google.android.gms.location.ActivityTransitionRequest
-import com.google.android.gms.location.DetectedActivity
-import com.google.android.gms.tasks.Task
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.common.base.Supplier
 import com.google.common.collect.ImmutableMap
@@ -59,6 +48,7 @@ import kotlinx.android.synthetic.main.fragment_main.navigation
 import org.sagebionetworks.research.mpower.history.HistoryItemFragment
 import org.sagebionetworks.research.mpower.profile.MPowerProfileSettingsFragment
 import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment
+import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -68,40 +58,6 @@ import javax.inject.Inject
  */
 class MainFragment : DaggerFragment(), OnRequestPermissionsResultCallback {
     private val LOGGER = LoggerFactory.getLogger(MainFragment::class.java)
-
-    private val runningQOrLater = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-    private var activityTrackingEnabled = false
-    private val activityTransitions: MutableList<ActivityTransition> by lazy {
-        val transitions = mutableListOf<ActivityTransition>()
-        transitions.add(
-                ActivityTransition.Builder()
-                        .setActivityType(DetectedActivity.STILL)
-                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-                        .build()
-        )
-        transitions.add(
-                ActivityTransition.Builder()
-                        .setActivityType(DetectedActivity.STILL)
-                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
-                        .build()
-        )
-        transitions.add(
-                ActivityTransition.Builder()
-                        .setActivityType(DetectedActivity.WALKING)
-                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-                        .build()
-        )
-        transitions.add(
-                ActivityTransition.Builder()
-                        .setActivityType(DetectedActivity.WALKING)
-                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
-                        .build()
-        )
-        transitions
-    }
-
-    private lateinit var pendingIntent: PendingIntent
-    // private val transitionsReceiver = ActivityTransitionsReceiver()
 
     // tag for identifying an instance of a fragment
     private val TAG_FRAGMENT_TRACKING = "tracking"
@@ -130,19 +86,8 @@ class MainFragment : DaggerFragment(), OnRequestPermissionsResultCallback {
         return@OnNavigationItemSelectedListener true
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setupPendingIntentForActivityTransitions()
-    }
-
-    private fun setupPendingIntentForActivityTransitions() {
-        LOGGER.debug("setupPendingIntentForActivityTransitions")
-        val intent = Intent(requireContext().applicationContext, ActivityTransitionsReceiver::class.java)
-        intent.action = ActivityTransitionsReceiver.INTENT_ACTION
-        pendingIntent = PendingIntent.getBroadcast(requireContext().applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-//        val intent = Intent(ActivityTransitionsReceiver.INTENT_ACTION)
-//        pendingIntent = PendingIntent.getBroadcast(requireContext().applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    private val passiveGaitViewModel: PassiveGaitViewModel by lazy {
+        ViewModelProviders.of(requireActivity()).get(PassiveGaitViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -207,127 +152,15 @@ class MainFragment : DaggerFragment(), OnRequestPermissionsResultCallback {
         }
     }
 
-    /**
-     * Registers callbacks for [ActivityTransition] events via a custom
-     * [BroadcastReceiver]
-     */
-    private fun enableActivityTransitions() {
-        LOGGER.debug("enableActivityTransitions()")
-        val request = ActivityTransitionRequest(activityTransitions)
-        val task: Task<Void> = ActivityRecognition.getClient(requireActivity())
-                .requestActivityUpdates(3000, pendingIntent)
-                // .requestActivityTransitionUpdates(request, pendingIntent)
-        // NOTE: Using activity updates for now.  Activity transitions are very delayed.  In testing, I end up walking
-        // around and sitting down before the first transition event even makes it to the BroadcastReceiver
-
-        task.addOnSuccessListener {
-            activityTrackingEnabled = true
-            LOGGER.debug("Transitions Api was successfully registered.")
-        }
-        task.addOnFailureListener { e ->
-            LOGGER.error("Transitions Api could NOT be registered: $e", e)
-        }
-    }
-
-    /**
-     * Unregisters callbacks for [ActivityTransition] events via a custom
-     * [BroadcastReceiver]
-     */
-    private fun disableActivityTransitions() {
-        LOGGER.debug("disableActivityTransitions()")
-        val task: Task<Void> = ActivityRecognition.getClient(requireActivity())
-                .removeActivityUpdates(pendingIntent)
-                // .removeActivityTransitionUpdates(pendingIntent)
-
-        task.addOnSuccessListener {
-            activityTrackingEnabled = false
-                    LOGGER.debug("Transitions successfully unregistered.")
-        }
-        .addOnFailureListener { e ->
-            LOGGER.error("Transitions could not be unregistered: $e", e)
-        }
-    }
-
-    /**
-     * On devices Android 10 and beyond (29+), you need to ask for the ACTIVITY_RECOGNITION via the
-     * run-time permissions.
-     */
-    private fun activityRecognitionPermissionApproved(): Boolean {
-        return if (runningQOrLater) {
-            PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACTIVITY_RECOGNITION
-            )
-        } else {
-            true
-        }
-    }
-
-    private fun initTracking() {
-        if (activityRecognitionPermissionApproved()) {
-            toggleTracking()
-        } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(), arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                PERMISSION_REQUEST_ACTIVITY_RECOGNITION
-            )
-        }
-    }
-
-    private fun toggleTracking() {
-        if (activityTrackingEnabled) {
-            disableActivityTransitions()
-        } else {
-            enableActivityTransitions()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray
-    ) {
-        val permissionResult = "Request code: $requestCode, Permissions: ${permissions.contentToString()}, Results: ${grantResults.contentToString()}"
-        LOGGER.debug("onRequestPermissionsResult(): $permissionResult")
-
-        when (requestCode) {
-            PERMISSION_REQUEST_ACTIVITY_RECOGNITION -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    toggleTracking()
-                } else {
-                    // TODO: Handle or ignore?
-                    // requireActivity().finish()
-                }
-                return
-            }
-            else -> {
-                // Ignore all other requests.
-            }
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-    }
-
     override fun onResume() {
+        LOGGER.debug("MainFragment onResume")
         super.onResume()
-        initTracking()
+        passiveGaitViewModel.enableTracking()
     }
 
     override fun onPause() {
-        if (activityTrackingEnabled) {
-            disableActivityTransitions()
-        }
+        LOGGER.debug("MainFragment onPause")
+        passiveGaitViewModel.disableTracking()
         super.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-    companion object {
-        private const val PERMISSION_REQUEST_ACTIVITY_RECOGNITION = 45
     }
 }

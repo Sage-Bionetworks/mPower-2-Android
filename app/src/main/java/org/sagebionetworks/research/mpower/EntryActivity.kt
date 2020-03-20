@@ -32,12 +32,44 @@
 
 package org.sagebionetworks.research.mpower
 
+import android.app.PendingIntent
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.DaggerAppCompatActivity
-
+import org.sagebionetworks.research.mpower.util.ActivityTransitionUtil
+import org.sagebionetworks.research.mpower.util.ActivityTransitionUtil.OnSuccessListener
+import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel
+import org.slf4j.LoggerFactory
 
 class EntryActivity : DaggerAppCompatActivity() {
+
+    private val LOGGER = LoggerFactory.getLogger(EntryActivity::class.java)
+
+    private val passiveGaitViewModel: PassiveGaitViewModel by lazy {
+        ViewModelProvider(this).get(PassiveGaitViewModel::class.java)
+    }
+
+    private val trackingTransitionsObserver = Observer<Boolean> { tracking ->
+        if (tracking) {
+            ActivityTransitionUtil.enable(this, pendingIntent, object : OnSuccessListener {
+                override fun onSuccess() {
+                    passiveGaitViewModel.trackingRegistered = true
+                }
+            })
+        } else {
+            ActivityTransitionUtil.disable(this, pendingIntent, object : OnSuccessListener {
+                override fun onSuccess() {
+                    passiveGaitViewModel.trackingRegistered = false
+                }
+            })
+        }
+    }
+
+    private lateinit var pendingIntent: PendingIntent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.entry_activity)
@@ -46,6 +78,18 @@ class EntryActivity : DaggerAppCompatActivity() {
                     .replace(R.id.container, EntryFragment())
                     .commitNow()
         }
+
+        setupPendingIntentForActivityTransitions()
+
+        passiveGaitViewModel.trackTransitions.observe(this, trackingTransitionsObserver)
+    }
+
+    private fun setupPendingIntentForActivityTransitions() {
+        LOGGER.debug("setupPendingIntentForActivityTransitions")
+        val intent = Intent(applicationContext, ActivityTransitionsReceiver::class.java)
+        intent.action = ActivityTransitionsReceiver.INTENT_ACTION
+        pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     private fun onBackPressed(fm: androidx.fragment.app.FragmentManager): Boolean {
@@ -71,6 +115,34 @@ class EntryActivity : DaggerAppCompatActivity() {
             return
         } else {
             super.onBackPressed()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
+    ) {
+        val permissionResult = "Request code: $requestCode, Permissions: ${permissions.contentToString()}, " +
+                "Results: ${grantResults.contentToString()}"
+        LOGGER.debug("onRequestPermissionsResult(): $permissionResult")
+
+        when (requestCode) {
+            ActivityTransitionUtil.PERMISSION_REQUEST_ACTIVITY_RECOGNITION -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // do nothing, because tracking is enabled by child component
+                    LOGGER.debug("ACTIVITY RECOGNITION Permission Granted")
+                } else {
+                    LOGGER.debug("ACTIVITY RECOGNITION Permission Denied")
+                    // TODO: Handle or ignore?
+                    // requireActivity().finish()
+                }
+                return
+            }
+            else -> {
+                // Ignore all other requests.
+            }
         }
     }
 }
