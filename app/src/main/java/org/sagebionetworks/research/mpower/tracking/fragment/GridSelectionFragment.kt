@@ -60,15 +60,15 @@ class GridSelectionFragment : AppCompatDialogFragment() {
         if (savedInstanceState == null) {
             val args = arguments
             if (args != null) {
-                items = args.getParcelableArrayList<SelectionItem>(ARG_ITEMS)!!
-                title = args.getString(ARG_TITLE)!!
+                items = args.getParcelableArrayList<SelectionItem>(ARG_ITEMS) ?: ArrayList()
+                title = args.getString(ARG_TITLE) ?: ""
                 singleSelect = args.getBoolean(ARG_SINGLE_SELECT, false)
             } else {
                 LOGGER.warn("No arguments found")
             }
         } else {
-            items = savedInstanceState.getParcelableArrayList<SelectionItem>(ARG_ITEMS)!!
-            title = savedInstanceState.getString(ARG_TITLE)!!
+            items = savedInstanceState.getParcelableArrayList<SelectionItem>(ARG_ITEMS) ?: ArrayList()
+            title = savedInstanceState.getString(ARG_TITLE) ?: ""
             singleSelect = savedInstanceState.getBoolean(ARG_SINGLE_SELECT)
         }
     }
