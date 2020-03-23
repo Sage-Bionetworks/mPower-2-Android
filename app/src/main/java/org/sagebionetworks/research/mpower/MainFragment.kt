@@ -39,6 +39,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.common.base.Supplier
@@ -87,7 +88,7 @@ class MainFragment : DaggerFragment(), OnRequestPermissionsResultCallback {
     }
 
     private val passiveGaitViewModel: PassiveGaitViewModel by lazy {
-        ViewModelProviders.of(requireActivity()).get(PassiveGaitViewModel::class.java)
+        ViewModelProvider(requireActivity()).get(PassiveGaitViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

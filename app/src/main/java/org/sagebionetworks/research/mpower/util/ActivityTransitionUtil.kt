@@ -35,6 +35,7 @@ package org.sagebionetworks.research.mpower.util
 import android.Manifest
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -57,11 +58,11 @@ object ActivityTransitionUtil {
     /**
      * Registers callbacks for [ActivityTransition] events via a custom [BroadcastReceiver]
      */
-    fun enable(activity:AppCompatActivity, pendingIntent:PendingIntent,
+    fun enable(context:Context, pendingIntent:PendingIntent,
             onSuccessListener: OnSuccessListener? = null) {
-        if (activityRecognitionPermissionApproved(activity)) {
+        if (activityRecognitionPermissionApproved(context)) {
             LOGGER.debug("enableActivityTransitions()")
-            val task: com.google.android.gms.tasks.Task<Void> = ActivityRecognition.getClient(activity)
+            val task: com.google.android.gms.tasks.Task<Void> = ActivityRecognition.getClient(context)
                     .requestActivityUpdates(ACTIVITY_RESULT_FREQUENCY_IN_MS, pendingIntent)
             // .requestActivityTransitionUpdates(ActivityTransitionRequest(activityTransitions), pendingIntent)
 
@@ -71,21 +72,22 @@ object ActivityTransitionUtil {
             }.addOnFailureListener { e ->
                 LOGGER.error("Transitions Api could NOT be registered: $e", e)
             }
-        } else {
-            ActivityCompat.requestPermissions(
-                    activity, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                    PERMISSION_REQUEST_ACTIVITY_RECOGNITION
-            )
         }
+//        else {
+//            ActivityCompat.requestPermissions(
+//                    activity, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+//                    PERMISSION_REQUEST_ACTIVITY_RECOGNITION
+//            )
+//        }
     }
 
     /**
      * Unregisters callbacks for [ActivityTransition] events via a custom [BroadcastReceiver]
      */
-    fun disable(activity:AppCompatActivity, pendingIntent:PendingIntent,
+    fun disable(context:Context, pendingIntent:PendingIntent,
             onSuccessListener: OnSuccessListener? = null) {
         LOGGER.debug("disableActivityTransitions()")
-        val task: com.google.android.gms.tasks.Task<Void> = ActivityRecognition.getClient(activity)
+        val task: com.google.android.gms.tasks.Task<Void> = ActivityRecognition.getClient(context)
                 .removeActivityUpdates(pendingIntent)
         // .removeActivityTransitionUpdates(pendingIntent)
 
@@ -101,11 +103,11 @@ object ActivityTransitionUtil {
      * On devices Android 10 and beyond (29+), you need to ask for the ACTIVITY_RECOGNITION via the
      * run-time permissions.
      */
-    private fun activityRecognitionPermissionApproved(activity:AppCompatActivity): Boolean {
+    fun activityRecognitionPermissionApproved(context:Context): Boolean {
         // TODO: Integrate consent alongside os permissions
         return if (RUNNING_Q_OR_LATER) {
             PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(
-                activity,
+                context,
                 Manifest.permission.ACTIVITY_RECOGNITION
             )
         } else {

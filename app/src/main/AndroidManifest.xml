@@ -142,6 +142,7 @@
             </intent-filter>
         </receiver>
 
+        <service android:name=".TransitionMonitoringService" android:exported="false" />
         <service android:name=".ActivityRecorderService" android:exported="false" />
     </application>
 

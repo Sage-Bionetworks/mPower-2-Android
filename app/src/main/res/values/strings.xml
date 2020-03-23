@@ -124,6 +124,9 @@
     <string name="recording_notification_title">mPower Recording</string>
     <string name="recording_notification_message">Recording Walk...</string>
 
+    <string name="monitoring_notification_title">mPower Monitoring</string>
+    <string name="monitoring_notification_message">Monitoring movement activity</string>
+
     <string name="measuring_center_label">Walk And Balance</string>
     <string name="measuring_left_label">Finger Tapping</string>
     <string name="measuring_right_label">Tremor Test</string>
