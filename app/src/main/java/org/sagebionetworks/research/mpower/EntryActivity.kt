@@ -58,8 +58,10 @@ class EntryActivity : DaggerAppCompatActivity() {
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            transitionMonitoringService = (binder as TransitionMonitoringService.ServiceBinder).service
-            isBound = true
+            if (!isBound) {
+                transitionMonitoringService = (binder as TransitionMonitoringService.ServiceBinder).service
+                isBound = true
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {

@@ -161,7 +161,7 @@ class MainFragment : DaggerFragment(), OnRequestPermissionsResultCallback {
 
     override fun onPause() {
         LOGGER.debug("MainFragment onPause")
-        passiveGaitViewModel.disableTracking()
+        // passiveGaitViewModel.disableTracking()
         super.onPause()
     }
 }
