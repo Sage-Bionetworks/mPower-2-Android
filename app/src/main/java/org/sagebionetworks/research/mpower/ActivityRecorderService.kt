@@ -59,9 +59,11 @@ import org.sagebionetworks.research.mpower.ActivityRecorderService.State.RECORDI
 import org.sagebionetworks.research.mpower.ActivityRecorderService.State.SAVING
 import org.sagebionetworks.research.mpower.R.drawable
 import org.sagebionetworks.research.mpower.R.string
+import org.sagebionetworks.research.mpower.research.MpIdentifier
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider
 import org.sagebionetworks.research.mpower.util.Repeat
 import org.sagebionetworks.research.presentation.perform_task.TaskResultManager
+import org.sagebionetworks.research.presentation.perform_task.TaskResultProcessingManager
 import org.sagebionetworks.research.presentation.recorder.RecorderActionType
 import org.sagebionetworks.research.presentation.recorder.sensor.SensorRecorderConfigPresentationFactory
 import org.sagebionetworks.research.presentation.recorder.service.RecorderManager
@@ -80,6 +82,9 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
 
     @Inject
     lateinit var recorderConfigPresentationFactory: SensorRecorderConfigPresentationFactory
+
+    @Inject
+    lateinit var taskResultProcessingManager: TaskResultProcessingManager
 
     private var recorderManager: RecorderManager? = null
 
@@ -278,6 +283,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
         Log.d(TAG, "-- saveToBridge ($state)")
 
         // MpDataProvider.getInstance().uploadTaskResult()
+        taskResultProcessingManager.registerTaskRun(TASK_IDENTIFIER, taskUUID)
         finish()
     }
 
@@ -323,7 +329,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
     companion object {
         private const val TAG = "ActivityRecorderService"
 
-        private const val TASK_IDENTIFIER = "PassiveGait"
+        private const val TASK_IDENTIFIER = MpIdentifier.PASSIVE_GAIT
 
         private const val ACTION_IDENTIFIER = "passiveGait"
 
