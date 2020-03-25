@@ -33,18 +33,16 @@
 package org.sagebionetworks.research.mpower
 
 import android.Manifest
-import android.content.ComponentName
-import android.content.Context
+import android.app.PendingIntent
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.IBinder
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.DaggerAppCompatActivity
 import org.sagebionetworks.research.mpower.util.ActivityTransitionUtil
+import org.sagebionetworks.research.mpower.util.ActivityTransitionUtil.OnSuccessListener
 import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel
 import org.slf4j.LoggerFactory
 
@@ -52,23 +50,7 @@ class EntryActivity : DaggerAppCompatActivity() {
 
     private val LOGGER = LoggerFactory.getLogger(EntryActivity::class.java)
 
-    private var transitionMonitoringService: TransitionMonitoringService? = null
-
-    private var isBound = false
-
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            if (!isBound) {
-                transitionMonitoringService = (binder as TransitionMonitoringService.ServiceBinder).service
-                isBound = true
-            }
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
-            transitionMonitoringService = null
-        }
-    }
+    private lateinit var pendingIntent: PendingIntent
 
     private val passiveGaitViewModel: PassiveGaitViewModel by lazy {
         ViewModelProvider(this).get(PassiveGaitViewModel::class.java)
@@ -77,13 +59,17 @@ class EntryActivity : DaggerAppCompatActivity() {
     private val trackingTransitionsObserver = Observer<Boolean> { tracking ->
         LOGGER.debug("OBSERVER: $tracking")
         if (tracking) {
-            if (!isBound) {
-                LOGGER.debug("bindTransitionMonitoringService")
-                val intent = Intent(this, TransitionMonitoringService::class.java)
-                bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-            }
+            ActivityTransitionUtil.enable(this, pendingIntent, object : OnSuccessListener {
+                override fun onSuccess() {
+                    passiveGaitViewModel.trackingRegistered = true
+                }
+            })
         } else {
-            unbindTransitionMonitoringService()
+            ActivityTransitionUtil.disable(this, pendingIntent, object : OnSuccessListener {
+                override fun onSuccess() {
+                    passiveGaitViewModel.trackingRegistered = false
+                }
+            })
         }
     }
 
@@ -96,7 +82,17 @@ class EntryActivity : DaggerAppCompatActivity() {
                     .commitNow()
         }
 
+        setupPendingIntentForActivityTransitions()
+
         passiveGaitViewModel.trackTransitions.observe(this, trackingTransitionsObserver)
+    }
+
+    private fun setupPendingIntentForActivityTransitions() {
+        LOGGER.debug("setupPendingIntentForActivityTransitions")
+        val intent = Intent(applicationContext, ActivityTransitionsReceiver::class.java)
+        intent.action = ActivityTransitionsReceiver.INTENT_ACTION
+        pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     private fun onBackPressed(fm: androidx.fragment.app.FragmentManager): Boolean {
@@ -137,16 +133,7 @@ class EntryActivity : DaggerAppCompatActivity() {
 
     override fun onDestroy() {
         LOGGER.debug("onDestroy")
-        unbindTransitionMonitoringService()
         super.onDestroy()
-    }
-
-    private fun unbindTransitionMonitoringService() {
-        if (isBound) {
-            LOGGER.debug("unbindTransitionMonitoringService")
-            unbindService(serviceConnection);
-            isBound = false;
-        }
     }
 
     override fun onRequestPermissionsResult(

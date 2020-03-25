@@ -43,7 +43,7 @@ import androidx.lifecycle.ViewModel
 class PassiveGaitViewModel : ViewModel() {
 
     // Indicates whether activity transition api was successfully registered
-    // var trackingRegistered: Boolean = false
+    var trackingRegistered: Boolean = false
 
     // Tracks whether activity transition api is enabled/disabled
     val trackTransitions: MutableLiveData<Boolean> by lazy {
@@ -52,9 +52,9 @@ class PassiveGaitViewModel : ViewModel() {
 
     // Helper method to enable activity transition api tracking
     fun enableTracking() {
-        //if (!trackingRegistered) {
+        if (!trackingRegistered) {
             trackTransitions.value = true
-        //}
+        }
     }
 
     // Helper method to disable activity transition api tracking

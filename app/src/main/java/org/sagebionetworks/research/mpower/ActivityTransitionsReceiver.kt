@@ -55,7 +55,7 @@ class ActivityTransitionsReceiver : BroadcastReceiver() {
     private val LOGGER = LoggerFactory.getLogger(ActivityTransitionsReceiver::class.java)
 
     override fun onReceive(context: Context, intent: Intent) {
-        LOGGER.debug("onReceive")
+        // LOGGER.debug("onReceive")
 
         if (!TextUtils.equals(INTENT_ACTION, intent.action)) {
             LOGGER.debug("Received an unsupported action in TransitionsReceiver: action = ${intent.action}")
@@ -64,7 +64,7 @@ class ActivityTransitionsReceiver : BroadcastReceiver() {
 
         val sharedPrefs = context.getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
         val currentActivityType = sharedPrefs.getInt(CURRENT_ACTIVITY_TYPE, -1)
-        LOGGER.debug("CURRENT ACTIVITY TYPE: ${toActivityString(currentActivityType)}")
+        val currentActivityInfo = "CURRENT ACTIVITY TYPE: ${toActivityString(currentActivityType)}"
 
         if (ActivityTransitionResult.hasResult(intent)) {
             val result = ActivityTransitionResult.extractResult(intent)
@@ -75,7 +75,7 @@ class ActivityTransitionsReceiver : BroadcastReceiver() {
                             event.transitionType
                         )}), (${TimeUnit.NANOSECONDS.toSeconds(event.elapsedRealTimeNanos)})" +
                         " ${SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())}"
-                    LOGGER.debug(info)
+                    LOGGER.debug("$currentActivityInfo $info")
                 }
             }
         }
@@ -105,7 +105,11 @@ class ActivityTransitionsReceiver : BroadcastReceiver() {
     private fun startService(context: Context, event: ActivityRecorderService.Event) {
         val i = Intent(context, ActivityRecorderService::class.java)
         i.putExtra(ActivityRecorderService.EVENT, event)
-        context.startService(i)
+        if (RUNNING_O_OR_LATER) {
+            context.startForegroundService(i)
+        } else {
+            context.startService(i)
+        }
     }
 
     private fun onStoppedWalking(context: Context) {

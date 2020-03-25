@@ -135,14 +135,13 @@
         </receiver>
         <receiver
             android:name=".ActivityTransitionsReceiver"
-            android:exported="false"
+            android:exported="true"
             android:permission="com.google.android.gms.permission.ACTIVITY_RECOGNITION">
             <intent-filter>
                 <action android:name="org.sagebionetworks.research.mpower.TRANSITIONS_RECEIVER_ACTION"/>
             </intent-filter>
         </receiver>
 
-        <service android:name=".TransitionMonitoringService" android:exported="false" />
         <service android:name=".ActivityRecorderService" android:exported="false" />
     </application>
 

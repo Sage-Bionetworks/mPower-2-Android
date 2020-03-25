@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -44,7 +45,7 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
     lateinit var profileViewModelFactory: MPowerProfileViewModel.Factory
 
     override fun loadProfileViewModel(): ProfileViewModel {
-        mPowerProfileViewModel = ViewModelProviders.of(this, profileViewModelFactory).get(MPowerProfileViewModel::class.java);
+        mPowerProfileViewModel = ViewModelProvider(this, profileViewModelFactory).get(MPowerProfileViewModel::class.java)
         return mPowerProfileViewModel
     }
 

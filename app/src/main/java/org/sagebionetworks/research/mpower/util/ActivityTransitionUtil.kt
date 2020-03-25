@@ -38,8 +38,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityTransition
@@ -61,8 +59,9 @@ object ActivityTransitionUtil {
     fun enable(context:Context, pendingIntent:PendingIntent,
             onSuccessListener: OnSuccessListener? = null) {
         if (activityRecognitionPermissionApproved(context)) {
-            LOGGER.debug("enableActivityTransitions()")
-            val task: com.google.android.gms.tasks.Task<Void> = ActivityRecognition.getClient(context)
+            val client = ActivityRecognition.getClient(context)
+            LOGGER.debug("enableActivityTransitions(): ${client.instanceId}")
+            val task: com.google.android.gms.tasks.Task<Void> = client
                     .requestActivityUpdates(ACTIVITY_RESULT_FREQUENCY_IN_MS, pendingIntent)
             // .requestActivityTransitionUpdates(ActivityTransitionRequest(activityTransitions), pendingIntent)
 
@@ -73,12 +72,6 @@ object ActivityTransitionUtil {
                 LOGGER.error("Transitions Api could NOT be registered: $e", e)
             }
         }
-//        else {
-//            ActivityCompat.requestPermissions(
-//                    activity, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-//                    PERMISSION_REQUEST_ACTIVITY_RECOGNITION
-//            )
-//        }
     }
 
     /**
