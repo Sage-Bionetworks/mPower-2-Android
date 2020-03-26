@@ -5,7 +5,7 @@ buildscript {
     ext.bridge_sdk_version = '0.4.0'
     ext.sage_research_version = '0.2.0'
     ext.support_library_version = '28.0.0'
-    ext.butterknife_version = '10.2.1'
+    ext.butterknife_version = '10.2.0'
     ext.dagger_version = '2.21'
     ext.guava_version = '27.0.1-android'
     ext.auto_value_version = '1.6.3'

@@ -5,6 +5,8 @@ include ':app', ':sageresearch-mpower', ':researchstack-mpower'
 includeBuild ('../SageResearch-Android') {
     dependencySubstitution {
         substitute module('org.sagebionetworks.research:data') with project(':data')
+        substitute module('org.sagebionetworks.research:domain') with project(':domain')
+        // substitute module('org.sagebionetworks.research:mobile-ui') with project(':mobile-ui')
         substitute module('org.sagebionetworks.research:presentation') with project(':presentation')
     }
 }
@@ -15,11 +17,12 @@ includeBuild ('../SageResearch-Android') {
 
 // uncomment this for a "composite build" which substitutes BridgeAndroidSDK artifacts
 // for the source code in the indicated directory
-// includeBuild ('../BridgeAndroidSDK') {
-//     dependencySubstitution {
-//         substitute module('org.sagebionetworks.bridge:android-sdk') with project(':android-sdk')
-//     }
-// }
+includeBuild ('../BridgeAndroidSDK') {
+ dependencySubstitution {
+     substitute module('org.sagebionetworks.bridge:researchstack-sdk') with project(':researchstack-sdk')
+     substitute module('org.sagebionetworks.bridge:sageresearch-app-sdk') with project(':sageresearch-app-sdk')
+ }
+}
 
 // uncomment this for a "composite build" which substitutes ResearchStack artifacts
 // for the source code in the indicated directory

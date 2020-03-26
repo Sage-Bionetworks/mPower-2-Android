@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../BridgeAndroidSDK/BridgeAndroidSDK.iml" filepath="$PROJECT_DIR$/../BridgeAndroidSDK/BridgeAndroidSDK.iml" group="BridgeAndroidSDK" />
       <module fileurl="file://$PROJECT_DIR$/../SageResearch-Android/SageResearch-Android.iml" filepath="$PROJECT_DIR$/../SageResearch-Android/SageResearch-Android.iml" group="SageResearch-Android" />
       <module fileurl="file://$PROJECT_DIR$/../SageResearch-Android/app/SageResearch-Android-app.iml" filepath="$PROJECT_DIR$/../SageResearch-Android/app/SageResearch-Android-app.iml" group="SageResearch-Android/app" />
+      <module fileurl="file://$PROJECT_DIR$/../BridgeAndroidSDK/android-sdk/android-sdk.iml" filepath="$PROJECT_DIR$/../BridgeAndroidSDK/android-sdk/android-sdk.iml" group="BridgeAndroidSDK/android-sdk" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/code-mPower-2-Android.iml" filepath="$PROJECT_DIR$/code-mPower-2-Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/../SageResearch-Android/data/data.iml" filepath="$PROJECT_DIR$/../SageResearch-Android/data/data.iml" group="SageResearch-Android/data" />
@@ -19,7 +21,10 @@
       <module fileurl="file://$PROJECT_DIR$/../SageResearch-Android/mobile-ui/mobile-ui.iml" filepath="$PROJECT_DIR$/../SageResearch-Android/mobile-ui/mobile-ui.iml" group="SageResearch-Android/mobile-ui" />
       <module fileurl="file://$PROJECT_DIR$/../SageResearch-Android/presentation/presentation.iml" filepath="$PROJECT_DIR$/../SageResearch-Android/presentation/presentation.iml" group="SageResearch-Android/presentation" />
       <module fileurl="file://$PROJECT_DIR$/researchstack-mpower/researchstack-mpower.iml" filepath="$PROJECT_DIR$/researchstack-mpower/researchstack-mpower.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../BridgeAndroidSDK/researchstack-sdk/researchstack-sdk.iml" filepath="$PROJECT_DIR$/../BridgeAndroidSDK/researchstack-sdk/researchstack-sdk.iml" group="BridgeAndroidSDK/researchstack-sdk" />
+      <module fileurl="file://$PROJECT_DIR$/../BridgeAndroidSDK/sageresearch-app-sdk/sageresearch-app-sdk.iml" filepath="$PROJECT_DIR$/../BridgeAndroidSDK/sageresearch-app-sdk/sageresearch-app-sdk.iml" group="BridgeAndroidSDK/sageresearch-app-sdk" />
       <module fileurl="file://$PROJECT_DIR$/sageresearch-mpower/sageresearch-mpower.iml" filepath="$PROJECT_DIR$/sageresearch-mpower/sageresearch-mpower.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../BridgeAndroidSDK/test-utils/test-utils.iml" filepath="$PROJECT_DIR$/../BridgeAndroidSDK/test-utils/test-utils.iml" group="BridgeAndroidSDK/test-utils" />
     </modules>
   </component>
 </project>

@@ -134,6 +134,13 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
         startActivity(intent)
     }
 
+    override fun launchPassiveDataAllowed(profileItem: ProfileItemProfileTableItem,
+            profileDataItem: ProfileDataItem, value: String?) {
+        LOGGER.info("launchPassiveDataAllowed: $value")
+        val intent = Intent(activity, PassiveGaitPermissionActivity::class.java)
+        startActivity(intent)
+    }
+
     override fun onDetach() {
         super.onDetach()
         disposable?.dispose()

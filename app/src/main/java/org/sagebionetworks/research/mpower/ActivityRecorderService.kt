@@ -237,13 +237,13 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
 
     private fun startForeground() {
         createNotificationChannel()
-        startForeground(FOREGROUND_NOTIFICATION_ID, createNotification())
+        startForeground(FOREGROUND_NOTIFICATION_ID, createNotification(getString(string.recording_notification_init)))
     }
 
     private fun createNotification(text: String? = null): Notification {
         return Builder(this, getString(string.foreground_channel_id))
-                .setContentTitle(getText(string.recording_notification_title))
-                .setContentText(text ?: getText(string.recording_notification_message))
+                .setContentTitle(getString(string.recording_notification_title))
+                .setContentText(text ?: getString(string.recording_notification_message))
                 .setSmallIcon(drawable.ic_launcher_foreground)
                 .build()
     }
@@ -294,7 +294,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
                 cancelRecording()
             }
         }
-        if (state == NEW|| state == CONNECTING) {
+        if (state == NEW || state == CONNECTING) {
             finish()
         }
 
@@ -304,6 +304,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
         state = SAVING
         Log.d(TAG, "-- saveToBridge ($state)")
 
+        updateNotification("${getText(string.recording_notification_saving)}")
         // MpDataProvider.getInstance().uploadTaskResult()
         // taskResultProcessingManager.registerTaskRun(TASK_IDENTIFIER, taskUUID)
 
@@ -313,6 +314,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
     private fun cancelRecording() {
         state = CANCELING
         Log.d(TAG, "-- cancelRecording ($state)")
+        updateNotification(getString(string.recording_notification_canceling))
         this.recorderService?.cancelRecorder(taskUUID, ACTION_IDENTIFIER)
         finish()
     }
@@ -354,7 +356,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
 
         private const val TASK_IDENTIFIER = MpIdentifier.PASSIVE_GAIT
 
-        private const val ACTION_IDENTIFIER = MpIdentifier.PASSIVE_GAIT // "passiveGait"
+        private const val ACTION_IDENTIFIER = "walk_motion"
 
         private const val TRANSITION_PREFS = "transitionPrefs"
 
