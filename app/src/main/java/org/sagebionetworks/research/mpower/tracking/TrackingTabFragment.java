@@ -32,6 +32,7 @@ import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
+import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderState;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderViewModel;
@@ -106,6 +107,8 @@ public class TrackingTabFragment extends Fragment {
         return new TrackingTabFragment();
     }
 
+    private PassiveGaitViewModel passiveGaitViewModel;
+
     @Override
     public void onAttach(Context context) {
         AndroidSupportInjection.inject(this);
@@ -172,6 +175,8 @@ public class TrackingTabFragment extends Fragment {
         studyBurstReminderViewModel = new ViewModelProvider(this,
                 studyBurstReminderViewModelFactory).get(StudyBurstReminderViewModel.class);
         studyBurstReminderViewModel.reminderLiveData().observe(getViewLifecycleOwner(), this::updateStudyBurstReminders);
+
+        passiveGaitViewModel = new ViewModelProvider(getActivity()).get(PassiveGaitViewModel.class);
     }
 
     @Override
@@ -280,6 +285,7 @@ public class TrackingTabFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         LOGGER.info("onActivityResult with requestCode " + requestCode + " resultCode " + resultCode);
+
         // Will be set if a survey was just successfully completed and uploaded
         String successfulSurveyUploadTaskId = null;
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TASK) {
@@ -377,6 +383,8 @@ public class TrackingTabFragment extends Fragment {
      * @param requestCode to launch with
      */
     private void startActivityForResultParent(Intent intent, int requestCode) {
+        passiveGaitViewModel.disableTracking();
+
         Fragment parent = this;
         while (parent.getParentFragment() != null) {
             parent = parent.getParentFragment();

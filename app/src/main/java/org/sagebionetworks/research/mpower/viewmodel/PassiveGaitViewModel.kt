@@ -59,8 +59,8 @@ class PassiveGaitViewModel : ViewModel() {
 
     // Helper method to disable activity transition api tracking
     fun disableTracking() {
-        //if (trackingRegistered) {
+        if (trackingRegistered) {
             trackTransitions.value = false
-        //}
+        }
     }
 }
