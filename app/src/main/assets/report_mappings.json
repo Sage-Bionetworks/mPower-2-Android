@@ -1,5 +1,6 @@
 {
   "StudyBurstReminder": "singleton",
+  "PassiveDataPermission": "singleton",
   "Motivation": "singleton",
   "Demographics": "singleton",
   "Background": "singleton",

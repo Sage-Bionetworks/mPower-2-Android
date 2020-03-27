@@ -32,30 +32,20 @@
 
 package org.sagebionetworks.research.mpower.profile
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.RadioButton
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_passive_gait_permission.*
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
-import org.sagebionetworks.bridge.researchstack.BridgeDataProvider
-import org.sagebionetworks.bridge.rest.RestUtils
+import kotlinx.android.synthetic.main.activity_passive_gait_permission.back_icon
+import kotlinx.android.synthetic.main.activity_passive_gait_permission.done_button
+import kotlinx.android.synthetic.main.activity_passive_gait_permission.radio_not_now
+import kotlinx.android.synthetic.main.activity_passive_gait_permission.radio_okay
 import org.sagebionetworks.research.mpower.R
-import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
-import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity
-import org.sagebionetworks.researchstack.backbone.factory.IntentFactory
-import org.sagebionetworks.researchstack.backbone.model.TaskModel
-import org.sagebionetworks.researchstack.backbone.result.TaskResult
 import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity
-import org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment
-import org.sagebionetworks.researchstack.backbone.utils.StepResultHelper
 import org.slf4j.LoggerFactory
 import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
@@ -64,11 +54,9 @@ class PassiveGaitPermissionActivity : DaggerAppCompatActivity() {
 
     private val LOGGER = LoggerFactory.getLogger(PassiveGaitPermissionActivity::class.java)
 
-    private var disposable: Disposable? = null
-    private var compositeSubscription = CompositeSubscription()
-
     @Inject
     lateinit var viewModelFactory: PassiveGaitPermissionViewModel.Factory
+
     private lateinit var viewModel: PassiveGaitPermissionViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,36 +64,43 @@ class PassiveGaitPermissionActivity : DaggerAppCompatActivity() {
         setContentView(R.layout.activity_passive_gait_permission)
         viewModel = ViewModelProvider(this, viewModelFactory).get(PassiveGaitPermissionViewModel::class.java)
 
-        back_icon.setOnClickListener {
-            onBackPressed()
+        intent.getStringExtra(ARG_PASSIVE_DATA_ALLOWED_VALUE)?.let {
+            if (it == "true") {
+                radio_okay.isChecked = true
+            } else {
+                radio_not_now.isChecked = true
+            }
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
-    fun showLoading(show: Boolean) {
-        Handler(Looper.getMainLooper()).post {spinner.visibility = if (show) View.VISIBLE else View.GONE }
+        done_button.setOnClickListener { onDoneButtonClicked() }
+        back_icon.setOnClickListener { onBackPressed() }
     }
 
     fun onRadioButtonClicked(view: View) {
         if (view is RadioButton) {
-            // Is the button now checked?
-            val checked = view.isChecked
-
-            // Check which radio button was clicked
             when (view.getId()) {
                 R.id.radio_okay ->
-                    if (checked) {
-                        // TODO: Activate Passive Gait
+                    if (view.isChecked) {
+                        viewModel.passiveDataAllowed = true
                     }
                 R.id.radio_not_now ->
-                    if (checked) {
-                        // TODO: Disable Passive Gait
+                    if (view.isChecked) {
+                        viewModel.passiveDataAllowed = false
                     }
             }
         }
     }
 
+    protected fun onDoneButtonClicked() {
+        viewModel.createSaveTaskResult(viewModel.passiveDataAllowed)?.let {
+            val resultIntent = Intent()
+            resultIntent.putExtra(ViewTaskActivity.EXTRA_TASK_RESULT, it)
+            setResult(AppCompatActivity.RESULT_OK, resultIntent)
+        }
+        finish()
+    }
+
+    companion object {
+        const val ARG_PASSIVE_DATA_ALLOWED_VALUE = "PASSIVE_DATA_ALLOWED_VALUE"
+    }
 }

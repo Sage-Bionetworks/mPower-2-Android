@@ -94,7 +94,6 @@
             android:id="@+id/radio_okay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:button="@drawable/mp_radio_royal500"
             android:text="@string/passive_gait_permission_okay"
             android:textColor="@color/appWhite"
             android:textSize="@dimen/image_button_text_size"
@@ -106,13 +105,21 @@
             android:id="@+id/radio_not_now"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:button="@drawable/mp_radio_royal500"
             android:text="@string/passive_gait_permission_not_now"
             android:textColor="@color/appWhite"
             android:textSize="@dimen/image_button_text_size"
             android:padding="@dimen/rsb_padding_small"
             android:onClick="onRadioButtonClicked"/>
     </RadioGroup>
+
+    <Button
+        style="@style/MPower.RoundedCornerMaterialButton"
+        android:id="@+id/done_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mp_rounded_button_height"
+        android:layout_alignParentBottom="true"
+        android:text="@string/rsb_BUTTON_SAVE"
+        android:layout_margin="@dimen/rsb_padding_large" />
 
     <include layout="@layout/loading_spinner"
         android:id="@+id/spinner"

@@ -30,42 +30,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.mpower.profile
+package org.sagebionetworks.research.mpower.util
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.google.common.base.Preconditions
-import org.sagebionetworks.research.mpower.research.MpIdentifier
-import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
-import org.sagebionetworks.researchstack.backbone.result.StepResult
-import org.sagebionetworks.researchstack.backbone.result.TaskResult
-import org.sagebionetworks.researchstack.backbone.step.Step
-import java.util.Date
-import javax.inject.Inject
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class PassiveGaitPermissionViewModel(val reportRepo: ReportRepository): ViewModel() {
+/**
+ * Description:
+ *
+ * @author <a href="mailto:darryl@heliumfoot.com">Darryl Yip</a>
+ */
+class Debounce(
+        private val wait: Long,
+        private val fn: () -> Unit,
+        private val context: CoroutineContext = Dispatchers.Main) {
 
-    var passiveDataAllowed: Boolean = false
+    var job: Job? = null
 
-    class Factory @Inject constructor(
-            private val reportRepo: ReportRepository) : ViewModelProvider.Factory {
-
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            Preconditions.checkArgument(modelClass.isAssignableFrom(PassiveGaitPermissionViewModel::class.java))
-            return PassiveGaitPermissionViewModel(reportRepo) as T
+    fun schedule(): Job? {
+        job?.cancel()
+        job = CoroutineScope(context).launch {
+            delay(wait)
+            fn()
         }
+        return job
     }
 
-    fun createSaveTaskResult(passiveDataAllowed: Boolean): TaskResult? {
-        val stepPassiveDataAllowed = StepResult<Boolean>(Step("passiveDataAllowed"))
-        stepPassiveDataAllowed.result = passiveDataAllowed
-
-        val taskResult = TaskResult(MpIdentifier.PASSIVE_DATA_PERMISSION)
-        taskResult.startDate = Date()
-        taskResult.endDate = Date()
-        taskResult.results["passiveDataAllowed"] = stepPassiveDataAllowed
-
-        return taskResult
+    fun cancel() {
+        job?.cancel()
     }
 }
