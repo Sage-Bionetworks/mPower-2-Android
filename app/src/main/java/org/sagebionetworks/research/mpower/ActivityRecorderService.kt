@@ -42,10 +42,6 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat.Builder
 import dagger.android.DaggerService
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import org.sagebionetworks.research.domain.async.AsyncActionConfiguration
 import org.sagebionetworks.research.domain.async.DeviceMotionRecorderConfigurationImpl
@@ -66,7 +62,6 @@ import org.sagebionetworks.research.mpower.R.string
 import org.sagebionetworks.research.mpower.research.MpIdentifier
 import org.sagebionetworks.research.mpower.util.Repeat
 import org.sagebionetworks.research.presentation.perform_task.TaskResultManager
-import org.sagebionetworks.research.presentation.perform_task.TaskResultManager.TaskResultManagerConnection
 import org.sagebionetworks.research.presentation.perform_task.TaskResultProcessingManager
 import org.sagebionetworks.research.presentation.recorder.RecorderActionType
 import org.sagebionetworks.research.presentation.recorder.sensor.SensorRecorderConfigPresentationFactory
@@ -148,29 +143,6 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
         recorderManager = RecorderManager(task, TASK_IDENTIFIER, taskUUID, this,
                 taskResultManager, recorderConfigPresentationFactory, this)
         taskResultProcessingManager.registerTaskRun(TASK_IDENTIFIER, taskUUID)
-
-//        val connection: Single<TaskResultManagerConnection> = taskResultManager.getTaskResultManagerConnection(
-//                TASK_IDENTIFIER, taskUUID)
-//        CompositeDisposable().add(
-//                connection
-//                        .observeOn(Schedulers.io())
-//                        .flatMapCompletable { trmc: TaskResultManagerConnection ->
-//                            Completable.mergeDelayError(
-//                                            Flowable.fromIterable<TaskResultProcessor>(taskResultProcessors)
-//                                                    .map { trp: TaskResultProcessor ->
-//                                                        trmc.finalTaskResult
-//                                                                .flatMapCompletable { taskResult: TaskResult? ->
-//                                                                    trp.processTaskResult(
-//                                                                            taskResult)
-//                                                                }
-//                                                    })
-//                                    .doOnComplete { trmc.disconnect() }
-//                        }
-//                        .subscribe({
-//                            Log.d(TAG, "Finished processing task for identifier: {$TASK_IDENTIFIER}, task run: {$taskUUID}")
-//                        }) { t: Throwable? ->
-//                            Log.w(TAG, "Error processing task result", t)
-//                        })
     }
 
     /**
