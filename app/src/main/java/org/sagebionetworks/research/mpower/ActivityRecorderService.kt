@@ -256,8 +256,9 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
             state = RECORDED
 
             if (elapsedTime >= MIN_RECORDING_TIME_SEC) {
+                updateNotification("${getText(string.recording_notification_saving)}")
                 recorderManager?.onStepTransition(stopStep, null, NavDirection.SHIFT_LEFT)
-
+                taskResultManager.getTaskResultManagerConnection(TASK_IDENTIFIER, taskUUID).blockingGet().finishTask()
                 val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
                 sharedPrefs.edit().putLong(LAST_RECORDED_AT, Date().time).apply()
 
@@ -275,10 +276,6 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
     private fun saveToBridge() {
         state = SAVING
         Log.d(TAG, "-- saveToBridge ($state)")
-
-        updateNotification("${getText(string.recording_notification_saving)}")
-        // MpDataProvider.getInstance().uploadTaskResult()
-        // taskResultProcessingManager.registerTaskRun(TASK_IDENTIFIER, taskUUID)
 
         finish()
     }
