@@ -59,9 +59,10 @@ import org.sagebionetworks.research.mpower.ActivityRecorderService.State.RECORDI
 import org.sagebionetworks.research.mpower.ActivityRecorderService.State.SAVING
 import org.sagebionetworks.research.mpower.R.drawable
 import org.sagebionetworks.research.mpower.R.string
-import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider
+import org.sagebionetworks.research.mpower.research.MpIdentifier
 import org.sagebionetworks.research.mpower.util.Repeat
 import org.sagebionetworks.research.presentation.perform_task.TaskResultManager
+import org.sagebionetworks.research.presentation.perform_task.TaskResultProcessingManager
 import org.sagebionetworks.research.presentation.recorder.RecorderActionType
 import org.sagebionetworks.research.presentation.recorder.sensor.SensorRecorderConfigPresentationFactory
 import org.sagebionetworks.research.presentation.recorder.service.RecorderManager
@@ -80,6 +81,9 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
 
     @Inject
     lateinit var recorderConfigPresentationFactory: SensorRecorderConfigPresentationFactory
+
+    @Inject
+    lateinit var taskResultProcessingManager: TaskResultProcessingManager
 
     private var recorderManager: RecorderManager? = null
 
@@ -130,6 +134,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
     override fun onCreate() {
         Log.d(TAG, "onCreate")
         super.onCreate()
+        startForeground()
     }
 
     private fun setupRecorderManager() {
@@ -137,12 +142,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
         Log.d(TAG, "-- setupRecorderManager ($state): $taskUUID")
         recorderManager = RecorderManager(task, TASK_IDENTIFIER, taskUUID, this,
                 taskResultManager, recorderConfigPresentationFactory, this)
-        taskResultManager.getTaskResultManagerConnection(TASK_IDENTIFIER, taskUUID).doOnSuccess {
-            Log.d(TAG, "getTaskResultManagerConnection: $it")
-            it.finalTaskResult.doOnSuccess { taskResult ->
-                Log.d(TAG, "FINAL TASK RESULT: $taskResult")
-            }
-        }
+        taskResultProcessingManager.registerTaskRun(TASK_IDENTIFIER, taskUUID)
     }
 
     /**
@@ -199,7 +199,6 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
 
             if (now - lastRecordedAt > MIN_FREQUENCY_MS) {
                 Log.d(TAG, "-- startRecording ($state): ${timeToDateStr(now)}")
-                startForeground()
                 setupRecorderManager()
             } else {
                 Log.d(TAG, "-- NOT RECORDING - ONLY RECORD ONCE EVERY $MIN_FREQUENCY_MS")
@@ -210,13 +209,13 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
 
     private fun startForeground() {
         createNotificationChannel()
-        startForeground(FOREGROUND_NOTIFICATION_ID, createNotification())
+        startForeground(FOREGROUND_NOTIFICATION_ID, createNotification(getString(string.recording_notification_init)))
     }
 
     private fun createNotification(text: String? = null): Notification {
         return Builder(this, getString(string.foreground_channel_id))
-                .setContentTitle(getText(string.recording_notification_title))
-                .setContentText(text ?: getText(string.recording_notification_message))
+                .setContentTitle(getString(string.recording_notification_title))
+                .setContentText(text ?: getString(string.recording_notification_message))
                 .setSmallIcon(drawable.ic_launcher_foreground)
                 .build()
     }
@@ -267,7 +266,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
                 cancelRecording()
             }
         }
-        if (state == NEW|| state == CONNECTING) {
+        if (state == NEW || state == CONNECTING) {
             finish()
         }
 
@@ -277,13 +276,17 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
         state = SAVING
         Log.d(TAG, "-- saveToBridge ($state)")
 
+        updateNotification("${getText(string.recording_notification_saving)}")
         // MpDataProvider.getInstance().uploadTaskResult()
+        // taskResultProcessingManager.registerTaskRun(TASK_IDENTIFIER, taskUUID)
+
         finish()
     }
 
     private fun cancelRecording() {
         state = CANCELING
         Log.d(TAG, "-- cancelRecording ($state)")
+        updateNotification(getString(string.recording_notification_canceling))
         this.recorderService?.cancelRecorder(taskUUID, ACTION_IDENTIFIER)
         finish()
     }
@@ -323,9 +326,9 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
     companion object {
         private const val TAG = "ActivityRecorderService"
 
-        private const val TASK_IDENTIFIER = "PassiveGait"
+        private const val TASK_IDENTIFIER = MpIdentifier.PASSIVE_GAIT
 
-        private const val ACTION_IDENTIFIER = "passiveGait"
+        private const val ACTION_IDENTIFIER = "walk_motion"
 
         private const val TRANSITION_PREFS = "transitionPrefs"
 

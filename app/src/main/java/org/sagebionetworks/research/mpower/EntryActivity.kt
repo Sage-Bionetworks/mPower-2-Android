@@ -32,10 +32,12 @@
 
 package org.sagebionetworks.research.mpower
 
+import android.Manifest
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.DaggerAppCompatActivity
@@ -48,17 +50,27 @@ class EntryActivity : DaggerAppCompatActivity() {
 
     private val LOGGER = LoggerFactory.getLogger(EntryActivity::class.java)
 
+    private lateinit var pendingIntent: PendingIntent
+
     private val passiveGaitViewModel: PassiveGaitViewModel by lazy {
         ViewModelProvider(this).get(PassiveGaitViewModel::class.java)
     }
 
     private val trackingTransitionsObserver = Observer<Boolean> { tracking ->
+        LOGGER.debug("OBSERVER: $tracking")
         if (tracking) {
-            ActivityTransitionUtil.enable(this, pendingIntent, object : OnSuccessListener {
-                override fun onSuccess() {
-                    passiveGaitViewModel.trackingRegistered = true
-                }
-            })
+            if (!ActivityTransitionUtil.activityRecognitionPermissionApproved(this)) {
+                ActivityCompat.requestPermissions(
+                        this, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                        ActivityTransitionUtil.PERMISSION_REQUEST_ACTIVITY_RECOGNITION
+                )
+            } else {
+                ActivityTransitionUtil.enable(this, pendingIntent, object : OnSuccessListener {
+                    override fun onSuccess() {
+                        passiveGaitViewModel.trackingRegistered = true
+                    }
+                })
+            }
         } else {
             ActivityTransitionUtil.disable(this, pendingIntent, object : OnSuccessListener {
                 override fun onSuccess() {
@@ -67,8 +79,6 @@ class EntryActivity : DaggerAppCompatActivity() {
             })
         }
     }
-
-    private lateinit var pendingIntent: PendingIntent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,8 +141,11 @@ class EntryActivity : DaggerAppCompatActivity() {
             ActivityTransitionUtil.PERMISSION_REQUEST_ACTIVITY_RECOGNITION -> {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // do nothing, because tracking is enabled by child component
-                    LOGGER.debug("ACTIVITY RECOGNITION Permission Granted")
+                    ActivityTransitionUtil.enable(this, pendingIntent, object : OnSuccessListener {
+                        override fun onSuccess() {
+                            passiveGaitViewModel.trackingRegistered = true
+                        }
+                    })
                 } else {
                     LOGGER.debug("ACTIVITY RECOGNITION Permission Denied")
                     // TODO: Handle or ignore?

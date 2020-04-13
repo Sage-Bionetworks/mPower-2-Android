@@ -1,31 +1,29 @@
 package org.sagebionetworks.research.mpower.tracking;
 
-import static org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
 import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN;
 import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_REQUEST_CODE;
+import static org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
 
 import android.app.Activity;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import org.sagebionetworks.researchstack.backbone.factory.IntentFactory;
-import org.sagebionetworks.researchstack.backbone.model.TaskModel;
-import org.sagebionetworks.researchstack.backbone.result.TaskResult;
-import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
@@ -34,6 +32,7 @@ import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
+import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderState;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderViewModel;
@@ -43,6 +42,10 @@ import org.sagebionetworks.research.mpower.viewmodel.TodayActionBarItem;
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
 import org.sagebionetworks.research.sageresearch.viewmodel.ReportViewModel;
+import org.sagebionetworks.researchstack.backbone.factory.IntentFactory;
+import org.sagebionetworks.researchstack.backbone.model.TaskModel;
+import org.sagebionetworks.researchstack.backbone.result.TaskResult;
+import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,6 +107,8 @@ public class TrackingTabFragment extends Fragment {
         return new TrackingTabFragment();
     }
 
+    private PassiveGaitViewModel passiveGaitViewModel;
+
     @Override
     public void onAttach(Context context) {
         AndroidSupportInjection.inject(this);
@@ -136,27 +141,26 @@ public class TrackingTabFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        todayScheduleViewModel = ViewModelProviders.of(this, todayScheduleViewModelFactory)
+        todayScheduleViewModel = new ViewModelProvider(this, todayScheduleViewModelFactory)
                 .get(TodayScheduleViewModel.class);
-        todayScheduleViewModel.liveData().observe(this, todayHistoryItems -> {
+        todayScheduleViewModel.liveData().observe(getViewLifecycleOwner(), todayHistoryItems -> {
             // do something so compiler doesn't reuse lambda as observer across LiveDatas
             LOGGER.debug("Observed todayHistoryItems");
             // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
         });
 
-        trackingTabViewModel =
-                ViewModelProviders.of(getActivity()).get(TrackingTabFragmentViewModel.class);
+        trackingTabViewModel = new ViewModelProvider(getActivity()).get(TrackingTabFragmentViewModel.class);
 
-        studyBurstViewModel = ViewModelProviders.of(this, studyBurstViewModelFactory)
+        studyBurstViewModel = new ViewModelProvider(this, studyBurstViewModelFactory)
                 .get(StudyBurstViewModel.class);
-        studyBurstViewModel.liveData().observe(this, this::setupActionBar);
-        studyBurstViewModel.getScheduleErrorLiveData().observe(this, this::showErrorMessage);
+        studyBurstViewModel.liveData().observe(getViewLifecycleOwner(), this::setupActionBar);
+        studyBurstViewModel.getScheduleErrorLiveData().observe(getViewLifecycleOwner(), this::showErrorMessage);
         // This is a single live event that will only be triggered once after a call to loadResearchStackSurvey
-        studyBurstViewModel.getLoadRsSurveyLiveData().observe(this, this::rsSurveyLoaded);
+        studyBurstViewModel.getLoadRsSurveyLiveData().observe(getViewLifecycleOwner(), this::rsSurveyLoaded);
 
-        surveyViewModel = ViewModelProviders.of(this, surveyViewModelFactory)
+        surveyViewModel = new ViewModelProvider(this, surveyViewModelFactory)
                 .get(SurveyViewModel.class);
-        surveyViewModel.liveData().observe(this, scheduledActivityEntities -> {
+        surveyViewModel.liveData().observe(getViewLifecycleOwner(), scheduledActivityEntities -> {
             // TODO: mdephillips 9/4/18 mimic On iOS, this runs any survey that managers may add
             // TODO: mdephillips 9/4/18 we may want to hold off on implementing it
             // do something so compiler doesn't reuse lambda as observer across LiveDatas
@@ -164,13 +168,15 @@ public class TrackingTabFragment extends Fragment {
             // TODO: mdephillips 9/4/18 because not all survey types are currently supported with UI right now
         });
 
-        reportViewModel = ViewModelProviders.of(this, reportViewModelFactory).get(ReportViewModel.class);
+        reportViewModel = new ViewModelProvider(this, reportViewModelFactory).get(ReportViewModel.class);
 
         // This view model is used to ensure that the study burst reminders are kept up to date
         // even if the user is using multiple devices, or has recently logged in/out
-        studyBurstReminderViewModel = ViewModelProviders.of(this,
+        studyBurstReminderViewModel = new ViewModelProvider(this,
                 studyBurstReminderViewModelFactory).get(StudyBurstReminderViewModel.class);
-        studyBurstReminderViewModel.reminderLiveData().observe(this, this::updateStudyBurstReminders);
+        studyBurstReminderViewModel.reminderLiveData().observe(getViewLifecycleOwner(), this::updateStudyBurstReminders);
+
+        passiveGaitViewModel = new ViewModelProvider(getActivity()).get(PassiveGaitViewModel.class);
     }
 
     @Override
@@ -279,6 +285,7 @@ public class TrackingTabFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         LOGGER.info("onActivityResult with requestCode " + requestCode + " resultCode " + resultCode);
+
         // Will be set if a survey was just successfully completed and uploaded
         String successfulSurveyUploadTaskId = null;
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TASK) {
@@ -376,6 +383,8 @@ public class TrackingTabFragment extends Fragment {
      * @param requestCode to launch with
      */
     private void startActivityForResultParent(Intent intent, int requestCode) {
+        passiveGaitViewModel.disableTracking();
+
         Fragment parent = this;
         while (parent.getParentFragment() != null) {
             parent = parent.getParentFragment();

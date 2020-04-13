@@ -33,18 +33,18 @@
 package org.sagebionetworks.research.mpower.reminders
 
 import android.app.TimePickerDialog
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_reminder.reminder_checkbox
 import kotlinx.android.synthetic.main.activity_reminder.reminder_done_button
 import kotlinx.android.synthetic.main.activity_reminder.reminder_time_button
-import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity.EXTRA_TASK_RESULT
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderViewModel
+import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity.EXTRA_TASK_RESULT
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -69,7 +69,7 @@ class StudyBurstReminderActivity: AppCompatActivity() {
      * @property viewModel encapsulates all read/write data operations
      */
     private val viewModel: StudyBurstReminderViewModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(StudyBurstReminderViewModel::class.java)
+        ViewModelProvider(this, viewModelFactory).get(StudyBurstReminderViewModel::class.java)
     }
 
     /**

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ BSD 3-Clause License
+  ~
+  ~ Copyright 2020  Sage Bionetworks. All rights reserved.
+  ~
+  ~ Redistribution and use in source and binary forms, with or without modification,
+  ~ are permitted provided that the following conditions are met:
+  ~
+  ~ 1.  Redistributions of source code must retain the above copyright notice, this
+  ~ list of conditions and the following disclaimer.
+  ~
+  ~ 2.  Redistributions in binary form must reproduce the above copyright notice,
+  ~ this list of conditions and the following disclaimer in the documentation and/or
+  ~ other materials provided with the distribution.
+  ~
+  ~ 3.  Neither the name of the copyright holder(s) nor the names of any contributors
+  ~ may be used to endorse or promote products derived from this software without
+  ~ specific prior written permission. No license is granted to the trademarks of
+  ~ the copyright holders even if such marks are included in this software.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ~ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<RelativeLayout
+    xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@color/colorPrimary">
+
+
+    <ImageView
+        android:id="@+id/back_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp"
+        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/rs2_back_icon"/>
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/back_icon"
+        android:layout_centerHorizontal="true"
+        app:srcCompat="@drawable/mp_logo" />
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:layout_below="@id/logo"
+        android:fontFamily="@font/lato"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/rsb_white"
+        android:text="@string/passive_gait_permission_title"/>
+
+    <TextView
+        android:id="@+id/detailTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:layout_below="@id/titleTextView"
+        android:fontFamily="@font/lato"
+        android:textAlignment="center"
+        android:textSize="19sp"
+        android:textColor="@color/rsb_white"
+        android:text="@string/passive_gait_permission_description"/>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/detailTextView"
+        android:layout_marginHorizontal="@dimen/margin_xxlarge">
+
+        <RadioButton
+            style="@style/Widget.MPower.RadioButtonStyle"
+            android:id="@+id/radio_okay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/passive_gait_permission_okay"
+            android:textColor="@color/appWhite"
+            android:textSize="@dimen/image_button_text_size"
+            android:padding="@dimen/rsb_padding_small"
+            android:onClick="onRadioButtonClicked" />
+
+        <RadioButton
+            style="@style/Widget.MPower.RadioButtonStyle"
+            android:id="@+id/radio_not_now"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/passive_gait_permission_not_now"
+            android:textColor="@color/appWhite"
+            android:textSize="@dimen/image_button_text_size"
+            android:padding="@dimen/rsb_padding_small"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
+
+    <Button
+        style="@style/MPower.RoundedCornerMaterialButton"
+        android:id="@+id/done_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mp_rounded_button_height"
+        android:layout_alignParentBottom="true"
+        android:text="@string/rsb_BUTTON_SAVE"
+        android:layout_margin="@dimen/rsb_padding_large" />
+
+    <include layout="@layout/loading_spinner"
+        android:id="@+id/spinner"
+        android:visibility="gone"/>
+
+</RelativeLayout>
+

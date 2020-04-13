@@ -10,7 +10,10 @@ import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE;
 
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.annotation.ColorRes;
@@ -31,6 +34,7 @@ import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
 import org.sagebionetworks.research.mpower.research.MpIdentifier;
+import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
@@ -138,6 +142,8 @@ public class TrackingMenuFragment extends Fragment {
     private @NonNull TrackingMenuFragmentViewModel trackingMenuViewModel;
     private boolean showTracking;
 
+    private PassiveGaitViewModel passiveGaitViewModel;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,6 +188,12 @@ public class TrackingMenuFragment extends Fragment {
         return result;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        passiveGaitViewModel = new ViewModelProvider(getActivity()).get(PassiveGaitViewModel.class);
+    }
+
     private void setIconListeners() {
         for (int i = 0; i < this.taskContainers.size(); i++) {
             final int copy = i;
@@ -217,6 +229,8 @@ public class TrackingMenuFragment extends Fragment {
                     if (trackingMenuViewModel.getCurrentSelectedId() == R.id.tracking_tab) {
                         taskResult = findPreviousTaskResultForTrackingTask(taskIdentifier, uuid);
                     }
+
+                    passiveGaitViewModel.disableTracking();
 
                     launcher.launchTask(getContext(), taskIdentifier, uuid, taskResult);
                 } else {

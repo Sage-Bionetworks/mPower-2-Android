@@ -118,6 +118,13 @@
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
 
+        <activity
+            android:name=".profile.PassiveGaitPermissionActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
+
+
         <!-- These control local reminder notification scheduling and display -->
         <receiver android:name="org.sagebionetworks.research.sageresearch.reminders.MpReminderAlarmReceiver" />
         <receiver android:name=".reminders.MpReminderRescheduleReceiver">
@@ -135,7 +142,7 @@
         </receiver>
         <receiver
             android:name=".ActivityTransitionsReceiver"
-            android:exported="false"
+            android:exported="true"
             android:permission="com.google.android.gms.permission.ACTIVITY_RECOGNITION">
             <intent-filter>
                 <action android:name="org.sagebionetworks.research.mpower.TRANSITIONS_RECEIVER_ACTION"/>
