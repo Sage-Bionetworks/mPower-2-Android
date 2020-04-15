@@ -1,13 +1,17 @@
 package org.sagebionetworks.research.mpower
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.RangeSet
-import org.junit.*
-import org.junit.Assert.*
-import org.junit.runner.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStep
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView
@@ -23,7 +27,6 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.Month
 import java.util.Arrays
-import java.util.Collections
 
 @RunWith(AndroidJUnit4::class)
 class MedicationTimeBasedFilteringTest {
@@ -45,7 +48,8 @@ class MedicationTimeBasedFilteringTest {
         init {
             CONFIG_1 = MedicationLog.builder()
                     .setIdentifier("Med1")
-                    .setDosageItems(mutableListOf(DosageItem(DOSAGE, DosageItem.dailySet.toMutableSet(), mutableSetOf())))
+                    .setDosageItems(
+                            mutableListOf(DosageItem(DOSAGE, DosageItem.dailySet.toMutableSet(), mutableSetOf())))
                     .build()
         }
 
@@ -78,7 +82,8 @@ class MedicationTimeBasedFilteringTest {
 
             CONFIG_3 = MedicationLog.builder()
                     .setIdentifier("Med3")
-                    .setDosageItems(mutableListOf(DosageItem(DOSAGE, days.toMutableSet(), mutableSetOf(timeStamp1, timeStamp2))))
+                    .setDosageItems(mutableListOf(
+                            DosageItem(DOSAGE, days.toMutableSet(), mutableSetOf(timeStamp1, timeStamp2))))
                     .build()
         }
 
@@ -93,7 +98,8 @@ class MedicationTimeBasedFilteringTest {
 
             CONFIG_4 = MedicationLog.builder()
                     .setIdentifier("Med4")
-                    .setDosageItems(mutableListOf(DosageItem(DOSAGE, DosageItem.dailySet.toMutableSet(), mutableSetOf(timeStamp))))
+                    .setDosageItems(mutableListOf(
+                            DosageItem(DOSAGE, DosageItem.dailySet.toMutableSet(), mutableSetOf(timeStamp))))
                     .build()
         }
 
@@ -114,7 +120,8 @@ class MedicationTimeBasedFilteringTest {
 
             CONFIG_5 = MedicationLog.builder()
                     .setIdentifier("Med5")
-                    .setDosageItems(mutableListOf(DosageItem(DOSAGE, days.toMutableSet(), mutableSetOf(timeStamp1, timeStamp2, timeStamp3))))
+                    .setDosageItems(mutableListOf(DosageItem(DOSAGE, days.toMutableSet(),
+                            mutableSetOf(timeStamp1, timeStamp2, timeStamp3))))
                     .build()
         }
 
@@ -147,7 +154,8 @@ class MedicationTimeBasedFilteringTest {
 
     @Before
     fun setupViewModel() {
-        viewModel = MedicationTrackingTaskViewModel(InstrumentationRegistry.getTargetContext(), STEP_VIEW, null)
+        viewModel = MedicationTrackingTaskViewModel(InstrumentationRegistry.getInstrumentation().targetContext,
+                STEP_VIEW, null)
         viewModel.addConfig(CONFIG_1)
         viewModel.addConfig(CONFIG_2)
         viewModel.addConfig(CONFIG_3)

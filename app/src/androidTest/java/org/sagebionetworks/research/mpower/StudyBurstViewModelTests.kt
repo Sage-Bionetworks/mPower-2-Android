@@ -2,9 +2,9 @@ package org.sagebionetworks.research.mpower
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.filters.MediumTest
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.MediumTest
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.gson.Gson
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -35,6 +35,8 @@ import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstSettingsDao
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
 import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters
+import org.sagebionetworks.research.sageresearch.dao.room.HistoryItemManager
+import org.sagebionetworks.research.sageresearch.dao.room.ReportEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
@@ -82,17 +84,19 @@ import org.threeten.bp.format.DateTimeFormatter
 
 @RunWith(AndroidJUnit4::class)
 @MediumTest
-class StudyBurstViewModelTests: RoomTestHelper() {
+class StudyBurstViewModelTests : RoomTestHelper() {
+
     companion object {
         lateinit var application: Application
         val studyBurstList = "test_study_burst_schedules.json"
         val testResourceMap = TestResourceHelper.testResourceMap(setOf(studyBurstList))
         val gson = Gson()
 
-        @BeforeClass @JvmStatic
+        @BeforeClass
+        @JvmStatic
         fun setup() {
             RoomTestHelper.setup()
-            application = InstrumentationRegistry.getTargetContext().applicationContext as Application
+            application = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as Application
         }
     }
 
@@ -100,11 +104,11 @@ class StudyBurstViewModelTests: RoomTestHelper() {
     @JvmField
     var instantExecutor = InstantTaskExecutorRule()
 
-    val studyBurstSettingsDao = StudyBurstSettingsDao(InstrumentationRegistry.getTargetContext())
+    val studyBurstSettingsDao = StudyBurstSettingsDao(InstrumentationRegistry.getInstrumentation().targetContext)
     val scheduleDao = database.scheduleDao()
     val scheduleRepo = ScheduleRepository(scheduleDao,
             ScheduledRepositorySyncStateDao(
-                    InstrumentationRegistry.getTargetContext()),
+                    InstrumentationRegistry.getInstrumentation().targetContext),
             BridgeApplication.getBridgeManagerProvider().surveyManager,
             BridgeApplication.getBridgeManagerProvider().activityManager,
             BridgeApplication.getBridgeManagerProvider().participantManager,
@@ -113,7 +117,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
             BridgeApplication.getBridgeManagerProvider().bridgeConfig)
     val reportRepo = ReportRepository(reportDao,
             BridgeApplication.getBridgeManagerProvider().participantManager,
-            BridgeApplication.getBridgeManagerProvider().bridgeConfig)
+            BridgeApplication.getBridgeManagerProvider().bridgeConfig,
+            HistoryItemManagerImpl())
 
     @Before
     fun setupForEachTest() {
@@ -124,7 +129,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
     @Test
     fun testStudyBurstConfig_Serialization() {
         val studyConfigPreSerialization = StudyBurstConfiguration(
-            STUDY_BURST_COMPLETED,
+                STUDY_BURST_COMPLETED,
                 20,
                 14,
                 19,
@@ -150,7 +155,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         assertEquals(MOTIVATION, studyConfig.motivationIdentifier)
         assertNotNull(studyConfig.completionTasks)
         assertEquals(3, studyConfig.completionTasks.size)
-        assertEquals(setOf(STUDY_BURST_REMINDER, DEMOGRAPHICS), studyConfig.completionTasks.elementAt(0).activityIdentifiers)
+        assertEquals(setOf(STUDY_BURST_REMINDER, DEMOGRAPHICS),
+                studyConfig.completionTasks.elementAt(0).activityIdentifiers)
         assertEquals(2, studyConfig.completionTasks.elementAt(0).day)
         assertEquals(setOf(BACKGROUND), studyConfig.completionTasks.elementAt(1).activityIdentifiers)
         assertEquals(10, studyConfig.completionTasks.elementAt(1).day)
@@ -494,7 +500,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
             /// The time in seconds to use as the time until today's finished tasks will expire. Default = 15 min.
             val timeUntilExpires: Long = 15 * 60,
             /// The data groups to set for this participant.
-            var dataGroups: Set<String> = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_T"),
+            var dataGroups: Set<String> = setOf("gr_SC_DB", "gr_BR_II", "gr_ST_T", "gr_DT_T"),
             /// The time to set as "now".
             val now: LocalDateTime = LocalDateTime.parse("2018-09-11T12:00:00"),
             /// The sudy burst reminders
@@ -554,7 +560,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                             studyBurstSurveyFinishedOnDays = mapOf(),
                             finishedTodayTasks = linkedSetOf(),
                             timeUntilExpires = 0,
-                            dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_T"))
+                            dataGroups = setOf("gr_SC_DB", "gr_BR_II", "gr_ST_T", "gr_DT_T"))
 
             val day1_startupState_BRII_DTF =
                     StudySetup(templateSchedules = templateSchedules,
@@ -563,7 +569,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                             studyBurstSurveyFinishedOnDays = mapOf(),
                             finishedTodayTasks = linkedSetOf(),
                             timeUntilExpires = 0,
-                            dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_F"))
+                            dataGroups = setOf("gr_SC_DB", "gr_BR_II", "gr_ST_T", "gr_DT_F"))
 
             val day1_startupState_BRAD_DTT =
                     StudySetup(templateSchedules = templateSchedules,
@@ -572,7 +578,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                             studyBurstSurveyFinishedOnDays = mapOf(),
                             finishedTodayTasks = linkedSetOf(),
                             timeUntilExpires = 0,
-                            dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_T"))
+                            dataGroups = setOf("gr_SC_DB", "gr_BR_AD", "gr_ST_T", "gr_DT_T"))
 
             val day1_startupState_BRAD_DTF =
                     StudySetup(templateSchedules = templateSchedules,
@@ -581,7 +587,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                             studyBurstSurveyFinishedOnDays = mapOf(),
                             finishedTodayTasks = linkedSetOf(),
                             timeUntilExpires = 0,
-                            dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_F"))
+                            dataGroups = setOf("gr_SC_DB", "gr_BR_AD", "gr_ST_T", "gr_DT_F"))
 
             val day1_noTasksFinished =
                     StudySetup(templateSchedules = templateSchedules,
@@ -611,7 +617,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                             studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
                             finishedTodayTasks = linkedSetOf(),
                             timeUntilExpires = 15,
-                            dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_T"))
+                            dataGroups = setOf("gr_SC_DB", "gr_BR_II", "gr_ST_T", "gr_DT_T"))
 
             val day1_tasksFinished_surveysNotFinished_BRII_DTF =
                     StudySetup(templateSchedules = templateSchedules,
@@ -620,7 +626,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                             studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
                             finishedTodayTasks = linkedSetOf(),
                             timeUntilExpires = 15,
-                            dataGroups = setOf("gr_SC_DB","gr_BR_II","gr_ST_T","gr_DT_F"))
+                            dataGroups = setOf("gr_SC_DB", "gr_BR_II", "gr_ST_T", "gr_DT_F"))
 
             val day1_tasksFinished_surveysNotFinished_BRAD_DTT =
                     StudySetup(templateSchedules = templateSchedules,
@@ -629,7 +635,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                             studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
                             finishedTodayTasks = linkedSetOf(),
                             timeUntilExpires = 15,
-                            dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_T"))
+                            dataGroups = setOf("gr_SC_DB", "gr_BR_AD", "gr_ST_T", "gr_DT_T"))
 
             val day1_tasksFinished_surveysNotFinished_BRAD_DTF =
                     StudySetup(templateSchedules = templateSchedules,
@@ -638,7 +644,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                             studyBurstSurveyFinishedOnDays = previousFinishedSurveys(0),
                             finishedTodayTasks = linkedSetOf(),
                             timeUntilExpires = 15,
-                            dataGroups = setOf("gr_SC_DB","gr_BR_AD","gr_ST_T","gr_DT_F"))
+                            dataGroups = setOf("gr_SC_DB", "gr_BR_AD", "gr_ST_T", "gr_DT_F"))
 
             val day1_tasksFinished_surveysFinished =
                     StudySetup(templateSchedules = templateSchedules,
@@ -689,7 +695,6 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                             studyBurstFinishedOnDays = finishedOnDays(10, 0),
                             studyBurstSurveyFinishedOnDays = previousFinishedSurveys(10),
                             finishedTodayTasks = linkedSetOf(TAPPING, TREMOR, WALK_AND_BALANCE))
-
 
             val day14_missing1_tasksFinished_engagementNotFinished =
                     StudySetup(templateSchedules = templateSchedules,
@@ -767,7 +772,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         // Generated days of the study burst to mark as finished. This only applies to days that are past.
         fun mapStudyBurstFinishedOn(): Map<Int, Instant> {
             val firstDay = createdOn().startOfDay().plusSeconds(8 * 60 * 60)
-            return studyBurstFinishedOnDays.filter { it <= studyBurstDay }.associateBy( { it }, {
+            return studyBurstFinishedOnDays.filter { it <= studyBurstDay }.associateBy({ it }, {
                 // iOS does random # of minutes, but let's hardcode to 30 for test reliability
                 firstDay.plusDays(it.toLong()).plusMinutes(30).atZone(timezone).toInstant()
             })
@@ -792,7 +797,8 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                             "  \"firstName\": \"" + firstName + "\",\n" +
                             "  \"dataGroups\": " + dataGroups.toString() + ",\n" +
                             "  \"phoneVerified\": true,\n" +
-                            "  \"createdO\": \"" + createdOn().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) + "\"\n" +
+                            "  \"createdO\": \"" + createdOn().format(
+                            DateTimeFormatter.ISO_OFFSET_DATE_TIME) + "\"\n" +
                             "}"
             return RestUtils.GSON.fromJson(participantJson, StudyParticipant::class.java)
         }
@@ -829,7 +835,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                         it.guid = (it.activityIdentifier() ?: "") + scheduledOn.toString()
                         it.scheduledOn = scheduledOn
                         it.finishedOn = finishedOn
-                        it.startedOn = finishedOn?.minusSeconds(3*60L)
+                        it.startedOn = finishedOn?.minusSeconds(3 * 60L)
                         it.expiresOn = null
                         it.clientData = null
                         it.schedulePlanGuid = activityGroup.schedulePlanGuid
@@ -868,7 +874,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                         it.scheduledOn = scheduledOn
                         it.expiresOn = scheduledOn.plusDays(1)
                         it.finishedOn = finishedOn
-                        it.startedOn = finishedOn?.minusSeconds(3*60L)
+                        it.startedOn = finishedOn?.minusSeconds(3 * 60L)
                         it.clientData = null
                         it.schedulePlanGuid = null
                         schedules.add(it)
@@ -883,7 +889,7 @@ class StudyBurstViewModelTests: RoomTestHelper() {
                     it.scheduledOn = createdOn
                     it.expiresOn = null
                     it.finishedOn = surveyMap[id]
-                    it.startedOn = surveyMap[id]?.minusSeconds(3*60L)
+                    it.startedOn = surveyMap[id]?.minusSeconds(3 * 60L)
                     it.clientData = null
                     it.schedulePlanGuid = null
                     schedules.add(it)
@@ -904,12 +910,13 @@ class StudyBurstViewModelTests: RoomTestHelper() {
     class MockStudyBurstViewModel(
             scheduleDao: ScheduledActivityEntityDao, scheduleRepo: ScheduleRepository,
             reportRepo: ReportRepository,
-            val studyBurstSettingsDao: StudyBurstSettingsDao, val studySetup: StudySetup):
+            val studyBurstSettingsDao: StudyBurstSettingsDao, val studySetup: StudySetup) :
 
             StudyBurstViewModel(scheduleDao, scheduleRepo, reportRepo, studyBurstSettingsDao) {
 
         // TODO: mdephillips 10/22/18 remove this once study burst reminder and engagement surveys are added back in
         companion object {
+
             val completionTasks: Set<CompletionTask> = setOf(
                     CompletionTask(linkedSetOf(STUDY_BURST_REMINDER, DEMOGRAPHICS), 1),
                     CompletionTask(linkedSetOf(BACKGROUND), 9),
@@ -926,9 +933,10 @@ class StudyBurstViewModelTests: RoomTestHelper() {
             return studySetup.now
         }
 
-        override val timezone: ZoneId get() {
-            return studySetup.timezone
-        }
+        override val timezone: ZoneId
+            get() {
+                return studySetup.timezone
+            }
 
         init {
             studySetup.populateDatabase(scheduleDao)
@@ -940,5 +948,13 @@ class StudyBurstViewModelTests: RoomTestHelper() {
         fun setOrderedTasks(sortOrder: List<String>, timestamp: LocalDateTime) {
             studyBurstSettingsDao.setOrderedTasks(sortOrder, timestamp)
         }
+    }
+}
+
+//TODO only to make it work
+class HistoryItemManagerImpl() : HistoryItemManager {
+
+    override fun updateHistoryItems(reportIdentifier: String, reports: List<ReportEntity>) {
+        //NO OP implementation
     }
 }
