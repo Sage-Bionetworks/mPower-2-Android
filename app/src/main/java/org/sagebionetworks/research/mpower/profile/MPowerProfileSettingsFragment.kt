@@ -70,7 +70,7 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
 
     fun launchTask(taskModel: TaskModel) {
         val factory = MpTaskFactory()
-        mPowerProfileViewModel.currentSurveyTask = factory.createMpSmartSurveyTask(activity!!, taskModel)
+        mPowerProfileViewModel.currentSurveyTask = factory.createMpSmartSurveyTask(requireActivity(), taskModel)
         startActivityForResultParent(IntentFactory.INSTANCE.newTaskIntent(activity,
                 MpViewTaskActivity::class.java, mPowerProfileViewModel.currentSurveyTask), REQUEST_TASK)
 
