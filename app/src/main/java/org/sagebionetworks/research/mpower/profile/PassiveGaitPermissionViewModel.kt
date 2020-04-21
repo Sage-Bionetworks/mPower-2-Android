@@ -44,7 +44,6 @@ import java.util.Date
 import javax.inject.Inject
 
 class PassiveGaitPermissionViewModel(val reportRepo: ReportRepository): ViewModel() {
-
     var passiveDataAllowed: Boolean = false
 
     class Factory @Inject constructor(
@@ -58,14 +57,18 @@ class PassiveGaitPermissionViewModel(val reportRepo: ReportRepository): ViewMode
     }
 
     fun createSaveTaskResult(passiveDataAllowed: Boolean): TaskResult? {
-        val stepPassiveDataAllowed = StepResult<Boolean>(Step("passiveDataAllowed"))
+        val stepPassiveDataAllowed = StepResult<Boolean>(Step(PROFILE_KEY_PASSIVE_DATA_ALLOWED))
         stepPassiveDataAllowed.result = passiveDataAllowed
 
         val taskResult = TaskResult(MpIdentifier.PASSIVE_DATA_PERMISSION)
         taskResult.startDate = Date()
         taskResult.endDate = Date()
-        taskResult.results["passiveDataAllowed"] = stepPassiveDataAllowed
+        taskResult.results[PROFILE_KEY_PASSIVE_DATA_ALLOWED] = stepPassiveDataAllowed
 
         return taskResult
+    }
+
+    companion object {
+        @JvmStatic val PROFILE_KEY_PASSIVE_DATA_ALLOWED = "passiveDataAllowed"
     }
 }

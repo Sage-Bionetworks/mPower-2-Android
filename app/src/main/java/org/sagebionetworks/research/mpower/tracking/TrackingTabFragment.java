@@ -27,6 +27,10 @@ import androidx.lifecycle.ViewModelProviders;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.TaskLauncher;
+import org.sagebionetworks.research.mpower.profile.MPowerProfileViewModel;
+import org.sagebionetworks.research.mpower.profile.PassiveGaitPermissionActivity;
+import org.sagebionetworks.research.mpower.profile.PassiveGaitPermissionViewModel;
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
@@ -40,7 +44,11 @@ import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TodayActionBarItem;
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
+import org.sagebionetworks.research.sageresearch.dao.room.AppConfigRepository;
+import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository;
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
+import org.sagebionetworks.research.sageresearch.profile.ProfileDataLoader;
+import org.sagebionetworks.research.sageresearch.profile.ProfileManager;
 import org.sagebionetworks.research.sageresearch.viewmodel.ReportViewModel;
 import org.sagebionetworks.researchstack.backbone.factory.IntentFactory;
 import org.sagebionetworks.researchstack.backbone.model.TaskModel;
@@ -67,6 +75,7 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class TrackingTabFragment extends Fragment {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackingTabFragment.class);
+    private static final int PASSIVE_DATA_PERMISSION_REQUEST_CODE = 312312;
 
     @BindView(R.id.tracking_status_bar)
     TrackingStatusBar trackingStatusBar;
@@ -85,6 +94,23 @@ public class TrackingTabFragment extends Fragment {
 
     @Inject
     StudyBurstReminderViewModel.Factory studyBurstReminderViewModelFactory;
+
+
+    private MPowerProfileViewModel mPowerProfileViewModel = null;
+
+    @Inject
+    MPowerProfileViewModel.Factory profileViewModelFactory;
+
+
+    @Inject
+    ReportRepository reportRepo;
+
+    @Inject
+    AppConfigRepository appConfigRepo;
+
+    ProfileManager profileManager = null;
+    ProfileDataLoader profileDataLoader = null;
+
 
     private TodayScheduleViewModel todayScheduleViewModel;
 
@@ -109,10 +135,26 @@ public class TrackingTabFragment extends Fragment {
 
     private PassiveGaitViewModel passiveGaitViewModel;
 
+
     @Override
     public void onAttach(Context context) {
         AndroidSupportInjection.inject(this);
         super.onAttach(context);
+    }
+
+    @Override
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPowerProfileViewModel = new ViewModelProvider(this, profileViewModelFactory).get(MPowerProfileViewModel.class);
+
+        profileManager = new ProfileManager(reportRepo, appConfigRepo);
+        profileManager.profileDataLoader().observe(this.getViewLifecycleOwner(), profileDataLoader1 -> {
+            String passiveDataAllowedString = profileDataLoader1.getValueString(PassiveGaitPermissionViewModel.getPROFILE_KEY_PASSIVE_DATA_ALLOWED());
+            trackingTabViewModel.passiveDataAllowed = Boolean.parseBoolean(passiveDataAllowedString);
+
+        });
+
+
     }
 
     @Override
@@ -184,6 +226,7 @@ public class TrackingTabFragment extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
+
 
     /**
      * Sets up the action bar according to the current state of the study burst
@@ -309,10 +352,21 @@ public class TrackingTabFragment extends Fragment {
                     goToStudyBurst();
                 }
                 successfulSurveyUploadTaskId = trackingTabViewModel.currentSurveySchedule.activityIdentifier();
+
+
             } else {
                 LOGGER.info("currentSurveySchedule is null, cannot upload results");
             }
+        } else if (resultCode == Activity.RESULT_OK && requestCode == PASSIVE_DATA_PERMISSION_REQUEST_CODE) {
+            //CHECK here if it's the passive data permission activity result
+            //mPowerProfileViewModel.currentSurveyTask?.processTaskResult(taskResult)
+            TaskResult taskResult = (TaskResult) data.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT);
+            if (taskResult != null) {
+                surveyViewModel.getBridgeRepoManager().saveTaskResult(taskResult, mPowerProfileViewModel.getCurrentScheduledActivity());
+            }
+
         }
+
         trackingTabViewModel.currentSurveyTask = null;
         trackingTabViewModel.currentSurveySchedule = null;
 
@@ -335,6 +389,18 @@ public class TrackingTabFragment extends Fragment {
                 launchRsSurvey(currentItem.getDemographicsSurvey());
             }
         }
+
+        //special case for Walk and Balance to ask for permission
+        if (resultCode == Activity.RESULT_OK && requestCode == TaskLauncher.WALK_AND_BALANCE_REQUEST_CODE && trackingTabViewModel.passiveDataAllowed == null) {
+
+            Intent intent = new Intent(this.getContext(), PassiveGaitPermissionActivity.class);
+            intent.putExtra(PassiveGaitPermissionActivity.ARG_PASSIVE_DATA_ALLOWED_VALUE,(String)null);
+
+            //start the activity from this fragment
+            this.startActivityForResult(intent, PASSIVE_DATA_PERMISSION_REQUEST_CODE);
+
+        }
+
     }
 
     /**
@@ -417,6 +483,8 @@ public class TrackingTabFragment extends Fragment {
          * The current survey schedule for current survey task being run, null if no survey is running
          */
         @Nullable ScheduledActivityEntity currentSurveySchedule;
+
+        @Nullable Boolean passiveDataAllowed;
     }
 }
 

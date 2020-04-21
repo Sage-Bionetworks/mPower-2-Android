@@ -8,12 +8,15 @@ import static org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE;
+import static org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
 
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.annotation.ColorRes;
@@ -33,6 +36,8 @@ import android.widget.TextView;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
+import org.sagebionetworks.research.mpower.profile.MPowerProfileViewModel;
+import org.sagebionetworks.research.mpower.profile.PassiveGaitPermissionActivity;
 import org.sagebionetworks.research.mpower.research.MpIdentifier;
 import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
@@ -42,6 +47,7 @@ import org.sagebionetworks.research.mpower.viewmodel.TrackingReports;
 import org.sagebionetworks.research.mpower.viewmodel.TrackingScheduleViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TrackingSchedules;
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo;
+import org.sagebionetworks.research.sageresearch.profile.ProfileViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,6 +104,9 @@ public class TrackingMenuFragment extends Fragment {
     @ColorRes
     private static final int UNSELECTED_COLOR = R.color.royal400;
     private boolean showingContent;
+
+
+
 
     @BindView(R.id.tracking_tab)
     TextView trackingButton;
@@ -232,7 +241,12 @@ public class TrackingMenuFragment extends Fragment {
 
                     passiveGaitViewModel.disableTracking();
 
-                    launcher.launchTask(getContext(), taskIdentifier, uuid, taskResult);
+                    Fragment parentFragment = this.getParentFragment();
+                    if (taskIdentifier.equals(WALK_AND_BALANCE) && TrackingTabFragment.class.equals(parentFragment.getClass())) {
+                        launcher.launchTask(getContext(), parentFragment, taskIdentifier, uuid, taskResult);
+                    } else {
+                        launcher.launchTask(getContext(), taskIdentifier, uuid, taskResult);
+                    }
                 } else {
                     LOGGER.warn("Selected Icon " + selection + " doesn't map to a task identifier");
                 }
