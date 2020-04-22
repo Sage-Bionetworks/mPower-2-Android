@@ -69,6 +69,6 @@ class PassiveGaitPermissionViewModel(val reportRepo: ReportRepository): ViewMode
     }
 
     companion object {
-        @JvmStatic val PROFILE_KEY_PASSIVE_DATA_ALLOWED = "passiveDataAllowed"
+        const val PROFILE_KEY_PASSIVE_DATA_ALLOWED = "passiveDataAllowed"
     }
 }
