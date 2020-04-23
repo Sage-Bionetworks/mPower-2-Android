@@ -163,7 +163,9 @@ public class TrackingTabFragment extends Fragment {
         profileManager.profileDataLoader().observe(this.getViewLifecycleOwner(), profileDataLoader1 -> {
             String passiveDataAllowedString = profileDataLoader1
                     .getValueString(PassiveGaitPermissionViewModel.PROFILE_KEY_PASSIVE_DATA_ALLOWED);
-            trackingTabViewModel.passiveDataAllowed = Boolean.parseBoolean(passiveDataAllowedString);
+            if (passiveDataAllowedString != null) {
+                trackingTabViewModel.passiveDataAllowed = null;//Boolean.parseBoolean(passiveDataAllowedString);
+            }
 
         });
 
