@@ -43,7 +43,7 @@ import java.util.UUID
 
 class PerformTaskWithResultActivity: PerformTaskActivity() {
     override fun onTaskExit(status: Status, taskResult: TaskResult) {
-        val resultCode = if (status == Status.CANCELLED) Activity.RESULT_CANCELED else  Activity.RESULT_OK
+        val resultCode = if (status == Status.CANCELLED) Activity.RESULT_CANCELED else Activity.RESULT_OK
         this.setResult(resultCode)
         super.onTaskExit(status, taskResult)
     }
@@ -52,10 +52,9 @@ class PerformTaskWithResultActivity: PerformTaskActivity() {
         public fun createIntent(context: Context, taskView: TaskView, taskRunUUID: UUID?): Intent {
             val originalIntent = PerformTaskActivity.createIntent(context, taskView, taskRunUUID)
 
-            val launchIntent = Intent(context,PerformTaskWithResultActivity::class.java)
+            val launchIntent = Intent(context, PerformTaskWithResultActivity::class.java)
             launchIntent.putExtras(originalIntent)
             return launchIntent
         }
     }
-
 }
