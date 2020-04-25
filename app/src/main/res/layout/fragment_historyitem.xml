@@ -52,7 +52,7 @@
         android:layout_marginRight="@dimen/margin_large"
         android:layout_marginLeft="@dimen/margin_small"
         android:text="SectionText"
-        app:layout_constraintBottom_toTopOf="@+id/item_detail"
+        app:layout_constraintBottom_toTopOf="@id/item_detail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@id/icon"

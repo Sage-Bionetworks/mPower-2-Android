@@ -147,7 +147,7 @@ class MedicationTimeBasedFilteringTest {
 
     @Before
     fun setupViewModel() {
-        viewModel = MedicationTrackingTaskViewModel(InstrumentationRegistry.getTargetContext(), STEP_VIEW, null)
+        viewModel = MedicationTrackingTaskViewModel(InstrumentationRegistry.getInstrumentation().targetContext, STEP_VIEW, null)
         viewModel.addConfig(CONFIG_1)
         viewModel.addConfig(CONFIG_2)
         viewModel.addConfig(CONFIG_3)
