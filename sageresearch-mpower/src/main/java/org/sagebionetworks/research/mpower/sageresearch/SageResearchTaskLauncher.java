@@ -39,7 +39,6 @@ public class SageResearchTaskLauncher {
             @Nullable UUID taskRunUUID, @NonNull int requestCode, @Nullable Bundle options) {
         TaskInfoView taskInfoView = taskRepository.getTaskInfo(taskIdentifier).blockingGet();
 
-        //TODO: mapper
         TaskView taskView = TaskView.builder().setIdentifier(taskInfoView.getIdentifier()).build();
 
         Intent intent = PerformTaskActivity.createIntent(context, taskView, taskRunUUID);

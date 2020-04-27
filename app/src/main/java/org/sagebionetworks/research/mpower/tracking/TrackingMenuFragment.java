@@ -8,23 +8,9 @@ import static org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE;
-import static org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
 
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import androidx.annotation.ColorRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.fragment.app.Fragment;
-import androidx.core.view.GestureDetectorCompat;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -33,11 +19,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
-import org.sagebionetworks.research.mpower.profile.MPowerProfileViewModel;
-import org.sagebionetworks.research.mpower.profile.PassiveGaitPermissionActivity;
 import org.sagebionetworks.research.mpower.research.MpIdentifier;
 import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
@@ -47,7 +41,6 @@ import org.sagebionetworks.research.mpower.viewmodel.TrackingReports;
 import org.sagebionetworks.research.mpower.viewmodel.TrackingScheduleViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TrackingSchedules;
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo;
-import org.sagebionetworks.research.sageresearch.profile.ProfileViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

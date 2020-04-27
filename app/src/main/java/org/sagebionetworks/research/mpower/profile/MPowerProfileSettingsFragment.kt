@@ -12,7 +12,6 @@ import org.sagebionetworks.bridge.android.manager.models.ProfileItemProfileTable
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.SurveyReference
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity
-import org.sagebionetworks.research.mpower.research.MpIdentifier
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity
 import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel
