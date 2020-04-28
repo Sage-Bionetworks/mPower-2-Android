@@ -41,7 +41,7 @@ public class SageResearchTaskLauncher {
 
         TaskView taskView = TaskView.builder().setIdentifier(taskInfoView.getIdentifier()).build();
 
-        Intent intent = PerformTaskActivity.createIntent(context, taskView, taskRunUUID);
+        Intent intent = PerformTaskWithResultActivity.Companion.createIntent(context, taskView, taskRunUUID);
         fragment.startActivityForResult(intent, requestCode, options);
     }
 }
