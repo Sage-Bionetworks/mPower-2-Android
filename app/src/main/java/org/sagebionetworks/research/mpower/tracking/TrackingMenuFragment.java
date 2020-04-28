@@ -98,9 +98,6 @@ public class TrackingMenuFragment extends Fragment {
     private static final int UNSELECTED_COLOR = R.color.royal400;
     private boolean showingContent;
 
-
-
-
     @BindView(R.id.tracking_tab)
     TextView trackingButton;
 

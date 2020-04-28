@@ -110,8 +110,6 @@ public class TrackingTabFragment extends Fragment {
 
     ProfileManager profileManager = null;
 
-    ProfileDataLoader profileDataLoader = null;
-
 
     private TodayScheduleViewModel todayScheduleViewModel;
 
@@ -160,8 +158,8 @@ public class TrackingTabFragment extends Fragment {
         ViewCompat.setOnApplyWindowInsetsListener(this.trackingStatusBar, listener);
 
         profileManager = new ProfileManager(reportRepo, appConfigRepo);
-        profileManager.profileDataLoader().observe(this.getViewLifecycleOwner(), profileDataLoader1 -> {
-            String passiveDataAllowedString = profileDataLoader1
+        profileManager.profileDataLoader().observe(this.getViewLifecycleOwner(), observedProfileDataLoader -> {
+            String passiveDataAllowedString = observedProfileDataLoader
                     .getValueString(PassiveGaitPermissionViewModel.PROFILE_KEY_PASSIVE_DATA_ALLOWED);
             trackingTabViewModel.passiveDataAllowed = Boolean.parseBoolean(passiveDataAllowedString);
 
@@ -298,8 +296,7 @@ public class TrackingTabFragment extends Fragment {
     /**
      * Launches an old style ResearchStack SmartSurveyTask
      *
-     * @param surveySchedule
-     *         of the survey to launch
+     * @param surveySchedule of the survey to launch
      */
     private void launchRsSurvey(@Nullable ScheduledActivityEntity surveySchedule) {
         if (surveySchedule == null) {
@@ -409,8 +406,7 @@ public class TrackingTabFragment extends Fragment {
     /**
      * Called when the survey model is loaded from bridge, time to show it to the user
      *
-     * @param task
-     *         old research stack model object for creating surveys
+     * @param task old research stack model object for creating surveys
      */
     private void rsSurveyLoaded(TaskModel task) {
         trackingStatusBar.setEnabled(true);
@@ -426,8 +422,7 @@ public class TrackingTabFragment extends Fragment {
     /**
      * Called when there is a network or database error
      *
-     * @param errorMessage
-     *         to display to the user
+     * @param errorMessage to display to the user
      */
     private void showErrorMessage(@Nullable String errorMessage) {
         if (errorMessage == null) {
@@ -453,10 +448,8 @@ public class TrackingTabFragment extends Fragment {
      * Due to a behavior issue in nested child fragments (like this fragment) We must call the startActivityForResult
      * on the parent fragment if we can
      *
-     * @param intent
-     *         to launch
-     * @param requestCode
-     *         to launch with
+     * @param intent to launch
+     * @param requestCode to launch with
      */
     private void startActivityForResultParent(Intent intent, int requestCode) {
         passiveGaitViewModel.disableTracking();
