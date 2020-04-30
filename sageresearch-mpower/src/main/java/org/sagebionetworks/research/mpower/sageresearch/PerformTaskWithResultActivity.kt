@@ -30,45 +30,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sagebionetworks.research.mpower.profile
+package org.sagebionetworks.research.mpower.sageresearch
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.google.common.base.Preconditions
-import org.sagebionetworks.research.mpower.research.MpIdentifier
-import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
-import org.sagebionetworks.researchstack.backbone.result.StepResult
-import org.sagebionetworks.researchstack.backbone.result.TaskResult
-import org.sagebionetworks.researchstack.backbone.step.Step
-import java.util.Date
-import javax.inject.Inject
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import org.sagebionetworks.research.domain.result.interfaces.TaskResult
+import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskActivity
+import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment.OnPerformTaskExitListener.Status
+import org.sagebionetworks.research.presentation.model.TaskView
+import java.util.UUID
 
-class PassiveGaitPermissionViewModel(val reportRepo: ReportRepository): ViewModel() {
-    var passiveDataAllowed: Boolean = false
-
-    class Factory @Inject constructor(
-            private val reportRepo: ReportRepository) : ViewModelProvider.Factory {
-
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            Preconditions.checkArgument(modelClass.isAssignableFrom(PassiveGaitPermissionViewModel::class.java))
-            return PassiveGaitPermissionViewModel(reportRepo) as T
-        }
-    }
-
-    fun createSaveTaskResult(passiveDataAllowed: Boolean): TaskResult? {
-        val stepPassiveDataAllowed = StepResult<Boolean>(Step(PROFILE_KEY_PASSIVE_DATA_ALLOWED))
-        stepPassiveDataAllowed.result = passiveDataAllowed
-
-        val taskResult = TaskResult(MpIdentifier.PASSIVE_DATA_PERMISSION)
-        taskResult.startDate = Date()
-        taskResult.endDate = Date()
-        taskResult.results[PROFILE_KEY_PASSIVE_DATA_ALLOWED] = stepPassiveDataAllowed
-
-        return taskResult
+class PerformTaskWithResultActivity: PerformTaskActivity() {
+    override fun onTaskExit(status: Status, taskResult: TaskResult) {
+        val resultCode = if (status == Status.CANCELLED) Activity.RESULT_CANCELED else Activity.RESULT_OK
+        this.setResult(resultCode)
+        super.onTaskExit(status, taskResult)
     }
 
     companion object {
-        const val PROFILE_KEY_PASSIVE_DATA_ALLOWED = "passiveDataAllowed"
+        public fun createIntent(context: Context, taskView: TaskView, taskRunUUID: UUID?): Intent {
+            val originalIntent = PerformTaskActivity.createIntent(context, taskView, taskRunUUID)
+
+            val launchIntent = Intent(context, PerformTaskWithResultActivity::class.java)
+            launchIntent.putExtras(originalIntent)
+            return launchIntent
+        }
     }
 }

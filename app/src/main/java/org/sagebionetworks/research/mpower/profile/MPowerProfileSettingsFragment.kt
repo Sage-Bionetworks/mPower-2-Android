@@ -12,7 +12,6 @@ import org.sagebionetworks.bridge.android.manager.models.ProfileItemProfileTable
 import org.sagebionetworks.bridge.rest.RestUtils
 import org.sagebionetworks.bridge.rest.model.SurveyReference
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity
-import org.sagebionetworks.research.mpower.research.MpIdentifier
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity
 import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel
@@ -118,13 +117,6 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
 
                 profileViewModel.bridgeRepoManager.saveTaskResult(taskResult, mPowerProfileViewModel.currentScheduledActivity)
 
-//                if (taskResult.identifier == MpIdentifier.PASSIVE_DATA_PERMISSION) {
-//                    if (taskResult.getStepResult("passiveDataAllowed")?.result == true) {
-//                        passiveGaitViewModel.enableTracking()
-//                    } else {
-//                        passiveGaitViewModel.disableTracking()
-//                    }
-//                }
             }
         }
         mPowerProfileViewModel.currentSurveyTask = null
@@ -143,8 +135,7 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
         startActivity(intent)
     }
 
-    override fun launchPassiveDataAllowed(profileItem: ProfileItemProfileTableItem,
-            profileDataItem: ProfileDataItem, value: String?) {
+    override fun launchPassiveDataAllowed(profileItem: ProfileItemProfileTableItem, profileDataItem: ProfileDataItem, value: String?) {
         val intent = Intent(activity, PassiveGaitPermissionActivity::class.java)
         intent.putExtra(PassiveGaitPermissionActivity.ARG_PASSIVE_DATA_ALLOWED_VALUE, value)
         startActivityForResultParent(intent, REQUEST_TASK)
