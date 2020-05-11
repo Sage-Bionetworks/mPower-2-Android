@@ -34,5 +34,9 @@
   "WalkAndBalance": {
     "id": "WalkAndBalance",
     "revision": 1
+  },
+  "PassiveDataPermission": {
+    "id": "PassiveDataPermission",
+    "revision": 1
   }
 }
