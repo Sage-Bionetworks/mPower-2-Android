@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ BSD 3-Clause License
   ~
   ~ Copyright 2020  Sage Bionetworks. All rights reserved.
@@ -31,99 +30,116 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<RelativeLayout
-    xmlns:android = "http://schemas.android.com/apk/res/android"
-    xmlns:app = "http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@color/colorPrimary"
+android:fitsSystemWindows="true">
+
+
+<ImageView
+    android:id="@+id/back_icon"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/margin_medium"
+    android:layout_marginTop="@dimen/margin_medium"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:srcCompat="@drawable/rs2_back_icon" />
+
+<ImageView
+    android:id="@+id/logo"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/back_icon"
+    app:srcCompat="@drawable/mp_logo" />
+
+<TextView
+    android:id="@+id/titleTextView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@color/colorPrimary">
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_medium"
+    android:fontFamily="@font/lato"
+    android:text="@string/passive_gait_permission_title"
+    android:textAlignment="center"
+    android:textColor="@color/rsb_white"
+    android:textSize="14sp"
+    android:textStyle="bold"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/logo" />
 
+<TextView
+    android:id="@+id/detailTextView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/titleTextView"
+    android:layout_margin="@dimen/margin_medium"
+    android:fontFamily="@font/lato"
+    android:text="@string/passive_gait_permission_description"
+    android:textAlignment="center"
+    android:textColor="@color/rsb_white"
+    android:textSize="12sp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/titleTextView" />
 
-    <ImageView
-        android:id="@+id/back_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
-        android:layout_marginLeft="@dimen/margin_medium"
-        android:layout_alignParentLeft="true"
-        android:src="@drawable/rs2_back_icon"/>
+<RadioGroup
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/detailTextView"
+    android:layout_marginHorizontal="@dimen/margin_xxlarge"
+    app:layout_constraintBottom_toTopOf="@id/done_button"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/detailTextView">
 
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/back_icon"
-        android:layout_centerHorizontal="true"
-        app:srcCompat="@drawable/mp_logo" />
-
-    <TextView
-        android:id="@+id/titleTextView"
+    <RadioButton
+        android:id="@+id/radio_okay"
+        style="@style/Widget.MPower.RadioButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_medium"
-        android:layout_below="@id/logo"
-        android:fontFamily="@font/lato"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@color/rsb_white"
-        android:text="@string/passive_gait_permission_title"/>
+        android:onClick="onRadioButtonClicked"
+        android:padding="@dimen/rsb_padding_small"
+        android:text="@string/passive_gait_permission_okay"
+        android:textColor="@color/appWhite"
+        android:textSize="@dimen/text_md" />
 
-    <TextView
-        android:id="@+id/detailTextView"
+    <RadioButton
+        android:id="@+id/radio_not_now"
+        style="@style/Widget.MPower.RadioButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_medium"
-        android:layout_below="@id/titleTextView"
-        android:fontFamily="@font/lato"
-        android:textAlignment="center"
-        android:textSize="19sp"
-        android:textColor="@color/rsb_white"
-        android:text="@string/passive_gait_permission_description"/>
+        android:onClick="onRadioButtonClicked"
+        android:padding="@dimen/rsb_padding_small"
+        android:text="@string/passive_gait_permission_not_now"
+        android:textColor="@color/appWhite"
+        android:textSize="@dimen/text_md" />
+</RadioGroup>
 
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/detailTextView"
-        android:layout_marginHorizontal="@dimen/margin_xxlarge">
+<Button
+    android:id="@+id/done_button"
+    style="@style/MPower.RoundedCornerMaterialButton"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/mp_rounded_button_height"
+    android:layout_alignParentBottom="true"
+    android:layout_margin="@dimen/rsb_padding_large"
+    android:text="@string/rsb_BUTTON_SAVE"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
 
-        <RadioButton
-            style="@style/Widget.MPower.RadioButtonStyle"
-            android:id="@+id/radio_okay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/passive_gait_permission_okay"
-            android:textColor="@color/appWhite"
-            android:textSize="@dimen/image_button_text_size"
-            android:padding="@dimen/rsb_padding_small"
-            android:onClick="onRadioButtonClicked" />
+<include
+    android:id="@+id/spinner"
+    layout="@layout/loading_spinner"
+    android:visibility="gone" />
 
-        <RadioButton
-            style="@style/Widget.MPower.RadioButtonStyle"
-            android:id="@+id/radio_not_now"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/passive_gait_permission_not_now"
-            android:textColor="@color/appWhite"
-            android:textSize="@dimen/image_button_text_size"
-            android:padding="@dimen/rsb_padding_small"
-            android:onClick="onRadioButtonClicked"/>
-    </RadioGroup>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        style="@style/MPower.RoundedCornerMaterialButton"
-        android:id="@+id/done_button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/mp_rounded_button_height"
-        android:layout_alignParentBottom="true"
-        android:text="@string/rsb_BUTTON_SAVE"
-        android:layout_margin="@dimen/rsb_padding_large" />
 
-    <include layout="@layout/loading_spinner"
-        android:id="@+id/spinner"
-        android:visibility="gone"/>
 
-</RelativeLayout>
 
