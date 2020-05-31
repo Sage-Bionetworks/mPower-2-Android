@@ -50,13 +50,7 @@ import org.sagebionetworks.research.domain.step.implementations.StepBase
 import org.sagebionetworks.research.domain.step.interfaces.Step
 import org.sagebionetworks.research.domain.task.navigation.NavDirection
 import org.sagebionetworks.research.domain.task.navigation.TaskBase
-import org.sagebionetworks.research.mpower.ActivityRecorderService.State.CANCELING
-import org.sagebionetworks.research.mpower.ActivityRecorderService.State.CONNECTING
-import org.sagebionetworks.research.mpower.ActivityRecorderService.State.FINISHED
-import org.sagebionetworks.research.mpower.ActivityRecorderService.State.NEW
-import org.sagebionetworks.research.mpower.ActivityRecorderService.State.RECORDED
-import org.sagebionetworks.research.mpower.ActivityRecorderService.State.RECORDING
-import org.sagebionetworks.research.mpower.ActivityRecorderService.State.SAVING
+import org.sagebionetworks.research.mpower.ActivityRecorderService.State.*
 import org.sagebionetworks.research.mpower.R.drawable
 import org.sagebionetworks.research.mpower.R.string
 import org.sagebionetworks.research.mpower.research.MpIdentifier
@@ -69,9 +63,7 @@ import org.sagebionetworks.research.presentation.recorder.service.RecorderManage
 import org.sagebionetworks.research.presentation.recorder.service.RecorderManager.RecorderServiceConnectionListener
 import org.sagebionetworks.research.presentation.recorder.service.RecorderService
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.UUID
+import java.util.*
 import javax.inject.Inject
 
 class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListener {
@@ -88,18 +80,18 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
     private var recorderManager: RecorderManager? = null
 
     private val asyncActions = mutableSetOf<AsyncActionConfiguration>(
-        DeviceMotionRecorderConfigurationImpl.builder()
-            .setIdentifier(ACTION_IDENTIFIER)
-            .setStartStepIdentifier(RecorderActionType.START)
-            .setStopStepIdentifier(RecorderActionType.STOP)
-            .setFrequency(null)
-            .setRecorderTypes(mutableSetOf(
-                MotionRecorderType.USER_ACCELERATION,
-                MotionRecorderType.MAGNETIC_FIELD,
-                MotionRecorderType.ROTATION_RATE,
-                MotionRecorderType.GYROSCOPE
-            ))
-            .build()
+            DeviceMotionRecorderConfigurationImpl.builder()
+                    .setIdentifier(ACTION_IDENTIFIER)
+                    .setStartStepIdentifier(RecorderActionType.START)
+                    .setStopStepIdentifier(RecorderActionType.STOP)
+                    .setFrequency(null)
+                    .setRecorderTypes(mutableSetOf(
+                            MotionRecorderType.USER_ACCELERATION,
+                            MotionRecorderType.MAGNETIC_FIELD,
+                            MotionRecorderType.ROTATION_RATE,
+                            MotionRecorderType.GYROSCOPE
+                    ))
+                    .build()
     )
 
     private val startStep = PassiveGaitStep(RecorderActionType.START, asyncActions)
@@ -216,11 +208,11 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
         return Builder(this, getString(string.foreground_channel_id))
                 .setContentTitle(getString(string.recording_notification_title))
                 .setContentText(text ?: getString(string.recording_notification_message))
-                .setSmallIcon(drawable.ic_launcher_foreground)
+                .setSmallIcon(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) drawable.ic_launcher_foreground else R.mipmap.ic_launcher)
                 .build()
     }
 
-    private fun updateNotification(text:String) {
+    private fun updateNotification(text: String) {
         (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                 .notify(FOREGROUND_NOTIFICATION_ID, createNotification(text))
     }
@@ -247,8 +239,8 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
     private fun stopRecording() {
         if (state == RECORDING) {
             Log.d(
-                TAG,
-                "-- stopRecording ($state): ${SimpleDateFormat(TIME_PATTERN, Locale.US).format(Date())}"
+                    TAG,
+                    "-- stopRecording ($state): ${SimpleDateFormat(TIME_PATTERN, Locale.US).format(Date())}"
             )
 
             recordTimer.cancel()
