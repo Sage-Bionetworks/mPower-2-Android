@@ -101,7 +101,7 @@ class GridSelectionFragment : AppCompatDialogFragment() {
             day_selection_message.visibility = View.GONE
         }
         var recycler = medication_day_recycler
-        val adapter = DayAdapter(items, context!!)
+        val adapter = DayAdapter(items, requireContext())
         recycler.adapter = adapter
 
         val gridLayoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 2)

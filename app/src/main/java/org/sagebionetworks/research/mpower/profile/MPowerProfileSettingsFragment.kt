@@ -69,7 +69,7 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
 
     fun launchTask(taskModel: TaskModel) {
         val factory = MpTaskFactory()
-        mPowerProfileViewModel.currentSurveyTask = factory.createMpSmartSurveyTask(activity!!, taskModel)
+        mPowerProfileViewModel.currentSurveyTask = factory.createMpSmartSurveyTask(requireActivity(), taskModel)
         startActivityForResultParent(IntentFactory.INSTANCE.newTaskIntent(activity,
                 MpViewTaskActivity::class.java, mPowerProfileViewModel.currentSurveyTask), REQUEST_TASK)
 
@@ -90,17 +90,17 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
      */
     private fun startActivityForResultParent(intent: Intent, requestCode: Int) {
         var parent: androidx.fragment.app.Fragment? = this
-        while (parent!!.parentFragment != null) {
+        while (parent?.parentFragment != null) {
             parent = parent.parentFragment
         }
-        parent.startActivityForResult(intent, requestCode)
+        parent?.startActivityForResult(intent, requestCode)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         LOGGER.info("onActivityResult with requestCode $requestCode resultCode $resultCode")
 
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TASK) {
-            val taskResult = data!!.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT) as TaskResult
+            val taskResult = data?.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT) as TaskResult
 
             LOGGER.info("Task was successfully finished")
 
@@ -108,7 +108,7 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
                 val stepResult = StepResultHelper.findStepResult(taskResult.results.values, mPowerProfileViewModel.currentProfileItem?.profileItemKey)
                 val result = stepResult.result
                 if (result is String) {
-                    profileViewModel.saveStudyParticipantValue(result, mPowerProfileViewModel.currentProfileItem?.profileItemKey!!)
+                    profileViewModel.saveStudyParticipantValue(result, mPowerProfileViewModel.currentProfileItem?.profileItemKey?:"")
                     adapter?.notifyDataSetChanged()
                 }
             } else {
