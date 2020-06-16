@@ -364,7 +364,6 @@ public class TrackingTabFragment extends Fragment {
             }
         } else if (resultCode == Activity.RESULT_OK && requestCode == PASSIVE_DATA_PERMISSION_REQUEST_CODE) {
             //CHECK here if it's the passive data permission activity result
-            //mPowerProfileViewModel.currentSurveyTask?.processTaskResult(taskResult)
             TaskResult taskResult = (TaskResult) data.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT);
             if (taskResult != null) {
                 surveyViewModel.getBridgeRepoManager()
