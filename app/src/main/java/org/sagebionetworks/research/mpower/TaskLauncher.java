@@ -150,8 +150,6 @@ public class TaskLauncher {
         if (SR_TASKS.contains(taskIdentifier)) {
             LOGGER.debug("Launching SageResearch task: {}", taskIdentifier);
             if (SR_TASKS_REQUIRING_RESULT.contains(taskIdentifier) && context instanceof Activity) {
-                //sageResearchTaskLauncher.launchTask(context, taskIdentifier, taskRunUUID);
-
                 sageResearchTaskLauncher.launchTask(context, fragment, taskIdentifier, taskRunUUID, WALK_AND_BALANCE_REQUEST_CODE, null);
 
             } else {
