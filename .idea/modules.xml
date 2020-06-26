@@ -9,6 +9,10 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/code-mPower-2-Android.iml" filepath="$PROJECT_DIR$/code-mPower-2-Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/../SageResearch-Android/domain/domain.iml" filepath="$PROJECT_DIR$/../SageResearch-Android/domain/domain.iml" group="SageResearch-Android/domain" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/helium-mPower-2-Android.git.iml" filepath="$PROJECT_DIR$/.idea/modules/helium-mPower-2-Android.git.iml" group="helium-mPower-2-Android.git" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/helium-mPower-2-Android.git-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/helium-mPower-2-Android.git-app.iml" group="helium-mPower-2-Android.git/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/researchstack-mpower/helium-mPower-2-Android.git-researchstack-mpower.iml" filepath="$PROJECT_DIR$/.idea/modules/researchstack-mpower/helium-mPower-2-Android.git-researchstack-mpower.iml" group="helium-mPower-2-Android.git/researchstack-mpower" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sageresearch-mpower/helium-mPower-2-Android.git-sageresearch-mpower.iml" filepath="$PROJECT_DIR$/.idea/modules/sageresearch-mpower/helium-mPower-2-Android.git-sageresearch-mpower.iml" group="helium-mPower-2-Android.git/sageresearch-mpower" />
       <module fileurl="file://$PROJECT_DIR$/hf-mPower-2-Android.iml" filepath="$PROJECT_DIR$/hf-mPower-2-Android.iml" group="mPower-2-Android" />
       <module fileurl="file://$PROJECT_DIR$/app/hf-mPower-2-Android-app.iml" filepath="$PROJECT_DIR$/app/hf-mPower-2-Android-app.iml" group="mPower-2-Android/app" />
       <module fileurl="file://$PROJECT_DIR$/researchstack-mpower/hf-mPower-2-Android-researchstack-mpower.iml" filepath="$PROJECT_DIR$/researchstack-mpower/hf-mPower-2-Android-researchstack-mpower.iml" group="mPower-2-Android/researchstack-mpower" />
