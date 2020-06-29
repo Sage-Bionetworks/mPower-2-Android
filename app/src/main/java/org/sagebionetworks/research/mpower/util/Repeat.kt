@@ -32,24 +32,35 @@
 
 package org.sagebionetworks.research.mpower.util
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
+/***
+ * time params in milliseconds
+ */
 class Repeat(
-    private val wait: Long = 0, // in milliseconds
-    private val fn: () -> Unit,
-    private val context: CoroutineContext = Dispatchers.Main) {
+        private val wait: Long = 0,
+        private val expiresAfter: Long = 30000,
+        private val fn: () -> Unit,
+        private val endFn: () -> Unit,
+        private val context: CoroutineContext = Dispatchers.Main) {
 
     var job: Job? = null
+    private val startTime = System.currentTimeMillis()
 
     fun start() {
         job?.cancel()
         if (wait > 0) {
             job = CoroutineScope(context).launch {
-                while (true) {
+                while (startTime + expiresAfter > System.currentTimeMillis()) {
                     delay(wait)
                     fn()
                 }
+                endFn()
             }
         } else {
             fn()

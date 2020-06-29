@@ -65,7 +65,7 @@ class PassiveGaitPermissionActivity : DaggerAppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(PassiveGaitPermissionViewModel::class.java)
 
         intent.getStringExtra(ARG_PASSIVE_DATA_ALLOWED_VALUE)?.let {
-            if (it == "true") {
+            if (it.toBoolean()) {
                 radio_okay.isChecked = true
             } else {
                 radio_not_now.isChecked = true
