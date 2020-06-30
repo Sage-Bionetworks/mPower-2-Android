@@ -19,16 +19,11 @@ import androidx.test.rule.ActivityTestRule;
 import org.hamcrest.core.AllOf;
 import org.hamcrest.core.AnyOf;
 import org.junit.Rule;
-import org.sagebionetworks.bridge.android.SingleFragmentActivity;
 import org.sagebionetworks.research.mobile_ui.perform_task.PerformTaskFragment;
 import org.threeten.bp.Instant;
 
 public abstract class UITestHelper {
     public static final String TREMOR_SHARED_PREFS_KEY = "Tremor";
-
-    @Rule
-    public ActivityTestRule<SingleFragmentActivity> mActivityRule = new ActivityTestRule<>(SingleFragmentActivity.class,
-            true, false);
 
     /**
      * Configures Shared Preferences to contain a last run date corresponding to a first run and then launches the
@@ -40,7 +35,7 @@ public abstract class UITestHelper {
         // lastRunMillis is set up to ensure the value of isFirstRun is the given value.
         long lastRunMillis = isFirstRun ? Instant.EPOCH.toEpochMilli() : Instant.now().minusSeconds(60).toEpochMilli();
         prefs.edit().putLong(PerformTaskFragment.LAST_RUN_KEY, lastRunMillis).apply();
-        mActivityRule.launchActivity(new Intent());
+      //  mActivityRule.launchActivity(new Intent());
     }
 
     /**
