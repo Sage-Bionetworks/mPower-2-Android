@@ -70,8 +70,10 @@ import org.sagebionetworks.research.mpower.researchstack.framework.step.body.MpT
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RunWith(AndroidJUnit4.class)
 @MediumTest
@@ -86,7 +88,7 @@ public class MpSmartSurveyTaskTests {
     public void setupForTests() {
         if (context == null) {
             // Needs delayed init so context is ready to open json assets
-            context = InstrumentationRegistry.getTargetContext();
+            context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         }
         if (motivationTaskModel == null) {
             motivationTaskModel = RestUtils.GSON.fromJson(
@@ -611,8 +613,8 @@ public class MpSmartSurveyTaskTests {
         }
         assertNull(step);
         mpTask.processTaskResult(taskResult);
-        assertEquals(1, mpTask.dataGroupsAdded.size());
-        assertEquals("parkinsons", mpTask.dataGroupsAdded.get(0));
+        assertEquals(1, mpTask.getCurrentDataGroups().size());
+        assertTrue(mpTask.getCurrentDataGroups().contains("parkinsons"));
     }
 
     @Test
@@ -638,8 +640,52 @@ public class MpSmartSurveyTaskTests {
         }
         assertNull(step);
         mpTask.processTaskResult(taskResult);
-        assertEquals(1, mpTask.dataGroupsAdded.size());
-        assertEquals("control", mpTask.dataGroupsAdded.get(0));
+        assertEquals(1, mpTask.getCurrentDataGroups().size());
+        assertTrue(mpTask.getCurrentDataGroups().contains("control"));
+    }
+
+    @Test
+    public void test_demographicsNavigationControlThenParkinsonsDataGroup() {
+        assertNotNull(demographicsTaskModel);
+        MpSmartSurveyTask task = new MockMpTaskFactory().createMpSmartSurveyTask(context, demographicsTaskModel);
+        assertNotNull(task);
+        assertTrue(task instanceof MpSmartSurveyTask);
+        MockMpSmartSurveyTask mpTask = (MockMpSmartSurveyTask) task;
+        assertNotNull(mpTask);
+
+        TaskResult taskResult = new TaskResult(task.getIdentifier());
+        StepResult<StepResult<String>> stepResult = new StepResult<>(new Step("diagnosis" + FORM_STEP_SUFFIX));
+        StepResult<String> answerResult = new StepResult<>(new Step("diagnosis"));
+        answerResult.setResult("control");
+        stepResult.setResult(answerResult);
+        taskResult.getResults().put("diagnosis" + FORM_STEP_SUFFIX, stepResult);
+
+        Step step = null;
+        // The only rule in the motivationTaskModel is for adding data models
+        for (int i = 0; i <= mpTask.getSteps().size(); i++) {
+            step = mpTask.getStepAfterStep(step, taskResult);
+        }
+        assertNull(step);
+        mpTask.processTaskResult(taskResult);
+        assertEquals(1, mpTask.getCurrentDataGroups().size());
+        assertTrue(mpTask.getCurrentDataGroups().contains("control"));
+
+        //Now change result to parkinsons
+        answerResult = new StepResult<>(new Step("diagnosis"));
+        answerResult.setResult("parkinsons");
+        stepResult.setResult(answerResult);
+        taskResult.getResults().put("diagnosis" + FORM_STEP_SUFFIX, stepResult);
+
+        step = null;
+        // The only rule in the motivationTaskModel is for adding data models
+        for (int i = 0; i <= mpTask.getSteps().size(); i++) {
+            step = mpTask.getStepAfterStep(step, taskResult);
+        }
+        assertNull(step);
+        mpTask.processTaskResult(taskResult);
+        //Verify that control was removed
+        assertEquals(1, mpTask.getCurrentDataGroups().size());
+        assertTrue(mpTask.getCurrentDataGroups().contains("parkinsons"));
     }
 
     @Test
@@ -665,7 +711,8 @@ public class MpSmartSurveyTaskTests {
         }
         assertNull(step);
         mpTask.processTaskResult(taskResult);
-        assertEquals(0, mpTask.dataGroupsAdded.size());
+        assertEquals(0, mpTask.getCurrentDataGroups().size());
+
     }
 
     @Test
@@ -989,9 +1036,10 @@ public class MpSmartSurveyTaskTests {
 
     class MockMpSmartSurveyTask extends MpSmartSurveyTask {
         public void setDataGroups(List<String> dataGroups) {
-            this.dataGroups = dataGroups;
+            this.currentDataGroups = new HashSet<>(dataGroups);
+            this.initialDataGroups = new HashSet<>(dataGroups);
         }
-        public List<String> dataGroupsAdded = new ArrayList<>();
+        //public List<String> dataGroupsAdded = new ArrayList<>();
         public List<Step> getSteps() {
             return steps;
         }
@@ -1007,7 +1055,7 @@ public class MpSmartSurveyTaskTests {
                 final TaskModel taskModel,
                 List<String> mockDataGroups) {
             super(context, taskModel);
-            dataGroups = mockDataGroups;
+            setDataGroups(mockDataGroups);
         }
 
         @Override
@@ -1016,9 +1064,14 @@ public class MpSmartSurveyTaskTests {
         }
 
         @Override
-        protected void assignDataGroup(String dataGroup) {
-            dataGroupsAdded.add(dataGroup);
+        protected void updateStudyParticipantDataGroups() {
+            // no-op so we don't try to call bridge
         }
+
+        public Set<String> getCurrentDataGroups() {
+            return currentDataGroups;
+        }
+
     }
 }
 

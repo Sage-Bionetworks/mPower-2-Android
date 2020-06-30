@@ -134,7 +134,8 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
 
     protected Map<String, List<RuleModel>> beforeRules;
     protected Map<String, List<TaskModel.RuleModel>> afterRules;
-    protected List<String> dataGroups;
+    protected Set<String> initialDataGroups;
+    protected Set<String> currentDataGroups;
 
     /**
      * The simple path the user has taken to get to the current step identifier
@@ -224,7 +225,8 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
 
     @VisibleForTesting
     protected void initDataGroups() {
-        dataGroups = MpDataProvider.getInstance().getUserDataGroups();
+        initialDataGroups = new HashSet<>(MpDataProvider.getInstance().getUserDataGroups());
+        currentDataGroups = new HashSet<>(initialDataGroups);
     }
 
     @Override
@@ -461,13 +463,13 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
             for (RuleModel rule : stepRules) {
                 if (rule.dataGroups != null && !rule.dataGroups.isEmpty()) {
                     if (OPERATOR_ALL.equals(rule.operator)) {
-                        if (dataGroups.containsAll(rule.dataGroups)) {
+                        if (currentDataGroups.containsAll(rule.dataGroups)) {
                             skipToIdentifier = rule.skipTo;
                         }
                     } else if (OPERATOR_ANY.equals(rule.operator)) {
                         boolean containsAny = false;
                         for (String dataGroup : rule.dataGroups) {
-                            if (dataGroups.contains(dataGroup)) {
+                            if (currentDataGroups.contains(dataGroup)) {
                                 containsAny = true;
                             }
                         }
@@ -507,12 +509,15 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
                         Object answer = answerForIdentifier(afterRuleKey, taskResult);
                         // After finding the correct result, compare the rule
                         if (rule.value != null && answer != null) {
-                            if (OPERATOR_EQUAL.equals(rule.operator) &&
-                                    rule.value.equals(answer)) {
-                                assignDataGroup(rule.assignDataGroup);
-                            } else if (OPERATOR_NOT_EQUAL.equals(rule.operator) &&
-                                    !rule.value.equals(answer)) {
-                                assignDataGroup(rule.assignDataGroup);
+                            if ((OPERATOR_EQUAL.equals(rule.operator) && rule.value.equals(answer))
+                                    || (OPERATOR_NOT_EQUAL.equals(rule.operator) && !rule.value.equals(answer))
+                                    || (OPERATOR_ALWAYS.equals(rule.operator))) {
+                                //Add data group
+                                currentDataGroups.add(rule.assignDataGroup);
+                            } else if ((OPERATOR_EQUAL.equals(rule.operator) && !rule.value.equals(answer))
+                                    || (OPERATOR_NOT_EQUAL.equals(rule.operator) && rule.value.equals(answer))) {
+                                //Remove data group
+                                currentDataGroups.remove(rule.assignDataGroup);
                             } else {
                                 LOGGER.warn("Operator " + rule.operator +
                                         " not supported with assignDataGroup function");
@@ -522,6 +527,7 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
                 }
             }
         }
+        updateStudyParticipantDataGroups();
     }
 
     /**
@@ -546,12 +552,14 @@ public class MpSmartSurveyTask extends OrderedTask implements Serializable {
         return result;
     }
 
-    protected void assignDataGroup(String dataGroup) {
-        dataGroups.add(dataGroup);
-        // Convert to set to make sure that data groups are unique
-        final Set<String> finalDataGroupSet = new HashSet<>(dataGroups);
+    protected void updateStudyParticipantDataGroups() {
+        if (initialDataGroups.equals(currentDataGroups)) {
+            //Data groups haven't changed, no need to update study participant.
+            return;
+        }
+
         final List<String> finalDataGroups = new ArrayList<>();
-        finalDataGroups.addAll(finalDataGroupSet);
+        finalDataGroups.addAll(currentDataGroups);
 
         StudyParticipant studyParticipant = new StudyParticipant();
         studyParticipant.dataGroups(finalDataGroups);

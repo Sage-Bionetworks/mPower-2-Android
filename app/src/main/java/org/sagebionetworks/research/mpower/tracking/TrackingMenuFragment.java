@@ -9,16 +9,8 @@ import static org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE;
 
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.res.Resources;
 import android.os.Bundle;
-import androidx.annotation.ColorRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.fragment.app.Fragment;
-import androidx.core.view.GestureDetectorCompat;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,10 +19,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
 import org.sagebionetworks.research.mpower.research.MpIdentifier;
+import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
@@ -138,6 +141,8 @@ public class TrackingMenuFragment extends Fragment {
     private @NonNull TrackingMenuFragmentViewModel trackingMenuViewModel;
     private boolean showTracking;
 
+    private PassiveGaitViewModel passiveGaitViewModel;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,6 +187,12 @@ public class TrackingMenuFragment extends Fragment {
         return result;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        passiveGaitViewModel = new ViewModelProvider(getActivity()).get(PassiveGaitViewModel.class);
+    }
+
     private void setIconListeners() {
         for (int i = 0; i < this.taskContainers.size(); i++) {
             final int copy = i;
@@ -218,7 +229,14 @@ public class TrackingMenuFragment extends Fragment {
                         taskResult = findPreviousTaskResultForTrackingTask(taskIdentifier, uuid);
                     }
 
-                    launcher.launchTask(getContext(), taskIdentifier, uuid, taskResult);
+                    passiveGaitViewModel.disableTracking();
+
+                    Fragment parentFragment = this.getParentFragment();
+                    if (taskIdentifier.equals(WALK_AND_BALANCE) && TrackingTabFragment.class.equals(parentFragment.getClass())) {
+                        launcher.launchTask(getContext(), parentFragment, taskIdentifier, uuid, taskResult);
+                    } else {
+                        launcher.launchTask(getContext(), taskIdentifier, uuid, taskResult);
+                    }
                 } else {
                     LOGGER.warn("Selected Icon " + selection + " doesn't map to a task identifier");
                 }

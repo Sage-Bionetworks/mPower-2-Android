@@ -13,6 +13,7 @@ import org.sagebionetworks.research.mpower.authentication.ExternalIdSignInActivi
 import org.sagebionetworks.research.mpower.history.HistoryItemFragment;
 import org.sagebionetworks.research.mpower.insights.InsightsFragment;
 import org.sagebionetworks.research.mpower.profile.MPowerProfileSettingsFragment;
+import org.sagebionetworks.research.mpower.profile.PassiveGaitPermissionActivity;
 import org.sagebionetworks.research.mpower.profile.WithdrawFromStudyActivity;
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity;
 import org.sagebionetworks.research.mpower.sageresearch.archive.TappingResultArchiveFactory;
@@ -77,6 +78,9 @@ public abstract class MPowerUserModule {
 
     @ContributesAndroidInjector
     abstract MainFragment contributeMainFragmentInjector();
+
+    @ContributesAndroidInjector
+    abstract PassiveGaitPermissionActivity contributePassiveGaitPermissionActivityInjector();
 
     @Provides
     @BridgeApplicationScope

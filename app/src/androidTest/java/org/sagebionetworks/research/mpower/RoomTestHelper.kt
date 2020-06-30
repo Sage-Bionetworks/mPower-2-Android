@@ -35,8 +35,8 @@ package org.sagebionetworks.research.sageresearch.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.room.Room
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import junit.framework.Assert.assertNull
 import org.junit.AfterClass
 import org.junit.BeforeClass
@@ -62,7 +62,8 @@ abstract class RoomTestHelper {
         lateinit var reportDao: ReportEntityDao
 
         @BeforeClass
-        @JvmStatic fun setup() {
+        @JvmStatic
+        fun setup() {
             database = Room.inMemoryDatabaseBuilder(
                     InstrumentationRegistry.getInstrumentation().getTargetContext(), ResearchDatabase::class.java)
                     .allowMainThreadQueries().build()
@@ -72,7 +73,8 @@ abstract class RoomTestHelper {
         }
 
         @AfterClass
-        @JvmStatic fun teardown() {
+        @JvmStatic
+        fun teardown() {
             database.close()
         }
     }
@@ -98,24 +100,27 @@ abstract class RoomTestHelper {
 
 object TestResourceHelper {
     fun testResourceMap(resourceSet: Set<String>): Map<String, List<ScheduledActivityEntity>> {
-        return resourceSet.associateBy( {it}, {
+        return resourceSet.associateBy({ it }, {
             testResource(it)
-        } )
+        })
     }
 
     internal fun testResource(filename: String): List<ScheduledActivityEntity> {
         var json: String? = null
         try {
             val inputStream = RoomTestHelper::class.java
-                    .classLoader.getResourceAsStream(filename)
-            val size = inputStream.available()
-            val buffer = ByteArray(size)
-            inputStream.read(buffer)
-            inputStream.close()
-            json = String(buffer, Charset.defaultCharset())
+                    .classLoader?.getResourceAsStream(filename)
+            inputStream?.let {
+                val size = inputStream.available()
+                val buffer = ByteArray(size)
+                inputStream.read(buffer)
+                inputStream.close()
+                json = String(buffer, Charset.defaultCharset())
+            }
         } catch (e: IOException) {
             assertNull("Error loading class resource", e)
         }
+
         val testList = RestUtils.GSON.fromJson(json, ScheduledActivityListV4::class.java)
         return EntityTypeConverters().fromScheduledActivityListV4(testList) ?: ArrayList()
     }

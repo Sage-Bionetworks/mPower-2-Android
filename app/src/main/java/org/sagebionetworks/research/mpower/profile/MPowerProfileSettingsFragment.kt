@@ -1,11 +1,9 @@
 package org.sagebionetworks.research.mpower.profile
 
 import android.app.Activity
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import io.reactivex.Scheduler
+import androidx.lifecycle.ViewModelProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import org.joda.time.DateTime
@@ -16,6 +14,7 @@ import org.sagebionetworks.bridge.rest.model.SurveyReference
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity
+import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel
 import org.sagebionetworks.research.sageresearch.profile.ProfileSettingsFragment
 import org.sagebionetworks.research.sageresearch.profile.ProfileViewModel
 import org.sagebionetworks.researchstack.backbone.factory.IntentFactory
@@ -25,7 +24,6 @@ import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity
 import org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK
 import org.sagebionetworks.researchstack.backbone.utils.StepResultHelper
 import org.slf4j.LoggerFactory
-import java.util.*
 import javax.inject.Inject
 
 class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
@@ -43,8 +41,12 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
     @Inject
     lateinit var profileViewModelFactory: MPowerProfileViewModel.Factory
 
+    private val passiveGaitViewModel: PassiveGaitViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(PassiveGaitViewModel::class.java)
+    }
+
     override fun loadProfileViewModel(): ProfileViewModel {
-        mPowerProfileViewModel = ViewModelProviders.of(this, profileViewModelFactory).get(MPowerProfileViewModel::class.java);
+        mPowerProfileViewModel = ViewModelProvider(this, profileViewModelFactory).get(MPowerProfileViewModel::class.java)
         return mPowerProfileViewModel
     }
 
@@ -67,7 +69,7 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
 
     fun launchTask(taskModel: TaskModel) {
         val factory = MpTaskFactory()
-        mPowerProfileViewModel.currentSurveyTask = factory.createMpSmartSurveyTask(activity!!, taskModel)
+        mPowerProfileViewModel.currentSurveyTask = factory.createMpSmartSurveyTask(requireActivity(), taskModel)
         startActivityForResultParent(IntentFactory.INSTANCE.newTaskIntent(activity,
                 MpViewTaskActivity::class.java, mPowerProfileViewModel.currentSurveyTask), REQUEST_TASK)
 
@@ -88,17 +90,17 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
      */
     private fun startActivityForResultParent(intent: Intent, requestCode: Int) {
         var parent: androidx.fragment.app.Fragment? = this
-        while (parent!!.parentFragment != null) {
+        while (parent?.parentFragment != null) {
             parent = parent.parentFragment
         }
-        parent.startActivityForResult(intent, requestCode)
+        parent?.startActivityForResult(intent, requestCode)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         LOGGER.info("onActivityResult with requestCode $requestCode resultCode $resultCode")
 
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TASK) {
-            val taskResult = data!!.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT) as TaskResult
+            val taskResult = data?.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT) as TaskResult
 
             LOGGER.info("Task was successfully finished")
 
@@ -106,15 +108,15 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
                 val stepResult = StepResultHelper.findStepResult(taskResult.results.values, mPowerProfileViewModel.currentProfileItem?.profileItemKey)
                 val result = stepResult.result
                 if (result is String) {
-                    profileViewModel.saveStudyParticipantValue(result, mPowerProfileViewModel.currentProfileItem?.profileItemKey!!)
+                    profileViewModel.saveStudyParticipantValue(result, mPowerProfileViewModel.currentProfileItem?.profileItemKey?:"")
                     adapter?.notifyDataSetChanged()
                 }
             } else {
-
                 // This will trigger any after-rule processing like adding data groups based on survey answers
                 mPowerProfileViewModel.currentSurveyTask?.processTaskResult(taskResult)
 
                 profileViewModel.bridgeRepoManager.saveTaskResult(taskResult, mPowerProfileViewModel.currentScheduledActivity)
+
             }
         }
         mPowerProfileViewModel.currentSurveyTask = null
@@ -131,6 +133,12 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
         intent.putExtra(WithdrawFromStudyActivity.ARG_NAME_KEY, firstName)
         intent.putExtra(WithdrawFromStudyActivity.ARG_JOINED_DATE, joinedDate)
         startActivity(intent)
+    }
+
+    override fun launchPassiveDataAllowed(profileItem: ProfileItemProfileTableItem, profileDataItem: ProfileDataItem, value: String?) {
+        val intent = Intent(activity, PassiveGaitPermissionActivity::class.java)
+        intent.putExtra(PassiveGaitPermissionActivity.ARG_PASSIVE_DATA_ALLOWED_VALUE, value)
+        startActivityForResultParent(intent, REQUEST_TASK)
     }
 
     override fun onDetach() {

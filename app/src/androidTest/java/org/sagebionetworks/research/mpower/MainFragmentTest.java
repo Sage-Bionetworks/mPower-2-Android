@@ -20,21 +20,21 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sagebionetworks.bridge.android.SingleFragmentActivity;
+//import org.sagebionetworks.bridge.android.SingleFragmentActivity;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 @Ignore
 public class MainFragmentTest {
 
-    @Rule
+   /* @Rule
     public ActivityTestRule<SingleFragmentActivity> mActivityTestRule = new ActivityTestRule<>(SingleFragmentActivity.class);
-
-    @Before
+*/
+  /*  @Before
     public void setupTest() {
         SingleFragmentActivity activity = mActivityTestRule.getActivity();
         activity.setFragment(new MainFragment());
-    }
+    }*/
 
     @Test
     public void mainFragmentTest() {

@@ -19,7 +19,7 @@ import org.sagebionetworks.research.sageresearch.extensions.localizedAndJoin
 import org.slf4j.LoggerFactory
 import org.threeten.bp.format.DateTimeFormatter
 
-class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listener, var medicationSchedulingViewModel: MedicationSchedulingViewModel) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class MedicationAdapter(var items: MutableList<DosageItem>, val listener: Listener, var medicationSchedulingViewModel: MedicationSchedulingViewModel) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val LOGGER = LoggerFactory.getLogger(
             MedicationAdapter::class.java)
@@ -217,12 +217,11 @@ class ViewDosageViewHolder(view: View) : androidx.recyclerview.widget.RecyclerVi
 
 class DosageViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
     val dosageText = view.dosage_edit_text
-    val radioButtonAnytime = view.radio_button_any_time!!
-    val radioButtonSchedule = view.radio_button_schedule!!
-    //val checkbox = view.schedule_anytime!!
-    val timeContainer = view.select_times!!
+    val radioButtonAnytime = view.radio_button_any_time
+    val radioButtonSchedule = view.radio_button_schedule
+    val timeContainer = view.select_times
     val timeText = timeContainer.title
-    val dayContainer = view.select_days!!
+    val dayContainer = view.select_days
     val dayText = dayContainer.title
     val removeButton = view.dosage_remove
     var textWatcher :TextWatcher? = null
