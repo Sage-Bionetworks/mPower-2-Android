@@ -39,7 +39,7 @@ jobs:
   include:
     - stage: test
       script:
-        - bundle exec fastlane test && bundle exec fastlane assemble
+       # - bundle exec fastlane test && bundle exec fastlane assemble
 #    - stage: Firebase-test
 #      name: "Large androidTests"
 #      if: branch =~ /^stable-.*$/
