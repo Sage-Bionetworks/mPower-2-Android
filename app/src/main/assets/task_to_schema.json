@@ -3,6 +3,10 @@
     "id": "Medication",
     "revision": 3
   },
+  "PassiveGait": {
+    "id": "PassiveGait",
+    "revision": 1
+  },
   "StudyBurst": {
     "id": "StudyBurst",
     "revision": 1
@@ -29,6 +33,10 @@
   },
   "WalkAndBalance": {
     "id": "WalkAndBalance",
+    "revision": 1
+  },
+  "PassiveDataPermission": {
+    "id": "PassiveDataPermission",
     "revision": 1
   }
 }

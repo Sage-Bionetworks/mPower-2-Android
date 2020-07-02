@@ -49,7 +49,7 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
         override fun onTimePressed(currentLoggedDate: Instant, medicationIdentifier: String,
                 scheduleItem: MedicationLoggingSchedule, position: Int) {
 
-            var selectionItems = viewModel.getSelectionTimes(context!!, scheduleItem.dosageItem)
+            var selectionItems = viewModel.getSelectionTimes(requireContext(), scheduleItem.dosageItem)
             selectionItems.forEach { it.isSelected = false }
             selectionItems.firstOrNull { it.identifier == scheduleItem.medicationTimestamp?.timeOfDay }?.isSelected = true
             var dialog = GridSelectionFragment.newInstance(
@@ -63,8 +63,8 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
 
                         scheduleItem.medicationTimestamp?.let { medicationTimestamp ->
                             scheduleItem.dosageItem.timestamps.remove(medicationTimestamp)
-                            val updatedTimeStamp = medicationTimestamp.toBuilder().setLoggedDate(updatedLoggedDate)!!.build()
-                            scheduleItem.dosageItem.timestamps.add(updatedTimeStamp)
+                            val updatedTimeStamp = medicationTimestamp.toBuilder().setLoggedDate(updatedLoggedDate)?.build()
+                            updatedTimeStamp?.let { scheduleItem.dosageItem.timestamps.add(it) }
                             val recyclerView = if (isCurrent) medication_recycler_view else missed_medication_recycler_view
                             val updatedScheduleItem = MedicationLoggingSchedule(
                                     scheduleItem.config, scheduleItem.dosageItem, updatedTimeStamp)
@@ -73,7 +73,7 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
                     }
                 }
             }
-            dialog.show(fragmentManager!!, "Times select")
+            dialog.show(parentFragmentManager, "Times select")
         }
 
         override fun onTakenPressed(medicationIdentifier: String, scheduleItem: MedicationLoggingSchedule, position: Int) {
@@ -156,9 +156,11 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
         // the adapter.
         val now = LocalDateTime.now()
         val timeBlock = viewModel.getTimeBlock(now.toLocalTime())
-        val currentMedicationAdapter = MedicationLoggingAdapter(
+        val currentMedicationAdapter = viewModel.loggedElementsById.value?.let {
+            MedicationLoggingAdapter(
                 viewModel.getCurrentTimeBlockMedications(timeBlock, now.toLocalDate()).toMutableList(),
-                viewModel.loggedElementsById.value!!, Listener(true))
+                    it, Listener(true))
+        }
         medication_recycler_view.adapter = currentMedicationAdapter
         // Filter the schedules down to those that should appear in the missed medications and setup the adapter.
         val missedMedications = viewModel.getMissedMedications(timeBlock, now).toMutableList()
@@ -168,8 +170,10 @@ class MedicationLoggingFragment : TrackingFragment<MedicationLog, MedicationLog,
         } else {
             missed_medication_label.visibility = View.VISIBLE
             missed_medication_recycler_view.visibility = View.VISIBLE
-            val missedMedicationAdapter = MedicationLoggingAdapter(missedMedications,
-                    viewModel.loggedElementsById.value!!, Listener(false))
+            val missedMedicationAdapter = viewModel.loggedElementsById.value?.let {
+                MedicationLoggingAdapter(missedMedications,
+                        it, Listener(false))
+            }
             missed_medication_recycler_view.adapter = missedMedicationAdapter
         }
 

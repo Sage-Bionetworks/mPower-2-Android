@@ -113,11 +113,11 @@
         android:text="@string/do_not_send_me_reminders"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/reminder_done_button"/>
+        app:layout_constraintBottom_toTopOf="@id/reminder_done_button"/>
 
     <Button
         style="@style/MPower.RoundedCornerMaterialButton"
-        android:id="@id/reminder_done_button"
+        android:id="@+id/reminder_done_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mp_rounded_button_height"
         android:text="@string/rsb_BUTTON_DONE"

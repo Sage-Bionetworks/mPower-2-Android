@@ -126,7 +126,7 @@ class MedicationTrackingTaskViewModel(context: Context,
      */
     fun getCurrentTimeBlockMedications(timeBlock: TimeBlock, today: LocalDate): List<MedicationLoggingItem> {
         val items: MutableList<MedicationLoggingItem> = mutableListOf()
-        val sortedConfigs = SortUtil.getActiveElementsSorted(activeElementsById.value!!)
+        val sortedConfigs = SortUtil.getActiveElementsSorted(activeElementsById.value?: mapOf())
         for (config in sortedConfigs) {
             if (config.dosageItems.isEmpty()) {
                 items.add(MedicationLoggingAddDetails(config))
@@ -171,7 +171,7 @@ class MedicationTrackingTaskViewModel(context: Context,
         val lowerEndpoint = if (containingRange.hasLowerBound()) containingRange.lowerEndpoint() else LocalTime.MIN
         val missedRange = Range.lessThan(lowerEndpoint)
         val missedItems: MutableList<MedicationLoggingItem> = mutableListOf()
-        val sortedConfigs = SortUtil.getActiveElementsSorted(activeElementsById.value!!)
+        val sortedConfigs = SortUtil.getActiveElementsSorted(activeElementsById.value?: mapOf())
         for (config in sortedConfigs) {
             for (dosage in config.dosageItems) {
                 val todayString = now.dayOfWeek.value

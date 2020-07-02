@@ -5,6 +5,7 @@ import org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS
 import org.sagebionetworks.research.mpower.research.MpIdentifier.ENGAGEMENT
 import org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION
 import org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION
+import org.sagebionetworks.research.mpower.research.MpIdentifier.PASSIVE_DATA_PERMISSION
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER
 import org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS
@@ -46,7 +47,7 @@ class DataSourceManager {
                         TRIGGERS to "b0f07b7e-408e-4d50-9368-8220971e570c"
                 ))
 
-        val surveyActivityGroupIdentifier = "Surveys"
+        const val surveyActivityGroupIdentifier = "Surveys"
         val surveyGroup = ActivityGroupObject(
                 surveyActivityGroupIdentifier, surveyActivityGroupIdentifier,
                 activityIdentifiers = setOf(DEMOGRAPHICS, ENGAGEMENT, MOTIVATION, BACKGROUND))

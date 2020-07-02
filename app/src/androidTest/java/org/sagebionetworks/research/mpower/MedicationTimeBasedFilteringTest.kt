@@ -1,13 +1,15 @@
 package org.sagebionetworks.research.mpower
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.RangeSet
-import org.junit.*
 import org.junit.Assert.*
-import org.junit.runner.*
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
 import org.sagebionetworks.research.mpower.tracking.model.TrackingItem
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStep
 import org.sagebionetworks.research.mpower.tracking.model.TrackingStepView
@@ -22,8 +24,7 @@ import org.sagebionetworks.research.mpower.tracking.view_model.logs.MedicationTi
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.Month
-import java.util.Arrays
-import java.util.Collections
+import java.util.*
 
 @RunWith(AndroidJUnit4::class)
 class MedicationTimeBasedFilteringTest {
@@ -147,7 +148,7 @@ class MedicationTimeBasedFilteringTest {
 
     @Before
     fun setupViewModel() {
-        viewModel = MedicationTrackingTaskViewModel(InstrumentationRegistry.getTargetContext(), STEP_VIEW, null)
+        viewModel = MedicationTrackingTaskViewModel(InstrumentationRegistry.getInstrumentation().targetContext, STEP_VIEW, null)
         viewModel.addConfig(CONFIG_1)
         viewModel.addConfig(CONFIG_2)
         viewModel.addConfig(CONFIG_3)

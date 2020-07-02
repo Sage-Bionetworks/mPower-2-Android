@@ -117,6 +117,19 @@
     <string name="reminder_notification_channel_title">mPower Reminders</string>
     <string name="reminder_notification_channel_desc">mPower reminders help you remember to log your data</string>
 
+    <string name="foreground_channel_id">mPower Alerts</string>
+    <string name="foreground_channel_title">mPower Informational Alerts</string>
+    <string name="foreground_channel_desc">mPower low importance informational alerts</string>
+
+    <string name="recording_notification_title">mPower Passive Gait</string>
+    <string name="recording_notification_message">Recording...</string>
+    <string name="recording_notification_init">Initializing...</string>
+    <string name="recording_notification_saving">Saving...</string>
+    <string name="recording_notification_canceling">Canceling...</string>
+
+    <string name="monitoring_notification_title">mPower Monitoring</string>
+    <string name="monitoring_notification_message">Monitoring movement activity</string>
+
     <string name="measuring_center_label">Walk And Balance</string>
     <string name="measuring_left_label">Finger Tapping</string>
     <string name="measuring_right_label">Tremor Test</string>
@@ -281,4 +294,8 @@
     <!-- Withdraw -->
     <string name="withdraw_title">Hi %1$s,\n You have been enrolled in the mPower2 Study since %2$s</string>
     <string name="withdraw_details">You can withdraw from the study if you no longer want to be involved. Please note that you will be logged out of your account and no further data will be collected.</string>
+    <string name="passive_gait_permission_title">Measure movement in the background</string>
+    <string name="passive_gait_permission_description">We are studying whether it is possible to capture similar measurements while you are going about your daily life. We would like to be able to measure your walking patterns in the background.</string>
+    <string name="passive_gait_permission_okay">Okay</string>
+    <string name="passive_gait_permission_not_now">Not Now</string>
 </resources>

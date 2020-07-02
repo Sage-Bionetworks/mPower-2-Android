@@ -1,39 +1,41 @@
 package org.sagebionetworks.research.mpower.tracking;
 
-import static org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER;
 import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN;
 import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityKt.STUDY_BURST_REQUEST_CODE;
+import static org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
 
 import android.app.Activity;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import org.sagebionetworks.researchstack.backbone.factory.IntentFactory;
-import org.sagebionetworks.researchstack.backbone.model.TaskModel;
-import org.sagebionetworks.researchstack.backbone.result.TaskResult;
-import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
+import org.sagebionetworks.research.mpower.TaskLauncher;
+import org.sagebionetworks.research.mpower.profile.MPowerProfileViewModel;
+import org.sagebionetworks.research.mpower.profile.PassiveGaitPermissionActivity;
+import org.sagebionetworks.research.mpower.profile.PassiveGaitPermissionViewModel;
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
+import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderState;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderViewModel;
@@ -41,8 +43,16 @@ import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TodayActionBarItem;
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
+import org.sagebionetworks.research.sageresearch.dao.room.AppConfigRepository;
+import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository;
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
+import org.sagebionetworks.research.sageresearch.profile.ProfileDataLoader;
+import org.sagebionetworks.research.sageresearch.profile.ProfileManager;
 import org.sagebionetworks.research.sageresearch.viewmodel.ReportViewModel;
+import org.sagebionetworks.researchstack.backbone.factory.IntentFactory;
+import org.sagebionetworks.researchstack.backbone.model.TaskModel;
+import org.sagebionetworks.researchstack.backbone.result.TaskResult;
+import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +75,8 @@ import rx.subscriptions.CompositeSubscription;
 public class TrackingTabFragment extends Fragment {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackingTabFragment.class);
 
+    private static final int PASSIVE_DATA_PERMISSION_REQUEST_CODE = 31231;
+
     @BindView(R.id.tracking_status_bar)
     TrackingStatusBar trackingStatusBar;
 
@@ -82,6 +94,22 @@ public class TrackingTabFragment extends Fragment {
 
     @Inject
     StudyBurstReminderViewModel.Factory studyBurstReminderViewModelFactory;
+
+
+    private MPowerProfileViewModel mPowerProfileViewModel = null;
+
+    @Inject
+    MPowerProfileViewModel.Factory profileViewModelFactory;
+
+
+    @Inject
+    ReportRepository reportRepo;
+
+    @Inject
+    AppConfigRepository appConfigRepo;
+
+    ProfileManager profileManager = null;
+
 
     private TodayScheduleViewModel todayScheduleViewModel;
 
@@ -104,10 +132,20 @@ public class TrackingTabFragment extends Fragment {
         return new TrackingTabFragment();
     }
 
+    private PassiveGaitViewModel passiveGaitViewModel;
+
+
     @Override
     public void onAttach(Context context) {
         AndroidSupportInjection.inject(this);
         super.onAttach(context);
+    }
+
+    @Override
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPowerProfileViewModel = new ViewModelProvider(this, profileViewModelFactory)
+                .get(MPowerProfileViewModel.class);
     }
 
     @Override
@@ -118,6 +156,17 @@ public class TrackingTabFragment extends Fragment {
         // Move the status bar down by the window insets.
         OnApplyWindowInsetsListener listener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
         ViewCompat.setOnApplyWindowInsetsListener(this.trackingStatusBar, listener);
+
+        profileManager = new ProfileManager(reportRepo, appConfigRepo);
+        profileManager.profileDataLoader().observe(this.getViewLifecycleOwner(), observedProfileDataLoader -> {
+            String passiveDataAllowedString = observedProfileDataLoader
+                    .getValueString(PassiveGaitPermissionViewModel.PROFILE_KEY_PASSIVE_DATA_ALLOWED);
+            if (passiveDataAllowedString != null) {
+                trackingTabViewModel.passiveDataAllowed = Boolean.parseBoolean(passiveDataAllowedString);
+            }
+
+        });
+
         return view;
     }
 
@@ -136,27 +185,26 @@ public class TrackingTabFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        todayScheduleViewModel = ViewModelProviders.of(this, todayScheduleViewModelFactory)
+        todayScheduleViewModel = new ViewModelProvider(this, todayScheduleViewModelFactory)
                 .get(TodayScheduleViewModel.class);
-        todayScheduleViewModel.liveData().observe(this, todayHistoryItems -> {
+        todayScheduleViewModel.liveData().observe(getViewLifecycleOwner(), todayHistoryItems -> {
             // do something so compiler doesn't reuse lambda as observer across LiveDatas
             LOGGER.debug("Observed todayHistoryItems");
             // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
         });
 
-        trackingTabViewModel =
-                ViewModelProviders.of(getActivity()).get(TrackingTabFragmentViewModel.class);
+        trackingTabViewModel = new ViewModelProvider(getActivity()).get(TrackingTabFragmentViewModel.class);
 
-        studyBurstViewModel = ViewModelProviders.of(this, studyBurstViewModelFactory)
+        studyBurstViewModel = new ViewModelProvider(this, studyBurstViewModelFactory)
                 .get(StudyBurstViewModel.class);
-        studyBurstViewModel.liveData().observe(this, this::setupActionBar);
-        studyBurstViewModel.getScheduleErrorLiveData().observe(this, this::showErrorMessage);
+        studyBurstViewModel.liveData().observe(getViewLifecycleOwner(), this::setupActionBar);
+        studyBurstViewModel.getScheduleErrorLiveData().observe(getViewLifecycleOwner(), this::showErrorMessage);
         // This is a single live event that will only be triggered once after a call to loadResearchStackSurvey
-        studyBurstViewModel.getLoadRsSurveyLiveData().observe(this, this::rsSurveyLoaded);
+        studyBurstViewModel.getLoadRsSurveyLiveData().observe(getViewLifecycleOwner(), this::rsSurveyLoaded);
 
-        surveyViewModel = ViewModelProviders.of(this, surveyViewModelFactory)
+        surveyViewModel = new ViewModelProvider(this, surveyViewModelFactory)
                 .get(SurveyViewModel.class);
-        surveyViewModel.liveData().observe(this, scheduledActivityEntities -> {
+        surveyViewModel.liveData().observe(getViewLifecycleOwner(), scheduledActivityEntities -> {
             // TODO: mdephillips 9/4/18 mimic On iOS, this runs any survey that managers may add
             // TODO: mdephillips 9/4/18 we may want to hold off on implementing it
             // do something so compiler doesn't reuse lambda as observer across LiveDatas
@@ -164,13 +212,16 @@ public class TrackingTabFragment extends Fragment {
             // TODO: mdephillips 9/4/18 because not all survey types are currently supported with UI right now
         });
 
-        reportViewModel = ViewModelProviders.of(this, reportViewModelFactory).get(ReportViewModel.class);
+        reportViewModel = new ViewModelProvider(this, reportViewModelFactory).get(ReportViewModel.class);
 
         // This view model is used to ensure that the study burst reminders are kept up to date
         // even if the user is using multiple devices, or has recently logged in/out
-        studyBurstReminderViewModel = ViewModelProviders.of(this,
+        studyBurstReminderViewModel = new ViewModelProvider(this,
                 studyBurstReminderViewModelFactory).get(StudyBurstReminderViewModel.class);
-        studyBurstReminderViewModel.reminderLiveData().observe(this, this::updateStudyBurstReminders);
+        studyBurstReminderViewModel.reminderLiveData()
+                .observe(getViewLifecycleOwner(), this::updateStudyBurstReminders);
+
+        passiveGaitViewModel = new ViewModelProvider(getActivity()).get(PassiveGaitViewModel.class);
     }
 
     @Override
@@ -178,6 +229,7 @@ public class TrackingTabFragment extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
+
 
     /**
      * Sets up the action bar according to the current state of the study burst
@@ -229,8 +281,8 @@ public class TrackingTabFragment extends Fragment {
     }
 
     /**
-     * Shows the next screen when the action bar is tapped,
-     * or when the user has not done their motivation survey yet.
+     * Shows the next screen when the action bar is tapped, or when the user has not done their motivation survey
+     * yet.
      */
     private void showActionBarFlow(@Nonnull StudyBurstItem item) {
         ScheduledActivityEntity nextCompletionTask = item.getNextCompletionActivityToShow();
@@ -245,6 +297,7 @@ public class TrackingTabFragment extends Fragment {
 
     /**
      * Launches an old style ResearchStack SmartSurveyTask
+     *
      * @param surveySchedule of the survey to launch
      */
     private void launchRsSurvey(@Nullable ScheduledActivityEntity surveySchedule) {
@@ -279,6 +332,7 @@ public class TrackingTabFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         LOGGER.info("onActivityResult with requestCode " + requestCode + " resultCode " + resultCode);
+
         // Will be set if a survey was just successfully completed and uploaded
         String successfulSurveyUploadTaskId = null;
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TASK) {
@@ -295,17 +349,29 @@ public class TrackingTabFragment extends Fragment {
             if (trackingTabViewModel.currentSurveySchedule != null) {
                 LOGGER.info("currentSurveySchedule non-null, uploading results");
 
-                surveyViewModel.getBridgeRepoManager().saveTaskResult(taskResult, trackingTabViewModel.currentSurveySchedule);
+                surveyViewModel.getBridgeRepoManager()
+                        .saveTaskResult(taskResult, trackingTabViewModel.currentSurveySchedule);
 
                 if (MOTIVATION.equals(trackingTabViewModel.currentSurveySchedule.activityIdentifier())) {
                     // send the user straight into the study burst
                     goToStudyBurst();
                 }
                 successfulSurveyUploadTaskId = trackingTabViewModel.currentSurveySchedule.activityIdentifier();
+
+
             } else {
                 LOGGER.info("currentSurveySchedule is null, cannot upload results");
             }
+        } else if (resultCode == Activity.RESULT_OK && requestCode == PASSIVE_DATA_PERMISSION_REQUEST_CODE) {
+            //CHECK here if it's the passive data permission activity result
+            TaskResult taskResult = (TaskResult) data.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT);
+            if (taskResult != null) {
+                surveyViewModel.getBridgeRepoManager()
+                        .saveTaskResult(taskResult, mPowerProfileViewModel.getCurrentScheduledActivity());
+            }
+
         }
+
         trackingTabViewModel.currentSurveyTask = null;
         trackingTabViewModel.currentSurveySchedule = null;
 
@@ -328,10 +394,19 @@ public class TrackingTabFragment extends Fragment {
                 launchRsSurvey(currentItem.getDemographicsSurvey());
             }
         }
+
+        //special case for Walk and Balance to ask for permission
+        if (resultCode == Activity.RESULT_OK && requestCode == TaskLauncher.WALK_AND_BALANCE_REQUEST_CODE && trackingTabViewModel.passiveDataAllowed == null) {
+            Intent intent = new Intent(this.getContext(), PassiveGaitPermissionActivity.class);
+            intent.putExtra(PassiveGaitPermissionActivity.ARG_PASSIVE_DATA_ALLOWED_VALUE, (String) null);
+
+            this.startActivityForResult(intent, PASSIVE_DATA_PERMISSION_REQUEST_CODE);
+        }
     }
 
     /**
      * Called when the survey model is loaded from bridge, time to show it to the user
+     *
      * @param task old research stack model object for creating surveys
      */
     private void rsSurveyLoaded(TaskModel task) {
@@ -347,6 +422,7 @@ public class TrackingTabFragment extends Fragment {
 
     /**
      * Called when there is a network or database error
+     *
      * @param errorMessage to display to the user
      */
     private void showErrorMessage(@Nullable String errorMessage) {
@@ -370,12 +446,15 @@ public class TrackingTabFragment extends Fragment {
     }
 
     /**
-     * Due to a behavior issue in nested child fragments (like this fragment)
-     * We must call the startActivityForResult on the parent fragment if we can
+     * Due to a behavior issue in nested child fragments (like this fragment) We must call the startActivityForResult
+     * on the parent fragment if we can
+     *
      * @param intent to launch
      * @param requestCode to launch with
      */
     private void startActivityForResultParent(Intent intent, int requestCode) {
+        passiveGaitViewModel.disableTracking();
+
         Fragment parent = this;
         while (parent.getParentFragment() != null) {
             parent = parent.getParentFragment();
@@ -402,12 +481,17 @@ public class TrackingTabFragment extends Fragment {
         /**
          * The current survey task being run, null if no survey is running
          */
-        @Nullable MpSmartSurveyTask currentSurveyTask;
+        @Nullable
+        MpSmartSurveyTask currentSurveyTask;
 
         /**
          * The current survey schedule for current survey task being run, null if no survey is running
          */
-        @Nullable ScheduledActivityEntity currentSurveySchedule;
+        @Nullable
+        ScheduledActivityEntity currentSurveySchedule;
+
+        @Nullable
+        Boolean passiveDataAllowed;
     }
 }
 
