@@ -1,18 +1,17 @@
 package org.sagebionetworks.research.mpower.tracking.fragment
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.ViewCompat
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import kotlinx.android.synthetic.main.mpower2_medication_scheduling.*
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper
 import org.sagebionetworks.research.mpower.R
@@ -86,9 +85,9 @@ class MedicationSchedulingFragment :
         navigationActionBar.forwardButton.setText(R.string.button_save)
         navigationActionBar.setActionButtonClickListener { _ ->
             configOriginal?.dosageItems?.clear()
-            configOriginal?.dosageItems?.addAll(config!!.dosageItems)
-            if (fragmentManager!!.backStackEntryCount > 0) {
-                fragmentManager!!.popBackStack()
+            config?.dosageItems?.let { configOriginal?.dosageItems?.addAll(it) }
+            if (requireFragmentManager().backStackEntryCount > 0) {
+                requireFragmentManager().popBackStack()
             } else {
                 val fragment = MedicationLoggingFragment.newInstance(stepView)
                 replaceWithFragment(fragment)
@@ -143,17 +142,22 @@ class MedicationSchedulingFragment :
 
                 var dialog = GridSelectionFragment.newInstance(
                         getString(R.string.medication_time_selection_title, identifier),
-                        viewModel.getSelectionTimes(context!!, dosageItem), false)
+                        viewModel.getSelectionTimes(requireContext(), dosageItem), false)
                 dialog.listener = object : ItemsSelectedListener {
                     override fun onItemsSelected(selectedItemIds: List<String>) {
                         val configUnwrapped = config ?: return
                         dosageItem.timestamps.clear()
-                        val timestamps = selectedItemIds.map { MedicationTimestamp.builder().setTimeOfDay(it)!!.build() }
+                        val timestamps = selectedItemIds.map {
+                            MedicationTimestamp.builder().setTimeOfDay(it)?.build()
+                                    ?: MedicationTimestamp.builder().build()
+                        }
+
                         dosageItem.timestamps.addAll(timestamps)
                         adapter.updateDosage(dosageItem)
+
                     }
                 }
-                dialog.show(fragmentManager!!, "Times select")
+                dialog.show(requireFragmentManager(), "Times select")
             }
 
             override fun onDaySelectionPressed(dosageItem: DosageItem) {
@@ -169,7 +173,7 @@ class MedicationSchedulingFragment :
                     }
                 }
 
-                dialog.show(fragmentManager!!, "Day select")
+                dialog.show(requireFragmentManager(), "Day select")
             }
 
             override fun onAnytimeSet(dosageItem: DosageItem, anytime: Boolean) {
@@ -178,17 +182,19 @@ class MedicationSchedulingFragment :
                     dosageItem.daysOfWeek.addAll(DosageItem.dailySet)
                 } else {
                     dosageItem.timestamps.clear()
-                    dosageItem.timestamps.add(MedicationTimestamp.builder().setTimeOfDay("08:00")!!.build())
+                    dosageItem.timestamps.add(MedicationTimestamp.builder().setTimeOfDay("08:00")?.build()
+                            ?: MedicationTimestamp.builder().build())
                 }
                 adapter.updateDosage(dosageItem)
             }
         }
 
-        if (config!!.dosageItems.isEmpty()) {
+        if (config?.dosageItems?.isEmpty() == true) {
             val dose = DosageItem("", DosageItem.dailySet.toMutableSet(), mutableSetOf())
             config?.dosageItems?.add(dose)
         }
-        return MedicationAdapter(config!!.dosageItems.toMutableList(), listener, medScheduleViewModel)
+        return MedicationAdapter(config?.dosageItems?.toMutableList()
+                ?: mutableListOf(), listener, medScheduleViewModel)
     }
 
     override fun getLayoutId(): Int {
@@ -216,8 +222,8 @@ class MedicationSchedulingFragment :
                 viewModel.removeLoggedElement(identifier)
                 viewModel.removeConfig(identifier)
                 viewModel.activeElementsById.value?.let {
-                    if (fragmentManager!!.backStackEntryCount > 0) {
-                        fragmentManager!!.popBackStack()
+                    if (requireFragmentManager().backStackEntryCount > 0) {
+                        fragmentManager?.popBackStack()
                     } else {
                         val fragment = MedicationLoggingFragment.newInstance(stepView)
                         replaceWithFragment(fragment)
@@ -225,7 +231,7 @@ class MedicationSchedulingFragment :
                 }
             }
         })
-        dialog.show(fragmentManager!!, "Remove medication")
+        dialog.show(requireFragmentManager(), "Remove medication")
     }
 
 }
@@ -239,6 +245,6 @@ class MedicationSchedulingViewModelFactory(val medicationLog: MedicationLog?) : 
 class MedicationSchedulingViewModel(medLog: MedicationLog?) : ViewModel() {
 
     val medicationLog = medLog
-    var editIndex = if (medicationLog!!.dosageItems.size < 2) 0 else -1
+    var editIndex = if ((medicationLog?.dosageItems?.size ?: 0) < 2) 0 else -1
 
 }

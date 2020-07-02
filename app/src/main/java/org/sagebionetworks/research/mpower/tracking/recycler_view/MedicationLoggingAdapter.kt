@@ -30,7 +30,7 @@ import java.util.*
 
 class MedicationLoggingAdapter(private val items: MutableList<MedicationLoggingItem>,
         val logs: Map<String, MedicationLog>,
-        private val listener: MedicationLoggingListener) : androidx.recyclerview.widget.RecyclerView.Adapter<ViewHolder>() {
+        private val listener: MedicationLoggingListener) : RecyclerView.Adapter<ViewHolder>() {
 
     companion object {
         const val TYPE_TITLE = 0

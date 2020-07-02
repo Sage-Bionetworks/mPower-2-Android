@@ -69,7 +69,7 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
         @BeforeClass @JvmStatic
         fun setup() {
             RoomTestHelper.setup()
-            application = InstrumentationRegistry.getTargetContext().applicationContext as Application
+            application = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as Application
         }
     }
 
@@ -79,7 +79,7 @@ class TodayScheduleViewModelTests: RoomTestHelper() {
     val scheduleDao = database.scheduleDao()
     val scheduleRepo = ScheduleRepository(scheduleDao,
             ScheduledRepositorySyncStateDao(
-                    InstrumentationRegistry.getTargetContext()),
+                    InstrumentationRegistry.getInstrumentation().targetContext),
             BridgeApplication.getBridgeManagerProvider().surveyManager,
             BridgeApplication.getBridgeManagerProvider().activityManager,
             BridgeApplication.getBridgeManagerProvider().participantManager,

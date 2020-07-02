@@ -20,7 +20,7 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
 
         val ARGUMENT_IS_SETUP = "isSetup"
 
-        fun newInstance(step : StepView, isSetup : Boolean) : MedicationReviewFragment {
+        fun newInstance(step: StepView, isSetup: Boolean): MedicationReviewFragment {
             val fragment = MedicationReviewFragment()
             val args = TrackingFragment.createArguments(step)
             args.putBoolean(ARGUMENT_IS_SETUP, isSetup)
@@ -39,24 +39,24 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
         }
         detail.setText(R.string.medication_add)
         addMore?.visibility = View.GONE
-        detail!!.setOnClickListener { _ ->
+        detail?.setOnClickListener { _ ->
             val fragment = MedicationSelectionFragment.newInstance(stepView)
             addChildFragmentOnTop(fragment, "MedicationSelectionFragment")
         }
 
         navigationActionBar.skipButton.setText(R.string.medication_add_details_later)
         navigationActionBar.forwardButton.setText(R.string.button_save)
-        navigationActionBar.setActionButtonClickListener{ actionButton ->
+        navigationActionBar.setActionButtonClickListener { actionButton ->
             if (isSetup && actionButton.id == R.id.rs2_step_navigation_action_forward) {
                 val fragment = RecordMedicationDialogFragment.newInstance()
                 fragment.setTargetFragment(this, 123)
-                fragment.show(fragmentManager!!, "dialog")
+                fragment.show(requireFragmentManager(), "dialog")
 
             } else if (actionButton.id == R.id.rs2_step_navigation_action_forward
                     || actionButton.id == R.id.rs2_step_navigation_action_skip) {
-                if (fragmentManager!!.backStackEntryCount > 0) {
+                if ((fragmentManager?.backStackEntryCount ?: -1) > 0) {
                     //Pop the back stack to take user back to medication logging
-                    fragmentManager!!.popBackStack()
+                    fragmentManager?.popBackStack()
                 } else {
                     val fragment = MedicationLoggingFragment.newInstance(stepView)
                     replaceWithFragment(fragment)
@@ -74,22 +74,23 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
     }
 
     private fun updateButtonState() {
-        val medicationConfigs =
-                SortUtil.getActiveElementsSorted(viewModel.activeElementsById.value!!)
-        if (medicationConfigs.indexOfFirst { !it.isConfigured } == -1) {
-            //All configured
-            navigationActionBar.skipButton.visibility = View.GONE
-            navigationActionBar.setForwardButtonEnabled(true)
-        } else {
-            //Not all configured
-            navigationActionBar.skipButton.visibility = View.VISIBLE
-            navigationActionBar.setForwardButtonEnabled(false)
+        viewModel.activeElementsById.value?.let { activeElementsById ->
+            val medicationConfigs =
+                    SortUtil.getActiveElementsSorted(activeElementsById)
+            if (medicationConfigs.indexOfFirst { !it.isConfigured } == -1) {
+                //All configured
+                navigationActionBar.skipButton.visibility = View.GONE
+                navigationActionBar.setForwardButtonEnabled(true)
+            } else {
+                //Not all configured
+                navigationActionBar.skipButton.visibility = View.VISIBLE
+                navigationActionBar.setForwardButtonEnabled(false)
+            }
         }
-
     }
 
     override fun initializeAdapter(): MedicationReviewAdapter {
-        val medicationReviewListener : MedicationReviewListener = object : MedicationReviewListener {
+        val medicationReviewListener: MedicationReviewListener = object : MedicationReviewListener {
             override fun editButtonPressed(config: MedicationLog, position: Int) {
                 val schedulingFragment = MedicationSchedulingFragment.newInstance(stepView, config.identifier)
                 addChildFragmentOnTop(schedulingFragment, "MedicationReviewFragment")
@@ -97,7 +98,7 @@ class MedicationReviewFragment : RecyclerViewTrackingFragment<MedicationLog, Med
         }
 
         val medicationConfigs =
-                SortUtil.getActiveElementsSorted(viewModel.activeElementsById.value!!)
+                SortUtil.getActiveElementsSorted(viewModel.activeElementsById.value?: mapOf())
         return MedicationReviewAdapter(medicationConfigs, medicationReviewListener)
     }
 

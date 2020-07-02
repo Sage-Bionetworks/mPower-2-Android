@@ -34,18 +34,27 @@ package org.sagebionetworks.research.mpower
 
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.common.base.Supplier
 import com.google.common.collect.ImmutableMap
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.fragment_main.navigation
 import org.sagebionetworks.research.mpower.history.HistoryItemFragment
 import org.sagebionetworks.research.mpower.profile.MPowerProfileSettingsFragment
 import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment
+import org.sagebionetworks.research.mpower.util.Debounce
+import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel
+import org.sagebionetworks.research.sageresearch.dao.room.AppConfigRepository
+import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
+import org.sagebionetworks.research.sageresearch.profile.ProfileDataLoader
+import org.sagebionetworks.research.sageresearch.profile.ProfileManager
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -53,7 +62,7 @@ import javax.inject.Inject
  * A simple [Fragment] subclass.
  *
  */
-class MainFragment : DaggerFragment() {
+class MainFragment : DaggerFragment(), OnRequestPermissionsResultCallback {
     private val LOGGER = LoggerFactory.getLogger(MainFragment::class.java)
 
     // tag for identifying an instance of a fragment
@@ -78,13 +87,47 @@ class MainFragment : DaggerFragment() {
     @Inject
     lateinit var taskLauncher: TaskLauncher
 
+    @Inject
+    lateinit var reportRepo: ReportRepository
+
+    @Inject
+    lateinit var appConfigRepo: AppConfigRepository
+
+    lateinit var profileManager: ProfileManager
+
+    private var debounceCheckPassiveGait = Debounce(500, this::checkPassiveGait)
+
+    private lateinit var profileDataLoader: ProfileDataLoader
+
+    private val passiveDataAllowedObserver = Observer<ProfileDataLoader> { profileDataLoader ->
+        this.profileDataLoader = profileDataLoader
+        debounceCheckPassiveGait.schedule()
+    }
+
+    private fun checkPassiveGait() {
+        val passiveDataAllowed = profileDataLoader.getValueString("passiveDataAllowed")
+        LOGGER.debug("--- checkPassiveGait: $passiveDataAllowed ---")
+        passiveDataAllowed?.let { passiveDataAllowed ->
+            if (passiveDataAllowed.toBoolean()) {
+                passiveGaitViewModel.enableTracking()
+            } else {
+                passiveGaitViewModel.disableTracking()
+            }
+        } ?: run {
+            passiveGaitViewModel.disableTracking()
+        }
+    }
+
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         showFragment(FRAGMENT_NAV_ID_TO_TAG[item.itemId])
         return@OnNavigationItemSelectedListener true
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+    private val passiveGaitViewModel: PassiveGaitViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(PassiveGaitViewModel::class.java)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
@@ -93,6 +136,9 @@ class MainFragment : DaggerFragment() {
 
         showFragment(TAG_FRAGMENT_TRACKING)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        profileManager = ProfileManager(reportRepo, appConfigRepo)
+        profileManager.profileDataLoader().observe(viewLifecycleOwner, passiveDataAllowedObserver)
     }
 
     /**
@@ -144,5 +190,19 @@ class MainFragment : DaggerFragment() {
             LOGGER.info("Calling onActivityResult for fragment " + fragment.id)
             fragment.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    override fun onResume() {
+        LOGGER.debug("MainFragment onResume")
+        super.onResume()
+    }
+
+    override fun onPause() {
+        LOGGER.debug("MainFragment onPause")
+        // profileManager.profileDataLoader().removeObserver(passiveDataAllowedObserver)
+        // NOTE: Do not disable passive gait tracking here.  This commented code is left here to allow
+        // developers to disable for local testing.
+        // passiveGaitViewModel.disableTracking()
+        super.onPause()
     }
 }

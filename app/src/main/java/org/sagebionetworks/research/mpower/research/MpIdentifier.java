@@ -10,7 +10,8 @@ import java.lang.annotation.RetentionPolicy;
         MpIdentifier.STUDY_BURST_COMPLETED, MpIdentifier.STUDY_BURST_COMPLETED_UPLOAD,
         MpIdentifier.TAPPING, MpIdentifier.WALK_AND_BALANCE, MpIdentifier.TREMOR, MpIdentifier.DEMOGRAPHICS,
         MpIdentifier.BACKGROUND, MpIdentifier.ENGAGEMENT, MpIdentifier.MOTIVATION, MpIdentifier.STUDY_BURST_REMINDER,
-        MpIdentifier.MEASURING, MpIdentifier.TRACKING, MpIdentifier.HEALTH_SURVEYS, MpIdentifier.AUTHENTICATE})
+        MpIdentifier.MEASURING, MpIdentifier.TRACKING, MpIdentifier.HEALTH_SURVEYS, MpIdentifier.AUTHENTICATE,
+        MpIdentifier.PASSIVE_DATA_PERMISSION, MpIdentifier.PASSIVE_GAIT})
 public @interface MpIdentifier {
     String TRIGGERS = "Triggers";
     String SYMPTOMS = "Symptoms";
@@ -29,4 +30,6 @@ public @interface MpIdentifier {
     String TRACKING = "Tracking";
     String HEALTH_SURVEYS = "Health Surveys";
     String AUTHENTICATE = "Signup";
+    String PASSIVE_DATA_PERMISSION = "PassiveDataPermission";
+    String PASSIVE_GAIT = "PassiveGait";
 }

@@ -79,7 +79,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
                 name = args.getString(ARG_NAME) ?: ""
                 time = args.getString(ARG_TIME) ?: ""
                 selectedDays = mutableSetOf<Int>()
-                selectedDays.addAll(args.getIntegerArrayList(ARG_DAYS))
+                selectedDays.addAll(args.getIntegerArrayList(ARG_DAYS) ?: mutableSetOf())
             } else {
                 LOGGER.warn("No arguments found")
                 name = "Default"
@@ -89,7 +89,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
             name = savedInstanceState.getString(ARG_NAME) ?: ""
             time = savedInstanceState.getString(ARG_TIME) ?: ""
             selectedDays = mutableSetOf<Int>()
-            selectedDays.addAll(savedInstanceState.getIntegerArrayList(ARG_DAYS))
+            savedInstanceState.getIntegerArrayList(ARG_DAYS)?.let { selectedDays.addAll(it) }
         }
     }
 
@@ -121,7 +121,7 @@ class MedicationDayFragment : AppCompatDialogFragment() {
         recycler.layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 2)
         val dayStrings = getDays(resources)
         dayStrings.add(resources.getString(medication_schedule_everyday))
-        recycler.adapter = DayAdapter(ArrayList((0..(dayStrings.size-1)).toList()), dayStrings, context!!)
+        recycler.adapter = DayAdapter(ArrayList((0..(dayStrings.size-1)).toList()), dayStrings, requireContext())
 
         day_selection_back.setOnClickListener { _ ->
             dismiss()

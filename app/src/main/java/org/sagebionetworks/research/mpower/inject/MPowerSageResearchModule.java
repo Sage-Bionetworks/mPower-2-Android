@@ -49,6 +49,7 @@ import org.sagebionetworks.research.modules.motor_control.inject.MtcCountdownSte
 import org.sagebionetworks.research.modules.motor_control.inject.TappingCompletionStepModule;
 import org.sagebionetworks.research.modules.motor_control.inject.TappingStepModule;
 import org.sagebionetworks.research.mpower.WebConsentFragment;
+import org.sagebionetworks.research.mpower.sageresearch.PerformTaskWithResultActivity;
 
 import dagger.Module;
 import dagger.Provides;
@@ -64,6 +65,9 @@ import dagger.multibindings.IntoSet;
 public abstract class MPowerSageResearchModule {
     @ContributesAndroidInjector
     abstract PerformTaskActivity contributePerformTaskActivityInjector();
+
+    @ContributesAndroidInjector
+    abstract PerformTaskWithResultActivity contributePerformTaskWithResultActivityInjector();
 
     @ContributesAndroidInjector
     abstract WebConsentFragment contributeWebConsentFragmentInjector();
