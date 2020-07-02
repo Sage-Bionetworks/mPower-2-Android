@@ -15,7 +15,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         // this is not the final version code, product flavors add to it
-        versionCode 118
+        versionCode 119
         versionName "0.16.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
