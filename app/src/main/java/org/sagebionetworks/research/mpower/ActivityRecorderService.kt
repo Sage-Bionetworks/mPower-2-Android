@@ -241,11 +241,18 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
             if (elapsedTime >= MIN_RECORDING_TIME_SEC) {
                 updateNotification("${getText(string.recording_notification_saving)}")
                 recorderManager?.onStepTransition(stopStep, null, NavDirection.SHIFT_LEFT)
-                taskResultManager.getTaskResultManagerConnection(TASK_IDENTIFIER, taskUUID).blockingGet().finishTask()
-                val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
-                sharedPrefs.edit().putLong(LAST_RECORDED_AT, Date().time).apply()
 
-                saveToBridge()
+
+                taskResultManager.getTaskResultManagerConnection(TASK_IDENTIFIER, taskUUID).doOnSuccess {
+                    taskResultManager -> taskResultManager.finishTask()
+                    saveToBridge()
+                    val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
+                    sharedPrefs.edit().putLong(LAST_RECORDED_AT, Date().time).apply()
+                }.doOnError {
+                    finish()
+                }
+
+
             } else {
                 cancelRecording()
             }
