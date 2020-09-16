@@ -42,6 +42,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat.Builder
 import dagger.android.DaggerService
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
 import org.sagebionetworks.research.domain.async.AsyncActionConfiguration
 import org.sagebionetworks.research.domain.async.DeviceMotionRecorderConfigurationImpl
@@ -63,7 +64,9 @@ import org.sagebionetworks.research.presentation.recorder.service.RecorderManage
 import org.sagebionetworks.research.presentation.recorder.service.RecorderManager.RecorderServiceConnectionListener
 import org.sagebionetworks.research.presentation.recorder.service.RecorderService
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
 import javax.inject.Inject
 
 class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListener {
@@ -76,7 +79,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
 
     @Inject
     lateinit var taskResultProcessingManager: TaskResultProcessingManager
-
+    private val compositeDisposable = CompositeDisposable()
     private var recorderManager: RecorderManager? = null
 
     private val asyncActions = mutableSetOf<AsyncActionConfiguration>(
@@ -199,7 +202,8 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
         return Builder(this, getString(string.foreground_channel_id))
                 .setContentTitle(getString(string.recording_notification_title))
                 .setContentText(text ?: getString(string.recording_notification_message))
-                .setSmallIcon(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) drawable.ic_launcher_foreground else R.mipmap.ic_launcher)
+                .setSmallIcon(
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) drawable.ic_launcher_foreground else R.mipmap.ic_launcher)
                 .build()
     }
 
@@ -241,11 +245,20 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
             if (elapsedTime >= MIN_RECORDING_TIME_SEC) {
                 updateNotification("${getText(string.recording_notification_saving)}")
                 recorderManager?.onStepTransition(stopStep, null, NavDirection.SHIFT_LEFT)
-                taskResultManager.getTaskResultManagerConnection(TASK_IDENTIFIER, taskUUID).blockingGet().finishTask()
-                val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
-                sharedPrefs.edit().putLong(LAST_RECORDED_AT, Date().time).apply()
+                compositeDisposable.add(
+                        taskResultManager.getTaskResultManagerConnection(TASK_IDENTIFIER, taskUUID).subscribe(
+                                { taskResultManager ->
+                                    taskResultManager.finishTask()
+                                    saveToBridge()
+                                    val sharedPrefs = getSharedPreferences(TRANSITION_PREFS, Context.MODE_PRIVATE)
+                                    sharedPrefs.edit().putLong(LAST_RECORDED_AT, Date().time).apply()
 
-                saveToBridge()
+                                }, {
+                            Log.d(TAG, "Failed to get result manager connection", it)
+                            finish()
+                        }
+                        )
+                )
             } else {
                 cancelRecording()
             }
@@ -283,6 +296,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
         recorderManager?.unbind()
+        compositeDisposable.clear()
         super.onDestroy()
     }
 
@@ -303,6 +317,7 @@ class ActivityRecorderService : DaggerService(), RecorderServiceConnectionListen
     }
 
     companion object {
+
         private const val TAG = "ActivityRecorderService"
         private const val TASK_IDENTIFIER = MpIdentifier.PASSIVE_GAIT
         private const val ACTION_IDENTIFIER = "walk_motion"
