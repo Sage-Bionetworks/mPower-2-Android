@@ -33,6 +33,8 @@
 <resources>
 
     <color name="colorPrimary">@color/sageResearchPrimary</color>
+    <!-- This controls status bar color -->
+    <color name="colorPrimaryDark">@color/sageResearchPrimaryDark</color>
 
     <color name="sageResearchPrimaryLight">@color/royal300</color>
     <color name="sageResearchPrimary">@color/royal500</color>

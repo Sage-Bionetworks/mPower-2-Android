@@ -1,15 +1,14 @@
 package org.sagebionetworks.research.mpower.studyburst
 
 import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_study_burst.expiresText
 import kotlinx.android.synthetic.main.activity_study_burst.expiresTextContainer
@@ -20,19 +19,25 @@ import kotlinx.android.synthetic.main.activity_study_burst.studyBurstStatusWheel
 import kotlinx.android.synthetic.main.activity_study_burst.studyBurstTitle
 import kotlinx.android.synthetic.main.activity_study_burst.studyBurstTopProgressBar
 import kotlinx.android.synthetic.main.activity_study_burst.study_burst_next
-import org.sagebionetworks.researchstack.backbone.utils.ResUtils
+import org.sagebase.crf.CrfTaskIntentFactory
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.TaskLauncher
 import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type.LAUNCH_ERROR
+import org.sagebionetworks.research.mpower.research.MpIdentifier
+import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
+import org.sagebionetworks.researchstack.backbone.result.TaskResult
+import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity
+import org.sagebionetworks.researchstack.backbone.utils.ResUtils
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 // Used with activity.startActivityForResult()
 const val STUDY_BURST_REQUEST_CODE= 1483
+const val HEART_SNAPSHOT_REQUEST_CODE= 1484
 // Used with activity.setResult()
 const val STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN = "StudyBurstActivity.Guid.ToRun"
 
@@ -268,10 +273,14 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * StudyBurstAdapterListener function, called when a task icon in the RecyclerView is selected.
      */
     override fun itemSelected(item: StudyBurstTaskInfo) {
+        if (item.task.identifier == MpIdentifier.HEART_SNAPSHOT) {
+            runHeartSnapshot()
+            return
+        }
         val uuid = studyBurstViewModel.createScheduleTaskRunUuid(item.schedule?.guid)
         taskLauncher.launchTask(this, item.task.identifier, uuid)
                 .observe(this, Observer {
-                    when(it?.state) {
+                    when (it?.state) {
                         LAUNCH_ERROR -> {
                             Toast.makeText(this,
                                     "Error launching  " + item.task.identifier,
@@ -279,5 +288,19 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
                         }
                     }
                 })
+    }
+
+    fun runHeartSnapshot() {
+        val intent = CrfTaskIntentFactory.getHeartRateTrainingTaskIntent(this)
+        startActivityForResult(intent, HEART_SNAPSHOT_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == HEART_SNAPSHOT_REQUEST_CODE) {
+            (data?.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT) as? TaskResult)?.let {
+                // TODO: mdephillips 4/13/2021 upload to bridge
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

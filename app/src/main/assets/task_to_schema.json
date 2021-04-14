@@ -38,5 +38,9 @@
   "PassiveDataPermission": {
     "id": "PassiveDataPermission",
     "revision": 1
+  },
+  "HeartSnapshot": {
+    "id": "HeartSnapshot",
+    "revision": 1
   }
 }

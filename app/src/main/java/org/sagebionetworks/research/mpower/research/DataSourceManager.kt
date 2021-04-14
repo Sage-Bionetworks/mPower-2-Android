@@ -3,6 +3,7 @@ package org.sagebionetworks.research.mpower.research
 import org.sagebionetworks.research.mpower.research.MpIdentifier.BACKGROUND
 import org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS
 import org.sagebionetworks.research.mpower.research.MpIdentifier.ENGAGEMENT
+import org.sagebionetworks.research.mpower.research.MpIdentifier.HEART_SNAPSHOT
 import org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION
 import org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION
 import org.sagebionetworks.research.mpower.research.MpIdentifier.PASSIVE_DATA_PERMISSION
@@ -13,6 +14,7 @@ import org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING
 import org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR
 import org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS
 import org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE
+import org.sagebionetworks.research.mpower.research.MpTaskInfo.HeartSnapshot
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
@@ -91,6 +93,9 @@ object MpTaskInfo {
 
     val Tremor = TaskInfoObject(TREMOR, TREMOR,
             imageName = "ic_tremor", estimatedMinutes = 4)
+
+    val HeartSnapshot = TaskInfoObject(HEART_SNAPSHOT, HEART_SNAPSHOT,
+            imageName = "ic_heart_snapshot_task", estimatedMinutes = 3)
 }
 
 data class CompletionTask(

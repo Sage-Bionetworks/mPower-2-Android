@@ -49,6 +49,9 @@ allprojects {
         maven { url 'https://dl.bintray.com/sage-bionetworks/research-stack/' } // remove after added to mavenCentral
         maven { url 'https://dl.bintray.com/sage-bionetworks/bridge-maven-release/' } // remove after added to mavenCentral
         mavenLocal()
+        flatDir {
+            dirs 'libs'
+        }
     }
 }
 
