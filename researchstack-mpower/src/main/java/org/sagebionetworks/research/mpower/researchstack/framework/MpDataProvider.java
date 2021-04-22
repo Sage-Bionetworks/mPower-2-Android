@@ -3,12 +3,16 @@ package org.sagebionetworks.research.mpower.researchstack.framework;
 import android.content.Context;
 import androidx.annotation.NonNull;
 
+import org.sagebionetworks.bridge.researchstack.TaskHelper;
+import org.sagebionetworks.bridge.researchstack.wrapper.StorageAccessWrapper;
+import org.sagebionetworks.researchstack.backbone.AppPrefs;
 import org.sagebionetworks.researchstack.backbone.DataProvider;
 import org.sagebionetworks.researchstack.backbone.result.TaskResult;
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
 import org.sagebionetworks.bridge.researchstack.BridgeDataProvider;
 import org.sagebionetworks.bridge.rest.model.StudyParticipant;
 import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
+import org.sagebionetworks.researchstack.backbone.storage.NotificationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +48,17 @@ public class MpDataProvider extends BridgeDataProvider {
     @Override
     public void processInitialTaskResult(Context context, TaskResult taskResult) {
         // no op
+    }
+
+    /**
+     * @return a custom task helper for mPower
+     */
+    @Override
+    public TaskHelper createTaskHelper(NotificationHelper notif,
+            StorageAccessWrapper wrapper, BridgeManagerProvider provider) {
+
+        return new MpTaskHelper(wrapper, MpResourceManager.getInstance(),
+                AppPrefs.getInstance(), notif, provider);
     }
 
     /**

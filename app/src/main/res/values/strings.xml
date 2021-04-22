@@ -199,6 +199,7 @@
     <string name="measuring_walk_and_balance_label">Walk And Balance</string>
     <string name="measuring_finger_tapping_label">Finger Tapping</string>
     <string name="measuring_tremor_test_label">Tremor Test</string>
+    <string name="measuring_heart_snapshot_label">Heart Snapshot</string>
     <string name="tracking_medication_label">Medication</string>
     <string name="tracking_symptom_label">Symptom</string>
     <string name="tracking_trigger_label">Trigger</string>

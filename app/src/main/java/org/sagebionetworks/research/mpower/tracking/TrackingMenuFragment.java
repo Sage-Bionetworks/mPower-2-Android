@@ -2,6 +2,7 @@ package org.sagebionetworks.research.mpower.tracking;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import static org.sagebionetworks.research.mpower.research.MpIdentifier.HEART_SNAPSHOT;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.MEDICATION;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.SYMPTOMS;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING;
@@ -9,6 +10,7 @@ import static org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -16,23 +18,29 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import org.sagebase.crf.CrfTaskIntentFactory;
+import org.sagebase.crf.CrfViewTaskActivity;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
 import org.sagebionetworks.research.mpower.research.MpIdentifier;
+import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
 import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo;
@@ -41,6 +49,7 @@ import org.sagebionetworks.research.mpower.viewmodel.TrackingReports;
 import org.sagebionetworks.research.mpower.viewmodel.TrackingScheduleViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TrackingSchedules;
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo;
+import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,17 +70,21 @@ public class TrackingMenuFragment extends Fragment {
 
     private static final List<Integer> MEASURING_LABELS =
             Arrays.asList(R.string.measuring_walk_and_balance_label, R.string.measuring_finger_tapping_label,
-                    R.string.measuring_tremor_test_label);
+                    /**R.string.measuring_tremor_test_label,*/ R.string.measuring_heart_snapshot_label);
 
     private static final List<Integer> TRACKING_LABELS =
             Arrays.asList(R.string.tracking_medication_label, R.string.tracking_symptom_label, R.string.tracking_trigger_label);
 
     // TODO for now icons have a white background, fix this when design gets the images without the background.
-    private static final List<Integer> MEASURING_ICONS =
-            Arrays.asList(R.drawable.walk_and_balance_icon, R.drawable.finger_tapping_icon, R.drawable.tremor_icon);
+    private static final List<Integer> MEASURING_ICONS = Arrays.asList(
+            R.drawable.walk_and_balance_icon,
+            R.drawable.finger_tapping_icon,
+            /** R.drawable.tremor_icon */ R.drawable.ic_heart_snapshot);
 
-    private static final List<Integer> TRACKING_ICONS =
-            Arrays.asList(R.drawable.medication_icon, R.drawable.symptom_icon, R.drawable.trigger_icon);
+    private static final List<Integer> TRACKING_ICONS = Arrays.asList(
+            R.drawable.medication_icon,
+            R.drawable.symptom_icon,
+            R.drawable.trigger_icon);
 
     // TODO get the gesture recognizer working.
     private class FlingListener extends SimpleOnGestureListener {
@@ -88,6 +101,7 @@ public class TrackingMenuFragment extends Fragment {
         }
     }
 
+    private static final int CRF_REQUEST_CODE = 1591;
 
     @Inject
     TaskLauncher launcher;
@@ -193,6 +207,20 @@ public class TrackingMenuFragment extends Fragment {
         passiveGaitViewModel = new ViewModelProvider(getActivity()).get(PassiveGaitViewModel.class);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CRF_REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) {
+            org.sagebionetworks.researchstack.backbone.result.TaskResult taskResult =
+                    (org.sagebionetworks.researchstack.backbone.result.TaskResult)
+                            data.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT);
+            if (taskResult == null) {
+                return;
+            }
+            MpDataProvider.getInstance().uploadTaskResult(getContext(), taskResult);
+        }
+    }
+
     private void setIconListeners() {
         for (int i = 0; i < this.taskContainers.size(); i++) {
             final int copy = i;
@@ -203,6 +231,7 @@ public class TrackingMenuFragment extends Fragment {
                 }
 
                 int selection = 0;
+
                 if (trackingMenuViewModel.getCurrentSelectedId() == R.id.tracking_tab) {
                     selection = TRACKING_LABELS.get(copy);
                 } else if (trackingMenuViewModel.getCurrentSelectedId() == R.id.measuring_tab) {
@@ -234,6 +263,9 @@ public class TrackingMenuFragment extends Fragment {
                     Fragment parentFragment = this.getParentFragment();
                     if (taskIdentifier.equals(WALK_AND_BALANCE) && TrackingTabFragment.class.equals(parentFragment.getClass())) {
                         launcher.launchTask(getContext(), parentFragment, taskIdentifier, uuid, taskResult);
+                    } else if (taskIdentifier.equals(HEART_SNAPSHOT)) {
+                        Intent intent = CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(getContext());
+                        startActivityForResult(intent, CRF_REQUEST_CODE);
                     } else {
                         launcher.launchTask(getContext(), taskIdentifier, uuid, taskResult);
                     }
@@ -264,6 +296,8 @@ public class TrackingMenuFragment extends Fragment {
             return MpIdentifier.SYMPTOMS;
         } else if (label == R.string.tracking_trigger_label) {
             return MpIdentifier.TRIGGERS;
+        } else if (label == R.string.measuring_heart_snapshot_label) {
+            return MpIdentifier.HEART_SNAPSHOT;
         }
 
         return null;
@@ -454,6 +488,8 @@ public class TrackingMenuFragment extends Fragment {
                     checkMarkImageViews.get(1).setVisibility(View.VISIBLE);
                 } else if (TREMOR.equals(taskInfo.getIdentifier())) {
                     checkMarkImageViews.get(2).setVisibility(View.VISIBLE);
+                } else if (HEART_SNAPSHOT.equals(taskInfo.getIdentifier())) {
+                    checkMarkImageViews.get(3).setVisibility(View.VISIBLE);
                 }
             }
         }

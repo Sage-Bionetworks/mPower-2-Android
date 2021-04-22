@@ -69,7 +69,11 @@ public class MpTaskHelper extends TaskHelper {
     /**
      * The RESULT_CONVERSION_MAP allows you to map any step identifier result to whatever you want
      */
-    static HashMap<String, String> RESULT_CONVERSION_MAP = new HashMap<>();
+    static HashMap<String, String> RESULT_CONVERSION_MAP = new HashMap<String, String>() {{
+        put("hr_rgb.json_hr", "hr_rgb");
+        put("accel_stairStep", "motion");
+        put("peak", "samples");
+    }};
 
     public MpTaskHelper(final StorageAccessWrapper storageAccess,
             final ResourceManager resourceManager, final AppPrefs appPrefs,
@@ -108,9 +112,6 @@ public class MpTaskHelper extends TaskHelper {
      */
     @Override
     protected void addFiles(Archive.Builder archiveBuilder, List<Result> flattenedResultList, String taskResultId) {
-
-        // We also upload each individual json answer result to support AppCore surveys
-        super.addFiles(archiveBuilder, flattenedResultList, taskResultId);
 
         // The other tasks group the question step results in a single "answers" file
         // This is behavior that the bridge server team has wanted for a long time
