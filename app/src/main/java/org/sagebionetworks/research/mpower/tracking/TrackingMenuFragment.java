@@ -33,6 +33,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.sagebase.crf.CrfTaskIntentFactory;
 import org.sagebase.crf.CrfViewTaskActivity;
@@ -53,6 +55,7 @@ import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -70,7 +73,7 @@ public class TrackingMenuFragment extends Fragment {
 
     private static final List<Integer> MEASURING_LABELS =
             Arrays.asList(R.string.measuring_walk_and_balance_label, R.string.measuring_finger_tapping_label,
-                    /**R.string.measuring_tremor_test_label,*/ R.string.measuring_heart_snapshot_label);
+                    R.string.measuring_tremor_test_label, R.string.measuring_heart_snapshot_label);
 
     private static final List<Integer> TRACKING_LABELS =
             Arrays.asList(R.string.tracking_medication_label, R.string.tracking_symptom_label, R.string.tracking_trigger_label);
@@ -79,7 +82,8 @@ public class TrackingMenuFragment extends Fragment {
     private static final List<Integer> MEASURING_ICONS = Arrays.asList(
             R.drawable.walk_and_balance_icon,
             R.drawable.finger_tapping_icon,
-            /** R.drawable.tremor_icon */ R.drawable.ic_heart_snapshot);
+            R.drawable.tremor_icon,
+            R.drawable.ic_heart_snapshot);
 
     private static final List<Integer> TRACKING_ICONS = Arrays.asList(
             R.drawable.medication_icon,
@@ -124,20 +128,13 @@ public class TrackingMenuFragment extends Fragment {
     @BindView(R.id.measuring_selected_image_view)
     ImageView measuringSelectedImageView;
 
-    @BindView(R.id.tracking_menu_content_view)
-    View contentView;
+    @BindView(R.id.tracking_menu_recycler_view)
+    protected RecyclerView recyclerView;
 
-    @BindViews({R.id.centerIconLabel, R.id.leftIconLabel, R.id.rightIconLabel})
-    protected List<TextView> labels;
-
-    @BindViews({R.id.centerIconImageView, R.id.leftIconImageView, R.id.rightIconImageView})
-    protected List<ImageView> imageViews;
-
-    @BindViews({R.id.center, R.id.left, R.id.right})
-    protected List<View> taskContainers;
-
-    @BindViews({R.id.centerIconCheckmark, R.id.leftIconCheckmark, R.id.rightIconCheckmark})
-    protected List<ImageView> checkMarkImageViews;
+    private TrackingMenuAdapter trackingAdatper;
+    private LinearLayoutManager trackingLayout;
+    private TrackingMenuAdapter measuringAdapter;
+    private LinearLayoutManager measuringLayout;
 
     private Unbinder unbinder;
     private GestureDetectorCompat gestureDetector;
@@ -178,13 +175,38 @@ public class TrackingMenuFragment extends Fragment {
         trackingViewModel.reportLiveData().observe(this, trackingReports -> {
             // No-op needed, we use these reports passively when the user taps a tracking task.
         });
+
+        trackingAdatper = createAdapter(TRACKING_ICONS, TRACKING_LABELS);
+        measuringAdapter = createAdapter(MEASURING_ICONS, MEASURING_LABELS);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup group, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.tracking_menu_fragment, group, false);
         this.unbinder = ButterKnife.bind(this, result);
+
+        trackingLayout = new LinearLayoutManager(
+                inflater.getContext(), LinearLayout.HORIZONTAL, false) {
+            @Override
+            public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
+                // force width of viewHolder here, this will override layout_height from xml
+                lp.width = getWidth() / 3;
+                return true;
+            }
+        };
+
+        measuringLayout = new LinearLayoutManager(
+                inflater.getContext(), LinearLayout.HORIZONTAL, false) {
+            @Override
+            public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
+                // Measuring has 4 tasks, so have the 4th peak out to show its there
+                lp.width = (int)(getWidth() / 3.33f);
+                return true;
+            }
+        };
+
         updateSelection(trackingMenuViewModel.getCurrentSelectedId(), true);
+
         this.measuringButton.setOnClickListener(view -> updateSelection(R.id.measuring_tab, false));
         if (showTracking) {
             this.trackingButton.setOnClickListener(view -> updateSelection(R.id.tracking_tab, false));
@@ -192,12 +214,14 @@ public class TrackingMenuFragment extends Fragment {
             trackingButton.setVisibility(View.GONE);
             trackingSelectedImageView.setVisibility(View.GONE);
         }
-        this.setIconListeners();
+
         this.gestureDetector = new GestureDetectorCompat(this.getContext(), new FlingListener());
+
         result.setOnTouchListener((view, event) -> {
             view.performClick();
             return this.gestureDetector.onTouchEvent(event);
         });
+
         return result;
     }
 
@@ -218,66 +242,6 @@ public class TrackingMenuFragment extends Fragment {
                 return;
             }
             MpDataProvider.getInstance().uploadTaskResult(getContext(), taskResult);
-        }
-    }
-
-    private void setIconListeners() {
-        for (int i = 0; i < this.taskContainers.size(); i++) {
-            final int copy = i;
-            taskContainers.get(i).setOnClickListener(view -> {
-
-                if (getContext() == null) {
-                    return;  // Guard NPE exceptions
-                }
-
-                int selection = 0;
-
-                if (trackingMenuViewModel.getCurrentSelectedId() == R.id.tracking_tab) {
-                    selection = TRACKING_LABELS.get(copy);
-                } else if (trackingMenuViewModel.getCurrentSelectedId() == R.id.measuring_tab) {
-                    selection = MEASURING_LABELS.get(copy);
-                }
-
-                String taskIdentifier = this.getTaskIdentifierFromLabel(selection);
-                if (taskIdentifier != null) {
-
-                    @Nullable String taskGuid = null;
-                    if (trackingMenuViewModel.getCurrentSelectedId() == R.id.tracking_tab) {
-                        taskGuid = findScheduleGuidForTrackingTask(taskIdentifier);
-                    } else if (trackingMenuViewModel.getCurrentSelectedId() == R.id.measuring_tab) {
-                        taskGuid = findScheduleGuidForMeasuringTask(taskIdentifier);
-                    }
-
-                    @NonNull UUID uuid = UUID.randomUUID();
-                    if (studyBurstViewModel != null) {
-                        uuid = studyBurstViewModel.createScheduleTaskRunUuid(taskGuid);
-                    }
-
-                    @Nullable TaskResult taskResult = null;
-                    if (trackingMenuViewModel.getCurrentSelectedId() == R.id.tracking_tab) {
-                        taskResult = findPreviousTaskResultForTrackingTask(taskIdentifier, uuid);
-                    }
-
-                    passiveGaitViewModel.disableTracking();
-
-                    Fragment parentFragment = this.getParentFragment();
-                    if (taskIdentifier.equals(WALK_AND_BALANCE) && TrackingTabFragment.class.equals(parentFragment.getClass())) {
-                        launcher.launchTask(getContext(), parentFragment, taskIdentifier, uuid, taskResult);
-                    } else if (taskIdentifier.equals(HEART_SNAPSHOT)) {
-                        Intent intent = CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(getContext());
-                        startActivityForResult(intent, CRF_REQUEST_CODE);
-                    } else {
-                        launcher.launchTask(getContext(), taskIdentifier, uuid, taskResult);
-                    }
-                } else {
-                    LOGGER.warn("Selected Icon " + selection + " doesn't map to a task identifier");
-                }
-
-                if (LOGGER.isDebugEnabled()) {
-                    String selectionString = this.getResources().getString(selection);
-                    LOGGER.debug("Icon " + selectionString.trim() + " was selected.");
-                }
-            });
         }
     }
 
@@ -303,19 +267,60 @@ public class TrackingMenuFragment extends Fragment {
         return null;
     }
 
-    private void setIcons(List<Integer> icons, List<Integer> labels) {
-        for (int i = 0; i < this.imageViews.size(); i++) {
-            ImageView imageView = this.imageViews.get(i);
-            TextView label = this.labels.get(i);
-            imageView.setImageResource(icons.get(i));
-            label.setText(labels.get(i));
+    private TrackingMenuAdapter createAdapter(List<Integer> icons, List<Integer> labels) {
+        ArrayList<TrackingMenuItem> items = new ArrayList<>();
+        for (int i = 0; i < icons.size(); i++) {
+            items.add(new TrackingMenuItem(labels.get(i), icons.get(i), false));
+        }
+        return new TrackingMenuAdapter(items, this::runTask);
+    }
+
+    private void runTask(int textResourceId) {
+        String taskIdentifier = this.getTaskIdentifierFromLabel(textResourceId);
+        if (taskIdentifier != null) {
+
+            @Nullable String taskGuid = null;
+            if (trackingMenuViewModel.getCurrentSelectedId() == R.id.tracking_tab) {
+                taskGuid = findScheduleGuidForTrackingTask(taskIdentifier);
+            } else if (trackingMenuViewModel.getCurrentSelectedId() == R.id.measuring_tab) {
+                taskGuid = findScheduleGuidForMeasuringTask(taskIdentifier);
+            }
+
+            @NonNull UUID uuid = UUID.randomUUID();
+            if (studyBurstViewModel != null) {
+                uuid = studyBurstViewModel.createScheduleTaskRunUuid(taskGuid);
+            }
+
+            @Nullable TaskResult taskResult = null;
+            if (trackingMenuViewModel.getCurrentSelectedId() == R.id.tracking_tab) {
+                taskResult = findPreviousTaskResultForTrackingTask(taskIdentifier, uuid);
+            }
+
+            passiveGaitViewModel.disableTracking();
+
+            Fragment parentFragment = this.getParentFragment();
+            if (taskIdentifier.equals(WALK_AND_BALANCE) && TrackingTabFragment.class.equals(parentFragment.getClass())) {
+                launcher.launchTask(getContext(), parentFragment, taskIdentifier, uuid, taskResult);
+            } else if (taskIdentifier.equals(HEART_SNAPSHOT)) {
+                Intent intent = CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(getContext());
+                startActivityForResult(intent, CRF_REQUEST_CODE);
+            } else {
+                launcher.launchTask(getContext(), taskIdentifier, uuid, taskResult);
+            }
+        } else {
+            LOGGER.warn("Selected Icon " + textResourceId + " doesn't map to a task identifier");
+        }
+
+        if (LOGGER.isDebugEnabled()) {
+            String selectionString = this.getResources().getString(textResourceId);
+            LOGGER.debug("Icon " + selectionString.trim() + " was selected.");
         }
     }
 
     public void setShowingContent(boolean showingContent) {
         this.showingContent = showingContent;
         int visibility = showingContent ? View.VISIBLE : View.GONE;
-        this.contentView.setVisibility(visibility);
+        this.recyclerView.setVisibility(visibility);
     }
 
     @Override
@@ -330,10 +335,12 @@ public class TrackingMenuFragment extends Fragment {
             this.setShowingContent(true);
             trackingMenuViewModel.setSelectedId(selectionId);
             if (selectionId == R.id.tracking_tab) {
-                this.setIcons(TRACKING_ICONS, TRACKING_LABELS);
+                recyclerView.setAdapter(trackingAdatper);
+                recyclerView.setLayoutManager(trackingLayout);
                 this.updateMenuState(true, false);
             } else if (selectionId == R.id.measuring_tab) {
-                this.setIcons(MEASURING_ICONS, MEASURING_LABELS);
+                recyclerView.setAdapter(measuringAdapter);
+                recyclerView.setLayoutManager(measuringLayout);
                 this.updateMenuState(false, true);
             }
         } else {
@@ -470,29 +477,26 @@ public class TrackingMenuFragment extends Fragment {
      * @param item the study burst item that contains the study burst measuring task states
      */
     private void setupMeasuringTaskCompletionState(@Nullable StudyBurstItem item) {
-        for (ImageView checkMarkImageView : checkMarkImageViews) {
-            checkMarkImageView.setVisibility(View.GONE);
+        if (item == null || item.getOrderedTasks() == null) {
+            return; // Study burst info hasn't loaded yet
         }
-        if (item == null ) {
-            return; // Guard NPE exceptions
-        }
-        if (trackingMenuViewModel.getCurrentSelectedId() != R.id.measuring_tab) {
-            return; // Tracking tasks don't have completion states
-        }
-        for (StudyBurstTaskInfo studyBurstTaskInfo : item.getOrderedTasks()) {
-            if (studyBurstTaskInfo.isComplete()) {
-                TaskInfo taskInfo = studyBurstTaskInfo.getTask();
-                if (WALK_AND_BALANCE.equals(taskInfo.getIdentifier())) {
-                    checkMarkImageViews.get(0).setVisibility(View.VISIBLE);
-                } else if (TAPPING.equals(taskInfo.getIdentifier())) {
-                    checkMarkImageViews.get(1).setVisibility(View.VISIBLE);
-                } else if (TREMOR.equals(taskInfo.getIdentifier())) {
-                    checkMarkImageViews.get(2).setVisibility(View.VISIBLE);
-                } else if (HEART_SNAPSHOT.equals(taskInfo.getIdentifier())) {
-                    checkMarkImageViews.get(3).setVisibility(View.VISIBLE);
+        ArrayList<TrackingMenuItem> newItems = new ArrayList<>();
+        for (TrackingMenuItem trackingItem : measuringAdapter.getDataSet()) {
+            boolean isComplete = trackingItem.isComplete();
+            String trackingTaskId = getTaskIdentifierFromLabel(trackingItem.getTextResourceId());
+            for (StudyBurstTaskInfo studyBurstTaskInfo : item.getOrderedTasks()) {
+                String taskId = studyBurstTaskInfo.getTask().getIdentifier();
+                if (taskId.equals(trackingTaskId)) {
+                    isComplete = studyBurstTaskInfo.isComplete();
                 }
             }
+            newItems.add(new TrackingMenuItem(
+                trackingItem.getTextResourceId(),
+                trackingItem.getImageResourceId(),
+                isComplete));
         }
+        measuringAdapter.setDataSet(newItems);
+        measuringAdapter.notifyDataSetChanged();
     }
 
     /**
