@@ -724,8 +724,15 @@ data class StudyBurstItem(
             millisToExpiration?.let {
                 details = timeUntilStudyBurstExpiration
             } ?: run {
-                val activitiesTodoCount = totalMeasuringActivitiesCount - finishedSchedules.size
-                details = context.getString(R.string.study_burst_activities_to_do).format(activitiesTodoCount)
+                var activitiesTodoCount = totalMeasuringActivitiesCount - finishedSchedules.size
+                if (!isHeartSnapshotFinished()) {
+                    activitiesTodoCount += 1
+                }
+                if (activitiesTodoCount == 1) {  // Singular
+                    details = context.getString(R.string.study_burst_activity_to_do)
+                } else { // plural
+                    details = context.getString(R.string.study_burst_activities_to_do).format(activitiesTodoCount)
+                }
             }
             return TodayActionBarItem(title, details, null)
         }
