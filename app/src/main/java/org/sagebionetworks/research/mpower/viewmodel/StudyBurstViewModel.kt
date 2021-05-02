@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower.viewmodel
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -19,9 +20,11 @@ import org.sagebionetworks.research.mpower.research.CompletionTask
 import org.sagebionetworks.research.mpower.research.DataSourceManager
 import org.sagebionetworks.research.mpower.research.MpIdentifier.BACKGROUND
 import org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS
+import org.sagebionetworks.research.mpower.research.MpIdentifier.HEART_SNAPSHOT
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED_UPLOAD
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_REMINDER
+import org.sagebionetworks.research.mpower.research.MpTaskInfo.HeartSnapshot
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tapping
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
@@ -60,7 +63,7 @@ import javax.inject.Inject
 open class StudyBurstViewModel(
         scheduleDao: ScheduledActivityEntityDao,
         scheduleRepo: ScheduleRepository, reportRepo: ReportRepository,
-        private val studyBurstSettingsDao: StudyBurstSettingsDao) :
+        val studyBurstSettingsDao: StudyBurstSettingsDao) :
         ReportAndScheduleViewModel(scheduleDao, scheduleRepo, reportRepo) {
 
     private val logger = LoggerFactory.getLogger(
@@ -87,7 +90,7 @@ open class StudyBurstViewModel(
         }
 
         internal val defaultTaskInfoSortOrder: List<TaskInfo> get() {
-            return listOf(Tapping, WalkAndBalance, Tremor)
+            return listOf(Tapping, WalkAndBalance, Tremor, HeartSnapshot)
         }
     }
 
@@ -242,7 +245,8 @@ open class StudyBurstViewModel(
     protected open fun createStudyBurstItem(schedules: List<ScheduledActivityEntity>): StudyBurstItem {
         return StudyBurstItem(
                 config, activityGroup(), schedules, now(), timezone,
-                shouldContinueStudyBurst(), studyBurstSettingsDao.getTaskSortOrder())
+                shouldContinueStudyBurst(), studyBurstSettingsDao.getTaskSortOrder(),
+                studyBurstSettingsDao)
     }
 
     /**
@@ -308,7 +312,6 @@ open class StudyBurstViewModel(
         }
         return studyBurstSettingsDao.getTaskSortOrder()
     }
-
 }
 
 data class StudyBurstItem(
@@ -339,7 +342,11 @@ data class StudyBurstItem(
         /**
          * @property studyBurstTasksSortOrder order of the study burst tasks
          */
-        val studyBurstTasksSortOrder: List<String>) {
+        val studyBurstTasksSortOrder: List<String>,
+        /**
+         * @property studyBurstSettingsDao shared preferences used to save/load data
+         */
+        val studyBurstSettingsDao: StudyBurstSettingsDao) {
 
     /**
      * @property orderedTasks the sorted task info objects that need done for a study burst's day to be completed.
@@ -417,7 +424,7 @@ data class StudyBurstItem(
         val todayStudyMarkerNotFinished =
                 (studyBurstMarker != null && studyBurstMarker.finishedOn == null)
         val allTodaysTaskCompletedWithinFinishedOn =
-                (totalActivitiesCount == filteredFinishedOn.first?.size && filteredFinishedOn.third != null)
+                (totalMeasuringActivitiesCount == filteredFinishedOn.first?.size && filteredFinishedOn.third != null)
 
         shouldMarkStudyBurstAsCompleted =
                 (todayStudyMarkerNotFinished && allTodaysTaskCompletedWithinFinishedOn)
@@ -433,8 +440,12 @@ data class StudyBurstItem(
             studyBurstTasksSortOrder.indexOf(o1.identifier).compareTo(
                     studyBurstTasksSortOrder.indexOf(o2.identifier))
         }) ?: StudyBurstViewModel.defaultTaskInfoSortOrder
+
+        val mutableSorted = sortedOrderedTasks.toMutableList()
+        mutableSorted.add(HeartSnapshot) // Heart Snapshot always goes at the end
+
         var firstUnfinishedReached = false
-        orderedTasks = sortedOrderedTasks.map {
+        orderedTasks = mutableSorted.map {
             val schedule = schedules.filterByActivityId(it.identifier).availableToday()?.scheduleClosestToNow()
             val isFinished = isStudyBurstTaskFinished(it.identifier)
             val isActive = isFinished || !firstUnfinishedReached
@@ -461,13 +472,17 @@ data class StudyBurstItem(
      * @return progress What is the current progress on required activities?
      */
     val progress: Float get() {
-        return finishedSchedules.size.toFloat() / totalActivitiesCount.toFloat()
+        var numerator = finishedSchedules.size.toFloat()
+        if (isHeartSnapshotFinished()) {
+            numerator += 1
+        }
+        return numerator / (totalMeasuringActivitiesCount.toFloat() + 1) // + 1 for heart snapshot
     }
 
     /**
-     * @property totalActivitiesCount total number of activities.
+     * @property totalMeasuringActivitiesCount total number of activities.
      */
-    val totalActivitiesCount: Int get() {
+    val totalMeasuringActivitiesCount: Int get() {
         return activityGroup?.activityIdentifiers?.size ?: 1
     }
 
@@ -475,7 +490,13 @@ data class StudyBurstItem(
      * @property isCompletedForToday Is the Study burst completed for today?
      */
     val isCompletedForToday: Boolean get() {
-        return !hasStudyBurst || (finishedSchedules.size == totalActivitiesCount)
+        if (!hasStudyBurst) {
+            return true
+        }
+        // Make sure both daily tasks and one-time tasks are complete
+        val dailyTasksCompletedForToday = (finishedSchedules.size == totalMeasuringActivitiesCount)
+        val oneTimeBurstTaskComplete = isHeartSnapshotFinished()
+        return dailyTasksCompletedForToday && oneTimeBurstTaskComplete
     }
 
     /**
@@ -703,7 +724,7 @@ data class StudyBurstItem(
             millisToExpiration?.let {
                 details = timeUntilStudyBurstExpiration
             } ?: run {
-                val activitiesTodoCount = totalActivitiesCount - finishedSchedules.size
+                val activitiesTodoCount = totalMeasuringActivitiesCount - finishedSchedules.size
                 details = context.getString(R.string.study_burst_activities_to_do).format(activitiesTodoCount)
             }
             return TodayActionBarItem(title, details, null)
@@ -743,7 +764,27 @@ data class StudyBurstItem(
      * @return true if the task is finished and is included in the finishedSchedules, false otherwise
      */
     fun isStudyBurstTaskFinished(taskIdentifier: String): Boolean {
+        if (taskIdentifier == HEART_SNAPSHOT) {
+            return isHeartSnapshotFinished()
+        }
         return null != finishedSchedules.firstOrNull { it.activityIdentifier() == taskIdentifier }
+    }
+
+    /**
+     * @return true if the heart snapshot has been finished for the current study burst
+     */
+    fun isHeartSnapshotFinished(): Boolean {
+        if (!hasStudyBurst) {
+            return true
+        }
+        val now = date
+        val dayCount = dayCount ?: run { return true }
+        val lastFinishedDate = studyBurstSettingsDao.getLastSnapshotComplete() ?: run {
+            // We have a study burst, but have not finished a heart snapshot yet
+            return false
+        }
+        val studyBurstStart = now.minusDays(dayCount.toLong()).startOfDay()
+        return lastFinishedDate.isAfter(studyBurstStart)
     }
 }
 
@@ -761,8 +802,21 @@ data class StudyBurstTaskInfo(
 open class StudyBurstSettingsDao @Inject constructor(context: Context) {
     val orderKey = "StudyBurstTaskOrder"
     val timestampKey = "StudyBurstTimestamp"
+    val lastHeartSnapshotCompleteTimestamp = "LastHeartSnapshotCompleteTimestamp"
 
     private val prefs = context.getSharedPreferences("StudyBurstViewModel", Context.MODE_PRIVATE)
+
+    @SuppressLint("ApplySharedPref") // Need it to immediately reflect the finished state
+    open fun setSnapshotComplete() {
+        prefs.edit().putString(lastHeartSnapshotCompleteTimestamp, LocalDateTime.now().toString()).commit()
+    }
+
+    @VisibleForTesting
+    open fun getLastSnapshotComplete(): LocalDateTime? {
+        prefs.getString(lastHeartSnapshotCompleteTimestamp, null)?.let {
+            return LocalDateTime.parse(it)
+        } ?: return null
+    }
 
     @VisibleForTesting
     open fun setOrderedTasks(sortOrder: List<String>, timestamp: LocalDateTime) {

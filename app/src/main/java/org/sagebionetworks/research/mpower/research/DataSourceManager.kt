@@ -36,8 +36,8 @@ class DataSourceManager {
 
         val measuringGroup = ActivityGroupObject(
                 "Measuring", "Measuring",
-                tasks = setOf(Tapping, WalkAndBalance, Tremor, HeartSnapshot),
-                activityIdentifiers = setOf(TAPPING, TREMOR, WALK_AND_BALANCE, HEART_SNAPSHOT),
+                tasks = setOf(Tapping, WalkAndBalance, Tremor),
+                activityIdentifiers = setOf(TAPPING, TREMOR, WALK_AND_BALANCE),
                 schedulePlanGuid = "3d898a6f-1ef2-4ece-9e9f-025d94bcd130")
 
         val trackingGroup = ActivityGroupObject(

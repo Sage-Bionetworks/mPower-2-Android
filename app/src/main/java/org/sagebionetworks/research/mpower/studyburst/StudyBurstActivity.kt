@@ -1,15 +1,15 @@
 package org.sagebionetworks.research.mpower.studyburst
 
 import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.CallSuper
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_study_burst.expiresText
 import kotlinx.android.synthetic.main.activity_study_burst.expiresTextContainer
@@ -20,25 +20,41 @@ import kotlinx.android.synthetic.main.activity_study_burst.studyBurstStatusWheel
 import kotlinx.android.synthetic.main.activity_study_burst.studyBurstTitle
 import kotlinx.android.synthetic.main.activity_study_burst.studyBurstTopProgressBar
 import kotlinx.android.synthetic.main.activity_study_burst.study_burst_next
-import org.sagebionetworks.researchstack.backbone.utils.ResUtils
+import org.sagebase.crf.CrfTaskIntentFactory
+import org.sagebionetworks.research.domain.repository.TaskRepository
+import org.sagebionetworks.research.domain.task.TaskInfoView
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.TaskLauncher
 import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type.LAUNCH_ERROR
+import org.sagebionetworks.research.mpower.research.DataSourceManager
+import org.sagebionetworks.research.mpower.research.MpIdentifier
+import org.sagebionetworks.research.mpower.research.MpIdentifier.HEART_SNAPSHOT
+import org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE
+import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider
+import org.sagebionetworks.research.mpower.sageresearch.PerformTaskWithResultActivity
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
+import org.sagebionetworks.research.presentation.model.TaskView
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
+import org.sagebionetworks.researchstack.backbone.result.TaskResult
+import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity
+import org.sagebionetworks.researchstack.backbone.utils.ResUtils
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 // Used with activity.startActivityForResult()
-const val STUDY_BURST_REQUEST_CODE= 1483
+const val STUDY_BURST_REQUEST_CODE = 1483
 // Used with activity.setResult()
 const val STUDY_BURST_EXTRA_GUID_OF_TASK_TO_RUN = "StudyBurstActivity.Guid.ToRun"
 
 class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
     private val logger = LoggerFactory.getLogger(StudyBurstActivity::class.java)
+
+    companion object {
+        private val CRF_REQUEST_CODE: Int = 1591
+    }
 
     /**
      * @property studyBurstViewModel encapsulates all read/write data operations
@@ -51,6 +67,11 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * @property taskLauncher used to launch the study burst tasks
      */
     @Inject lateinit var taskLauncher: TaskLauncher
+
+    /**
+     * @property taskRepository used to create walk and balance test
+     */
+    @Inject lateinit var taskRepository: TaskRepository
 
     /**
      * @property studyBurstViewModelFactory used to create a StudyBurstViewModel instance injected through Dagger
@@ -268,16 +289,47 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * StudyBurstAdapterListener function, called when a task icon in the RecyclerView is selected.
      */
     override fun itemSelected(item: StudyBurstTaskInfo) {
+
         val uuid = studyBurstViewModel.createScheduleTaskRunUuid(item.schedule?.guid)
-        taskLauncher.launchTask(this, item.task.identifier, uuid)
-                .observe(this, Observer {
-                    when(it?.state) {
-                        LAUNCH_ERROR -> {
-                            Toast.makeText(this,
-                                    "Error launching  " + item.task.identifier,
-                                    Toast.LENGTH_LONG).show()
+
+        if (item.task.identifier == WALK_AND_BALANCE) {
+
+            // There is a bug in task launcher that does not allow an activity
+            // to launch a ResearchStack task, so let's do it manually here
+            val taskInfoView: TaskInfoView = taskRepository.getTaskInfo(item.task.identifier).blockingGet()
+            val taskView = TaskView.builder().setIdentifier(taskInfoView.identifier).build()
+            val intent = PerformTaskWithResultActivity.Companion.createIntent(this, taskView, uuid)
+            startActivityForResult(intent, TaskLauncher.WALK_AND_BALANCE_REQUEST_CODE, null)
+
+        } else if (item.task.identifier == MpIdentifier.HEART_SNAPSHOT) {
+
+            val intent = CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(this)
+            startActivityForResult(intent, CRF_REQUEST_CODE)
+
+        } else {
+            taskLauncher.launchTask(this, item.task.identifier, uuid)
+                    .observe(this, Observer {
+                        when (it?.state) {
+                            LAUNCH_ERROR -> {
+                                Toast.makeText(this,
+                                        "Error launching  " + item.task.identifier,
+                                        Toast.LENGTH_LONG).show()
+                            }
                         }
-                    }
-                })
+                    })
+        }
+    }
+
+    @Override
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == CRF_REQUEST_CODE && resultCode == RESULT_OK) {
+            val taskResult = data?.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT) as? TaskResult
+                    ?: run { return }
+            MpDataProvider.getInstance().uploadTaskResult(this, taskResult)
+            studyBurstViewModel.studyBurstSettingsDao.setSnapshotComplete()
+            observeLiveData() // Refresh live data
+        }
     }
 }
