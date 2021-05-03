@@ -333,7 +333,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
             // Refresh view model observer to force refresh data
             viewModelObserver?.let {
                 studyBurstViewModel.liveData().removeObservers(this)
-                studyBurstViewModel.refreshLiveData(this).observeForever(it)
+                studyBurstViewModel.refreshLiveData(this).observe(this, it)
             }
         }
     }
