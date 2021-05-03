@@ -329,7 +329,12 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
                     ?: run { return }
             MpDataProvider.getInstance().uploadTaskResult(this, taskResult)
             studyBurstViewModel.studyBurstSettingsDao.setSnapshotComplete()
-            observeLiveData() // Refresh live data
+
+            // Refresh view model observer to force refresh data
+            viewModelObserver?.let {
+                studyBurstViewModel.liveData().removeObservers(this)
+                studyBurstViewModel.refreshLiveData(this).observeForever(it)
+            }
         }
     }
 }
