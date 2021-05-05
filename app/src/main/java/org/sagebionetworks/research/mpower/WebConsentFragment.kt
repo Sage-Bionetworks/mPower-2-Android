@@ -164,11 +164,24 @@ class WebConsentFragment : DaggerFragment() {
     }
 
     fun onConsentLoading() {
-
+        isLoading = true
     }
 
-    fun onConsentError() {
+    fun onConsentError(errorMessage: String?) {
+        Builder(context)
+                .setTitle(R.string.consent_error_title)
+                .setMessage(errorMessage)
+                .setPositiveButton(R.string.rsb_BUTTON_OK, null)
+                .show()
+        isLoading = false
+    }
 
+    fun onConsentSuccess() {
+        val intent = Intent(context, EntryActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+        activity?.finish()
+        isLoading = false
     }
 
     fun onConsentUploadState(state: Resource<BridgeAccessState>?) {
@@ -177,23 +190,13 @@ class WebConsentFragment : DaggerFragment() {
         state?.let {
             when {
                 it.status == Status.LOADING -> {
-                    // no-op needed, we are consenting the user
-                    isLoading = true
+                    onConsentLoading()
                 }
                 it.status == Status.SUCCESS -> {
-                    val intent = Intent(context, EntryActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(intent)
-                    activity?.finish()
-                    isLoading = false
+                    onConsentSuccess()
                 }
                 else -> { // it.status == Status.ERROR
-                    Builder(context)
-                            .setTitle(R.string.consent_error_title)
-                            .setMessage(state.message)
-                            .setPositiveButton(R.string.rsb_BUTTON_OK, null)
-                            .show()
-                    isLoading = false
+                    onConsentError(state.message)
                 }
             }
         }
