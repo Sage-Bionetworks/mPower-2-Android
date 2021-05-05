@@ -300,4 +300,7 @@
     <string name="passive_gait_permission_description">We are studying whether it is possible to capture similar measurements while you are going about your daily life. We would like to be able to measure your walking patterns in the background.</string>
     <string name="passive_gait_permission_okay">Okay</string>
     <string name="passive_gait_permission_not_now">Not Now</string>
+
+    <!-- Consent error handling -->
+    <string name="consent_error_title">Something went wrong…</string>
 </resources>

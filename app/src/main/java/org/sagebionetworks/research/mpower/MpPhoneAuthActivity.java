@@ -3,7 +3,12 @@ package org.sagebionetworks.research.mpower;
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.AUTHENTICATE;
 
 import android.annotation.SuppressLint;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -81,9 +86,20 @@ public class MpPhoneAuthActivity extends DaggerAppCompatActivity {
     void onSignInStateReceived(Resource<Object> signInState) {
         if (signInState.status == Status.SUCCESS) {
             returnToEntryActivity();
-        } else if (signInState.status == Status.ERROR) {
-            ((TextView) findViewById(R.id.textView))
-                    .setText(signInState.message);
+        } else if (signInState.status == Status.ERROR &&
+                signInState.message != null) {
+
+            if (signInState.message.contains("Consent required.")) {
+                Fragment fragment = WebConsentFragment.Companion.newInstance();
+                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.add(R.id.container, fragment, "WebConsentFragment");
+                transaction.addToBackStack(null);
+                transaction.commit();
+            } else {
+                ((TextView) findViewById(R.id.textView))
+                        .setText(signInState.message);
+            }
         }
     }
 

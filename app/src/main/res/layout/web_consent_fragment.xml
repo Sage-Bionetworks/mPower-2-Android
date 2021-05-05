@@ -35,13 +35,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/rsb_activity_purple"
-    tools:context=".ui.WebConsentFragment">
+    android:background="@color/rsb_activity_purple">
 
     <WebView
         android:id="@+id/consent_webview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></WebView>
+        android:layout_height="match_parent"/>
 
 
 </FrameLayout>
