@@ -8,14 +8,14 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
 
-import org.sagebionetworks.researchstack.backbone.DataResponse;
-import org.sagebionetworks.researchstack.backbone.result.StepResult;
-import org.sagebionetworks.researchstack.backbone.step.Step;
-import org.sagebionetworks.researchstack.backbone.utils.ObservableUtils;
 import org.sagebionetworks.bridge.rest.exceptions.InvalidEntityException;
 import org.sagebionetworks.bridge.rest.model.Phone;
 import org.sagebionetworks.research.mpower.researchstack.R;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
+import org.sagebionetworks.researchstack.backbone.DataResponse;
+import org.sagebionetworks.researchstack.backbone.result.StepResult;
+import org.sagebionetworks.researchstack.backbone.step.Step;
+import org.sagebionetworks.researchstack.backbone.utils.ObservableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,16 +61,9 @@ public class MpPhoneInstructionStepLayout extends MpInstructionStepLayout {
 
         Observable<DataResponse> phoneAuthObservable;
 
-        // check whether we should create new accounts
-        if (getResources().getBoolean(R.bool.should_sign_up_phone)) {
-            LOGGER.debug("Doing phone sign up and sign in");
-            Phone phone = new Phone().regionCode(US_REGION_CODE).number(phoneNumber);
-            phoneAuthObservable = provider.signUp(phone);
-        } else {
-            // only existing accounts can sign in
-            LOGGER.debug("Doing phone sign in only");
-            phoneAuthObservable = provider.requestPhoneSignIn(US_REGION_CODE, phoneNumber);
-        }
+        LOGGER.debug("Doing phone sign up and sign in");
+        Phone phone = new Phone().regionCode(US_REGION_CODE).number(phoneNumber);
+        phoneAuthObservable = provider.signUp(phone);
 
         compositeSubscription.add(phoneAuthObservable
                 .compose(ObservableUtils.applyDefault())
