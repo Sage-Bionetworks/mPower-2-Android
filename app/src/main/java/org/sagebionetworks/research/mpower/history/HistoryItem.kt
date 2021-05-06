@@ -107,6 +107,11 @@ enum class HistoryItemType {
             return SymptomDetails::class.java as Class<T>
         }
     },
+    HEART_SNAPSHOT {
+        override fun <T:HistoryDetails> detailsClass(): Class<T> {
+            return HeartSnapshotDetails::class.java as Class<T>
+        }
+    },
     DATE_BUCKET {
         override fun <T:HistoryDetails> detailsClass(): Class<T> {
             return DateBucketDetails::class.java as Class<T>
@@ -266,6 +271,25 @@ data class MedicationDetails(
 
     override fun details(resources: Resources): String {
         return dosage
+    }
+}
+
+data class HeartSnapshotDetails(
+        val vo2Max: Int
+): HistoryDetails {
+
+    override val iconId: Int
+        get() = R.drawable.ic_heart_snapshot_purple
+
+    override fun title(resources: Resources): String {
+        return resources.getString(R.string.measuring_heart_snapshot_label)
+    }
+
+    override fun details(resources: Resources): String {
+        if (vo2Max <= 0) {
+            return ""
+        }
+        return "VO2 Max: $vo2Max"
     }
 }
 

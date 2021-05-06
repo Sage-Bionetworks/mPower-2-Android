@@ -10,6 +10,7 @@ import com.google.common.reflect.TypeToken
 import org.sagebionetworks.bridge.rest.RestUtils.GSON
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.history.HistoryItemType.DATE_BUCKET
+import org.sagebionetworks.research.mpower.history.HistoryItemType.HEART_SNAPSHOT
 import org.sagebionetworks.research.mpower.history.HistoryItemType.SYMPTOM
 import org.sagebionetworks.research.mpower.history.HistoryItemType.MEDICATION
 import org.sagebionetworks.research.mpower.history.HistoryItemType.TAPPING
@@ -84,9 +85,8 @@ class MpHistoryItemManager(val historyItemDao: HistoryItemEntityDao): HistoryIte
             MpIdentifier.WALK_AND_BALANCE -> updateMeasurementHistoryItems(WALK_BALANCE, reports)
             MpIdentifier.TREMOR -> updateMeasurementHistoryItems(TREMOR, reports)
             MpIdentifier.TAPPING -> updateMeasurementHistoryItems(TAPPING, reports)
+            MpIdentifier.HEART_SNAPSHOT -> updateHeartSnapshotHistoryItems(reports)
         }
-
-
     }
 
     private fun updateMeasurementHistoryItems(type: HistoryItemType, reports: List<ReportEntity>) {
@@ -206,6 +206,22 @@ class MpHistoryItemManager(val historyItemDao: HistoryItemEntityDao): HistoryIte
                 historyItemDao.deleteAndUpdate(MpIdentifier.MEDICATION, dateBucket, medList)
             }
         }
+    }
+
+    private fun updateHeartSnapshotHistoryItems(reports: List<ReportEntity>) {
+
+        val historyList = mutableListOf<HistoryItemEntity>()
+        for(report in reports) {
+            val dateBucket = getDateBucket(report)
+            val vo2Max = (report.data?.mapValue("vo2_max", Integer::class.java) as? Int) ?: 0
+            val details = HeartSnapshotDetails(vo2Max = vo2Max)
+            val historyItem = HistoryItem(HEART_SNAPSHOT,
+                    report.identifier?:"", dateBucket, report.dateTime!!, details)
+            historyList.add(historyItem.toHistoryItemEntity())
+            historyList.add(createDateBucketHistoryItemEntity(dateBucket))
+            historyList.add(createTimeBucketHistoryItemEntity(dateBucket, report.dateTime!!))
+        }
+        historyItemDao.update(historyList)
     }
 
     private fun <T: TrackingItemLog> createLoggingCollection(report: ReportEntity, reportId: String): LoggingCollection<T>? {

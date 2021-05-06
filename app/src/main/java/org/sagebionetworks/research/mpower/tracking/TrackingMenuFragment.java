@@ -45,12 +45,14 @@ import org.sagebionetworks.research.mpower.research.MpIdentifier;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
 import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
+import org.sagebionetworks.research.mpower.viewmodel.StudyBurstSettingsDao;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstTaskInfo;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TrackingReports;
 import org.sagebionetworks.research.mpower.viewmodel.TrackingScheduleViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TrackingSchedules;
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo;
+import org.sagebionetworks.researchstack.backbone.model.SchedulesAndTasksModel.TaskScheduleModel;
 import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -238,10 +240,19 @@ public class TrackingMenuFragment extends Fragment {
             org.sagebionetworks.researchstack.backbone.result.TaskResult taskResult =
                     (org.sagebionetworks.researchstack.backbone.result.TaskResult)
                             data.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT);
+
             if (taskResult == null) {
                 return;
             }
+
+
             MpDataProvider.getInstance().uploadTaskResult(getContext(), taskResult);
+
+            if (studyBurstViewModel == null) {
+                return;
+            }
+            studyBurstViewModel.getStudyBurstSettingsDao().setSnapshotComplete();
+            studyBurstViewModel.saveResearchStackReports(taskResult);
         }
     }
 

@@ -327,8 +327,11 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         if (requestCode == CRF_REQUEST_CODE && resultCode == RESULT_OK) {
             val taskResult = data?.getSerializableExtra(ViewTaskActivity.EXTRA_TASK_RESULT) as? TaskResult
                     ?: run { return }
+
             MpDataProvider.getInstance().uploadTaskResult(this, taskResult)
+
             studyBurstViewModel.studyBurstSettingsDao.setSnapshotComplete()
+            studyBurstViewModel.saveResearchStackReports(taskResult)
 
             // Refresh view model observer to force refresh data
             viewModelObserver?.let {

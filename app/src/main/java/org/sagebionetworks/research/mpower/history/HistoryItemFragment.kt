@@ -81,7 +81,8 @@ class HistoryItemFragment : Fragment() {
                 layoutManager = LinearLayoutManager(context)
                 adapter = adapt
             }
-            (historyItemViewModel.historyItemManager as MpHistoryItemManager).historyItems().observe(this, Observer {
+            (historyItemViewModel.historyItemManager as MpHistoryItemManager)
+                    .historyItems().observe(viewLifecycleOwner, Observer {
                 adapt.submitList(it)
             })
         }
