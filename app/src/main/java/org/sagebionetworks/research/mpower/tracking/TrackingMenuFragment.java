@@ -75,6 +75,10 @@ public class TrackingMenuFragment extends Fragment {
 
     private static final List<Integer> MEASURING_LABELS =
             Arrays.asList(R.string.measuring_walk_and_balance_label, R.string.measuring_finger_tapping_label,
+                    R.string.measuring_tremor_test_label);
+
+    private static final List<Integer> MEASURING_AND_HEART_SNAPSHOT_LABELS =
+            Arrays.asList(R.string.measuring_walk_and_balance_label, R.string.measuring_finger_tapping_label,
                     R.string.measuring_tremor_test_label, R.string.measuring_heart_snapshot_label);
 
     private static final List<Integer> TRACKING_LABELS =
@@ -82,6 +86,11 @@ public class TrackingMenuFragment extends Fragment {
 
     // TODO for now icons have a white background, fix this when design gets the images without the background.
     private static final List<Integer> MEASURING_ICONS = Arrays.asList(
+            R.drawable.walk_and_balance_icon,
+            R.drawable.finger_tapping_icon,
+            R.drawable.tremor_icon);
+
+    private static final List<Integer> MEASURING_AND_HEART_SNAPSHOT_ICONS = Arrays.asList(
             R.drawable.walk_and_balance_icon,
             R.drawable.finger_tapping_icon,
             R.drawable.tremor_icon,
@@ -179,7 +188,14 @@ public class TrackingMenuFragment extends Fragment {
         });
 
         trackingAdatper = createAdapter(TRACKING_ICONS, TRACKING_LABELS);
-        measuringAdapter = createAdapter(MEASURING_ICONS, MEASURING_LABELS);
+
+        if (MpDataProvider.getInstance().hasHeartSnapshotDataGroup()) {
+            measuringAdapter = createAdapter(
+                    MEASURING_AND_HEART_SNAPSHOT_ICONS,
+                    MEASURING_AND_HEART_SNAPSHOT_LABELS);
+        } else {
+            measuringAdapter = createAdapter(MEASURING_ICONS, MEASURING_LABELS);
+        }
     }
 
     @Override
@@ -202,7 +218,15 @@ public class TrackingMenuFragment extends Fragment {
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
                 // Measuring has 4 tasks, so have the 4th peak out to show its there
-                lp.width = (int)(getWidth() / 3.33f);
+                if (MpDataProvider.getInstance().hasHeartSnapshotDataGroup()) {
+                    if (getResources().getConfiguration().screenWidthDp > 280) {
+                        lp.width = getWidth() / 4;
+                    } else {
+                        lp.width = (int)(getWidth() / 3.33f);
+                    }
+                } else {
+                    lp.width = getWidth() / 3;
+                }
                 return true;
             }
         };

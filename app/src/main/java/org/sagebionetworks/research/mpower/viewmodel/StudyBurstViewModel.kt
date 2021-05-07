@@ -30,6 +30,7 @@ import org.sagebionetworks.research.mpower.research.MpTaskInfo.Tremor
 import org.sagebionetworks.research.mpower.research.MpTaskInfo.WalkAndBalance
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
 import org.sagebionetworks.research.mpower.researchstack.MpResearchStackArchiveFactory
+import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider
 import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduleRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
@@ -442,7 +443,9 @@ data class StudyBurstItem(
         }) ?: StudyBurstViewModel.defaultTaskInfoSortOrder
 
         val mutableSorted = sortedOrderedTasks.toMutableList()
-        mutableSorted.add(HeartSnapshot) // Heart Snapshot always goes at the end
+        if (shouldShowHeartSnapshot()) {
+            mutableSorted.add(HeartSnapshot) // Heart Snapshot always goes at the end
+        }
 
         var firstUnfinishedReached = false
         orderedTasks = mutableSorted.map {
@@ -473,10 +476,16 @@ data class StudyBurstItem(
      */
     val progress: Float get() {
         var numerator = finishedSchedules.size.toFloat()
-        if (isHeartSnapshotFinished()) {
-            numerator += 1
+        var denominator = totalMeasuringActivitiesCount.toFloat()
+
+        if (shouldShowHeartSnapshot()) {
+            denominator += 1
+            if (isHeartSnapshotFinished()) {
+                numerator += 1
+            }
         }
-        return numerator / (totalMeasuringActivitiesCount.toFloat() + 1) // + 1 for heart snapshot
+
+        return numerator / denominator
     }
 
     /**
@@ -493,10 +502,10 @@ data class StudyBurstItem(
         if (!hasStudyBurst) {
             return true
         }
-        // Make sure both daily tasks and one-time tasks are complete
+        // Make sure both daily tasks and one-time heart snapshot if applicable are complete
         val dailyTasksCompletedForToday = (finishedSchedules.size == totalMeasuringActivitiesCount)
-        val oneTimeBurstTaskComplete = isHeartSnapshotFinished()
-        return dailyTasksCompletedForToday && oneTimeBurstTaskComplete
+        val heartSnapshotHiddenOrComplete = (!shouldShowHeartSnapshot() || isHeartSnapshotFinished())
+        return dailyTasksCompletedForToday && heartSnapshotHiddenOrComplete
     }
 
     /**
@@ -725,7 +734,7 @@ data class StudyBurstItem(
                 details = timeUntilStudyBurstExpiration
             } ?: run {
                 var activitiesTodoCount = totalMeasuringActivitiesCount - finishedSchedules.size
-                if (!isHeartSnapshotFinished()) {
+                if (shouldShowHeartSnapshot() && !isHeartSnapshotFinished()) {
                     activitiesTodoCount += 1
                 }
                 if (activitiesTodoCount == 1) {  // Singular
@@ -775,6 +784,13 @@ data class StudyBurstItem(
             return isHeartSnapshotFinished()
         }
         return null != finishedSchedules.firstOrNull { it.activityIdentifier() == taskIdentifier }
+    }
+
+    /**
+     * @return true if user has the show heart snapshot data group
+     */
+    fun shouldShowHeartSnapshot(): Boolean {
+        return MpDataProvider.getInstance().hasHeartSnapshotDataGroup()
     }
 
     /**
