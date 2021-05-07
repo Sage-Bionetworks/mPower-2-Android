@@ -25,6 +25,7 @@ import org.sagebionetworks.research.mpower.research.DataSourceManager
 import org.sagebionetworks.research.mpower.research.MpIdentifier.BACKGROUND
 import org.sagebionetworks.research.mpower.research.MpIdentifier.DEMOGRAPHICS
 import org.sagebionetworks.research.mpower.research.MpIdentifier.ENGAGEMENT
+import org.sagebionetworks.research.mpower.research.MpIdentifier.HEART_SNAPSHOT
 import org.sagebionetworks.research.mpower.research.MpIdentifier.MEASURING
 import org.sagebionetworks.research.mpower.research.MpIdentifier.MOTIVATION
 import org.sagebionetworks.research.mpower.research.MpIdentifier.STUDY_BURST_COMPLETED
@@ -33,6 +34,7 @@ import org.sagebionetworks.research.mpower.research.MpIdentifier.TAPPING
 import org.sagebionetworks.research.mpower.research.MpIdentifier.TREMOR
 import org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
+import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstSettingsDao
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel
 import org.sagebionetworks.research.sageresearch.dao.room.EntityTypeConverters
@@ -220,6 +222,47 @@ class StudyBurstViewModelTests : RoomTestHelper() {
         assertEquals(0, item.pastCompletionSurveys.size)
         assertNotNull(item.todayCompletionTask)
         assertFalse(item.isHeartSnapshotFinished())
+
+        val demographics = item.schedules.filterByActivityId(DEMOGRAPHICS)
+        assertEquals(1, demographics.size)
+        val studyBurstReminder = item.schedules.filterByActivityId(STUDY_BURST_REMINDER)
+        assertEquals(1, studyBurstReminder.size)
+
+        assertEquals(3, item.orderedTasks)
+
+        assertFalse(item.hasCompletedMotivationSurvey())
+        val completionTask = item.nextCompletionActivityToShow
+        assertNull(completionTask)
+
+        assertNotNull(item.getActionBarItem(application))
+        assertNotNull("Study Burst", item.getActionBarItem(application)?.title)
+        assertNotNull("3 activities to do", item.getActionBarItem(application)?.detail)
+        assertNull(item.getUnfinishedSchedule())
+    }
+
+    @Test
+    fun testStudyBurst_Day1_StartState_HeartSnapshot() {
+        val viewModel = MockStudyBurstViewModel(scheduleDao, scheduleRepo, reportRepo, studyBurstSettingsDao,
+                StudySetup.day1_startupState_HeartSnapshot)
+        studyBurstSettingsDao.heartSnapshotCompleteDate = null
+
+        val item = getValue(viewModel.liveData())
+        assertNotNull(item)
+        assertNotNull(item.activityGroup)
+        assertEquals(1, item.dayCount)
+        assertTrue(item.hasStudyBurst)
+        assertEquals(0, item.finishedSchedules.size)
+        assertFalse(item.isCompletedForToday)
+        assertFalse(item.isLastDay)
+        assertEquals(1, item.calculateThisDay())
+        assertEquals(0, item.pastCompletionTasks.size)
+        assertEquals(0, item.pastCompletionSurveys.size)
+        assertNotNull(item.todayCompletionTask)
+        assertFalse(item.isHeartSnapshotFinished())
+
+        assertTrue(item.shouldShowHeartSnapshot)
+        assertEquals(4, item.orderedTasks.size)
+        assertEquals(HEART_SNAPSHOT, item.orderedTasks[3].task.identifier)
 
         val demographics = item.schedules.filterByActivityId(DEMOGRAPHICS)
         assertEquals(1, demographics.size)
@@ -593,6 +636,14 @@ class StudyBurstViewModelTests : RoomTestHelper() {
 
             val day1_startupState =
                     StudySetup(templateSchedules = templateSchedules,
+                            studyBurstDay = 0,
+                            studyBurstFinishedOnDays = setOf(),
+                            studyBurstSurveyFinishedOnDays = mapOf(),
+                            finishedTodayTasks = linkedSetOf())
+
+            val day1_startupState_HeartSnapshot =
+                    StudySetup(templateSchedules = templateSchedules,
+                            dataGroups = setOf(MpDataProvider.SHOW_HEART_SNAPSHOT_DATA_GROUP),
                             studyBurstDay = 0,
                             studyBurstFinishedOnDays = setOf(),
                             studyBurstSurveyFinishedOnDays = mapOf(),
@@ -992,6 +1043,10 @@ class StudyBurstViewModelTests : RoomTestHelper() {
 
         fun setOrderedTasks(sortOrder: List<String>, timestamp: LocalDateTime) {
             studyBurstSettingsDao.setOrderedTasks(sortOrder, timestamp)
+        }
+
+        override open fun shouldShowHeartSnapshot(): Boolean {
+            return studySetup.dataGroups.contains(MpDataProvider.SHOW_HEART_SNAPSHOT_DATA_GROUP)
         }
     }
 
