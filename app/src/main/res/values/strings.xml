@@ -35,6 +35,9 @@
     <string name="osb_study_name" translatable="false">mPower 2.0</string>
 
     <string name="app_name">mPower</string>
+    <string name="phone_number">Phone number</string>
+    <string name="enter_code">Enter Code</string>
+    <string name="sms_message">SMS Message</string>
     <string name="button_submit">Submit</string>
     <string name="button_save">Save</string>
     <string name="title_activity_main">MainActivity</string>
@@ -303,4 +306,22 @@
 
     <!-- Consent error handling -->
     <string name="consent_error_title">Something went wrong…</string>
+
+    <!-- Introduction -->
+    <string name="introduction_title">Welcome to mPower</string>
+    <string name="introduction_message">A Parkinson\'s Disease Research Study</string>
+
+    <!-- Phone registration -->
+    <string name="registration_header_subtext">Study</string>
+    <string name="registration_title">Let\'s get started</string>
+    <string name="registration_message">Please enter your phone number so we can see if you have an existing account.\n\nWe will not store your phone number until you have completed the Consent step of this study.</string>
+    <string name="registration_continue">Continue</string>
+    <string name="registration_link"><u>Need to Register?</u></string>
+    <string name="registration_learn_link"><u>Learn More</u></string>
+    <string name="registration_hint">Phone Number</string>
+    <string name="registration_link_sent">Your link is on its way!</string>
+    <string name="button_edit_lowercase"><u>edit</u></string>
+    <string name="button_resend_link"><u>(Resend link)</u></string>
+    <string name="registration_sms_message">We sent you a link to verify your identity via SMS text message to</string>
+
 </resources>

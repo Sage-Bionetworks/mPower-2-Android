@@ -5,9 +5,13 @@
         <item name="showTitle">false</item>
         <item name="android:numbersTextColor">@color/appTextDark</item>
         <item name="android:colorControlNormal">@color/appVeryLightGray</item>
+        <item name="colorPrimary">@color/sageResearchPrimary</item>
+        <item name="colorPrimaryDark">@color/sageResearchPrimaryDark</item>
+        <item name="colorAccent">@color/sageResearchSecondary</item>
+        <item name="colorControlHighlight">@color/sageResearchSecondary</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/royal500</item>
         <item name="colorPrimaryDark">@color/royal600</item>

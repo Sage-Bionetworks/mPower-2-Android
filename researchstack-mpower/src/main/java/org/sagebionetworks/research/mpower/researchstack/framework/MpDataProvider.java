@@ -1,12 +1,24 @@
 package org.sagebionetworks.research.mpower.researchstack.framework;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import static org.sagebionetworks.bridge.researchstack.ApiUtils.SUCCESS_DATA_RESPONSE;
+
 import android.content.Context;
 import androidx.annotation.NonNull;
 
+import com.google.common.base.Preconditions;
+
+import org.sagebionetworks.bridge.android.manager.AuthenticationManager;
+import org.sagebionetworks.bridge.researchstack.ApiUtils;
+import org.sagebionetworks.bridge.researchstack.ResearchStackDAO;
 import org.sagebionetworks.bridge.researchstack.TaskHelper;
 import org.sagebionetworks.bridge.researchstack.wrapper.StorageAccessWrapper;
+import org.sagebionetworks.bridge.rest.model.Phone;
+import org.sagebionetworks.bridge.rest.model.SignUp;
 import org.sagebionetworks.researchstack.backbone.AppPrefs;
 import org.sagebionetworks.researchstack.backbone.DataProvider;
+import org.sagebionetworks.researchstack.backbone.DataResponse;
 import org.sagebionetworks.researchstack.backbone.result.TaskResult;
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
 import org.sagebionetworks.bridge.researchstack.BridgeDataProvider;
@@ -20,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import rx.Completable;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -27,6 +41,9 @@ import rx.subscriptions.CompositeSubscription;
 public class MpDataProvider extends BridgeDataProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(MpDataProvider.class);
+
+    public static final String SHOW_HEART_SNAPSHOT_DATA_GROUP = "show_heartsnapshot";
+    public static final String TEST_USER_DATA_GROUP = "test_user";
 
     protected MpTaskFactory taskFactory;
     protected CompositeSubscription compositeSubscription = new CompositeSubscription();
@@ -50,6 +67,13 @@ public class MpDataProvider extends BridgeDataProvider {
         // no op
     }
 
+    public Observable<DataResponse> signUpPhone(SignUp signUp) {
+        Preconditions.checkNotNull(signUp);
+        logger.debug("Called signUp using phone");
+        return this.bridgeManagerProvider.getAuthenticationManager().signUp(signUp)
+                .andThen(ApiUtils.SUCCESS_DATA_RESPONSE);
+    }
+
     /**
      * @return a custom task helper for mPower
      */
@@ -70,6 +94,10 @@ public class MpDataProvider extends BridgeDataProvider {
             return new ArrayList<>();
         }
         return sessionInfo.getDataGroups();
+    }
+
+    public boolean hasHeartSnapshotDataGroup() {
+        return getUserDataGroups().contains(SHOW_HEART_SNAPSHOT_DATA_GROUP);
     }
 
     /**

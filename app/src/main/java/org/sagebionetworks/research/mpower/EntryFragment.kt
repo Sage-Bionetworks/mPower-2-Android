@@ -35,6 +35,7 @@ package org.sagebionetworks.research.mpower
 import android.content.Intent
 import org.sagebionetworks.bridge.android.access.BridgeAccessFragment
 import org.sagebionetworks.bridge.android.manager.AuthenticationManager
+import org.sagebionetworks.research.mpower.authentication.IntroductionActivity
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -46,7 +47,8 @@ class EntryFragment : BridgeAccessFragment() {
     override fun onRequireAuthentication() {
         LOGGER.debug("Showing MpPhoneAuthActivity")
 
-        startActivity(Intent(context, MpPhoneAuthActivity::class.java))
+        startActivity(Intent(context, IntroductionActivity::class.java))
+        activity?.finish()
     }
 
     override fun onRequireConsent() {

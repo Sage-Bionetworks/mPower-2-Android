@@ -59,4 +59,7 @@
     <color name="severity_selected_text">@color/appDarkGrey</color>
     <color name="severity_unselected_text">@color/appLightGray</color>
 
+    <color name="button_color_disabled">#DDDDDD</color>
+    <color name="button_text_color_disabled">#747983</color>
+
 </resources>

@@ -124,6 +124,18 @@
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
 
+        <!-- Phone Sign up group -->
+        <activity
+            android:name=".authentication.IntroductionActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".authentication.PhoneSignUpActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".authentication.SmsCodeActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".authentication.PhoneLearnMoreViewWeb"
+            android:screenOrientation="portrait"/>
+
 
         <!-- These control local reminder notification scheduling and display -->
         <receiver android:name="org.sagebionetworks.research.sageresearch.reminders.MpReminderAlarmReceiver" />

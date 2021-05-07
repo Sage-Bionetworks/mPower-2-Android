@@ -1,7 +1,5 @@
 package org.sagebionetworks.research.mpower;
 
-import static org.sagebionetworks.research.mpower.research.MpIdentifier.AUTHENTICATE;
-
 import android.annotation.SuppressLint;
 
 import androidx.fragment.app.Fragment;
@@ -18,6 +16,7 @@ import android.widget.TextView;
 import org.sagebionetworks.bridge.android.access.Resource;
 import org.sagebionetworks.bridge.android.access.Resource.Status;
 import org.sagebionetworks.bridge.android.viewmodel.PhoneAuthViewModel;
+import org.sagebionetworks.research.mpower.authentication.IntroductionActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,6 +112,6 @@ public class MpPhoneAuthActivity extends DaggerAppCompatActivity {
 
     @VisibleForTesting
     void startSignupTask() {
-        taskLauncher.launchTask(this, AUTHENTICATE, null);
+        startActivity(new Intent(this, IntroductionActivity.class));
     }
 }

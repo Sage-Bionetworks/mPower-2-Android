@@ -4,5 +4,6 @@
     <!-- Progress bar -->
     <string name="mp_step_progress">Step %1$s of %2$s</string>
     <string name="mp_question_progress">Question %1$s of %2$s</string>
+    <string name="mp_phone_error">The phone number you entered is not valid. Please enter a valid phone number.</string>
 
 </resources>
