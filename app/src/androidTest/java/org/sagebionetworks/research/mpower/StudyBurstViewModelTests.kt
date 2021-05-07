@@ -228,7 +228,7 @@ class StudyBurstViewModelTests : RoomTestHelper() {
         val studyBurstReminder = item.schedules.filterByActivityId(STUDY_BURST_REMINDER)
         assertEquals(1, studyBurstReminder.size)
 
-        assertEquals(3, item.orderedTasks)
+        assertEquals(3, item.orderedTasks.size)
 
         assertFalse(item.hasCompletedMotivationSurvey())
         val completionTask = item.nextCompletionActivityToShow
