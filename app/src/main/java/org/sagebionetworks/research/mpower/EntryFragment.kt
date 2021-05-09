@@ -61,13 +61,7 @@ class EntryFragment : BridgeAccessFragment() {
 
     override fun onAccessGranted() {
         LOGGER.debug("Showing MainFragment")
-
-        if ("clinical" == BuildConfig.FLAVOR &&
-                isMissingClinicalConsent()) {
-            LOGGER.info("clinical_consent data group required, even for consented users")
-            onRequireConsent()
-            return
-        }
+        
         if (childFragmentManager.fragments.isEmpty() || !childFragmentManager.fragments[0].isVisible || !(childFragmentManager.fragments[0] is MainFragment)) {
             childFragmentManager.beginTransaction()
                     .replace(R.id.container, MainFragment())

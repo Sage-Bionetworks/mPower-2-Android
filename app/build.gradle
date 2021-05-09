@@ -58,10 +58,6 @@ android {
             versionCode 2 * android.defaultConfig.versionCode
             dimension "userRole"
         }
-        clinical {
-            versionCode 2 * android.defaultConfig.versionCode
-            dimension "userRole"
-        }
     }
 
     compileOptions {
