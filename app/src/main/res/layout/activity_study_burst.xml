@@ -161,9 +161,20 @@
             android:layout_height="@dimen/mp_rounded_button_height"
             android:text="@string/rsb_next"
             android:layout_marginTop="@dimen/rsb_padding_large"
-            android:layout_marginBottom="@dimen/rsb_padding_large"
-            android:layout_alignParentBottom="true"
+            android:layout_above="@+id/skip_button"
+            android:textColor="@color/white"
             style="@style/MPower.RoundedCornerMaterialButton"/>
+
+        <Button
+            android:id="@id/skip_button"
+            style="@style/Widget.MPower.TextView.UnderlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:text="@string/skip_underlined"
+            android:textColor="@color/secondaryTint"
+            android:layout_marginBottom="@dimen/rsb_padding_large"/>
 
     </RelativeLayout>
 

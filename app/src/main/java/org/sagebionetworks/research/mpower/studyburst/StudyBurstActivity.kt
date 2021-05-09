@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_study_burst.expiresText
 import kotlinx.android.synthetic.main.activity_study_burst.expiresTextContainer
+import kotlinx.android.synthetic.main.activity_study_burst.skip_button
 import kotlinx.android.synthetic.main.activity_study_burst.studyBurstBack
 import kotlinx.android.synthetic.main.activity_study_burst.studyBurstMessage
 import kotlinx.android.synthetic.main.activity_study_burst.studyBurstRecycler
@@ -104,6 +105,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         observeLiveData()
 
         study_burst_next.setOnClickListener { onNextClicked() }
+        skip_button.setOnClickListener { onSkipClicked() }
         studyBurstBack.setOnClickListener {
             finishActivity(null)
         }
@@ -134,7 +136,8 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
                     // If we don't have a study burst, and we have the next completion activity to show,
                     // we should send the user back to the tracking tab fragment to do the completion task
                     finishActivity(nextCompletionActivityToShow)
-                    return@Observer
+                } ?: run {
+                    finishActivity(null)
                 }
             }
         }}
@@ -168,7 +171,9 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
      * is finished and we need to reset all previously finished study burst activities.
      */
     private fun refreshLiveData() {
+        // Refresh view model observer to force refresh data
         viewModelObserver?.let {
+            studyBurstViewModel.liveData().removeObservers(this)
             studyBurstViewModel.refreshLiveData(this).observe(this, it)
         }
     }
@@ -285,6 +290,13 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
         }
     }
 
+    private fun onSkipClicked() {
+        studyBurstAdapter?.nextItem?.task?.identifier?.let {
+            studyBurstViewModel.studyBurstSettingsDao.skipTaskForToday(it)
+            refreshLiveData()
+        }
+    }
+
     /**
      * StudyBurstAdapterListener function, called when a task icon in the RecyclerView is selected.
      */
@@ -301,7 +313,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
             val intent = PerformTaskWithResultActivity.Companion.createIntent(this, taskView, uuid)
             startActivityForResult(intent, TaskLauncher.WALK_AND_BALANCE_REQUEST_CODE, null)
 
-        } else if (item.task.identifier == MpIdentifier.HEART_SNAPSHOT) {
+        } else if (item.task.identifier == HEART_SNAPSHOT) {
 
             val intent = CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(this)
             startActivityForResult(intent, CRF_REQUEST_CODE)
@@ -333,11 +345,8 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
             studyBurstViewModel.studyBurstSettingsDao.setSnapshotComplete()
             studyBurstViewModel.saveResearchStackReports(taskResult)
 
-            // Refresh view model observer to force refresh data
-            viewModelObserver?.let {
-                studyBurstViewModel.liveData().removeObservers(this)
-                studyBurstViewModel.refreshLiveData(this).observe(this, it)
-            }
+            // Force refresh is necessary as heart snapshot logic is not reflected in live data
+            refreshLiveData()
         }
     }
 }

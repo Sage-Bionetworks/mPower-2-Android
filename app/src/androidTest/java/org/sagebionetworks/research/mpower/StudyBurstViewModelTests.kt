@@ -1057,5 +1057,21 @@ class StudyBurstViewModelTests : RoomTestHelper() {
         override fun getLastSnapshotComplete(): LocalDateTime? {
             return heartSnapshotCompleteDate
         }
+
+        override open fun skipTaskForToday(taskIdentifier: String) {
+            // do nothing
+        }
+
+        override open fun isTaskSkippedForToday(taskIdentifier: String): Boolean {
+            return false
+        }
+
+        override open fun todaysSkippedTasks(): ArrayList<String>? {
+            return arrayListOf()
+        }
+
+        override open fun todaysSkippedTaskCount(): Int {
+            return 0
+        }
     }
 }

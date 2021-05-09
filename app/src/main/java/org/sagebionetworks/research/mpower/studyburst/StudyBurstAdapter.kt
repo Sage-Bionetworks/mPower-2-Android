@@ -37,11 +37,9 @@ class StudyBurstAdapter(context: Context, val items : List<StudyBurstTaskInfo>?)
     private val lightGrayColor = ResourcesCompat.getColor(context.resources, R.color.appLightGray, null)
 
     val nextItem: StudyBurstTaskInfo? get() {
-        items?.let {
-            it.forEach {
-                if (!it.isComplete) {
-                    return it
-                }
+        items?.forEach {
+            if (!it.isComplete && !it.isSkipped) {
+                return it
             }
         }
         return null

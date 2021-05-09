@@ -7,6 +7,8 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.VisibleForTesting
 import com.google.common.base.Preconditions.checkArgument
@@ -459,12 +461,13 @@ data class StudyBurstItem(
         orderedTasks = mutableSorted.map {
             val schedule = schedules.filterByActivityId(it.identifier).availableToday()?.scheduleClosestToNow()
             val isFinished = isStudyBurstTaskFinished(it.identifier)
-            val isActive = isFinished || !firstUnfinishedReached
+            val isSkipped = studyBurstSettingsDao.isTaskSkippedForToday(it.identifier)
+            val isActive = (isFinished || !firstUnfinishedReached) && !isSkipped
             if (!firstUnfinishedReached) {
-                firstUnfinishedReached = !isFinished
+                firstUnfinishedReached = (!isFinished && !isSkipped)
             }
             // Tasks are active and can be run if they are finished or they are the first unfinished in the list
-            StudyBurstTaskInfo(schedule, it, isActive, isFinished)
+            StudyBurstTaskInfo(schedule, it, isActive, isFinished, isSkipped)
         }
 
         studyBurstWasJustCompleted =
@@ -483,7 +486,7 @@ data class StudyBurstItem(
      * @return progress What is the current progress on required activities?
      */
     val progress: Float get() {
-        var numerator = finishedSchedules.size.toFloat()
+        var numerator = finishedOrSkippedScheduledCount.toFloat()
         var denominator = totalMeasuringActivitiesCount.toFloat()
 
         if (shouldShowHeartSnapshot) {
@@ -511,9 +514,16 @@ data class StudyBurstItem(
             return true
         }
         // Make sure both daily tasks and one-time heart snapshot if applicable are complete
-        val dailyTasksCompletedForToday = (finishedSchedules.size == totalMeasuringActivitiesCount)
+        val dailyTasksCompletedForToday = (finishedOrSkippedScheduledCount >= totalMeasuringActivitiesCount)
         val heartSnapshotHiddenOrComplete = (!shouldShowHeartSnapshot || isHeartSnapshotFinished())
         return dailyTasksCompletedForToday && heartSnapshotHiddenOrComplete
+    }
+
+    /**
+     * @property finishedOrSkippedScheduledCount the count of finished or skipped daily study burst tasks
+     */
+    val finishedOrSkippedScheduledCount: Int get() {
+        return finishedSchedules.size + studyBurstSettingsDao.todaysSkippedTaskCount()
     }
 
     /**
@@ -741,7 +751,7 @@ data class StudyBurstItem(
             millisToExpiration?.let {
                 details = timeUntilStudyBurstExpiration
             } ?: run {
-                var activitiesTodoCount = totalMeasuringActivitiesCount - finishedSchedules.size
+                var activitiesTodoCount = totalMeasuringActivitiesCount - finishedOrSkippedScheduledCount
                 if (shouldShowHeartSnapshot && !isHeartSnapshotFinished()) {
                     activitiesTodoCount += 1
                 }
@@ -810,6 +820,14 @@ data class StudyBurstItem(
         val studyBurstStart = now.minusDays(dayCount.toLong()).startOfDay()
         return lastFinishedDate.isAfter(studyBurstStart)
     }
+
+    fun skipTaskForToday(taskIdentifier: String) {
+        studyBurstSettingsDao.skipTaskForToday(taskIdentifier)
+    }
+
+    fun isTaskSkippedForToday(taskIdentifier: String): Boolean {
+        return studyBurstSettingsDao.isTaskSkippedForToday(taskIdentifier)
+    }
 }
 
 data class TodayActionBarItem(
@@ -821,12 +839,20 @@ data class StudyBurstTaskInfo(
         val schedule: ScheduledActivityEntity?,
         val task: TaskInfo,
         val isActive: Boolean,
-        val isComplete: Boolean)
+        val isComplete: Boolean,
+        val isSkipped: Boolean)
 
 open class StudyBurstSettingsDao @Inject constructor(context: Context) {
     val orderKey = "StudyBurstTaskOrder"
     val timestampKey = "StudyBurstTimestamp"
     val lastHeartSnapshotCompleteTimestamp = "LastHeartSnapshotCompleteTimestamp"
+
+    val kSkippedTaskDateIdentifier = "SkippedTaskDateIdentifier"
+    val kSkippedTaskArrayIdentifier = "SkippedTaskArrayIdentifier"
+
+    companion object {
+        private val TAG = StudyBurstSettingsDao::class.java.simpleName
+    }
 
     private val prefs = context.getSharedPreferences("StudyBurstViewModel", Context.MODE_PRIVATE)
 
@@ -840,6 +866,68 @@ open class StudyBurstSettingsDao @Inject constructor(context: Context) {
         prefs.getString(lastHeartSnapshotCompleteTimestamp, null)?.let {
             return LocalDateTime.parse(it)
         } ?: return null
+    }
+
+    @SuppressLint("ApplySharedPref") // Need it to immediately reflect the finished state
+    open fun skipTaskForToday(taskIdentifier: String) {
+        // Heart snapshot is skipped differently
+        if (taskIdentifier == HEART_SNAPSHOT) {
+            setSnapshotComplete()
+            return
+        }
+
+        // Always reset todays skipped date
+        val now = LocalDateTime.now()
+        val editPrefs = prefs.edit()
+        editPrefs.putString(kSkippedTaskDateIdentifier, now.toString())
+
+        val skippedTaskIds = todaysSkippedTasks() ?: run {
+            editPrefs.putStringSet(kSkippedTaskArrayIdentifier, setOf(taskIdentifier))
+            editPrefs.commit()
+            return
+        }
+
+        // Add the task to the existing set of todays skipped identifiers
+        skippedTaskIds.add(taskIdentifier)
+        editPrefs.putStringSet(kSkippedTaskArrayIdentifier, skippedTaskIds.toSet())
+        editPrefs.commit()
+    }
+
+    open fun isTaskSkippedForToday(taskIdentifier: String): Boolean {
+        val skippedTaskIds = todaysSkippedTasks() ?: run {
+            return false
+        }
+        return skippedTaskIds.contains(taskIdentifier)
+    }
+
+    /// The list of skipped task identifiers for today, nil or empty if none available
+    open fun todaysSkippedTasks(): ArrayList<String>? {
+        // Check if there was a task skipped already today, and if so, if the
+        // supplied task was one of the ones skipped.
+        val skipDateStr = prefs.getString(kSkippedTaskDateIdentifier, null) ?: run {
+            return null
+        }
+
+        val skipDate = LocalDateTime.parse(skipDateStr) ?: run {
+            Log.e(TAG, "Error parsing skip task date")
+            return null
+        }
+
+        // Is the date after today's start of day?  If no, consider it not applicable to today
+        if (!skipDate.isAfter(LocalDateTime.now().startOfDay())) {
+            return null
+        }
+
+        val taskArrayList = arrayListOf<String>()
+        prefs.getStringSet(kSkippedTaskArrayIdentifier, null)?.forEach {
+            taskArrayList.add(it)
+        }
+
+        return taskArrayList
+    }
+
+    open fun todaysSkippedTaskCount(): Int {
+        return (todaysSkippedTasks() ?: arrayListOf()).size
     }
 
     @VisibleForTesting
