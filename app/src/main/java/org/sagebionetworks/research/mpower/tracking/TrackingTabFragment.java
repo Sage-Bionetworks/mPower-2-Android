@@ -252,22 +252,34 @@ public class TrackingTabFragment extends Fragment {
                 item.getMotivationSurvey() != null) {
             showActionBarFlow(item);
         }
-        if (!item.getHasStudyBurst() || item.getDayCount() == null) {
-            trackingStatusBar.setVisibility(View.GONE);
-            return;
-        }
-        trackingStatusBar.setVisibility(View.VISIBLE);
-        trackingStatusBar.setDayCount(item.getDayCount());
+
         trackingStatusBar.setMax(100);
         trackingStatusBar.setProgress(Math.round(100 * item.getProgress()));
+
+        trackingStatusBar.setVisibility(View.VISIBLE);
+        if (item.getDayCount() != null) {
+            trackingStatusBar.setDayCount(item.getDayCount());
+            trackingStatusBar.statusWheel.setDayLabelVisibility(true);
+        } else {
+            trackingStatusBar.statusWheel.setDayLabelVisibility(false);
+            trackingStatusBar.setProgress(0);
+        }
 
         if (getContext() == null) {
             return;
         }
+
         TodayActionBarItem actionBarItem = item.getActionBarItem(getContext());
         if (actionBarItem != null) {
-            trackingStatusBar.setEnabled(true);
-            trackingStatusBar.setOnClickListener(view -> showActionBarFlow(item));
+            if (actionBarItem.isClickable()) {
+                trackingStatusBar.setEnabled(true);
+                trackingStatusBar.setOnClickListener(view -> showActionBarFlow(item));
+                trackingStatusBar.carrotImageButton.setVisibility(View.VISIBLE);
+            } else {
+                trackingStatusBar.setEnabled(false);
+                trackingStatusBar.setOnClickListener(null);
+                trackingStatusBar.carrotImageButton.setVisibility(View.GONE);
+            }
             trackingStatusBar.setTitleTextBackgroundVisibility(View.VISIBLE);
             trackingStatusBar.setTitle(actionBarItem.getTitle());
             trackingStatusBar.setText(actionBarItem.getDetail());

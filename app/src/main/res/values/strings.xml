@@ -54,6 +54,11 @@
     <string name="study_burst_day">Day</string>
     <string name="skip_underlined"><u>Skip</u></string>
 
+    <string name="study_burst_1_day_until_next">1 day until next Study Burst</string>
+    <string name="study_burst_days_until_next">%s days until next Study Burst</string>
+    <string name="study_burst_all_activities_complete">Activities complete</string>
+    <string name="study_burst_not_active">No study burst currently active</string>
+
     <string name="study_burst_action_bar_title">Study Burst</string>
     <string name="study_burst_title_day_1">This is your time!</string>
     <string name="study_burst_title_day_2">You are making a difference!</string>

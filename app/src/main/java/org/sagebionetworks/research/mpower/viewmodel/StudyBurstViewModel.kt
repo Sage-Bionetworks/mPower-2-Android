@@ -53,11 +53,13 @@ import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.temporal.ChronoUnit
 import java.lang.Integer.MAX_VALUE
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.time.days
 
 /**
  * The StudyBurstViewModel has access to all schedules and reports that are needed to manage the state
@@ -270,6 +272,7 @@ open class StudyBurstViewModel(
         val stepId = "TaskStep" // can be anything, identifier not used in the upload
         val stepResult = org.sagebionetworks.researchstack.backbone.result.StepResult<Any>(
                 org.sagebionetworks.researchstack.backbone.step.Step(stepId))
+        studyMarker.finishedOn = Instant.now()
 
         stepResult.results["taskOrder"] = getTaskSortOrder().joinToString()
         // Fill in info about the finished tasks' guid
@@ -766,7 +769,25 @@ data class StudyBurstItem(
         pastUnfinishedCompletionTasks?.let {
             return TodayActionBarItem(it.first, it.second, null)
         }
-        return null
+        if (hasStudyBurst) {  // Study burst is done for the day
+            return TodayActionBarItem(
+                    context.getString(R.string.study_burst_action_bar_title),
+                    context.getString(R.string.study_burst_all_activities_complete),
+                    null, false)
+        } else { // Study burst as a whole is done and we are waiting until the next one
+            var detail = context.getString(R.string.study_burst_not_active)
+            var daysUntilNextStudyBurst = -1
+            schedules.sortedBy { it.scheduledOn }.firstOrNull()?.scheduledOn?.let {
+                daysUntilNextStudyBurst = 91 - (ChronoUnit.DAYS.between(it, date).toInt() % 91)
+            }
+            if (daysUntilNextStudyBurst == 1) {
+                detail = context.getString(R.string.study_burst_1_day_until_next)
+            } else if (daysUntilNextStudyBurst > 1) {
+                detail = context.getString(R.string.study_burst_days_until_next, daysUntilNextStudyBurst.toString())
+            }
+            return TodayActionBarItem(context.getString(R.string.study_burst_action_bar_title),
+                    detail, null, false)
+        }
     }
 
     val millisToExpiration: Long? get() {
@@ -833,7 +854,8 @@ data class StudyBurstItem(
 data class TodayActionBarItem(
         val title: String,
         val detail: String?,
-        @DrawableRes val image: Int?)
+        @DrawableRes val image: Int?,
+        val isClickable: Boolean = true)
 
 data class StudyBurstTaskInfo(
         val schedule: ScheduledActivityEntity?,

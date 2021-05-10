@@ -39,6 +39,9 @@ public class TrackingStatusBar extends ConstraintLayout {
     @BindView(R.id.title_text_background)
     View titleTextBackground;
 
+    @BindView(R.id.carrot_image_button)
+    View carrotImageButton;
+
     private Unbinder unbinder;
 
     public TrackingStatusBar(final Context context) {

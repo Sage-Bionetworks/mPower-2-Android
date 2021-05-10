@@ -47,7 +47,7 @@
             app:layout_constraintTop_toBottomOf="@+id/study_burst_progress_bar_title" />
 
         <org.sagebionetworks.research.mobile_ui.widget.ActionButton
-            android:id="@+id/actionButton"
+            android:id="@+id/carrot_image_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="@dimen/margin_medium"
@@ -69,7 +69,7 @@
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="@+id/study_burst_progress_bar_title"
             app:layout_constraintEnd_toEndOf="@+id/study_burst_progress_bar_title"
-            app:layout_constraintTop_toBottomOf="@id/actionButton"/>
+            app:layout_constraintTop_toBottomOf="@id/carrot_image_button"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
