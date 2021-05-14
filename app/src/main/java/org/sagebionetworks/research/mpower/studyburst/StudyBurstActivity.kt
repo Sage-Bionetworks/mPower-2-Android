@@ -304,16 +304,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
         val uuid = studyBurstViewModel.createScheduleTaskRunUuid(item.schedule?.guid)
 
-        if (item.task.identifier == WALK_AND_BALANCE) {
-
-            // There is a bug in task launcher that does not allow an activity
-            // to launch a ResearchStack task, so let's do it manually here
-            val taskInfoView: TaskInfoView = taskRepository.getTaskInfo(item.task.identifier).blockingGet()
-            val taskView = TaskView.builder().setIdentifier(taskInfoView.identifier).build()
-            val intent = PerformTaskWithResultActivity.Companion.createIntent(this, taskView, uuid)
-            startActivityForResult(intent, TaskLauncher.WALK_AND_BALANCE_REQUEST_CODE, null)
-
-        } else if (item.task.identifier == HEART_SNAPSHOT) {
+        if (item.task.identifier == HEART_SNAPSHOT) {
             // Look for saved answers to gender/age questions if we have them
             val intent = studyBurstViewModel.studyBurstSettingsDao.loadGenderAndBirthYear()?.let {
                 CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(this, it.gender, it.birthYear)

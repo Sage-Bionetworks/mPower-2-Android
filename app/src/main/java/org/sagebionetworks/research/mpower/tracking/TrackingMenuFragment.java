@@ -336,9 +336,7 @@ public class TrackingMenuFragment extends Fragment {
             passiveGaitViewModel.disableTracking();
 
             Fragment parentFragment = this.getParentFragment();
-            if (taskIdentifier.equals(WALK_AND_BALANCE) && TrackingTabFragment.class.equals(parentFragment.getClass())) {
-                launcher.launchTask(getContext(), parentFragment, taskIdentifier, uuid, taskResult);
-            } else if (taskIdentifier.equals(HEART_SNAPSHOT)) {
+            if (taskIdentifier.equals(HEART_SNAPSHOT)) {
                 // Look for saved answers to gender/age questions if we have them
                 GenderAndBirthYear saved = studyBurstViewModel.getStudyBurstSettingsDao().loadGenderAndBirthYear();
                 Intent intent;

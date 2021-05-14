@@ -12,8 +12,6 @@ import static org.sagebionetworks.research.mpower.research.MpIdentifier.TRIGGERS
 import static org.sagebionetworks.research.mpower.research.MpIdentifier.WALK_AND_BALANCE;
 
 import android.app.Activity;
-
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import android.content.Context;
@@ -25,7 +23,6 @@ import androidx.annotation.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
-import org.jetbrains.annotations.NotNull;
 import org.sagebionetworks.research.domain.repository.TaskRepository;
 import org.sagebionetworks.research.domain.result.interfaces.TaskResult;
 import org.sagebionetworks.research.mpower.TaskLauncher.TaskLaunchState.Type;
@@ -47,7 +44,6 @@ import javax.inject.Inject;
 public class TaskLauncher {
 
     public static final int TASK_REQUEST_CODE = 1492;
-    public static final int WALK_AND_BALANCE_REQUEST_CODE = 1776;
 
     public static class TaskLaunchState {
         @Retention(RetentionPolicy.SOURCE)
@@ -78,7 +74,6 @@ public class TaskLauncher {
 
     private static final ImmutableSet<String> SR_TASKS = ImmutableSet
             .of(TAPPING, WALK_AND_BALANCE, TRIGGERS, TREMOR, SYMPTOMS, MEDICATION);
-    private static final ImmutableSet<String> SR_TASKS_REQUIRING_RESULT = ImmutableSet.of(WALK_AND_BALANCE);
 
     private final ResearchStackTaskLauncher researchStackTaskLauncher;
     private final SageResearchTaskLauncher sageResearchTaskLauncher;
@@ -120,11 +115,6 @@ public class TaskLauncher {
             @Nullable UUID taskRunUUID) {
         return launchTask(context, taskIdentifier, taskRunUUID, null);
     }
-    public LiveData<TaskLaunchState> launchTask(@NonNull Context context, @NonNull String taskIdentifier,
-            @Nullable UUID taskRunUUID, @Nullable TaskResult taskResult) {
-        return launchTask(context, null, taskIdentifier, taskRunUUID, null);
-
-    }
 
     /**
      * @param context used to launch the task, if this function ends up launching a ResearchTask task,
@@ -135,7 +125,7 @@ public class TaskLauncher {
      * @return state of the task launch, some tasks, like surveys, may require an additional network call
      */
     @NonNull
-    public LiveData<TaskLaunchState> launchTask(@NonNull Context context, @NonNull Fragment fragment, @NonNull String taskIdentifier,
+    public LiveData<TaskLaunchState> launchTask(@NonNull Context context, @NonNull String taskIdentifier,
             @Nullable UUID taskRunUUID, @Nullable TaskResult taskResult) {
         checkNotNull(context);
         checkArgument(!Strings.isNullOrEmpty(taskIdentifier), "taskIdentifier cannot be null or empty");
@@ -149,12 +139,8 @@ public class TaskLauncher {
 
         if (SR_TASKS.contains(taskIdentifier)) {
             LOGGER.debug("Launching SageResearch task: {}", taskIdentifier);
-            if (SR_TASKS_REQUIRING_RESULT.contains(taskIdentifier) && context instanceof Activity) {
-                sageResearchTaskLauncher.launchTask(context, fragment, taskIdentifier, taskRunUUID, WALK_AND_BALANCE_REQUEST_CODE, null);
 
-            } else {
-                sageResearchTaskLauncher.launchTask(context, taskIdentifier, taskRunUUID);
-            }
+            sageResearchTaskLauncher.launchTask(context, taskIdentifier, taskRunUUID);
             tls = new MutableLiveData<>();
         } else if (RS_TASKS.contains(taskIdentifier)) {
             LOGGER.debug("Launching ResearchStack task: {}", taskIdentifier);

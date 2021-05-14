@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -31,10 +32,12 @@ import org.sagebionetworks.research.mpower.profile.MPowerProfileViewModel;
 import org.sagebionetworks.research.mpower.profile.PassiveGaitPermissionActivity;
 import org.sagebionetworks.research.mpower.profile.PassiveGaitPermissionViewModel;
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity;
+import org.sagebionetworks.research.mpower.research.MpIdentifier;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
+import org.sagebionetworks.research.mpower.viewmodel.ItemType;
 import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderState;
@@ -42,6 +45,7 @@ import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderViewModel
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.SurveyViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.TodayActionBarItem;
+import org.sagebionetworks.research.mpower.viewmodel.TodayHistoryItem;
 import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
 import org.sagebionetworks.research.sageresearch.dao.room.AppConfigRepository;
 import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository;
@@ -55,6 +59,8 @@ import org.sagebionetworks.researchstack.backbone.result.TaskResult;
 import org.sagebionetworks.researchstack.backbone.ui.ViewTaskActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -110,8 +116,10 @@ public class TrackingTabFragment extends Fragment {
 
     ProfileManager profileManager = null;
 
+    private boolean launchedPassiveGaitPrompt = false;
 
     private TodayScheduleViewModel todayScheduleViewModel;
+    private Observer<List<TodayHistoryItem>> todayObserver = null;
 
     private SurveyViewModel surveyViewModel;
 
@@ -157,6 +165,9 @@ public class TrackingTabFragment extends Fragment {
         OnApplyWindowInsetsListener listener = SystemWindowHelper.getOnApplyWindowInsetsListener(Direction.TOP);
         ViewCompat.setOnApplyWindowInsetsListener(this.trackingStatusBar, listener);
 
+        todayScheduleViewModel = new ViewModelProvider(this, todayScheduleViewModelFactory)
+                .get(TodayScheduleViewModel.class);
+
         profileManager = new ProfileManager(reportRepo, appConfigRepo);
         profileManager.profileDataLoader().observe(this.getViewLifecycleOwner(), observedProfileDataLoader -> {
             String passiveDataAllowedString = observedProfileDataLoader
@@ -165,6 +176,15 @@ public class TrackingTabFragment extends Fragment {
                 trackingTabViewModel.passiveDataAllowed = Boolean.parseBoolean(passiveDataAllowedString);
             }
 
+            // Now that we have pass data question answers, let's register for today's history items
+            // since those are dependent on the answer to the passive data collection
+            if (todayObserver == null) {
+                todayObserver = todayHistoryItems -> {
+                    LOGGER.debug("Observed todayHistoryItems today");
+                    checkForPassiveGaitPrompt(todayHistoryItems);
+                };
+                todayScheduleViewModel.liveData().observe(getViewLifecycleOwner(), todayObserver);
+            }
         });
 
         return view;
@@ -184,14 +204,6 @@ public class TrackingTabFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        todayScheduleViewModel = new ViewModelProvider(this, todayScheduleViewModelFactory)
-                .get(TodayScheduleViewModel.class);
-        todayScheduleViewModel.liveData().observe(getViewLifecycleOwner(), todayHistoryItems -> {
-            // do something so compiler doesn't reuse lambda as observer across LiveDatas
-            LOGGER.debug("Observed todayHistoryItems");
-            // TODO: mdephillips 9/4/18 mimic what iOS does with the history items, see TodayViewController
-        });
 
         trackingTabViewModel = new ViewModelProvider(getActivity()).get(TrackingTabFragmentViewModel.class);
 
@@ -406,12 +418,29 @@ public class TrackingTabFragment extends Fragment {
                 launchRsSurvey(currentItem.getDemographicsSurvey());
             }
         }
+    }
 
-        //special case for Walk and Balance to ask for permission
-        if (resultCode == Activity.RESULT_OK && requestCode == TaskLauncher.WALK_AND_BALANCE_REQUEST_CODE && trackingTabViewModel.passiveDataAllowed == null) {
+    /**
+     * If the user has completed a walk and balance task,
+     * we should prompt them to accept passive gait tracking if we haven't already.
+     */
+    private void checkForPassiveGaitPrompt(List<TodayHistoryItem> items) {
+        boolean walkAndBalanceCompletedToday = false;
+        for (TodayHistoryItem item : items) {
+            if (item.getSchedules() != null) {
+                for (ScheduledActivityEntity schedule : item.getSchedules()) {
+                    if (MpIdentifier.WALK_AND_BALANCE.equals(schedule.activityIdentifier()) &&
+                            schedule.getFinishedOn() != null) {
+                        walkAndBalanceCompletedToday = true;
+                    }
+                }
+            }
+        }
+        if (!launchedPassiveGaitPrompt && walkAndBalanceCompletedToday &&
+                trackingTabViewModel.passiveDataAllowed == null) {
+            launchedPassiveGaitPrompt = true;
             Intent intent = new Intent(this.getContext(), PassiveGaitPermissionActivity.class);
             intent.putExtra(PassiveGaitPermissionActivity.ARG_PASSIVE_DATA_ALLOWED_VALUE, (String) null);
-
             this.startActivityForResult(intent, PASSIVE_DATA_PERMISSION_REQUEST_CODE);
         }
     }
