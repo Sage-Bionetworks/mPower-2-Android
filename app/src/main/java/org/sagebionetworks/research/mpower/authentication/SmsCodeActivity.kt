@@ -37,7 +37,6 @@ import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.R.id
 import org.sagebionetworks.research.mpower.R.layout
 import org.sagebionetworks.research.mpower.WebConsentFragment
-import org.sagebionetworks.research.mpower.WebConsentFragment.Companion.newInstance
 import org.sagebionetworks.researchstack.backbone.DataResponse
 import org.slf4j.LoggerFactory
 import rx.subscriptions.CompositeSubscription
@@ -181,7 +180,9 @@ open class SmsCodeActivity : AppCompatActivity() {
 
     fun returnToEntryActivity() {
         val intent = Intent(this, EntryActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
         finish()
     }

@@ -48,6 +48,9 @@ import org.sagebionetworks.research.sageresearch.manager.ActivityGroup
 import org.sagebionetworks.research.sageresearch.manager.TaskInfo
 import org.sagebionetworks.research.sageresearch.viewmodel.ReportAndScheduleViewModel
 import org.sagebionetworks.research.sageresearch.viewmodel.SingleLiveEvent
+import org.sagebionetworks.researchstack.backbone.model.UserHealth.Gender
+import org.sagebionetworks.researchstack.backbone.result.TaskResult
+import org.sagebionetworks.researchstack.backbone.utils.StepResultHelper
 import org.slf4j.LoggerFactory
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
@@ -971,4 +974,30 @@ open class StudyBurstSettingsDao @Inject constructor(context: Context) {
             return LocalDateTime.parse(it)
         } ?: return null
     }
+
+    open fun saveGenderAndBirthYear(taskResult: TaskResult) {
+        val gender = StepResultHelper.findStringResult(
+                taskResult, "sex") ?: run { return }
+        val birthYear = StepResultHelper.findIntegerResult(
+                "birthYear", taskResult) ?: run { return }
+
+        val editor = prefs.edit()
+        editor.putString("gender", gender)
+        editor.putInt("birthYear", birthYear)
+        editor.apply()
+    }
+
+    open fun loadGenderAndBirthYear(): GenderAndBirthYear? {
+        prefs.getString("gender", null)?.let {
+            val birthYear = prefs.getInt("birthYear", -1)
+            if (birthYear >= 0) {
+                return GenderAndBirthYear(it, birthYear)
+            }
+        }
+        return null
+    }
 }
+
+data class GenderAndBirthYear(
+        val gender: String,
+        val birthYear: Int)

@@ -314,10 +314,13 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
             startActivityForResult(intent, TaskLauncher.WALK_AND_BALANCE_REQUEST_CODE, null)
 
         } else if (item.task.identifier == HEART_SNAPSHOT) {
-
-            val intent = CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(this)
+            // Look for saved answers to gender/age questions if we have them
+            val intent = studyBurstViewModel.studyBurstSettingsDao.loadGenderAndBirthYear()?.let {
+                CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(this, it.gender, it.birthYear)
+            } ?: run {
+                CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(this)
+            }
             startActivityForResult(intent, CRF_REQUEST_CODE)
-
         } else {
             taskLauncher.launchTask(this, item.task.identifier, uuid)
                     .observe(this, Observer {
@@ -342,6 +345,7 @@ class StudyBurstActivity : AppCompatActivity(), StudyBurstAdapterListener {
 
             MpDataProvider.getInstance().uploadTaskResult(this, taskResult)
 
+            studyBurstViewModel.studyBurstSettingsDao.saveGenderAndBirthYear(taskResult)
             studyBurstViewModel.studyBurstSettingsDao.setSnapshotComplete()
             studyBurstViewModel.saveResearchStackReports(taskResult)
 

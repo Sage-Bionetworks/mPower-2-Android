@@ -43,6 +43,7 @@ import org.sagebionetworks.research.mpower.R;
 import org.sagebionetworks.research.mpower.TaskLauncher;
 import org.sagebionetworks.research.mpower.research.MpIdentifier;
 import org.sagebionetworks.research.mpower.researchstack.framework.MpDataProvider;
+import org.sagebionetworks.research.mpower.viewmodel.GenderAndBirthYear;
 import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstSettingsDao;
@@ -275,6 +276,7 @@ public class TrackingMenuFragment extends Fragment {
             if (studyBurstViewModel == null) {
                 return;
             }
+            studyBurstViewModel.getStudyBurstSettingsDao().saveGenderAndBirthYear(taskResult);
             studyBurstViewModel.getStudyBurstSettingsDao().setSnapshotComplete();
             studyBurstViewModel.saveResearchStackReports(taskResult);
         }
@@ -337,7 +339,15 @@ public class TrackingMenuFragment extends Fragment {
             if (taskIdentifier.equals(WALK_AND_BALANCE) && TrackingTabFragment.class.equals(parentFragment.getClass())) {
                 launcher.launchTask(getContext(), parentFragment, taskIdentifier, uuid, taskResult);
             } else if (taskIdentifier.equals(HEART_SNAPSHOT)) {
-                Intent intent = CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(getContext());
+                // Look for saved answers to gender/age questions if we have them
+                GenderAndBirthYear saved = studyBurstViewModel.getStudyBurstSettingsDao().loadGenderAndBirthYear();
+                Intent intent;
+                if (saved != null) {
+                    intent = CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(
+                            getContext(), saved.getGender(), saved.getBirthYear());
+                } else {
+                    intent = CrfTaskIntentFactory.getHeartRateSnapshotTaskIntent(getContext());
+                }
                 startActivityForResult(intent, CRF_REQUEST_CODE);
             } else {
                 launcher.launchTask(getContext(), taskIdentifier, uuid, taskResult);
