@@ -61,6 +61,7 @@ import java.lang.Integer.MAX_VALUE
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.Random
 import javax.inject.Inject
 import kotlin.time.days
 
@@ -102,11 +103,11 @@ open class StudyBurstViewModel(
         }
     }
 
-    // TODO: mdephillips 9/8/18 get this from bridge config
+
     @VisibleForTesting
     protected open val config = StudyBurstConfiguration()
 
-    // TODO: mdephillips 9/8/18 get this from bridge config
+    // TODO: mdephillips 9/8/18 get this from bridge config one day, but not blocking launch
     @VisibleForTesting
     protected open fun activityGroup(): ActivityGroup? {
         return DataSourceManager.installedGroup(config.taskGroupIdentifier)
@@ -253,7 +254,7 @@ open class StudyBurstViewModel(
     protected open fun createStudyBurstItem(schedules: List<ScheduledActivityEntity>): StudyBurstItem {
         return StudyBurstItem(
                 config, activityGroup(), schedules, now(), timezone,
-                shouldContinueStudyBurst(), studyBurstSettingsDao.getTaskSortOrder(),
+                shouldContinueStudyBurst(), getTaskSortOrder(),
                 studyBurstSettingsDao, shouldShowHeartSnapshot())
     }
 
@@ -311,14 +312,14 @@ open class StudyBurstViewModel(
      */
     private fun isTaskSortOrderStale(): Boolean {
         val sortOrderDate = studyBurstSettingsDao.getTaskSortOrderTimestamp() ?: return true
-        return sortOrderDate.inSameDayAs(now())
+        return !sortOrderDate.inSameDayAs(now())
     }
 
     @VisibleForTesting
     protected open fun getTaskSortOrder(): List<String> {
         // Check for stale sort order and update if appropriate
         if (isTaskSortOrderStale()) {
-            activityGroup()?.activityIdentifiers?.toList()?.shuffled()?.let {
+            activityGroup()?.activityIdentifiers?.toMutableList()?.shuffled(Random())?.let {
                 studyBurstSettingsDao.setOrderedTasks(it, now())
                 return it
             } ?: return defaultTaskSortOrder
