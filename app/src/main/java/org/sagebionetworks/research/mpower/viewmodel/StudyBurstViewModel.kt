@@ -530,7 +530,11 @@ data class StudyBurstItem(
      * @property finishedOrSkippedScheduledCount the count of finished or skipped daily study burst tasks
      */
     val finishedOrSkippedScheduledCount: Int get() {
-        return finishedSchedules.size + studyBurstSettingsDao.todaysSkippedTaskCount()
+        val finishedIdentifiers = finishedSchedules.map { it.activityIdentifier() }.toSet()
+        return orderedTasks.filter {
+            studyBurstSettingsDao.isTaskSkippedForToday(it.task.identifier) ||
+                    finishedIdentifiers.contains(it.task.identifier)
+        }.size
     }
 
     /**
