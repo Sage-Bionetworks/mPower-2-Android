@@ -66,7 +66,7 @@ class StudyBurstAdapter(context: Context, val items : List<StudyBurstTaskInfo>?)
                 holder.ivImage.visibility = View.INVISIBLE
             }
 
-            if (item.isActive) {
+            if (item.isActive || item.isComplete) {
                 holder.ivImage.colorFilter = null
                 holder.ivImage.alpha = 1.0f
                 holder.tvTitle.setTextColor(blackColor)
