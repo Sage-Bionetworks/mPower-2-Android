@@ -18,7 +18,7 @@ before_install:
 install:
   # upgrade to dpkg >= 1.17.5ubuntu5.8, which fixes https://bugs.launchpad.net/ubuntu/+source/dpkg/+bug/1730627
   - sudo apt-get install -y dpkg
-  - gem install bundler -v 1.17.2
+  - gem install bundler -v 2.2.17
   - bundle install
   - ./setup_git_crypt.sh || travis_terminate 1
 #  - ./install-gcloud.sh || travis_terminate 1
