@@ -24,7 +24,7 @@ install:
 
 # Path is used for zipalign
 before_script:
-  - export PATH=$PATH:$ANDROID_HOME/build-tools/27.0.3
+  - export PATH=$PATH:$ANDROID_HOME/build-tools/29.0.3
 
 stages:
   - name: test
