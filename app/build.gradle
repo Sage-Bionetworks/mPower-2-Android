@@ -14,6 +14,7 @@ android {
         applicationId "org.sagebionetworks.research.mpower"
         minSdkVersion 19
         targetSdkVersion 29
+
         // this is not the final version code, product flavors add to it
         versionCode 120
         versionName "0.17.0"
@@ -149,6 +150,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.8.9'
     testImplementation "org.sagebionetworks.bridge:test-utils:$bridge_sdk_version"
 
+    androidTestImplementation "org.sagebionetworks.bridge:test-utils:$bridge_sdk_version"
     androidTestImplementation 'org.mockito:mockito-android:2.22.0'
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.2'
     androidTestImplementation 'androidx.arch.core:core-testing:2.0.0'
