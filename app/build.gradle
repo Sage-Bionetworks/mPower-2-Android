@@ -14,6 +14,7 @@ android {
         applicationId "org.sagebionetworks.research.mpower"
         minSdkVersion 21
         targetSdkVersion 29
+
         // this is not the final version code, product flavors add to it
         versionCode 245
         versionName "1.0"
@@ -113,6 +114,7 @@ dependencies {
     kapt "com.google.auto.value:auto-value-annotations:$auto_value_version" // include again for auto-value-gson
 
     // Dagger
+    //noinspection OutdatedLibrary
     implementation "com.google.dagger:dagger-android:$dagger_version"
     implementation "com.google.dagger:dagger-android-support:$dagger_version"
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
@@ -156,6 +158,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.8.9'
     testImplementation "org.sagebionetworks.bridge:test-utils:$bridge_sdk_version"
 
+    androidTestImplementation "org.sagebionetworks.bridge:test-utils:$bridge_sdk_version"
     androidTestImplementation 'org.mockito:mockito-android:2.22.0'
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.2'
     androidTestImplementation 'androidx.arch.core:core-testing:2.0.0'
