@@ -116,6 +116,9 @@ open class PhoneSignUpActivity : AppCompatActivity() {
                 phoneSignUpViewModel?.phoneNumber = phoneNumber?.toString() ?: ""
             }
         })
+        val countryCode = PhoneSignUpViewModel.countryCode(this)
+        phone_number_text_input.setText(countryCode)
+        phoneSignUpViewModel?.phoneNumber = countryCode
 
         learn_more_button.setOnClickListener {
             startActivity(Intent(this, PhoneLearnMoreViewWeb::class.java))
@@ -150,7 +153,17 @@ public class PhoneSignUpViewModel @MainThread constructor(
     companion object {
         private val LOGGER = LoggerFactory.getLogger(PhoneSignUpViewModel::class.java)
         const val US_REGION_CODE = "US"
+        const val US_COUNTRY_CODE = "+1"
+
         const val NETHERLANDS_REGION_CODE = "NL"
+        const val NETHERLANDS_COUNTRY_CODE = "+31"
+
+        fun countryCode(context: Context): String {
+            return when(phoneRegion(context)) {
+                NETHERLANDS_REGION_CODE -> NETHERLANDS_COUNTRY_CODE
+                else -> US_COUNTRY_CODE
+            }
+        }
 
         fun phoneRegion(context: Context): String {
             // Here we attempt to get the user's phone region, if it is correct and shows up, we should use it
