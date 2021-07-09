@@ -46,15 +46,16 @@ import com.google.common.base.Supplier
 import com.google.common.collect.ImmutableMap
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_main.navigation
+import org.sagebionetworks.bridge.android.manager.AuthenticationManager
 import org.sagebionetworks.research.mpower.history.HistoryItemFragment
 import org.sagebionetworks.research.mpower.profile.MPowerProfileSettingsFragment
+import org.sagebionetworks.research.mpower.profile.MpProfileManager
 import org.sagebionetworks.research.mpower.tracking.TrackingTabFragment
 import org.sagebionetworks.research.mpower.util.Debounce
 import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel
 import org.sagebionetworks.research.sageresearch.dao.room.AppConfigRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
 import org.sagebionetworks.research.sageresearch.profile.ProfileDataLoader
-import org.sagebionetworks.research.sageresearch.profile.ProfileManager
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -93,11 +94,12 @@ class MainFragment : DaggerFragment(), OnRequestPermissionsResultCallback {
     @Inject
     lateinit var appConfigRepo: AppConfigRepository
 
-    lateinit var profileManager: ProfileManager
+    @Inject
+    lateinit var authManager: AuthenticationManager
+    lateinit var profileManager: MpProfileManager
+    private lateinit var profileDataLoader: ProfileDataLoader
 
     private var debounceCheckPassiveGait = Debounce(500, this::checkPassiveGait)
-
-    private lateinit var profileDataLoader: ProfileDataLoader
 
     private val passiveDataAllowedObserver = Observer<ProfileDataLoader> { profileDataLoader ->
         this.profileDataLoader = profileDataLoader
@@ -137,7 +139,7 @@ class MainFragment : DaggerFragment(), OnRequestPermissionsResultCallback {
         showFragment(TAG_FRAGMENT_TRACKING)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        profileManager = ProfileManager(reportRepo, appConfigRepo)
+        profileManager = MpProfileManager(reportRepo, appConfigRepo, authManager)
         profileManager.profileDataLoader().observe(viewLifecycleOwner, passiveDataAllowedObserver)
     }
 

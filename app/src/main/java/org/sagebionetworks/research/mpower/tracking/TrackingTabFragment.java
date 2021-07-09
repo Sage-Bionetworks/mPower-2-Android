@@ -24,11 +24,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import org.sagebionetworks.bridge.android.manager.AuthenticationManager;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper;
 import org.sagebionetworks.research.mobile_ui.show_step.view.SystemWindowHelper.Direction;
 import org.sagebionetworks.research.mpower.R;
-import org.sagebionetworks.research.mpower.TaskLauncher;
 import org.sagebionetworks.research.mpower.profile.MPowerProfileViewModel;
+import org.sagebionetworks.research.mpower.profile.MpProfileManager;
 import org.sagebionetworks.research.mpower.profile.PassiveGaitPermissionActivity;
 import org.sagebionetworks.research.mpower.profile.PassiveGaitPermissionViewModel;
 import org.sagebionetworks.research.mpower.reminders.StudyBurstReminderActivity;
@@ -37,7 +38,6 @@ import org.sagebionetworks.research.mpower.researchstack.framework.MpTaskFactory
 import org.sagebionetworks.research.mpower.researchstack.framework.MpViewTaskActivity;
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask;
 import org.sagebionetworks.research.mpower.studyburst.StudyBurstActivity;
-import org.sagebionetworks.research.mpower.viewmodel.ItemType;
 import org.sagebionetworks.research.mpower.viewmodel.PassiveGaitViewModel;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstItem;
 import org.sagebionetworks.research.mpower.viewmodel.StudyBurstReminderState;
@@ -50,8 +50,6 @@ import org.sagebionetworks.research.mpower.viewmodel.TodayScheduleViewModel;
 import org.sagebionetworks.research.sageresearch.dao.room.AppConfigRepository;
 import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository;
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity;
-import org.sagebionetworks.research.sageresearch.profile.ProfileDataLoader;
-import org.sagebionetworks.research.sageresearch.profile.ProfileManager;
 import org.sagebionetworks.research.sageresearch.viewmodel.ReportViewModel;
 import org.sagebionetworks.researchstack.backbone.factory.IntentFactory;
 import org.sagebionetworks.researchstack.backbone.model.TaskModel;
@@ -114,7 +112,10 @@ public class TrackingTabFragment extends Fragment {
     @Inject
     AppConfigRepository appConfigRepo;
 
-    ProfileManager profileManager = null;
+    @Inject
+    AuthenticationManager authManager;
+
+    private MpProfileManager profileManager;
 
     private boolean launchedPassiveGaitPrompt = false;
 
@@ -168,7 +169,7 @@ public class TrackingTabFragment extends Fragment {
         todayScheduleViewModel = new ViewModelProvider(this, todayScheduleViewModelFactory)
                 .get(TodayScheduleViewModel.class);
 
-        profileManager = new ProfileManager(reportRepo, appConfigRepo);
+        profileManager = new MpProfileManager(reportRepo, appConfigRepo, authManager);
         profileManager.profileDataLoader().observe(this.getViewLifecycleOwner(), observedProfileDataLoader -> {
             String passiveDataAllowedString = observedProfileDataLoader
                     .getValueString(PassiveGaitPermissionViewModel.PROFILE_KEY_PASSIVE_DATA_ALLOWED);
