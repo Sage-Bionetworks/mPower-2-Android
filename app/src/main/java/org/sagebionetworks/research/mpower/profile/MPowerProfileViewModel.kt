@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower.profile
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.base.Preconditions
@@ -21,21 +22,23 @@ class MPowerProfileViewModel(
         reportRepo: ReportRepository,
         appConfigRepo: AppConfigRepository,
         surveyRepo: SurveyRepository,
-        authManager: AuthenticationManager):
+        authManager: AuthenticationManager,
+        app: Application):
 
-        MpBaseProfileViewModel(bridgeRepoManager, reportRepo, appConfigRepo, surveyRepo, authManager) {
+        MpBaseProfileViewModel(bridgeRepoManager, reportRepo, appConfigRepo, surveyRepo, authManager, app) {
 
     class Factory @Inject constructor(
             private val bridgeRepoManager: BridgeRepositoryManager,
             private val reportRepo: ReportRepository,
             private val appConfigRepo: AppConfigRepository,
             private val surveyRepo: SurveyRepository,
-            private val authManager: AuthenticationManager): ViewModelProvider.Factory {
+            private val authManager: AuthenticationManager,
+            private val app: Application): ViewModelProvider.Factory {
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             Preconditions.checkArgument(modelClass.isAssignableFrom(MPowerProfileViewModel::class.java))
-            return MPowerProfileViewModel(bridgeRepoManager, reportRepo, appConfigRepo, surveyRepo, authManager) as T
+            return MPowerProfileViewModel(bridgeRepoManager, reportRepo, appConfigRepo, surveyRepo, authManager, app) as T
         }
     }
 

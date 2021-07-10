@@ -32,6 +32,10 @@
 
 package org.sagebionetworks.research.mpower.profile
 
+import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
@@ -49,6 +53,7 @@ import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ScheduledActivityEntity
 import org.sagebionetworks.research.sageresearch.dao.room.SurveyRepository
 import org.sagebionetworks.research.sageresearch.profile.ProfileDataLoader
+import org.sagebionetworks.research.sageresearch.profile.ProfileManager
 import org.sagebionetworks.research.sageresearch.repos.BridgeRepositoryManager
 import org.slf4j.LoggerFactory
 
@@ -57,17 +62,20 @@ open class MpBaseProfileViewModel(
         val reportRepo: ReportRepository,
         val appConfigRepo: AppConfigRepository,
         val surveyRepo: SurveyRepository,
-        val authManager: AuthenticationManager) : ViewModel() {
+        val authManager: AuthenticationManager,
+        app: Application) : AndroidViewModel(app) {
 
     private val LOGGER = LoggerFactory.getLogger(MpBaseProfileViewModel::class.java)
 
-    val profileManager = MpProfileManager(reportRepo, appConfigRepo, authManager)
+    val profileManager = MpProfileManager(reportRepo, appConfigRepo, authManager, app)
 
     val compositeDisposable = io.reactivex.disposables.CompositeDisposable()
 
     var currentScheduledActivity: ScheduledActivityEntity? = null
 
     private var cachedProfileDataLoader: ProfileDataLoader? = null
+
+    private val sharedPrefs: SharedPreferences = MpProfileManager.createSharedPrefs(app)
 
     private fun profileDataLoader(): LiveData<ProfileDataLoader> {
         return profileManager.profileDataLoader()
@@ -110,13 +118,14 @@ open class MpBaseProfileViewModel(
         var studyParticipant: StudyParticipant? = null
         when (profileItemKey) {
             "firstName" -> {
-
+                MpProfileManager.updateFirstNameInCache(sharedPrefs, value)
                 cachedProfileDataLoader?.participantData?.firstName = value
                 studyParticipant = StudyParticipant()
                 studyParticipant.firstName = value
             }
             "sharingScope" -> {
                 val scope = SharingScope.fromValue(value)
+                MpProfileManager.updateSharingScopeInCache(sharedPrefs, value)
                 cachedProfileDataLoader?.participantData?.sharingScope = scope
                 studyParticipant = StudyParticipant()
                 studyParticipant.sharingScope = scope

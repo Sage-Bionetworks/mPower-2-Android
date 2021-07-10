@@ -32,18 +32,36 @@
 
 package org.sagebionetworks.research.mpower.profile
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.LiveDataReactiveStreams
 import androidx.lifecycle.MediatorLiveData
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import dagger.android.DaggerService
 import io.reactivex.Single
+import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat
 import org.sagebionetworks.bridge.android.manager.AuthenticationManager
 import org.sagebionetworks.bridge.android.manager.models.ProfileDataManager
 import org.sagebionetworks.bridge.android.manager.models.ProfileDataSource
+import org.sagebionetworks.bridge.rest.gson.ByteArrayToBase64TypeAdapter
+import org.sagebionetworks.bridge.rest.gson.DateTimeTypeAdapter
+import org.sagebionetworks.bridge.rest.gson.LocalDateTypeAdapter
+import org.sagebionetworks.bridge.rest.model.SharingScope
 import org.sagebionetworks.bridge.rest.model.StudyParticipant
 import org.sagebionetworks.research.sageresearch.dao.room.AppConfigRepository
+import org.sagebionetworks.research.sageresearch.dao.room.InstantAdapter
+import org.sagebionetworks.research.sageresearch.dao.room.LocalDateAdapter
+import org.sagebionetworks.research.sageresearch.dao.room.LocalDateTimeAdapter
 import org.sagebionetworks.research.sageresearch.dao.room.ReportEntity
 import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
 import org.sagebionetworks.research.sageresearch.profile.ProfileDataLoader
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZonedDateTime
 
 /**
  * The ProfileManager loads ProfileDataSources and a ProfileDataManager from AppConfig, useing the data
@@ -52,8 +70,47 @@ import org.sagebionetworks.research.sageresearch.profile.ProfileDataLoader
 class MpProfileManager(
         val reportRepo: ReportRepository,
         val appConfigRepo: AppConfigRepository,
-        val authManager: AuthenticationManager) {
+        val authManager: AuthenticationManager,
+        context: Context) {
 
+    companion object {
+        const val participantKey = "StudyParticipant"
+
+        fun createSharedPrefs(context: Context): SharedPreferences {
+            return context.getSharedPreferences("MpProfileManager", DaggerService.MODE_PRIVATE)
+        }
+
+        fun cachedStudyParticipant(sharedPrefs: SharedPreferences): MpStudyParticipantProfile? {
+            val participant = sharedPrefs.getString(participantKey, null) ?: run { return null }
+            return Gson().fromJson(participant, MpStudyParticipantProfile::class.java)
+        }
+
+        fun cacheStudyParticipant(sharedPrefs: SharedPreferences, participant: MpStudyParticipantProfile) {
+            val json = Gson().toJson(participant)
+            sharedPrefs.edit().putString(participantKey, json).apply()
+        }
+
+        fun updateSharingScopeInCache(sharedPrefs: SharedPreferences, scope: String) {
+            cachedStudyParticipant(sharedPrefs)?.let {
+                val new = it.copy(sharingScope = scope)
+                cacheStudyParticipant(sharedPrefs, new)
+            }
+        }
+
+        fun updateFirstNameInCache(sharedPrefs: SharedPreferences, firstName: String) {
+            cachedStudyParticipant(sharedPrefs)?.let {
+                val new = it.copy(firstName = firstName)
+                cacheStudyParticipant(sharedPrefs, new)
+            }
+        }
+    }
+
+    val sharedPrefs = createSharedPrefs(context)
+
+    val gsonBuilder = GsonBuilder()
+            .registerTypeAdapter(DateTime::class.java, DateTimeTypeAdapter())
+
+    val gson = gsonBuilder.create()
 
     fun loadProfileDataSources() : LiveData<Map<String, ProfileDataSource>> {
         val profileDataSourceLiveData = LiveDataReactiveStreams.fromPublisher(
@@ -101,16 +158,28 @@ class MpProfileManager(
             var profileDataManager: ProfileDataManager? = null
             var reportMap: Map<String, ReportEntity?>? = null
 
+            fun userSessionStudyParticipant(): StudyParticipant {
+                val user = authManager.userSessionInfo
+                val createdOn = user?.createdOn ?: DateTime.now()
+                val datTimeStr = MpStudyParticipantProfile.createdOnFormatter.print(createdOn)
+                val participantJson = "{\"createdOn\": \"$datTimeStr\"}"
+                val studyParticipant = gson.fromJson(participantJson, StudyParticipant::class.java)
+                studyParticipant.dataGroups = user?.dataGroups ?: listOf()
+                studyParticipant.firstName = user?.firstName ?: ""
+                studyParticipant.externalId = user?.externalId
+                studyParticipant.sharingScope = user?.sharingScope
+                return studyParticipant
+            }
+
             fun update() {
                 if (profileDataManager != null && reportMap != null) {
-                    val user = authManager.userSessionInfo
-                    val studyParticipant = StudyParticipant()
-                    studyParticipant.dataGroups = user?.dataGroups ?: listOf()
-                    studyParticipant.firstName = user?.firstName ?: ""
-                    studyParticipant.externalId = user?.externalId
-                    studyParticipant.sharingScope = user?.sharingScope
-
-                    this.value = ProfileDataLoader(profileDataManager!!, studyParticipant, reportMap!!)
+                    val cached = cachedStudyParticipant(sharedPrefs)?.toStudyParticipant(gson)
+                    val participant = cached ?: userSessionStudyParticipant()
+                    if (cached == null) {
+                        val new = MpStudyParticipantProfile.fromStudyParticipant(participant)
+                        cacheStudyParticipant(sharedPrefs, new)
+                    }
+                    this.value = ProfileDataLoader(profileDataManager!!, participant, reportMap!!)
                 }
             }
 
@@ -126,5 +195,37 @@ class MpProfileManager(
             }
         }
         return mediator
+    }
+}
+
+data class MpStudyParticipantProfile(
+        val dataGroups: List<String>?,
+        val firstName: String?,
+        val externalId: String?,
+        val sharingScope: String?,
+        val createdOnStr: String?) {
+
+    companion object {
+        val createdOnFormatter = ISODateTimeFormat.dateTime().withOffsetParsed()
+
+        fun fromStudyParticipant(participant: StudyParticipant): MpStudyParticipantProfile {
+            return MpStudyParticipantProfile(
+                    participant.dataGroups,
+                    participant.firstName,
+                    participant.externalId,
+                    participant.sharingScope.value,
+                    createdOnFormatter.print(participant.createdOn ?: DateTime.now()))
+        }
+    }
+
+    fun toStudyParticipant(gson: Gson): StudyParticipant {
+        val createdOn = createdOnStr ?: createdOnFormatter.print(DateTime.now())
+        val participantJson = "{\"createdOn\": \"$createdOn\"}"
+        val studyParticipant = gson.fromJson(participantJson, StudyParticipant::class.java)
+        studyParticipant.dataGroups = dataGroups
+        studyParticipant.firstName = firstName
+        studyParticipant.externalId = externalId
+        studyParticipant.sharingScope = SharingScope.fromValue(sharingScope)
+        return studyParticipant
     }
 }

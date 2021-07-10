@@ -139,7 +139,8 @@ class MainFragment : DaggerFragment(), OnRequestPermissionsResultCallback {
         showFragment(TAG_FRAGMENT_TRACKING)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        profileManager = MpProfileManager(reportRepo, appConfigRepo, authManager)
+        val contextUnwrapped = context ?: run { return }
+        profileManager = MpProfileManager(reportRepo, appConfigRepo, authManager, contextUnwrapped)
         profileManager.profileDataLoader().observe(viewLifecycleOwner, passiveDataAllowedObserver)
     }
 

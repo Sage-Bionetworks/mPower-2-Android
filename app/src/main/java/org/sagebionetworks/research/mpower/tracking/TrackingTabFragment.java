@@ -7,6 +7,7 @@ import static org.sagebionetworks.research.mpower.studyburst.StudyBurstActivityK
 import static org.sagebionetworks.researchstack.backbone.ui.fragment.ActivitiesFragment.REQUEST_TASK;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -169,24 +170,30 @@ public class TrackingTabFragment extends Fragment {
         todayScheduleViewModel = new ViewModelProvider(this, todayScheduleViewModelFactory)
                 .get(TodayScheduleViewModel.class);
 
-        profileManager = new MpProfileManager(reportRepo, appConfigRepo, authManager);
-        profileManager.profileDataLoader().observe(this.getViewLifecycleOwner(), observedProfileDataLoader -> {
-            String passiveDataAllowedString = observedProfileDataLoader
-                    .getValueString(PassiveGaitPermissionViewModel.PROFILE_KEY_PASSIVE_DATA_ALLOWED);
-            if (passiveDataAllowedString != null) {
-                trackingTabViewModel.passiveDataAllowed = Boolean.parseBoolean(passiveDataAllowedString);
-            }
+        if (this.getActivity() != null &&
+            this.getActivity().getApplicationContext() != null &&
+            this.getActivity().getApplicationContext() instanceof Application) {
 
-            // Now that we have pass data question answers, let's register for today's history items
-            // since those are dependent on the answer to the passive data collection
-            if (todayObserver == null) {
-                todayObserver = todayHistoryItems -> {
-                    LOGGER.debug("Observed todayHistoryItems today");
-                    checkForPassiveGaitPrompt(todayHistoryItems);
-                };
-                todayScheduleViewModel.liveData().observe(getViewLifecycleOwner(), todayObserver);
-            }
-        });
+            Application app = (Application)this.getActivity().getApplicationContext();
+            profileManager = new MpProfileManager(reportRepo, appConfigRepo, authManager, app);
+            profileManager.profileDataLoader().observe(this.getViewLifecycleOwner(), observedProfileDataLoader -> {
+                String passiveDataAllowedString = observedProfileDataLoader
+                        .getValueString(PassiveGaitPermissionViewModel.PROFILE_KEY_PASSIVE_DATA_ALLOWED);
+                if (passiveDataAllowedString != null) {
+                    trackingTabViewModel.passiveDataAllowed = Boolean.parseBoolean(passiveDataAllowedString);
+                }
+
+                // Now that we have pass data question answers, let's register for today's history items
+                // since those are dependent on the answer to the passive data collection
+                if (todayObserver == null) {
+                    todayObserver = todayHistoryItems -> {
+                        LOGGER.debug("Observed todayHistoryItems today");
+                        checkForPassiveGaitPrompt(todayHistoryItems);
+                    };
+                    todayScheduleViewModel.liveData().observe(getViewLifecycleOwner(), todayObserver);
+                }
+            });
+        }
 
         return view;
     }
