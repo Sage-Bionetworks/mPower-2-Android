@@ -3,7 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'io.fabric'
 apply plugin: 'com.jakewharton.butterknife'
 apply from: '../config/quality/quality.gradle'
 

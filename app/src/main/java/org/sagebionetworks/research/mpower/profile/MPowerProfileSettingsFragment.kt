@@ -41,8 +41,9 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
     @Inject
     lateinit var profileViewModelFactory: MPowerProfileViewModel.Factory
 
-    private val passiveGaitViewModel: PassiveGaitViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(PassiveGaitViewModel::class.java)
+    private val passiveGaitViewModel: PassiveGaitViewModel? by lazy {
+        val activityUnwrapped = activity ?: run { return@lazy null }
+        ViewModelProvider(activityUnwrapped).get(PassiveGaitViewModel::class.java)
     }
 
     override fun loadProfileViewModel(): ProfileViewModel {
