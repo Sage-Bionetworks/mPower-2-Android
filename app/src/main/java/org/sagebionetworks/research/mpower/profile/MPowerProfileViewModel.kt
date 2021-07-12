@@ -1,31 +1,44 @@
 package org.sagebionetworks.research.mpower.profile
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.base.Preconditions
+import org.sagebionetworks.bridge.android.manager.AuthenticationManager
 import org.sagebionetworks.bridge.android.manager.models.ProfileDataItem
 import org.sagebionetworks.bridge.android.manager.models.ProfileItemProfileTableItem
 import org.sagebionetworks.research.mpower.researchstack.framework.step.MpSmartSurveyTask
 import org.sagebionetworks.research.sageresearch.dao.room.AppConfigRepository
 import org.sagebionetworks.research.sageresearch.dao.room.ReportRepository
 import org.sagebionetworks.research.sageresearch.dao.room.SurveyRepository
-import org.sagebionetworks.research.sageresearch.profile.ProfileViewModel
 import org.sagebionetworks.research.sageresearch.repos.BridgeRepositoryManager
 import org.sagebionetworks.researchstack.backbone.model.TaskModel
 import java.util.*
 import javax.inject.Inject
 
 
-class MPowerProfileViewModel(bridgeRepoManager: BridgeRepositoryManager,
-                                  reportRepo: ReportRepository,
-                                  appConfigRepo: AppConfigRepository,
-                                  surveyRepo: SurveyRepository): ProfileViewModel(bridgeRepoManager, reportRepo, appConfigRepo, surveyRepo) {
+class MPowerProfileViewModel(
+        bridgeRepoManager: BridgeRepositoryManager,
+        reportRepo: ReportRepository,
+        appConfigRepo: AppConfigRepository,
+        surveyRepo: SurveyRepository,
+        authManager: AuthenticationManager,
+        app: Application):
 
-    class Factory @Inject constructor(private val bridgeRepoManager: BridgeRepositoryManager, private val reportRepo: ReportRepository, private val appConfigRepo: AppConfigRepository, private val surveyRepo: SurveyRepository): ViewModelProvider.Factory {
+        MpBaseProfileViewModel(bridgeRepoManager, reportRepo, appConfigRepo, surveyRepo, authManager, app) {
+
+    class Factory @Inject constructor(
+            private val bridgeRepoManager: BridgeRepositoryManager,
+            private val reportRepo: ReportRepository,
+            private val appConfigRepo: AppConfigRepository,
+            private val surveyRepo: SurveyRepository,
+            private val authManager: AuthenticationManager,
+            private val app: Application): ViewModelProvider.Factory {
+
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             Preconditions.checkArgument(modelClass.isAssignableFrom(MPowerProfileViewModel::class.java))
-            return MPowerProfileViewModel(bridgeRepoManager, reportRepo, appConfigRepo, surveyRepo) as T
+            return MPowerProfileViewModel(bridgeRepoManager, reportRepo, appConfigRepo, surveyRepo, authManager, app) as T
         }
     }
 

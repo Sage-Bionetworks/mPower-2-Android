@@ -26,9 +26,9 @@ import org.sagebionetworks.researchstack.backbone.utils.StepResultHelper
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
-class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
+class MPowerProfileSettingsFragment: MpBaseProfileSettingsFragment() {
 
-    override fun newInstance(profileKey: String, isMainView: Boolean): ProfileSettingsFragment {
+    override fun newInstance(profileKey: String, isMainView: Boolean): MpBaseProfileSettingsFragment {
         return newFragmentInstance(profileKey, isMainView)
     }
 
@@ -46,8 +46,9 @@ class MPowerProfileSettingsFragment: ProfileSettingsFragment() {
         ViewModelProvider(activityUnwrapped).get(PassiveGaitViewModel::class.java)
     }
 
-    override fun loadProfileViewModel(): ProfileViewModel {
-        mPowerProfileViewModel = ViewModelProvider(this, profileViewModelFactory).get(MPowerProfileViewModel::class.java)
+    override fun loadProfileViewModel(): MpBaseProfileViewModel {
+        mPowerProfileViewModel = ViewModelProvider(this, profileViewModelFactory)
+                .get(MPowerProfileViewModel::class.java)
         return mPowerProfileViewModel
     }
 
