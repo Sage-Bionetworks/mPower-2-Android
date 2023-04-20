@@ -8,14 +8,15 @@ android:
     - tools
     - build-tools-29.0.3
     - build-tools-28.0.3
-    - android-29
-    - android-28
 
 before_install:
+  - yes | sdkmanager "platforms;android-29"
   - rvm install 2.7.2
   - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
   - git config --global user.name "Travis CI"
   - git config --global user.email "tcisagebio@sagebase.org"
+
+
 
 install:
   # upgrade to dpkg >= 1.17.5ubuntu5.8, which fixes https://bugs.launchpad.net/ubuntu/+source/dpkg/+bug/1730627
