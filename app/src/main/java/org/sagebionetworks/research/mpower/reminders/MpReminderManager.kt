@@ -33,16 +33,24 @@
 package org.sagebionetworks.research.mpower.reminders
 
 import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import org.sagebionetworks.research.mpower.R.string
 import org.sagebionetworks.research.mpower.research.MpIdentifier
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
 import org.sagebionetworks.research.sageresearch.reminders.MpReminderAlarmReceiver
+import org.sagebionetworks.research.sageresearch.reminders.REMINDER_JSON_KEY
 import org.sagebionetworks.research.sageresearch.reminders.Reminder
 import org.sagebionetworks.research.sageresearch.reminders.ReminderManager
 import org.sagebionetworks.research.sageresearch.reminders.ReminderScheduleIgnoreRule
 import org.sagebionetworks.research.sageresearch.reminders.ReminderScheduleRules
+import org.slf4j.LoggerFactory
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
+import java.util.concurrent.TimeUnit
 
 val REMINDER_CODE_RUN_TASK = 1001
 val REMINDER_ACTION_RUN_TASK = "REMINDER_ACTION_RUN_TASK"
@@ -105,5 +113,66 @@ class MpReminderManager(context: Context): ReminderManager(context) {
      */
     fun isStudyBurstReminderScheduled(): Boolean {
         return isReminderScheduled(MpIdentifier.STUDY_BURST_REMINDER)
+    }
+
+    fun cancelReminderUpdated(context: Context, reminder: Reminder) {
+        val logger = LoggerFactory.getLogger(ReminderManager::class.java)
+        (context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager)?.let { alarmManager ->
+            // Let's check for a previously scheduled reminder with the same guid
+            // Some Reminder data may have changed, but if it has the same guid it should always be canceled
+            sharedPrefs.getString(reminder.guid, null)?.let { reminderJson ->
+                reminderFromJson(reminderJson)?.let {
+                    val pendingIntent = pendingIntentForReminderUpdated(context, it)
+                    alarmManager.cancel(pendingIntent)
+                    pendingIntent.cancel()
+                }
+            }
+            // Always cancel the reminder as it currently exists as well
+            val pendingIntent = pendingIntentForReminderUpdated(context, reminder)
+            alarmManager.cancel(pendingIntent)
+            pendingIntent.cancel()
+            sharedPrefs.edit().remove(reminder.guid).apply()
+        } ?: run {
+            logger.warn("Failed to obtain alarm service to cancel all reminders")
+        }
+    }
+
+    private fun pendingIntentForReminderUpdated(context: Context, reminder: Reminder): PendingIntent {
+        val intent = Intent(context, reminderAlarmReceiver)
+        intent.action = reminder.action
+        intent.putExtra(REMINDER_JSON_KEY, jsonFromReminder(reminder))
+        intent.data = Uri.parse(reminder.guid)
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+        return PendingIntent.getBroadcast(context, reminder.code, intent, flag)
+    }
+
+    fun scheduleReminderUpdated(context: Context, reminder: Reminder) {
+        val logger = LoggerFactory.getLogger(ReminderManager::class.java)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: run {
+            logger.warn("Could not obtain alarm service to schedule reminder")
+            return
+        }
+
+        // Enable receiver so it can intercept alarm broadcasts
+        enableReceiver(context, true)
+        // Cancel any previously scheduled reminders that have the same pending intent
+        cancelReminderUpdated(context, reminder)
+        val pendingIntent = pendingIntentForReminderUpdated(context, reminder)
+
+        // Persist the reminder info so we can cancel it later if we need to
+        val reminderJson = jsonFromReminder(reminder)
+        sharedPrefs.edit().putString(reminder.guid, reminderJson).apply()
+
+        val initialAlarmDateTime = reminder.reminderScheduleRules.initialAlarmTime
+        val initialAlarmEpochMillis = TimeUnit.SECONDS.toMillis(
+                initialAlarmDateTime.atZone(ZoneId.systemDefault()).toEpochSecond())
+
+        reminder.reminderScheduleRules.repeatAlarmInterval?.let {
+            logger.info("Setting repeat reminder with info $reminder")
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, initialAlarmEpochMillis, it, pendingIntent)
+        } ?: run {
+            logger.info("Setting reminder with info $reminder")
+            alarmManager.set(AlarmManager.RTC_WAKEUP, initialAlarmEpochMillis, pendingIntent)
+        }
     }
 }

@@ -36,6 +36,7 @@ import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import org.sagebionetworks.research.mpower.EntryActivity
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.reminders.MpReminderManager
@@ -61,7 +62,8 @@ class MpReminderAlarmReceiver: ReminderAlarmReceiver() {
         val stackBuilder = TaskStackBuilder.create(context)
         stackBuilder.addParentStack(EntryActivity::class.java)
         stackBuilder.addNextIntent(notificationIntent)
-        return stackBuilder.getPendingIntent(reminder.code, PendingIntent.FLAG_UPDATE_CURRENT)
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+        return stackBuilder.getPendingIntent(reminder.code, flag)
     }
 
     override fun createReminderManager(context: Context): ReminderManager {

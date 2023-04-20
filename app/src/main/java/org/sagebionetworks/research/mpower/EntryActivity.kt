@@ -36,6 +36,7 @@ import android.Manifest
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
@@ -98,8 +99,8 @@ class EntryActivity : DaggerAppCompatActivity() {
         LOGGER.debug("setupPendingIntentForActivityTransitions")
         val intent = Intent(applicationContext, ActivityTransitionsReceiver::class.java)
         intent.action = ActivityTransitionsReceiver.INTENT_ACTION
-        pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+        pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent, flag)
     }
 
     private fun onBackPressed(fm: androidx.fragment.app.FragmentManager): Boolean {
