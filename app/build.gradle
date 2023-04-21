@@ -142,10 +142,10 @@ dependencies {
     implementation 'com.github.akarnokd:rxjava2-interop:0.13.2'
 
     // room db functionality
-    implementation 'androidx.room:room-runtime:2.0.0'
-    kapt 'androidx.room:room-compiler:2.0.0'
-    androidTestImplementation 'androidx.room:room-testing:2.0.0'
-    androidTestImplementation 'androidx.arch.core:core-testing:2.0.0'
+    implementation 'androidx.room:room-runtime:2.5.1'
+    kapt 'androidx.room:room-compiler:2.5.1'
+    androidTestImplementation 'androidx.room:room-testing:2.5.1'
+    androidTestImplementation 'androidx.arch.core:core-testing:2.5.1'
 
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
