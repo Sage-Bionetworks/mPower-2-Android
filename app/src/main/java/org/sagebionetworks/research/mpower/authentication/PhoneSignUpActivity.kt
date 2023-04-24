@@ -1,5 +1,6 @@
 package org.sagebionetworks.research.mpower.authentication
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +9,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.widget.TextView
 import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +19,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.button.MaterialButton
 import com.google.common.base.Strings
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_external_id_sign_in.progressBar
@@ -106,6 +110,10 @@ open class PhoneSignUpActivity : AppCompatActivity() {
         })
 
         submit_button.setOnClickListener {
+            if (isSecretTestUser()) {
+                startTestUserSignInProcess()
+                return@setOnClickListener
+            }
             viewModel.signUpPhone(this)
         }
 
@@ -126,6 +134,57 @@ open class PhoneSignUpActivity : AppCompatActivity() {
         }
 
         phoneSignUpViewModel = viewModel
+    }
+
+    private fun sendToExternalIdActivity() {
+        val intent = Intent(this, ExternalIdSignInActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun isSecretTestUser(): Boolean {
+        var phone = phoneSignUpViewModel?.phoneNumber ?: ""
+        if (phone.length <= 3) {
+            return false
+        }
+        phone = phone.substring(0, phone.length - 2)
+        if (phone.endsWith("555-01") || phone.endsWith("55501")) {
+            return true
+        }
+        return false
+    }
+
+    private fun startTestUserSignInProcess() {
+        val dialog = Dialog(this)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(layout.dialog_2_button_message)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.white)
+
+        val title = dialog.findViewById<TextView>(id.dialog_title)
+        title?.text = getString(R.string.tester_message)
+
+        val msg = dialog.findViewById<TextView>(R.id.dialog_message)
+        msg?.text = ""
+
+        val posButton = dialog.findViewById<MaterialButton>(R.id.confirm_button)
+        posButton?.text = getString(R.string.rsb_BOOL_YES)
+        posButton?.setOnClickListener {
+            dialog.dismiss()
+            sendToExternalIdActivity()
+        }
+
+        val negButton = dialog.findViewById<MaterialButton>(R.id.cancel_button)
+        negButton?.text = getString(R.string.rsb_BOOL_NO)
+        negButton?.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     fun onErrorMessage(errorMessage: String?) {

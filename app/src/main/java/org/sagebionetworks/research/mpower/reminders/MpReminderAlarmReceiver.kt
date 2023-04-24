@@ -36,6 +36,8 @@ import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import org.sagebionetworks.research.mobile_ui.show_step.view.forms.FormDataAdapter.Companion.logger
 import org.sagebionetworks.research.mpower.EntryActivity
 import org.sagebionetworks.research.mpower.R
 import org.sagebionetworks.research.mpower.reminders.MpReminderManager
@@ -61,10 +63,63 @@ class MpReminderAlarmReceiver: ReminderAlarmReceiver() {
         val stackBuilder = TaskStackBuilder.create(context)
         stackBuilder.addParentStack(EntryActivity::class.java)
         stackBuilder.addNextIntent(notificationIntent)
-        return stackBuilder.getPendingIntent(reminder.code, PendingIntent.FLAG_UPDATE_CURRENT)
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+        return stackBuilder.getPendingIntent(reminder.code, flag)
     }
 
     override fun createReminderManager(context: Context): ReminderManager {
         return MpReminderManager(context)
     }
+
+    override fun onReceive(context: Context?, intent: Intent?) {
+        if (context == null) {
+            logger.warn("Received broadcast with null context")
+            return
+        }
+
+        if (intent == null) {
+            logger.warn("Received broadcast with null intent")
+            return
+        }
+
+        val action = intent.action
+
+        // Collection reminder notification info
+        val reminderManager = createReminderManager(context)
+        val reminderJson = intent.getStringExtra(REMINDER_JSON_KEY)
+        val reminder = reminderManager.reminderFromJson(reminderJson)
+
+        if (reminder == null) {
+            logger.error("Broadcast reminder action $action received but reminder extra is missing!")
+            return
+        }
+
+        logger.info("Broadcast reminder action $action received with reminder info $reminder")
+        // Trigger the notification
+        if (!shouldIgnoreAlarm(reminder)) {
+            showNotification(context, reminderManager, reminder, action ?: "")
+        } else {
+            logger.info("Reminder notification not being shown, today\'s date is in the ignore rules")
+        }
+
+        val mpReminderManager = reminderManager as MpReminderManager
+        // Reschedule the reminders if it is a daily alarm
+        if (reminder.reminderScheduleRules.isDailyAlarm) {
+            val newReminder = recreateDailyReminder(reminder)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                mpReminderManager.scheduleReminderUpdated(context, newReminder)
+            } else {
+                reminderManager.scheduleReminder(context, newReminder)
+            }
+        }
+
+        if (reminder.isOneShotAlarm()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                mpReminderManager.cancelReminderUpdated(context, reminder)
+            } else {
+                reminderManager.cancelReminder(context, reminder)
+            }
+        }
+    }
+
 }

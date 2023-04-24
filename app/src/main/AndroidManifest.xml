@@ -31,7 +31,8 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity">
+            tools:ignore="LockedOrientationActivity"
+            android:exported="true">
 
             <tools:validation testUrl="https://parkinsonmpower.org/sage-mpower-2/study-burst" />
 
@@ -62,6 +63,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/MPowerTheme"
             android:windowSoftInputMode="adjustPan"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity">
 
             <tools:validation testUrl="https://parkinsonmpower.org/sage-mpower-2/phoneSignIn/TOKEN" />
@@ -139,7 +141,8 @@
 
         <!-- These control local reminder notification scheduling and display -->
         <receiver android:name="org.sagebionetworks.research.sageresearch.reminders.MpReminderAlarmReceiver" />
-        <receiver android:name=".reminders.MpReminderRescheduleReceiver">
+        <receiver android:name=".reminders.MpReminderRescheduleReceiver"
+            android:exported="false">
             <!-- These intent filters allow all our time-based alarms to be rescheduled when any of these occur
                  The reason we need these filters is because the Android OS cancels ALL time-based alarms
                  When the user reboots or changes anything in their settings related to time -->

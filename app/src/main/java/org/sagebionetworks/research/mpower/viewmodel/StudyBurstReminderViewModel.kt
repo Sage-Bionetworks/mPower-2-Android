@@ -191,7 +191,7 @@ open class StudyBurstReminderViewModel(
         if (doNotRemindMe) {
             logger.info("Canceling reminders")
             if (reminderState.isSetOnDevice) {
-                reminderManager.cancelReminder(context, reminder)
+                reminderManager.cancelReminderUpdated(context, reminder)
             } else {
                 logger.info("No need to cancel reminders, as they are already absent on the device")
             }
@@ -199,7 +199,7 @@ open class StudyBurstReminderViewModel(
             // No need to keep re-adding the alarms if they are already set
             if (!reminderState.isSetOnDevice) {
                 logger.info("Scheduling reminders at hour=$hour, min=$minute")
-                reminderManager.scheduleReminder(context, reminder)
+                reminderManager.scheduleReminderUpdated(context, reminder)
             } else {
                 logger.info("No need to schedule reminders, as they are already set on the device")
             }

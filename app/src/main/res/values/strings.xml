@@ -329,5 +329,7 @@
     <string name="button_edit_lowercase"><u>edit</u></string>
     <string name="button_resend_link"><u>(Resend link)</u></string>
     <string name="registration_sms_message">We sent you a link to verify your identity via SMS text message to</string>
+    <string name="tester_message">Do you want to be a tester?</string>
+    <string name="close">Close</string>
 
 </resources>

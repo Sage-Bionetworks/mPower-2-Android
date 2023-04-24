@@ -32,6 +32,7 @@
 
 package org.sagebionetworks.research.mpower.inject
 
+import android.os.Build
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.widget.Button
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton
@@ -118,7 +119,7 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
                     taskId, REMINDER_ACTION_RUN_TASK,
                     REMINDER_CODE_RUN_TASK, reminderScheduleRules,
                     title = it.getString(R.string.reminder_title_run_task).format(taskId))
-            reminderManager.scheduleReminder(it, reminder)
+            reminderManager.scheduleReminderUpdated(it, reminder)
         }
     }
 }
