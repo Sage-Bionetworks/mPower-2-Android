@@ -99,7 +99,7 @@ class EntryActivity : DaggerAppCompatActivity() {
         LOGGER.debug("setupPendingIntentForActivityTransitions")
         val intent = Intent(applicationContext, ActivityTransitionsReceiver::class.java)
         intent.action = ActivityTransitionsReceiver.INTENT_ACTION
-        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
         pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent, flag)
     }
 

@@ -38,6 +38,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import org.sagebionetworks.research.mobile_ui.show_step.view.forms.FormDataAdapter.Companion.logger
 import org.sagebionetworks.research.mpower.R.string
 import org.sagebionetworks.research.mpower.research.MpIdentifier
 import org.sagebionetworks.research.mpower.research.StudyBurstConfiguration
@@ -72,8 +73,8 @@ class MpReminderManager(context: Context): ReminderManager(context) {
      * @param context can be app, activity, or server
      */
     fun rescheduleAllReminders(context: Context) {
-        cancelAllReminders(context).forEach {
-            scheduleReminder(context, it)
+        cancelAllRemindersUpdated(context).forEach {
+            scheduleReminderUpdated(context, it)
         }
     }
 
@@ -142,10 +143,9 @@ class MpReminderManager(context: Context): ReminderManager(context) {
         intent.action = reminder.action
         intent.putExtra(REMINDER_JSON_KEY, jsonFromReminder(reminder))
         intent.data = Uri.parse(reminder.guid)
-        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
         return PendingIntent.getBroadcast(context, reminder.code, intent, flag)
     }
-
     fun scheduleReminderUpdated(context: Context, reminder: Reminder) {
         val logger = LoggerFactory.getLogger(ReminderManager::class.java)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: run {
@@ -174,5 +174,19 @@ class MpReminderManager(context: Context): ReminderManager(context) {
             logger.info("Setting reminder with info $reminder")
             alarmManager.set(AlarmManager.RTC_WAKEUP, initialAlarmEpochMillis, pendingIntent)
         }
+    }
+
+    private fun cancelAllRemindersUpdated(context: Context): List<Reminder> {
+        enableReceiver(context, false)
+        val reminderList = ArrayList<Reminder>()
+        (context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager)?.let {
+            allActiveReminders().map {
+                cancelReminderUpdated(context, it)
+                reminderList.add(it)
+            }
+        } ?: run {
+            logger.warn("Failed to obtain alarm service to cancel all reminders")
+        }
+        return reminderList
     }
 }

@@ -119,11 +119,7 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
                     taskId, REMINDER_ACTION_RUN_TASK,
                     REMINDER_CODE_RUN_TASK, reminderScheduleRules,
                     title = it.getString(R.string.reminder_title_run_task).format(taskId))
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                reminderManager.scheduleReminderUpdated(it, reminder)
-            } else {
-                reminderManager.scheduleReminder(it, reminder)
-            }
+            reminderManager.scheduleReminderUpdated(it, reminder)
         }
     }
 }
