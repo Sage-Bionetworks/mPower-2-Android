@@ -163,6 +163,10 @@
         <item quantity="other">%d Doses.</item>
     </plurals>
 
+    <!-- Post Notification Permissions Strings -->
+    <string name="reminder_post_notifications">Please enable Post Notifications in Settings</string>
+    <string name="notification_permissions_asked">POST_NOTIFICATIONS_ASKED</string>
+
     <!-- Today Fragment -->
     <!-- The term to use when referring to multiple instances of a task, such as when describing-->
     <!-- how may times the user has logged taking medication.-->

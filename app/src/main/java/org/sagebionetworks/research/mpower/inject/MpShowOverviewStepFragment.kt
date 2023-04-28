@@ -32,12 +32,22 @@
 
 package org.sagebionetworks.research.mpower.inject
 
+import android.Manifest
+import android.app.Dialog
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings
+import android.view.Window
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.widget.Button
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import com.google.android.material.button.MaterialButton
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton
 import org.sagebionetworks.research.modules.common.step.overview.ShowOverviewStepFragment
 import org.sagebionetworks.research.mpower.R
+import org.sagebionetworks.research.mpower.R.layout
 import org.sagebionetworks.research.mpower.reminders.MpReminderManager
 import org.sagebionetworks.research.mpower.reminders.REMINDER_ACTION_RUN_TASK
 import org.sagebionetworks.research.mpower.reminders.REMINDER_CODE_RUN_TASK
@@ -80,9 +90,16 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
      * "Remind me later" skip button action at the bottom of the screen
      */
     protected fun onReminderMeLaterClicked() {
+        context?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(it, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                startEnableNotificationsProcess()
+                return
+            }
+        }
         val act = activity ?: return
         val dialog = BottomSheetDialog(act)
-        val sheetView = act.layoutInflater.inflate(R.layout.dialog_reminder_me_later, null)
+        val sheetView = act.layoutInflater.inflate(layout.dialog_reminder_me_later, null)
 
         sheetView.findViewById<Button>(R.id.remind_me_in_2_hours_button)?.setOnClickListener {
             setReminder(LocalDateTime.now().plusHours(2))
@@ -105,6 +122,39 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
 
         dialog.setContentView(sheetView)
         dialog.show()
+    }
+
+    private fun startEnableNotificationsProcess() {
+        val dialog = Dialog(requireContext())
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(layout.dialog_2_button_message)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.white)
+
+        val msg = dialog.findViewById<TextView>(R.id.dialog_message)
+        msg?.text = getString(R.string.reminder_post_notifications)
+
+        val posButton = dialog.findViewById<MaterialButton>(R.id.confirm_button)
+        posButton?.text = getString(R.string.rsb_BOOL_YES)
+        posButton?.setOnClickListener {
+            dialog.dismiss()
+            sendToSettings()
+        }
+
+        val negButton = dialog.findViewById<MaterialButton>(R.id.cancel_button)
+        negButton?.text = getString(R.string.rsb_BOOL_NO)
+        negButton?.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun sendToSettings() {
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+        intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
+        startActivity(intent)
     }
 
     /**
