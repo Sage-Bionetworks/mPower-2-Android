@@ -62,6 +62,7 @@ import org.threeten.bp.LocalDateTime
 class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
 
     lateinit var sharedPrefs: SharedPreferences
+    lateinit var myContext: Context
 
     companion object {
         /**
@@ -78,6 +79,7 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         sharedPrefs = context.getSharedPreferences(getString(R.string.reminder_post_notifications), Context.MODE_PRIVATE)
+        myContext = context
     }
 
     /**
@@ -136,23 +138,21 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
      * @return true if notification permissions are not already granted
      */
     private fun requestNotificationPermissions(): Boolean {
-        context?.let { context ->
-            val permissionRequested = sharedPrefs
-                    .getBoolean(getString(R.string.notification_permissions_asked), false) ?: false
-            val permissionNotGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
-                    PackageManager.PERMISSION_GRANTED
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && permissionNotGranted) {
-                if (permissionRequested) {
-                    startEnableNotificationsProcess()
-                } else {
-                    requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
-                    with(sharedPrefs.edit()) {
-                        putBoolean(getString(R.string.notification_permissions_asked), true)
-                        apply()
-                    }
+        val permissionRequested = sharedPrefs
+                .getBoolean(getString(R.string.notification_permissions_asked), false) ?: false
+        val permissionNotGranted = ContextCompat.checkSelfPermission(myContext, Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && permissionNotGranted) {
+            if (permissionRequested) {
+                startEnableNotificationsProcess()
+            } else {
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+                with(sharedPrefs.edit()) {
+                    putBoolean(getString(R.string.notification_permissions_asked), true)
+                    apply()
                 }
-                return true
             }
+            return true
         }
         return false
     }
@@ -195,14 +195,12 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
      */
     protected fun setReminder(reminderTime: LocalDateTime) {
         val taskId = performTaskViewModel.taskView.identifier
-        context?.let {
-            val reminderManager = MpReminderManager(it)
-            val reminderScheduleRules = ReminderScheduleRules(reminderTime)
-            val reminder = Reminder(
-                    taskId, REMINDER_ACTION_RUN_TASK,
-                    REMINDER_CODE_RUN_TASK, reminderScheduleRules,
-                    title = it.getString(R.string.reminder_title_run_task).format(taskId))
-            reminderManager.scheduleReminderUpdated(it, reminder)
-        }
+        val reminderManager = MpReminderManager(myContext)
+        val reminderScheduleRules = ReminderScheduleRules(reminderTime)
+        val reminder = Reminder(
+                taskId, REMINDER_ACTION_RUN_TASK,
+                REMINDER_CODE_RUN_TASK, reminderScheduleRules,
+                title = myContext.getString(R.string.reminder_title_run_task).format(taskId))
+        reminderManager.scheduleReminderUpdated(myContext, reminder)
     }
 }
