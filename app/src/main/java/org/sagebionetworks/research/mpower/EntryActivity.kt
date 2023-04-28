@@ -95,12 +95,21 @@ class EntryActivity : DaggerAppCompatActivity() {
                     .commitNow()
         }
 
+        requestNotificationPermissions()
+
+        setupPendingIntentForActivityTransitions()
+
+        passiveGaitViewModel.trackTransitions.observe(this, trackingTransitionsObserver)
+    }
+
+    private fun requestNotificationPermissions() {
         // Android 13 requires asking a runtime permission for Notifications
         sharedPrefs = getPreferences(Context.MODE_PRIVATE)
         val permissionNotGranted = ContextCompat
                 .checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED
         val permissionRequested = sharedPrefs
                 .getBoolean(getString(R.string.notification_permissions_asked), false)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                 && permissionNotGranted
                 && !permissionRequested) {
@@ -110,10 +119,6 @@ class EntryActivity : DaggerAppCompatActivity() {
                 apply()
             }
         }
-
-        setupPendingIntentForActivityTransitions()
-
-        passiveGaitViewModel.trackTransitions.observe(this, trackingTransitionsObserver)
     }
 
     private fun setupPendingIntentForActivityTransitions() {
