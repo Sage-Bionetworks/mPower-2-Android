@@ -34,7 +34,9 @@ package org.sagebionetworks.research.mpower.inject
 
 import android.Manifest
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
@@ -59,6 +61,8 @@ import org.threeten.bp.LocalDateTime
 
 class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
 
+    lateinit var sharedPrefs: SharedPreferences
+
     companion object {
         /**
          * @return a new instance of the MpShowOverviewStepFragment
@@ -69,6 +73,11 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
             fragment.arguments = arguments
             return fragment
         }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        sharedPrefs = context.getSharedPreferences(getString(R.string.reminder_post_notifications), Context.MODE_PRIVATE)
     }
 
     /**
@@ -90,14 +99,12 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
      * "Remind me later" skip button action at the bottom of the screen
      */
     protected fun onReminderMeLaterClicked() {
-        context?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                    && ContextCompat.checkSelfPermission(it, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                startEnableNotificationsProcess()
-                return
-            }
+
+        // Do not show options for reminder times if notification permissions are not granted
+        if (requestNotificationPermissions()) {
+            return
         }
+
         val act = activity ?: return
         val dialog = BottomSheetDialog(act)
         val sheetView = act.layoutInflater.inflate(layout.dialog_reminder_me_later, null)
@@ -123,6 +130,31 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
 
         dialog.setContentView(sheetView)
         dialog.show()
+    }
+
+    /**
+     * @return true if notification permissions are not already granted
+     */
+    private fun requestNotificationPermissions(): Boolean {
+        context?.let { context ->
+            val permissionRequested = sharedPrefs
+                    .getBoolean(getString(R.string.notification_permissions_asked), false) ?: false
+            val permissionNotGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && permissionNotGranted) {
+                if (permissionRequested) {
+                    startEnableNotificationsProcess()
+                } else {
+                    requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+                    with(sharedPrefs.edit()) {
+                        putBoolean(getString(R.string.notification_permissions_asked), true)
+                        apply()
+                    }
+                }
+                return true
+            }
+        }
+        return false
     }
 
     private fun startEnableNotificationsProcess() {

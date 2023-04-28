@@ -34,14 +34,11 @@ package org.sagebionetworks.research.mpower
 
 import android.Manifest
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.DaggerAppCompatActivity
@@ -55,8 +52,6 @@ class EntryActivity : DaggerAppCompatActivity() {
     private val LOGGER = LoggerFactory.getLogger(EntryActivity::class.java)
 
     private lateinit var pendingIntent: PendingIntent
-
-    lateinit var sharedPrefs: SharedPreferences
 
     private val passiveGaitViewModel: PassiveGaitViewModel by lazy {
         ViewModelProvider(this).get(PassiveGaitViewModel::class.java)
@@ -95,30 +90,9 @@ class EntryActivity : DaggerAppCompatActivity() {
                     .commitNow()
         }
 
-        requestNotificationPermissions()
-
         setupPendingIntentForActivityTransitions()
 
         passiveGaitViewModel.trackTransitions.observe(this, trackingTransitionsObserver)
-    }
-
-    private fun requestNotificationPermissions() {
-        // Android 13 requires asking a runtime permission for Notifications
-        sharedPrefs = getPreferences(Context.MODE_PRIVATE)
-        val permissionNotGranted = ContextCompat
-                .checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED
-        val permissionRequested = sharedPrefs
-                .getBoolean(getString(R.string.notification_permissions_asked), false)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                && permissionNotGranted
-                && !permissionRequested) {
-            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
-            with(sharedPrefs.edit()) {
-                putBoolean(getString(R.string.notification_permissions_asked), true)
-                apply()
-            }
-        }
     }
 
     private fun setupPendingIntentForActivityTransitions() {
