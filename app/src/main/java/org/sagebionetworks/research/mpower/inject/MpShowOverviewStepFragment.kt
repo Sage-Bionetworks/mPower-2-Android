@@ -91,7 +91,8 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
      */
     protected fun onReminderMeLaterClicked() {
         context?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(it, Manifest.permission.POST_NOTIFICATIONS)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    && ContextCompat.checkSelfPermission(it, Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED) {
                 startEnableNotificationsProcess()
                 return
