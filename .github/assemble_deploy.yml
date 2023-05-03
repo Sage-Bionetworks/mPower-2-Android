@@ -1,0 +1,46 @@
+name: Bundle and deploy
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.konan
+          key: ${{ runner.os }}-kmmcache-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties', 'buildSrc/*.kt', 'settings.gradle*', 'gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-kmmcache-
+
+      - name: Generate Release Bundle
+        run: ./gradlew bundleRelease
+      
+      - name: Sign Release Bundle
+        uses: r0adkll/sign-android-release@v1
+        # ID used to access action output
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.KEY_STORE_BASE64 }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      # 4
+      - uses: actions/upload-artifact@master
+        with:
+          name: app-release.aab
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+      # 5
+      - uses: actions/upload-artifact@master
+        with:
+          name: mapping.txt
+          path: app/build/outputs/mapping/release/mapping.txt
