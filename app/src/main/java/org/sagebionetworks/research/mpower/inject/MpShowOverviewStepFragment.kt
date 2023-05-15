@@ -100,7 +100,7 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
      * This function is called when the user taps the
      * "Remind me later" skip button action at the bottom of the screen
      */
-    protected fun onReminderMeLaterClicked() {
+    private fun onReminderMeLaterClicked() {
         val permissionRequested = sharedPrefs
                 .getBoolean(getString(R.string.notification_permissions_asked), false)
         val permissionNotGranted = ContextCompat.checkSelfPermission(myContext, Manifest.permission.POST_NOTIFICATIONS) !=
