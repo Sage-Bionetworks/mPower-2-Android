@@ -101,12 +101,26 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
      * "Remind me later" skip button action at the bottom of the screen
      */
     protected fun onReminderMeLaterClicked() {
-
-        // Do not show options for reminder times if notification permissions are not granted
-        if (requestNotificationPermissions()) {
+        val permissionRequested = sharedPrefs
+                .getBoolean(getString(R.string.notification_permissions_asked), false)
+        val permissionNotGranted = ContextCompat.checkSelfPermission(myContext, Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && permissionNotGranted) {
+            if (permissionRequested) {
+                startEnableNotificationsProcess()
+                return
+            }
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 7)
+            with(sharedPrefs.edit()) {
+                putBoolean(getString(R.string.notification_permissions_asked), true)
+                apply()
+            }
             return
         }
+        showNotificationOptionsDialog()
+    }
 
+    private fun showNotificationOptionsDialog() {
         val act = activity ?: return
         val dialog = BottomSheetDialog(act)
         val sheetView = act.layoutInflater.inflate(layout.dialog_reminder_me_later, null)
@@ -134,27 +148,12 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
         dialog.show()
     }
 
-    /**
-     * @return true if notification permissions are not already granted
-     */
-    private fun requestNotificationPermissions(): Boolean {
-        val permissionRequested = sharedPrefs
-                .getBoolean(getString(R.string.notification_permissions_asked), false) ?: false
-        val permissionNotGranted = ContextCompat.checkSelfPermission(myContext, Manifest.permission.POST_NOTIFICATIONS) !=
-                PackageManager.PERMISSION_GRANTED
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && permissionNotGranted) {
-            if (permissionRequested) {
-                startEnableNotificationsProcess()
-            } else {
-                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
-                with(sharedPrefs.edit()) {
-                    putBoolean(getString(R.string.notification_permissions_asked), true)
-                    apply()
-                }
-            }
-            return true
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+            grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 7 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            showNotificationOptionsDialog()
         }
-        return false
     }
 
     private fun startEnableNotificationsProcess() {
