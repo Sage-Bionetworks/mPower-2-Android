@@ -32,12 +32,24 @@
 
 package org.sagebionetworks.research.mpower.inject
 
+import android.Manifest
+import android.app.Dialog
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings
+import android.view.Window
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.widget.Button
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import com.google.android.material.button.MaterialButton
 import org.sagebionetworks.research.mobile_ui.widget.ActionButton
 import org.sagebionetworks.research.modules.common.step.overview.ShowOverviewStepFragment
 import org.sagebionetworks.research.mpower.R
+import org.sagebionetworks.research.mpower.R.layout
 import org.sagebionetworks.research.mpower.reminders.MpReminderManager
 import org.sagebionetworks.research.mpower.reminders.REMINDER_ACTION_RUN_TASK
 import org.sagebionetworks.research.mpower.reminders.REMINDER_CODE_RUN_TASK
@@ -49,6 +61,9 @@ import org.threeten.bp.LocalDateTime
 
 class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
 
+    lateinit var sharedPrefs: SharedPreferences
+    lateinit var myContext: Context
+
     companion object {
         /**
          * @return a new instance of the MpShowOverviewStepFragment
@@ -59,6 +74,12 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
             fragment.arguments = arguments
             return fragment
         }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        sharedPrefs = context.getSharedPreferences(getString(R.string.reminder_post_notifications), Context.MODE_PRIVATE)
+        myContext = context
     }
 
     /**
@@ -79,10 +100,30 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
      * This function is called when the user taps the
      * "Remind me later" skip button action at the bottom of the screen
      */
-    protected fun onReminderMeLaterClicked() {
+    private fun onReminderMeLaterClicked() {
+        val permissionRequested = sharedPrefs
+                .getBoolean(getString(R.string.notification_permissions_asked), false)
+        val permissionNotGranted = ContextCompat.checkSelfPermission(myContext, Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && permissionNotGranted) {
+            if (permissionRequested) {
+                startEnableNotificationsProcess()
+                return
+            }
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 7)
+            with(sharedPrefs.edit()) {
+                putBoolean(getString(R.string.notification_permissions_asked), true)
+                apply()
+            }
+            return
+        }
+        showNotificationOptionsDialog()
+    }
+
+    private fun showNotificationOptionsDialog() {
         val act = activity ?: return
         val dialog = BottomSheetDialog(act)
-        val sheetView = act.layoutInflater.inflate(R.layout.dialog_reminder_me_later, null)
+        val sheetView = act.layoutInflater.inflate(layout.dialog_reminder_me_later, null)
 
         sheetView.findViewById<Button>(R.id.remind_me_in_2_hours_button)?.setOnClickListener {
             setReminder(LocalDateTime.now().plusHours(2))
@@ -107,19 +148,58 @@ class MpShowOverviewStepFragment: ShowOverviewStepFragment() {
         dialog.show()
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+            grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 7 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            showNotificationOptionsDialog()
+        }
+    }
+
+    private fun startEnableNotificationsProcess() {
+        val dialog = Dialog(requireContext())
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(layout.dialog_2_button_message)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.white)
+
+        val msg = dialog.findViewById<TextView>(R.id.dialog_message)
+        msg?.text = getString(R.string.reminder_post_notifications)
+
+        val posButton = dialog.findViewById<MaterialButton>(R.id.confirm_button)
+        posButton?.text = getString(R.string.rsb_BOOL_YES)
+        posButton?.setOnClickListener {
+            dialog.dismiss()
+            sendToSettings()
+        }
+
+        val negButton = dialog.findViewById<MaterialButton>(R.id.cancel_button)
+        negButton?.text = getString(R.string.rsb_BOOL_NO)
+        negButton?.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun sendToSettings() {
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+        intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
+        startActivity(intent)
+    }
+
     /**
      * @param reminderTime the time to schedule the reminder at
      */
     protected fun setReminder(reminderTime: LocalDateTime) {
         val taskId = performTaskViewModel.taskView.identifier
-        context?.let {
-            val reminderManager = MpReminderManager(it)
-            val reminderScheduleRules = ReminderScheduleRules(reminderTime)
-            val reminder = Reminder(
-                    taskId, REMINDER_ACTION_RUN_TASK,
-                    REMINDER_CODE_RUN_TASK, reminderScheduleRules,
-                    title = it.getString(R.string.reminder_title_run_task).format(taskId))
-            reminderManager.scheduleReminderUpdated(it, reminder)
-        }
+        val reminderManager = MpReminderManager(myContext)
+        val reminderScheduleRules = ReminderScheduleRules(reminderTime)
+        val reminder = Reminder(
+                taskId, REMINDER_ACTION_RUN_TASK,
+                REMINDER_CODE_RUN_TASK, reminderScheduleRules,
+                title = myContext.getString(R.string.reminder_title_run_task).format(taskId))
+        reminderManager.scheduleReminderUpdated(myContext, reminder)
     }
 }
